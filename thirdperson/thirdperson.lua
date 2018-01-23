@@ -1,15 +1,20 @@
 local mod = new_mod("ThirdPerson")
 --[[ 
-	Third person mode
+	Third person
 		- Does the necessary positioning of the camera
 		- Applies different fixes to certain situations
+	Issues:
+		- When camera collides backwards with map aiming inaccurate
 	
 	Author: grasmann
 --]]
 
--- ####################################################################################################################
--- ##### Settings #####################################################################################################
--- ####################################################################################################################
+-- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
+-- ##### ██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██║████╗  ██║██╔════╝ ██╔════╝ #############################################
+-- ##### ███████╗█████╗     ██║      ██║   ██║██╔██╗ ██║██║  ███╗███████╗ #############################################
+-- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
+-- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
+-- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
 local options_widgets = {
 	{
 		["setting_name"] = "side",
@@ -107,9 +112,12 @@ local options_widgets = {
 	},
 }
 
--- ####################################################################################################################
--- ##### Data #########################################################################################################
--- ####################################################################################################################
+-- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
+-- ##### ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗ ############################################################################
+-- ##### ██║  ██║███████║   ██║   ███████║ ############################################################################
+-- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
+-- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
+-- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
 mod.reset = true
 mod.first_person_zoom = {
 	active = false,
@@ -143,17 +151,18 @@ mod.reload = {
 	extended = {},
 	is_reloading = function(self, unit)
 		if self.reloading[unit] and self.t then
-			if self.reloading[unit].start_time + self.reloading[unit].reload_time > self.t then
-				return true
-			end
+			if self.reloading[unit].start_time + self.reloading[unit].reload_time > self.t then return true end
 		end
 		return false
 	end
 }
 
--- ####################################################################################################################
--- ##### Functions ####################################################################################################
--- ####################################################################################################################
+-- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
+-- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
+-- ##### █████╗  ██║   ██║██╔██╗ ██║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗ ###################################
+-- ##### ██╔══╝  ██║   ██║██║╚██╗██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║ ###################################
+-- ##### ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║ ###################################
+-- ##### ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ###################################
 --[[
 	Set zoom values
 --]]
@@ -213,9 +222,12 @@ mod.is_third_person_active = function()
 	return not mod:is_suspended() and not mod.first_person_zoom.active
 end
 
--- ####################################################################################################################
--- ##### Hooks ########################################################################################################
--- ####################################################################################################################
+-- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
+-- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
+-- ##### ███████║██║   ██║██║   ██║█████╔╝ ███████╗ ###################################################################
+-- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
+-- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
+-- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
 --[[
 	Fix to make mission objectives visible in third person
 --]]
@@ -237,7 +249,7 @@ mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name)
 	-- ##### Original function ########################################################################################
 	func(self, dt, t, viewport_name)			
 	
-	-- ##### Get data #############################################################################################
+	-- ##### Get data #################################################################################################
 	local viewport = ScriptWorld.viewport(self._world, viewport_name)
 	local camera = ScriptViewport.camera(viewport)
 	local shadow_cull_camera = ScriptViewport.shadow_cull_camera(viewport)
@@ -262,7 +274,7 @@ mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name)
 	-- ##### Change zoom #####
 	mod.set_zoom_values(current_node)
 	
-	-- ##### Update camera ########################################################################################		
+	-- ##### Update camera ############################################################################################
 	self._update_camera_properties(self, camera, shadow_cull_camera, current_node, camera_data, viewport_name)
 	self._update_sound_listener(self, viewport_name)		
 	ScriptCamera.force_update(self._world, camera)		
@@ -302,6 +314,7 @@ end)
 --]]
 mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, input, dt, context, t)
 
+	-- ##### Reset view ###############################################################################################
 	if mod.reset then
 		self.set_first_person_mode(self, mod:is_suspended())
 		mod.reset = false
@@ -336,9 +349,12 @@ mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, input, dt, c
 	
 end)
 
--- ####################################################################################################################
--- ##### Reset ########################################################################################################
--- ####################################################################################################################
+-- ##### ██████╗ ███████╗███████╗███████╗████████╗ ####################################################################
+-- ##### ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝ ####################################################################
+-- ##### ██████╔╝█████╗  ███████╗█████╗     ██║    ####################################################################
+-- ##### ██╔══██╗██╔══╝  ╚════██║██╔══╝     ██║    ####################################################################
+-- ##### ██║  ██║███████╗███████║███████╗   ██║    ####################################################################
+-- ##### ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝    ####################################################################
 --[[
 	A game was started
 --]]
@@ -358,34 +374,29 @@ end)
 --]]
 Mods.hook.set(mod_name, "CutsceneSystem.set_first_person_mode", function(func, self, enabled)
 	func(self, enabled)
-	
-	if enabled then
-		mod.reset = true
-	end
+	if enabled then mod.reset = true end
 end)
 --[[
 	Reset view after character change
 --]]
 Mods.hook.set(mod_name, "ProfileView.on_exit", function(func, ...)
 	func(...)
-	
-	if not mod:is_suspended() then
-		mod.reset = true
-	end
+	if not mod:is_suspended() then mod.reset = true end
 end)
 --[[
 	Reset view after equipment change
 --]]
 Mods.hook.set(mod_name, "InventoryView.on_exit", function(func, self)
 	func(self)
-	if not mod:is_suspended() then
-		mod.reset = true
-	end
+	if not mod:is_suspended() then mod.reset = true end
 end)
 
--- ####################################################################################################################
--- ##### Projectiles ##################################################################################################
--- ####################################################################################################################
+-- ##### ██████╗ ██████╗  ██████╗      ██╗███████╗ ██████╗████████╗██╗██╗     ███████╗███████╗ ########################
+-- ##### ██╔══██╗██╔══██╗██╔═══██╗     ██║██╔════╝██╔════╝╚══██╔══╝██║██║     ██╔════╝██╔════╝ ########################
+-- ##### ██████╔╝██████╔╝██║   ██║     ██║█████╗  ██║        ██║   ██║██║     █████╗  ███████╗ ########################
+-- ##### ██╔═══╝ ██╔══██╗██║   ██║██   ██║██╔══╝  ██║        ██║   ██║██║     ██╔══╝  ╚════██║ ########################
+-- ##### ██║     ██║  ██║╚██████╔╝╚█████╔╝███████╗╚██████╗   ██║   ██║███████╗███████╗███████║ ########################
+-- ##### ╚═╝     ╚═╝  ╚═╝ ╚═════╝  ╚════╝ ╚══════╝ ╚═════╝   ╚═╝   ╚═╝╚══════╝╚══════╝╚══════╝ ########################
 --[[
 	Fix to apply camera offset to projectiles
 --]]
@@ -417,6 +428,9 @@ Mods.hook.set(mod_name, "ActionUtils.spawn_player_projectile", function(func, ow
 	func(owner_unit, position, rotation, scale, angle, target_vector, speed, item_name, 
 		item_template_name, action_name, sub_action_name)
 end)
+--[[
+	Fix to apply camera offset to trueflight projectiles
+--]]
 Mods.hook.set(mod_name, "ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, target_unit, true_flight_template_id, 
 	position, rotation, angle, target_vector, speed, item_name, item_template_name, action_name, sub_action_name, scale)
 	
@@ -446,19 +460,21 @@ Mods.hook.set(mod_name, "ActionUtils.spawn_true_flight_projectile", function(fun
 		target_vector, speed, item_name, item_template_name, action_name, sub_action_name, scale)
 end)
 
--- ####################################################################################################################
--- ##### Reload #######################################################################################################
--- ####################################################################################################################
+-- ##### ██████╗ ███████╗██╗      ██████╗  █████╗ ██████╗  ############################################################
+-- ##### ██╔══██╗██╔════╝██║     ██╔═══██╗██╔══██╗██╔══██╗ ############################################################
+-- ##### ██████╔╝█████╗  ██║     ██║   ██║███████║██║  ██║ ############################################################
+-- ##### ██╔══██╗██╔══╝  ██║     ██║   ██║██╔══██║██║  ██║ ############################################################
+-- ##### ██║  ██║███████╗███████╗╚██████╔╝██║  ██║██████╔╝ ############################################################
+-- ##### ╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝  ############################################################
 --[[
 	Play third person animation for yourself
 --]]
 Mods.hook.set(mod_name, "GenericAmmoUserExtension.start_reload_animation", function(func, self, reload_time)
 	func(self, reload_time)
-	--if mod.get(mod.widget_settings.RELOAD_ANIMATION_FIX.save) and self.reload_event then
 	if self.reload_event then
-		-- Play 3rd person animation
+		-- ##### Play 3rd person animation ############################################################################
 		Unit.animation_event(self.owner_unit, self.reload_event)
-		-- Set reloading
+		-- ##### Set reloading ########################################################################################
 		mod.reload.reloading[self.owner_unit] = {
 			reload_time = reload_time,
 			start_time = mod.reload.t or 0,
@@ -472,7 +488,6 @@ end)
 Mods.hook.set(mod_name, "GenericAmmoUserExtension.update", function(func, self, unit, input, dt, context, t)
 	func(self, unit, input, dt, context, t)
 	mod.reload.t = t
-	--if mod.get(mod.widget_settings.RELOAD_ANIMATION_FIX.save) and mod.reload.reloading[self.owner_unit] then
 	if mod.reload.reloading[self.owner_unit] then
 		if not mod.reload:is_reloading(self.owner_unit) then
 			if mod:get("reload_stop_when_finished") then
@@ -490,7 +505,7 @@ Mods.hook.set(mod_name, "GenericAmmoUserExtension.update", function(func, self, 
 		elseif not mod.reload.extended[self.owner_unit] and mod:get("reload_extend_too_short") then
 			local t, length = Unit.animation_layer_info(self.owner_unit, 2)
 			if length > mod.reload.reloading[self.owner_unit].reload_time then
-				-- Reload animation is too short
+				-- ##### Reload animation is too short ################################################################
 				CharacterStateHelper.play_animation_event(self.owner_unit, mod.reload.reloading[self.owner_unit].event)
 				mod.reload.extended[self.owner_unit] = true
 			end
@@ -502,59 +517,73 @@ end)
 --]]
 Mods.hook.set(mod_name, "GenericAmmoUserExtension.abort_reload", function(func, self)
 	func(self)
-	--if mod.get(mod.widget_settings.RELOAD_ANIMATION_FIX.save) then
 	mod.reload.reloading[self.owner_unit] = nil
 	mod.reload.extended[self.owner_unit] = nil
-	--end
 end)
 
--- ####################################################################################################################
--- ##### Third Person - First Person Zoom #############################################################################
--- ####################################################################################################################
+-- #####  ██╗███████╗████████╗██████╗     ███████╗ ██████╗  ██████╗ ███╗   ███╗ #######################################
+-- ##### ███║██╔════╝╚══██╔══╝██╔══██╗    ╚══███╔╝██╔═══██╗██╔═══██╗████╗ ████║ #######################################
+-- ##### ╚██║███████╗   ██║   ██████╔╝      ███╔╝ ██║   ██║██║   ██║██╔████╔██║ #######################################
+-- #####  ██║╚════██║   ██║   ██╔═══╝      ███╔╝  ██║   ██║██║   ██║██║╚██╔╝██║ #######################################
+-- #####  ██║███████║   ██║   ██║         ███████╗╚██████╔╝╚██████╔╝██║ ╚═╝ ██║ #######################################
+-- #####  ╚═╝╚══════╝   ╚═╝   ╚═╝         ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝     ╚═╝ #######################################
+--[[
+	Activate first person view on aim start
+--]]
 Mods.hook.set(mod_name, "ActionAim.client_owner_start_action", function(func, ...)
 	func(...)
-	
 	if mod:get("first_person_zoom") then
 		mod.first_person_zoom.active = not mod.firstperson.value
 	end
 end)
+--[[
+	Activate ending first person view on aim finish
+--]]
 Mods.hook.set(mod_name, "ActionAim.finish", function(func, ...)
 	func(...)
-	
 	mod.first_person_zoom.end_zoom = true
 end)
+--[[
+	Activate ending first person view on trueflight aim finish
+--]]
 Mods.hook.set(mod_name, "ActionTrueFlightBowAim.client_owner_start_action", function(func, ...)
 	func(...)
-	
 	if mod:get("first_person_zoom") then
 		mod.first_person_zoom.active = not mod.firstperson.value
 	end
 end)
+--[[
+	Activate first person view on trueflight aim start
+--]]
 Mods.hook.set(mod_name, "ActionTrueFlightBowAim.finish", function(func, ...)
 	local chain_action_data = func(...)
-
 	mod.first_person_zoom.end_zoom = true
-	
 	return chain_action_data
 end)
+--[[
+	Deactivate first person view
+--]]
 Mods.hook.set(mod_name, "MatchmakingManager.update", function(func, self, dt, t)
 	func(self, dt, t)
-	-- Check if end zoom has triggered
+	-- ##### Check if end zoom has triggered ##########################################################################
 	if mod.first_person_zoom.end_zoom then
-		-- Save the now time to wait 1 second to end first person mode
+		-- ##### Save the now time to wait 1 second to end first person mode ##########################################
 		mod.first_person_zoom.wait_time = t
 		mod.first_person_zoom.end_zoom = false
 	end
-	-- After 1 second
+	-- ##### After 1 second ###########################################################################################
 	if mod.first_person_zoom.wait_time ~= 0 and mod.first_person_zoom.wait_time + 0.3 < t then
 		mod.first_person_zoom.wait_time = 0
 		mod.first_person_zoom.active = false
 	end
 end)
 
--- ####################################################################################################################
--- ##### Events #######################################################################################################
--- ####################################################################################################################
+-- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
+-- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
+-- ##### █████╗  ██║   ██║█████╗  ██╔██╗ ██║   ██║   ███████╗ #########################################################
+-- ##### ██╔══╝  ╚██╗ ██╔╝██╔══╝  ██║╚██╗██║   ██║   ╚════██║ #########################################################
+-- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
+-- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
 mod.setting_changed = function(setting_name)
 end
 
