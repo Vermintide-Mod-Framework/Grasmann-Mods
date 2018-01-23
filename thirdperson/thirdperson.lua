@@ -359,35 +359,35 @@ end)
 --[[
 	A game was started
 --]]
-Mods.hook.set(mod_name, "StateInGameRunning.event_game_started", function(func, self)
+mod:hook("StateInGameRunning.event_game_started", function(func, self)
 	func(self)
 	mod.reset = true
 end)
 --[[
 	A game was actually started ... lol
 --]]
-Mods.hook.set(mod_name, "StateInGameRunning.event_game_actually_starts", function(func, self)
-	func(self)
-	mod.reset = true
-end)
+-- mod:hook("StateInGameRunning.event_game_actually_starts", function(func, self)
+	-- func(self)
+	-- mod.reset = true
+-- end)
 --[[
 	Set first person mode for cutscenes
 --]]
-Mods.hook.set(mod_name, "CutsceneSystem.set_first_person_mode", function(func, self, enabled)
+mod:hook("CutsceneSystem.set_first_person_mode", function(func, self, enabled)
 	func(self, enabled)
 	if enabled then mod.reset = true end
 end)
 --[[
 	Reset view after character change
 --]]
-Mods.hook.set(mod_name, "ProfileView.on_exit", function(func, ...)
+mod:hook("ProfileView.on_exit", function(func, ...)
 	func(...)
 	if not mod:is_suspended() then mod.reset = true end
 end)
 --[[
 	Reset view after equipment change
 --]]
-Mods.hook.set(mod_name, "InventoryView.on_exit", function(func, self)
+mod:hook("InventoryView.on_exit", function(func, self)
 	func(self)
 	if not mod:is_suspended() then mod.reset = true end
 end)
@@ -401,7 +401,7 @@ end)
 --[[
 	Fix to apply camera offset to projectiles
 --]]
-Mods.hook.set(mod_name, "ActionUtils.spawn_player_projectile", function(func, owner_unit, position, rotation, scale, angle, 
+mod:hook("ActionUtils.spawn_player_projectile", function(func, owner_unit, position, rotation, scale, angle, 
 	target_vector, speed, item_name, item_template_name, action_name, sub_action_name)
 	if mod.is_third_person_active() then
 		-- ##### Get data #############################################################################################
@@ -432,7 +432,7 @@ end)
 --[[
 	Fix to apply camera offset to trueflight projectiles
 --]]
-Mods.hook.set(mod_name, "ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, target_unit, true_flight_template_id, 
+mod:hook("ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, target_unit, true_flight_template_id, 
 	position, rotation, angle, target_vector, speed, item_name, item_template_name, action_name, sub_action_name, scale)
 	
 	if mod.is_third_person_active() then
@@ -470,7 +470,7 @@ end)
 --[[
 	Play third person animation for yourself
 --]]
-Mods.hook.set(mod_name, "GenericAmmoUserExtension.start_reload_animation", function(func, self, reload_time)
+mod:hook("GenericAmmoUserExtension.start_reload_animation", function(func, self, reload_time)
 	func(self, reload_time)
 	if self.reload_event then
 		-- ##### Play 3rd person animation ############################################################################
@@ -486,7 +486,7 @@ end)
 --[[
 	Check to disable animation when reloading is done
 --]]
-Mods.hook.set(mod_name, "GenericAmmoUserExtension.update", function(func, self, unit, input, dt, context, t)
+mod:hook("GenericAmmoUserExtension.update", function(func, self, unit, input, dt, context, t)
 	func(self, unit, input, dt, context, t)
 	mod.reload.t = t
 	-- ##### Check if reload process is issued ########################################################################
@@ -518,7 +518,7 @@ end)
 --[[
 	Cancel reload
 --]]
-Mods.hook.set(mod_name, "GenericAmmoUserExtension.abort_reload", function(func, self)
+mod:hook("GenericAmmoUserExtension.abort_reload", function(func, self)
 	func(self)
 	mod.reload.reloading[self.owner_unit] = nil
 	mod.reload.extended[self.owner_unit] = nil
@@ -533,7 +533,7 @@ end)
 --[[
 	Activate first person view on aim start
 --]]
-Mods.hook.set(mod_name, "ActionAim.client_owner_start_action", function(func, ...)
+mod:hook("ActionAim.client_owner_start_action", function(func, ...)
 	func(...)
 	if mod:get("first_person_zoom") then
 		mod.first_person_zoom.active = not mod.firstperson.value
@@ -542,14 +542,14 @@ end)
 --[[
 	Activate ending first person view on aim finish
 --]]
-Mods.hook.set(mod_name, "ActionAim.finish", function(func, ...)
+mod:hook("ActionAim.finish", function(func, ...)
 	func(...)
 	mod.first_person_zoom.end_zoom = true
 end)
 --[[
 	Activate ending first person view on trueflight aim finish
 --]]
-Mods.hook.set(mod_name, "ActionTrueFlightBowAim.client_owner_start_action", function(func, ...)
+mod:hook("ActionTrueFlightBowAim.client_owner_start_action", function(func, ...)
 	func(...)
 	if mod:get("first_person_zoom") then
 		mod.first_person_zoom.active = not mod.firstperson.value
@@ -558,7 +558,7 @@ end)
 --[[
 	Activate first person view on trueflight aim start
 --]]
-Mods.hook.set(mod_name, "ActionTrueFlightBowAim.finish", function(func, ...)
+mod:hook("ActionTrueFlightBowAim.finish", function(func, ...)
 	local chain_action_data = func(...)
 	mod.first_person_zoom.end_zoom = true
 	return chain_action_data
@@ -566,7 +566,7 @@ end)
 --[[
 	Deactivate first person view
 --]]
-Mods.hook.set(mod_name, "MatchmakingManager.update", function(func, self, dt, t)
+mod:hook("MatchmakingManager.update", function(func, self, dt, t)
 	func(self, dt, t)
 	-- ##### Check if end zoom has triggered ##########################################################################
 	if mod.first_person_zoom.end_zoom then
@@ -587,35 +587,25 @@ end)
 -- ##### ██╔══╝  ╚██╗ ██╔╝██╔══╝  ██║╚██╗██║   ██║   ╚════██║ #########################################################
 -- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
 -- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
--- --[[
-	-- Mod Setting changed
--- --]]
--- mod.setting_changed = function(setting_name)
--- end
--- --[[
-	-- Mod Suspended
--- --]]
--- mod.suspended = function()
--- end
--- --[[
-	-- Mod Unsuspended
--- --]]
--- mod.unsuspended = function()
--- end
--- --[[
-	-- Mod Reload
--- --]]
--- mod.reload = function()
--- end
--- --[[
-	-- Mod Load
--- --]]
--- mod.load = function()
--- end
--- --[[
-	-- Mod Unload
--- --]]
--- mod.unload = function()
--- end
+--[[
+	Mod Setting changed
+--]]
+mod.setting_changed = function(setting_name)
+end
+--[[
+	Mod Suspended
+--]]
+mod.suspended = function()
+end
+--[[
+	Mod Unsuspended
+--]]
+mod.unsuspended = function()
+end
+--[[
+	Mod Update
+--]]
+mod.update = function(dt)
+end
 
 mod:create_options(options_widgets, true, "Third Person", "Mod description")

@@ -103,8 +103,10 @@ local options_widgets = {
 			"Affects: Red staffs, volley crossbow, wh crossbow",
 		["value_type"] = "number",
 		["options"] = {
-			{text = "Belt", value = 1},
-			{text = "Back", value = 2},
+			{text = "Off", value = 100},
+			{text = "Slightly", value = 90},
+			{text = "More", value = 75},
+			{text = "Max", value = 50},
 		},
 		--["range"] = {50, 100},
 		["default_value"] = 75,
@@ -265,7 +267,7 @@ mod.get_item_setting = function(self, unit, slot_name, item_data, left)
 			local option_d_belt = 2
 			local option_d_back = 3
 			local dwarf_weapon = table.contains(def.dwarf_weapons, item_data.item_type)
-			local _1h_weapon_position = self:get("dwarf_onehand_weapon_position")
+			local _1h_weapon_position = self:get("onehand_weapon_position")
 			local option_belt = 1
 			local option_back = 2
 			if _1h_weapon_position == option_belt and not dwarf_weapon or dwarf_weapon and dwarf_one_handed_weapon_position == option_d_belt then
@@ -344,13 +346,21 @@ mod.add_item = function(self, unit, slot_name, item_data)
 		local right, left, right_pack, left_pack = nil
 		if item_data.right_hand_unit ~= nil then
 			local item_setting = self:get_item_setting(unit, slot_name, item_data)
-			right_pack = item_data.right_hand_unit.."_3p"
-			right = self:spawn(right_pack, unit, item_setting)
+			if item_setting.node ~= nil then
+				right_pack = item_data.right_hand_unit.."_3p"
+				right = self:spawn(right_pack, unit, item_setting)
+			else
+				mod:echo(slot_name)
+			end
 		end
 		if item_data.left_hand_unit ~= nil then
 			local item_setting = self:get_item_setting(unit, slot_name, item_data, true)
-			left_pack = item_data.left_hand_unit.."_3p"
-			left = self:spawn(left_pack, unit, item_setting)
+			if item_setting.node ~= nil then
+				left_pack = item_data.left_hand_unit.."_3p"
+				left = self:spawn(left_pack, unit, item_setting)
+			else
+				mod:echo(slot_name)
+			end
 		end
 		
 		self.current.equipment[unit] = self.current.equipment[unit] or {}
@@ -454,7 +464,7 @@ end
 --[[
 	Wield equipment hooks
 --]]
-Mods.hook.set(mod_name, "InventorySystem.rpc_wield_equipment", function(func, self, sender, go_id, slot_id)
+mod:hook("InventorySystem.rpc_wield_equipment", function(func, self, sender, go_id, slot_id)
 	func(self, sender, go_id, slot_id)
 	if not mod:is_suspended() then
 		local unit = self.unit_storage:unit(go_id)
@@ -462,13 +472,13 @@ Mods.hook.set(mod_name, "InventorySystem.rpc_wield_equipment", function(func, se
 		mod:wield_equipment(unit, slot_name)
 	end
 end)
-Mods.hook.set(mod_name, "SimpleInventoryExtension.wield", function(func, self, slot_name)
+mod:hook("SimpleInventoryExtension.wield", function(func, self, slot_name)
 	func(self, slot_name)
 	if not mod:is_suspended() then
 		mod:wield_equipment(self._unit, slot_name)
 	end
 end)
-Mods.hook.set(mod_name, "SimpleHuskInventoryExtension.wield", function(func, self, slot_name)
+mod:hook("SimpleHuskInventoryExtension.wield", function(func, self, slot_name)
 	func(self, slot_name)
 	if not mod:is_suspended() then
 		mod:wield_equipment(self._unit, slot_name)
@@ -477,19 +487,19 @@ end)
 --[[
 	Despawn equipment
 --]]
-Mods.hook.set(mod_name, "SimpleInventoryExtension.destroy_slot", function(func, self, slot_name, allow_destroy_weapon)
+mod:hook("SimpleInventoryExtension.destroy_slot", function(func, self, slot_name, allow_destroy_weapon)
 	func(self, slot_name, allow_destroy_weapon)
 	if not mod:is_suspended() then
 		mod:delete_units(self._unit)
 	end
 end)
-Mods.hook.set(mod_name, "SimpleHuskInventoryExtension.destroy_slot", function(func, self, slot_name)
+mod:hook("SimpleHuskInventoryExtension.destroy_slot", function(func, self, slot_name)
 	func(self, slot_name)
 	if not mod:is_suspended() then
 		mod:delete_units(self._unit)
 	end
 end)
-Mods.hook.set(mod_name, "PlayerUnitHealthExtension.die", function(func, self, damage_type)
+mod:hook("PlayerUnitHealthExtension.die", function(func, self, damage_type)
 	func(self, damage_type)
 	if not mod:is_suspended() then
 		mod:delete_units(self.unit)
@@ -498,7 +508,7 @@ end)
 --[[
 	Unloading packages
 --]]
-Mods.hook.set(mod_name, "PackageManager.unload", function(func, self, package_name, ...)
+mod:hook("PackageManager.unload", function(func, self, package_name, ...)
 	if not mod:is_suspended() then
 		for unit, equip in pairs(mod.current.equipment) do
 			for _, i_unit in pairs(equip) do
@@ -513,11 +523,7 @@ Mods.hook.set(mod_name, "PackageManager.unload", function(func, self, package_na
 	end
 	return func(self, package_name, ...)
 end)
---[[
-	Manage option toggle
-	Create equipment
---]]
-Mods.hook.set(mod_name, "MatchmakingManager.update", function(func, self, dt, t)
+mod:hook("MatchmakingManager.update", function(func, self, dt, t)
 	func(self, dt, t)
 	if not mod:is_suspended() then
 		local players = Managers.player:human_and_bot_players()
@@ -537,10 +543,10 @@ Mods.hook.set(mod_name, "MatchmakingManager.update", function(func, self, dt, t)
 							local is_alive = health_extension.is_alive(health_extension) and not status_extension.is_disabled(status_extension)
 							if is_alive and mod.is_not_loading() and mod.current.profile[player_unit] and not mod.current.equipment[player_unit] then
 								mod:add_all_items(player_unit)
-								-- wield
-								local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
-								local slot_name = inventory_extension.get_wielded_slot_name(inventory_extension)
-								mod:wield_equipment(player_unit, slot_name)
+								-- -- wield
+								-- local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+								-- local slot_name = inventory_extension.get_wielded_slot_name(inventory_extension)
+								-- mod:wield_equipment(player_unit, slot_name)
 							end
 						end
 					end
@@ -561,7 +567,7 @@ end)
 --[[
 	Inventory synchronizer hook
 --]]
-Mods.hook.set(mod_name, "InventoryPackageSynchronizer.set_inventory_list", function(func, self, profile_index, inventory_list, inventory_list_first_person)
+mod:hook("InventoryPackageSynchronizer.set_inventory_list", function(func, self, profile_index, inventory_list, inventory_list_first_person)
 	if not mod:is_suspended() then
 		local players = Managers.player:human_and_bot_players()
 		for k, player in pairs(players) do
@@ -627,43 +633,50 @@ mod.unsuspended = function()
 		mod:add_all_items(player.player_unit)
 	end
 end
--- --[[
-	-- Mod Reload
--- --]]
--- mod.on_reload = function()
-	-- mod:echo("ThirdPersonEquipment - reload")
--- end
--- mod.reload = function()
-	-- local players = Managers.player:human_and_bot_players()
-	-- for k, player in pairs(players) do
-		-- mod:add_all_items(player.player_unit)
-		-- -- wield
-		-- local inventory_extension = ScriptUnit.extension(player.player_unit, "inventory_system")
-		-- local slot_name = inventory_extension.get_wielded_slot_name(inventory_extension)
-		-- mod:wield_equipment(player.player_unit, slot_name)
+--[[
+	Mod update
+--]]
+-- mod.update = function(dt)
+	-- if not mod:is_suspended() then
+		-- local players = Managers.player:human_and_bot_players()
+		-- for k, player in pairs(players) do
+			-- if player then
+				-- local player_unit = player.player_unit
+				-- if player_unit ~= nil then
+				
+					-- local profile_synchronizer = Managers.state.network.profile_synchronizer
+					-- local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
+					-- if profile_index ~= nil then
+						-- mod.current.profile[player_unit] = SPProfiles[profile_index].unit_name
+
+						-- if ScriptUnit.has_extension(player_unit, "health_system") and ScriptUnit.has_extension(player_unit, "status_system") then
+							-- local health_extension = ScriptUnit.extension(player_unit, "health_system")
+							-- local status_extension = ScriptUnit.extension(player_unit, "status_system")
+							-- local is_alive = health_extension.is_alive(health_extension) and not status_extension.is_disabled(status_extension)
+							-- if is_alive and mod.is_not_loading() and mod.current.profile[player_unit] and not mod.current.equipment[player_unit] then
+								-- mod:add_all_items(player_unit)
+								-- -- wield
+								-- local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+								-- local slot_name = inventory_extension.get_wielded_slot_name(inventory_extension)
+								-- mod:wield_equipment(player_unit, slot_name)
+							-- end
+						-- end
+					-- end
+				-- end
+			-- end
+		-- end
+		-- -- First person
+		-- local player = Managers.player:local_player()
+		-- if player then
+			-- local third_person_mod = get_mod("ThirdPerson")
+			-- local third_person = third_person_mod and not third_person_mod.firstperson.value or mod:is_first_person_blocked(player.player_unit) or false
+			-- mod:set_equipment_visibility(player.player_unit, not third_person)
+		-- end
+	-- else
+		-- mod:delete_all_units()
 	-- end
-	-- mod:echo("ThirdPersonEquipment - reload")
-	-- --mod:add_all_items(player.player_unit)
--- end
--- --[[
-	-- Mod Load
--- --]]
--- mod.load = function()
--- end
--- --[[
-	-- Mod Unload
--- --]]
--- mod.unload = function()
 -- end
 
 -- Delete
 mod:delete_all_units()
--- local players = Managers.player:human_and_bot_players()
--- for k, player in pairs(players) do
-	-- mod:add_all_items(player.player_unit)
-	-- -- wield
-	-- -- local inventory_extension = ScriptUnit.extension(player.player_unit, "inventory_system")
-	-- -- local slot_name = inventory_extension.get_wielded_slot_name(inventory_extension)
-	-- -- mod:wield_equipment(player.player_unit, slot_name)
--- end
 mod:create_options(options_widgets, true, "Third Person Equipment", "Mod description")
