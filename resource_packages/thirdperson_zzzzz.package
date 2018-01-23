@@ -1,0 +1,11 @@
+mod =  [
+	"thirdperson"
+]
+
+package = [
+	"resource_packages/thirdperson_zzzzz"
+]
+
+lua = [
+	"thirdperson"
+]
