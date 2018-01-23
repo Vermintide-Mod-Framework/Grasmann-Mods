@@ -7,6 +7,7 @@ local mod = new_mod("ThirdPerson")
 		- When camera collides backwards with map aiming inaccurate
 	
 	Author: grasmann
+	Version: 1.3.0
 --]]
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -271,7 +272,7 @@ mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name)
 		camera_data.position = self._calculate_sequence_event_position(self, camera_data, offset)
 	end
 	
-	-- ##### Change zoom #####
+	-- ##### Change zoom ##############################################################################################
 	mod.set_zoom_values(current_node)
 	
 	-- ##### Update camera ############################################################################################
@@ -488,9 +489,11 @@ end)
 Mods.hook.set(mod_name, "GenericAmmoUserExtension.update", function(func, self, unit, input, dt, context, t)
 	func(self, unit, input, dt, context, t)
 	mod.reload.t = t
+	-- ##### Check if reload process is issued ########################################################################
 	if mod.reload.reloading[self.owner_unit] then
 		if not mod.reload:is_reloading(self.owner_unit) then
 			if mod:get("reload_stop_when_finished") then
+				-- ##### Reload animation is too long #################################################################
 				local inventory_extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
 				local slot_data = inventory_extension.get_slot_data(inventory_extension, "slot_ranged")
 				local item_template = BackendUtils.get_item_template(slot_data.item_data)
@@ -584,19 +587,35 @@ end)
 -- ##### ██╔══╝  ╚██╗ ██╔╝██╔══╝  ██║╚██╗██║   ██║   ╚════██║ #########################################################
 -- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
 -- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
-mod.setting_changed = function(setting_name)
-end
-
-mod.suspended = function()
-end
-
-mod.unsuspended = function()
-end
-
-mod.load = function()
-end
-
-mod.unload = function()
-end
+-- --[[
+	-- Mod Setting changed
+-- --]]
+-- mod.setting_changed = function(setting_name)
+-- end
+-- --[[
+	-- Mod Suspended
+-- --]]
+-- mod.suspended = function()
+-- end
+-- --[[
+	-- Mod Unsuspended
+-- --]]
+-- mod.unsuspended = function()
+-- end
+-- --[[
+	-- Mod Reload
+-- --]]
+-- mod.reload = function()
+-- end
+-- --[[
+	-- Mod Load
+-- --]]
+-- mod.load = function()
+-- end
+-- --[[
+	-- Mod Unload
+-- --]]
+-- mod.unload = function()
+-- end
 
 mod:create_options(options_widgets, true, "Third Person", "Mod description")
