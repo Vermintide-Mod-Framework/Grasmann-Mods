@@ -3,7 +3,7 @@
 		- Provides configurations for equipment positions
 	
 	Author: grasmann
-	Version: 1.3.0
+	Version: 1.1.0
 --]]
 
 local default_node = "j_spine"

@@ -1,0 +1,12 @@
+mod =  [
+	"moreratweapons"
+]
+
+package = [
+	"resource_packages/thirdperson_zzzzzz"
+]
+
+lua = [
+	"moreratweapons_def"
+	"moreratweapons"
+]

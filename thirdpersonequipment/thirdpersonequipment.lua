@@ -7,7 +7,7 @@ local mod = new_mod("ThirdPersonEquipment")
 		- Doesn't work after game start right away
 	
 	Author: grasmann
-	Version: 1.3.0
+	Version: 1.1.0
 --]]
 
 -- Global to keep track of spawned units
