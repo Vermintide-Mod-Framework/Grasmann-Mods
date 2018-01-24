@@ -1,0 +1,11 @@
+mod =  [
+	"healthbars"
+]
+
+package = [
+	"resource_packages/healthbars/healthbars_z"
+]
+
+lua = [
+	"scripts/mods/healthbars/healthbars"
+]

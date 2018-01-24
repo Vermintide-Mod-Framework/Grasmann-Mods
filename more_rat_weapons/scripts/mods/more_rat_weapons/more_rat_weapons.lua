@@ -1,4 +1,4 @@
-local mod = new_mod("MoreRatWeapons")
+local mod = get_mod("MoreRatWeapons")
 --[[ 
 	More Rat Weapons
 		- Unlocks shields for rats
@@ -972,12 +972,12 @@ end
 --]]
 AIInventoryExtension.replace_inventory_visually = function(self, inventory_template)
 	if mod:get("use_player_weapons") then
-		local definitions = get_mod("MoreRatWeapons_Def") --Mods.MoreRatWeaponsDefinitions
-		if definitions and mod:loaded_all() then
-			local luck_max = definitions.replace_luck[inventory_template] or 0
+		--local definitions = get_mod("MoreRatWeapons_Def") --Mods.MoreRatWeaponsDefinitions
+		if mod:loaded_all() then
+			local luck_max = mod.replace_luck[inventory_template] or 0
 			local luck = math.random(1, 100)
 			if luck <= luck_max then
-				local inventory_configuration_name = definitions.replace_inventory[inventory_template]
+				local inventory_configuration_name = mod.replace_inventory[inventory_template]
 				if inventory_configuration_name then
 					local unit_spawner = Managers.state.unit_spawner
 					local inventory_configuration = InventoryConfigurations[inventory_configuration_name]
@@ -1100,20 +1100,20 @@ mod.load_packages = function(self, unload)
 	--safe_pcall(function()
 		local manager = Managers.package
 		local reference = "MoreRatWeapons"
-		local definitions = get_mod("MoreRatWeapons_Def") --Mods.MoreRatWeaponsDefinitions
-		if definitions then
+		--local definitions = get_mod("MoreRatWeapons_Def") --Mods.MoreRatWeaponsDefinitions
+		--if definitions then
 			local active = self:get("use_player_weapons") or false
 			local setting = self:get("player_weapons_count") or 2
-			for i = 1, #definitions.packages do
+			for i = 1, #mod.packages do
 				if i <= setting and active then
-					for _, name in pairs(definitions.packages[i]) do
+					for _, name in pairs(mod.packages[i]) do
 						if not manager:is_loading(name) and not manager:has_loaded(name, reference) then
 							manager:load(name, reference, self.package_callback(self, name), true)
 							self.loading_packages[name] = true
 						end
 					end
 				-- elseif unload then
-					-- for _, name in pairs(definitions.packages[i]) do
+					-- for _, name in pairs(mod.packages[i]) do
 						-- if manager:has_loaded(name, reference) and manager:can_unload(name) then
 							-- manager:unload(name, reference)
 							-- self.loading_packages[name] = nil
@@ -1122,10 +1122,10 @@ mod.load_packages = function(self, unload)
 					-- end
 				end
 			end
-			definitions.custom_1h_weapons.count = definitions.custom_1h_weapons.count_settings[setting]
-			definitions.custom_2h_weapons.count = definitions.custom_2h_weapons.count_settings[setting]
-			definitions.custom_shields.count = definitions.custom_shields.count_settings[setting]
-		end
+			mod.custom_1h_weapons.count = mod.custom_1h_weapons.count_settings[setting]
+			mod.custom_2h_weapons.count = mod.custom_2h_weapons.count_settings[setting]
+			mod.custom_shields.count = mod.custom_shields.count_settings[setting]
+		--end
 	--end)
 end
 

@@ -1,4 +1,4 @@
-local mod = new_mod("MoreRatWeapons_Def")
+local mod = get_mod("MoreRatWeapons")
 
 mod.packages = {
 	-- Default

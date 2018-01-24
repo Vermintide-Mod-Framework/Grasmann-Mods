@@ -1,4 +1,4 @@
-local mod = new_mod("ThirdPersonEquipment")
+local mod = get_mod("ThirdPersonEquipment")
 --[[ 
 	Third person equipment
 		- Shows equipped items on characters
@@ -234,7 +234,7 @@ end
 	Spawn single equipment unit
 --]]
 mod.get_item_setting = function(self, unit, slot_name, item_data, left)
-	local def = Visible3PEquipment_Definitions
+	local def = mod.definitions
 	local item_setting = nil
 	
 	-- ####### Fixes and options #######
@@ -342,7 +342,7 @@ mod.add_item = function(self, unit, slot_name, item_data)
 	local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 	local equipment = inventory_extension.equipment(inventory_extension)
 	
-	if Visible3PEquipment_Definitions[item_data.item_type] ~= nil then
+	if mod.definitions[item_data.item_type] ~= nil then
 		local right, left, right_pack, left_pack = nil
 		if item_data.right_hand_unit ~= nil then
 			local item_setting = self:get_item_setting(unit, slot_name, item_data)

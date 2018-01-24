@@ -1,0 +1,12 @@
+mod =  [
+	"more_rat_weapons"
+]
+
+package = [
+	"resource_packages/more_rat_weapons/more_rat_weapons"
+]
+
+lua = [
+	"scripts/mods/more_rat_weapons/more_rat_weapons_def"
+	"scripts/mods/more_rat_weapons/more_rat_weapons"
+]

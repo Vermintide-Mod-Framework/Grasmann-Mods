@@ -1,4 +1,4 @@
-local mod = new_mod("ThirdPerson")
+local mod = get_mod("ThirdPerson")
 --[[ 
 	Third person
 		- Does the necessary positioning of the camera
@@ -234,10 +234,9 @@ end
 --]]
 mod:hook("TutorialUI.update", function(func, self, ...)
 	if mod.is_third_person_active() then
-		local extension = self._first_person_extension
-		if extension then extension.first_person_mode = true end
+		if self._first_person_extension then self._first_person_extension.first_person_mode = true end
 		func(self, ...)
-		if extension then extension.first_person_mode = mod.firstperson.value end
+		if self._first_person_extension then self._first_person_extension.first_person_mode = mod.firstperson.value end
 	else
 		func(self, ...)
 	end
@@ -317,7 +316,7 @@ mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, input, dt, c
 
 	-- ##### Reset view ###############################################################################################
 	if mod.reset then
-		self.set_first_person_mode(self, mod:is_suspended())
+		self.set_first_person_mode(self, not mod.is_third_person_active())
 		mod.reset = false
 	end
 	
@@ -382,14 +381,14 @@ end)
 --]]
 mod:hook("ProfileView.on_exit", function(func, ...)
 	func(...)
-	if not mod:is_suspended() then mod.reset = true end
+	if mod.is_third_person_active() then mod.reset = true end
 end)
 --[[
 	Reset view after equipment change
 --]]
 mod:hook("InventoryView.on_exit", function(func, self)
 	func(self)
-	if not mod:is_suspended() then mod.reset = true end
+	if mod.is_third_person_active() then mod.reset = true end
 end)
 
 -- ##### ██████╗ ██████╗  ██████╗      ██╗███████╗ ██████╗████████╗██╗██╗     ███████╗███████╗ ########################

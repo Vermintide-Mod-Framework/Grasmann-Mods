@@ -1,4 +1,4 @@
-local mod = new_mod("Healthbars")
+local mod = get_mod("Healthbars")
 --[[ 
 	Healthbars
 		- Shows healthbars for all or specific enemies

@@ -1,3 +1,4 @@
+local mod = get_mod("ThirdPersonEquipment")
 --[[ 
 	Third person equipment definitions
 		- Provides configurations for equipment positions
@@ -11,7 +12,7 @@ local default_node_2 = "j_spine2"
 --local default_node = default_node_2
 local backpack_node = "a_hanging_trophy_3"
 local hip_node = "j_hips"
-Visible3PEquipment_Definitions = {
+mod.definitions = {
 	-- Soldier
 	es_handgun = {
 		right = {
@@ -821,7 +822,7 @@ Visible3PEquipment_Definitions = {
 		},
 	},
 }
-Visible3PEquipment_Definitions.dwarf_weapons = {
+mod.definitions.dwarf_weapons = {
 	"dr_1h_axe_shield",
 	"dr_handgun",
 	"dr_1h_hammer",
@@ -833,7 +834,7 @@ Visible3PEquipment_Definitions.dwarf_weapons = {
 	"dr_crossbow",
 	"dr_2h_picks",
 }
-Visible3PEquipment_Definitions.one_handed = {
+mod.definitions.one_handed = {
 	"es_1h_sword",
 	"es_1h_sword_shield",
 	"es_1h_mace",
@@ -854,7 +855,7 @@ Visible3PEquipment_Definitions.one_handed = {
 	"dr_1h_axes",
 	"dr_1h_hammer_shield",
 }
-Visible3PEquipment_Definitions.waywatcher_dual = {
+mod.definitions.waywatcher_dual = {
 	"ww_dual_swords",
 	"ww_sword_and_dagger",
 	"ww_dual_daggers",
