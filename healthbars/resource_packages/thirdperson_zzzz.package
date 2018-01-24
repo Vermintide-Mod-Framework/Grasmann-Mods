@@ -1,0 +1,11 @@
+mod =  [
+	"healthbars"
+]
+
+package = [
+	"resource_packages/thirdperson_zzzz"
+]
+
+lua = [
+	"healthbars"
+]
