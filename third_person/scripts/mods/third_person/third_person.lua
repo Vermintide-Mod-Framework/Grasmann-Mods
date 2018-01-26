@@ -166,6 +166,7 @@ mod.set_zoom_values = function(current_node)
 	local degrees_to_radians = math.pi/180
 	local zoom_fov = 65
 	local zoom_setting = mod:get("zoom")
+	if mod:is_suspended() then zoom_setting = 1 end
 	
 	if current_node._name == "zoom_in" then
 		if zoom_setting == 2 then
