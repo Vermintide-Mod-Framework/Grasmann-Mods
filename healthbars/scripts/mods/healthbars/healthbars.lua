@@ -15,6 +15,18 @@ local mod = get_mod("Healthbars")
 -- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
 local options_widgets = {
 	{
+		["setting_name"] = "position",
+		["widget_type"] = "stepper",
+		["text"] = "Position",
+		["tooltip"] = "Position",
+			 "Switch position of the enemy health bars.",
+		["options"] = {
+			{text = "Bottom", value = 1},
+			{text = "Top", value = 2}
+		},
+		["default_value"] = 2,
+	},
+	{
 		["setting_name"] = "mode",
 		--["widget_type"] = "dropdown",
 		["widget_type"] = "stepper",
@@ -45,19 +57,6 @@ local options_widgets = {
 		},
 		["default_value"] = 2,
 		["sub_widgets"] = {
-			{
-				["show_widget_condition"] = {1, 2, 3, 4},
-				["setting_name"] = "position",
-				["widget_type"] = "stepper",
-				["text"] = "Position",
-				["tooltip"] = "Position",
-					 "Switch position of the enemy health bars.",
-				["options"] = {
-					{text = "Bottom", value = 1},
-					{text = "Top", value = 2}
-				},
-				["default_value"] = 2,
-			},
 			{
 				["show_widget_condition"] = {4},
 				["setting_name"] = "slave_rat",
