@@ -4,7 +4,7 @@ local ret = {
 		mod:dofile("scripts/mods/third_person/third_person")
 	end,
 	packages = {
-		"resource_packages/third_person/third_person_zz"
+		"resource_packages/third_person/third_person"
 	},
 }
 return ret

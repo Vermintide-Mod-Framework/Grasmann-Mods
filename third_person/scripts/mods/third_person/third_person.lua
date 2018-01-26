@@ -22,7 +22,6 @@ local options_widgets = {
 		["widget_type"] = "stepper",
 		["text"] = "Side",
 		["tooltip"] = "Third Person Side\n" ..
-			"Toggle side for third person left and right.\n\n" ..
 			"Choose if the camera is to left or right of your character.",
 		["options"] = {
 			{text = "Left", value = false},
@@ -36,7 +35,6 @@ local options_widgets = {
 		["widget_type"] = "stepper",
 		["text"] = "Offset",
 		["tooltip"] = "Third Person Offset\n" ..
-			"Set camera offset for third person.\n\n" ..
 			"Change the distance between the camera and the character.",
 		--["range"] = {50, 400},
 		["options"] = {
@@ -53,7 +51,6 @@ local options_widgets = {
 		["widget_type"] = "stepper",
 		["text"] = "Zoom",
 		["tooltip"] = "Third Person Zoom\n" ..
-			"Set camera zoom for third person.\n\n" ..
 			"Change the zoom strength for third person.",
 		["options"] = {
 			{text = "Default", value = 1},
@@ -65,45 +62,42 @@ local options_widgets = {
 	},
 	{
 		["setting_name"] = "first_person_zoom",
-		["widget_type"] = "stepper",
+		["widget_type"] = "checkbox",
 		["text"] = "First Person Zoom",
 		["tooltip"] = "First Person Zoom\n" ..
-			"Toggle first person zoom off or on.\n\n" ..
 			"Aiming in third person will switch you to first person.",
-		["options"] = {
-			{text = "Off", value = false},
-			{text = "On", value = true},
-		},
 		["default_value"] = false,
+		["sub_widgets"] = {
+			{
+				["setting_name"] = "first_person_zoom_apply_zoom_change",
+				["widget_type"] = "checkbox",
+				["text"] = "Apply Zoom Change",
+				["tooltip"] = "Apply Zoom Change\n" ..
+					"Apply zoom changes to first person zoom.",
+				["default_value"] = false,
+			},
+		}
 	},
 	{
 		["setting_name"] = "reload_stop_when_finished",
-		["widget_type"] = "stepper",
+		["widget_type"] = "checkbox",
 		["text"] = "Stop Reload When Finished",
 		["tooltip"] = "Stop Reload When Finished\n" ..
 			"Toggle stop reload when finished off or on.\n\n" ..
 			"The first- and third person animations can differ a lot.\n" ..
 			"Especially the reload animation for ranged weapons.\n" ..
 			"Stops third person reload animation after the correct time.",
-		["options"] = {
-			{text = "Off", value = false},
-			{text = "On", value = true},
-		},
 		["default_value"] = true,
 	},
 	{
 		["setting_name"] = "reload_extend_too_short",
-		["widget_type"] = "stepper",
+		["widget_type"] = "checkbox",
 		["text"] = "Extend Short Reload Animations",
 		["tooltip"] = "Extend short Animations\n" ..
 			"Toggle extend short animations off or on.\n\n" ..
 			"The first- and third person animations can differ a lot.\n" ..
 			"Especially the reload animation for ranged weapons.\n" ..
 			"Repeats third person reload animation if too short.",
-		["options"] = {
-			{text = "Off", value = false},
-			{text = "On", value = true},
-		},
 		["default_value"] = true,
 	},
 }
@@ -162,32 +156,33 @@ mod.reload = {
 --[[
 	Set zoom values
 --]]
-mod.set_zoom_values = function(current_node)
+mod.set_zoom_values = function(self, current_node)
 	local degrees_to_radians = math.pi/180
 	local zoom_fov = 65
-	local zoom_setting = mod:get("zoom")
-	if mod:is_suspended() then zoom_setting = 1 end
+	local zoom_setting = self:get("zoom")
+	if self:is_suspended() then zoom_setting = 1 end
+	if self.first_person_zoom.active and not self:get("first_person_zoom_apply_zoom_change") then zoom_setting = 1 end
 	
 	if current_node._name == "zoom_in" then
 		if zoom_setting == 2 then
-			zoom_fov = mod.zoom.default.medium
+			zoom_fov = self.zoom.default.medium
 		elseif zoom_setting == 3 then
-			zoom_fov = mod.zoom.default.low
+			zoom_fov = self.zoom.default.low
 		elseif zoom_setting == 4 then
-			zoom_fov = mod.zoom.default.off
+			zoom_fov = self.zoom.default.off
 		else
-			zoom_fov = mod.zoom.default.default
+			zoom_fov = self.zoom.default.default
 		end
 		current_node._vertical_fov = zoom_fov*degrees_to_radians				
 	elseif current_node._name == "increased_zoom_in" then
 		if zoom_setting == 2 then
-			zoom_fov = mod.zoom.increased.medium
+			zoom_fov = self.zoom.increased.medium
 		elseif zoom_setting == 3 then
-			zoom_fov = mod.zoom.increased.low
+			zoom_fov = self.zoom.increased.low
 		elseif zoom_setting == 4 then
-			zoom_fov = mod.zoom.increased.off
+			zoom_fov = self.zoom.increased.off
 		else
-			zoom_fov = mod.zoom.increased.default
+			zoom_fov = self.zoom.increased.default
 		end
 		current_node._vertical_fov = zoom_fov*degrees_to_radians
 	end	
@@ -195,7 +190,7 @@ end
 --[[
 	Check if first person is blocked
 --]]
-mod.is_first_person_blocked = function(unit)
+mod.is_first_person_blocked = function(self, unit)
 	local blocked = false
 	local state_system = ScriptUnit.extension(unit, "character_state_machine_system")
 	if state_system ~= nil then
@@ -215,8 +210,8 @@ end
 --[[
 	Check if third person is active
 --]]
-mod.is_third_person_active = function()
-	return not mod:is_suspended() and not mod.first_person_zoom.active
+mod.is_third_person_active = function(self)
+	return not self:is_suspended() and not self.first_person_zoom.active
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -229,7 +224,7 @@ end
 	Fix to make mission objectives visible in third person
 --]]
 mod:hook("TutorialUI.update", function(func, self, ...)
-	if mod.is_third_person_active() then
+	if mod:is_third_person_active() then
 		if self._first_person_extension then self._first_person_extension.first_person_mode = true end
 		func(self, ...)
 		if self._first_person_extension then self._first_person_extension.first_person_mode = mod.firstperson.value end
@@ -240,10 +235,10 @@ end)
 --[[
 	MAIN FUNCTION - Camera positioning
 --]]
-mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name)
+mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name, ...)
 	
 	-- ##### Original function ########################################################################################
-	func(self, dt, t, viewport_name)			
+	func(self, dt, t, viewport_name, ...)			
 	
 	-- ##### Get data #################################################################################################
 	local viewport = ScriptWorld.viewport(self._world, viewport_name)
@@ -253,7 +248,7 @@ mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name)
 	local current_node = self._current_node(self, camera_nodes)
 	local camera_data = self._update_transition(self, viewport_name, camera_nodes, dt)	
 		
-	if mod.is_third_person_active() then
+	if mod:is_third_person_active() then
 		-- ##### Check side ###########################################################################################
 		local offset = nil
 		local mult = mod:get("offset") / 100
@@ -268,7 +263,7 @@ mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name)
 	end
 	
 	-- ##### Change zoom ##############################################################################################
-	mod.set_zoom_values(current_node)
+	mod:set_zoom_values(current_node)
 	
 	-- ##### Update camera ############################################################################################
 	self._update_camera_properties(self, camera, shadow_cull_camera, current_node, camera_data, viewport_name)
@@ -279,9 +274,9 @@ end)
 --[[
 	Fix to apply camera offset to ranged weapons
 --]]
-mod:hook("PlayerUnitFirstPerson.current_position", function(func, self)
+mod:hook("PlayerUnitFirstPerson.current_position", function(func, self, ...)
 	
-	if mod.is_third_person_active() then
+	if mod:is_third_person_active() then
 		-- ##### Get data #############################################################################################
 		local position = Unit.world_position(self.first_person_unit, 0) --+ Vector3(0, 0, 1.5)
 		local current_rot = Unit.local_rotation(self.first_person_unit, 0)
@@ -303,24 +298,24 @@ mod:hook("PlayerUnitFirstPerson.current_position", function(func, self)
 	end
 	
 	-- ##### Original function ########################################################################################
-	return func(self)
+	return func(self, ...)
 end)
 --[[
 	MAIN FUNCTION - Set first / third person mode - Hide first person ammo
 --]]
-mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, input, dt, context, t)
+mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
 
 	-- ##### Reset view ###############################################################################################
 	if mod.reset then
-		self.set_first_person_mode(self, not mod.is_third_person_active())
+		self.set_first_person_mode(self, not mod:is_third_person_active())
 		mod.reset = false
 	end
 	
 	-- ##### Original function ########################################################################################
-	func(self, unit, input, dt, context, t)
+	func(self, unit, ...)
 	
-	if not mod.is_first_person_blocked(self.unit) then
-		if mod.is_third_person_active() then
+	if not mod:is_first_person_blocked(self.unit) then
+		if mod:is_third_person_active() then
 			-- ##### Disable first person #############################################################################
 			if mod.firstperson.value then
 				self.set_first_person_mode(self, false)
@@ -354,22 +349,15 @@ end)
 --[[
 	A game was started
 --]]
-mod:hook("StateInGameRunning.event_game_started", function(func, self)
-	func(self)
+mod:hook("StateInGameRunning.event_game_started", function(func, self, ...)
+	func(self, ...)
 	mod.reset = true
 end)
 --[[
-	A game was actually started ... lol
---]]
--- mod:hook("StateInGameRunning.event_game_actually_starts", function(func, self)
-	-- func(self)
-	-- mod.reset = true
--- end)
---[[
 	Set first person mode for cutscenes
 --]]
-mod:hook("CutsceneSystem.set_first_person_mode", function(func, self, enabled)
-	func(self, enabled)
+mod:hook("CutsceneSystem.set_first_person_mode", function(func, self, enabled, ...)
+	func(self, enabled, ...)
 	if enabled then mod.reset = true end
 end)
 --[[
@@ -377,14 +365,14 @@ end)
 --]]
 mod:hook("ProfileView.on_exit", function(func, ...)
 	func(...)
-	if mod.is_third_person_active() then mod.reset = true end
+	if mod:is_third_person_active() then mod.reset = true end
 end)
 --[[
 	Reset view after equipment change
 --]]
 mod:hook("InventoryView.on_exit", function(func, self)
 	func(self)
-	if mod.is_third_person_active() then mod.reset = true end
+	if mod:is_third_person_active() then mod.reset = true end
 end)
 
 -- ##### ██████╗ ██████╗  ██████╗      ██╗███████╗ ██████╗████████╗██╗██╗     ███████╗███████╗ ########################
@@ -396,9 +384,8 @@ end)
 --[[
 	Fix to apply camera offset to projectiles
 --]]
-mod:hook("ActionUtils.spawn_player_projectile", function(func, owner_unit, position, rotation, scale, angle, 
-	target_vector, speed, item_name, item_template_name, action_name, sub_action_name)
-	if mod.is_third_person_active() then
+mod:hook("ActionUtils.spawn_player_projectile", function(func, owner_unit, position, ...)
+	if mod:is_third_person_active() then
 		-- ##### Get data #############################################################################################
 		local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 		local first_person_unit = first_person_extension.get_first_person_unit(first_person_extension)	
@@ -421,16 +408,13 @@ mod:hook("ActionUtils.spawn_player_projectile", function(func, owner_unit, posit
 	end
 	
 	-- ##### Original function ########################################################################################
-	func(owner_unit, position, rotation, scale, angle, target_vector, speed, item_name, 
-		item_template_name, action_name, sub_action_name)
+	func(owner_unit, position, ...)
 end)
 --[[
 	Fix to apply camera offset to trueflight projectiles
 --]]
-mod:hook("ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, target_unit, true_flight_template_id, 
-	position, rotation, angle, target_vector, speed, item_name, item_template_name, action_name, sub_action_name, scale)
-	
-	if mod.is_third_person_active() then
+mod:hook("ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, target_unit, true_flight_template_id, position, ...)
+	if mod:is_third_person_active() then
 		-- ##### Get data #############################################################################################
 		local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 		local first_person_unit = first_person_extension.get_first_person_unit(first_person_extension)	
@@ -452,8 +436,7 @@ mod:hook("ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, 
 		position = position + x + y + z	
 	end
 	
-	func(owner_unit, target_unit, true_flight_template_id, position, rotation, angle, 
-		target_vector, speed, item_name, item_template_name, action_name, sub_action_name, scale)
+	func(owner_unit, target_unit, true_flight_template_id, position, ...)
 end)
 
 -- ##### ██████╗ ███████╗██╗      ██████╗  █████╗ ██████╗  ############################################################
@@ -465,8 +448,8 @@ end)
 --[[
 	Play third person animation for yourself
 --]]
-mod:hook("GenericAmmoUserExtension.start_reload_animation", function(func, self, reload_time)
-	func(self, reload_time)
+mod:hook("GenericAmmoUserExtension.start_reload_animation", function(func, self, reload_time, ...)
+	func(self, reload_time, ...)
 	if self.reload_event then
 		-- ##### Play 3rd person animation ############################################################################
 		Unit.animation_event(self.owner_unit, self.reload_event)
@@ -481,8 +464,8 @@ end)
 --[[
 	Check to disable animation when reloading is done
 --]]
-mod:hook("GenericAmmoUserExtension.update", function(func, self, unit, input, dt, context, t)
-	func(self, unit, input, dt, context, t)
+mod:hook("GenericAmmoUserExtension.update", function(func, self, unit, input, dt, context, t, ...)
+	func(self, unit, input, dt, context, t, ...)
 	mod.reload.t = t
 	-- ##### Check if reload process is issued ########################################################################
 	if mod.reload.reloading[self.owner_unit] then
@@ -513,8 +496,8 @@ end)
 --[[
 	Cancel reload
 --]]
-mod:hook("GenericAmmoUserExtension.abort_reload", function(func, self)
-	func(self)
+mod:hook("GenericAmmoUserExtension.abort_reload", function(func, self, ...)
+	func(self, ...)
 	mod.reload.reloading[self.owner_unit] = nil
 	mod.reload.extended[self.owner_unit] = nil
 end)
@@ -561,8 +544,8 @@ end)
 --[[
 	Deactivate first person view
 --]]
-mod:hook("MatchmakingManager.update", function(func, self, dt, t)
-	func(self, dt, t)
+mod:hook("MatchmakingManager.update", function(func, self, dt, t, ...)
+	func(self, dt, t, ...)
 	-- ##### Check if end zoom has triggered ##########################################################################
 	if mod.first_person_zoom.end_zoom then
 		-- ##### Save the now time to wait 1 second to end first person mode ##########################################
