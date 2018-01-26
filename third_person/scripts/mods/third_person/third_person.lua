@@ -24,7 +24,6 @@ local options_widgets = {
 		["tooltip"] = "Third Person Side\n" ..
 			"Toggle side for third person left and right.\n\n" ..
 			"Choose if the camera is to left or right of your character.",
-		["value_type"] = "boolean",
 		["options"] = {
 			{text = "Left", value = false},
 			{text = "Right", value = true}
@@ -56,7 +55,6 @@ local options_widgets = {
 		["tooltip"] = "Third Person Zoom\n" ..
 			"Set camera zoom for third person.\n\n" ..
 			"Change the zoom strength for third person.",
-		["value_type"] = "number",
 		["options"] = {
 			{text = "Default", value = 1},
 			{text = "Medium", value = 2},
@@ -72,7 +70,6 @@ local options_widgets = {
 		["tooltip"] = "First Person Zoom\n" ..
 			"Toggle first person zoom off or on.\n\n" ..
 			"Aiming in third person will switch you to first person.",
-		["value_type"] = "boolean",
 		["options"] = {
 			{text = "Off", value = false},
 			{text = "On", value = true},
@@ -88,7 +85,6 @@ local options_widgets = {
 			"The first- and third person animations can differ a lot.\n" ..
 			"Especially the reload animation for ranged weapons.\n" ..
 			"Stops third person reload animation after the correct time.",
-		["value_type"] = "boolean",
 		["options"] = {
 			{text = "Off", value = false},
 			{text = "On", value = true},
@@ -104,7 +100,6 @@ local options_widgets = {
 			"The first- and third person animations can differ a lot.\n" ..
 			"Especially the reload animation for ranged weapons.\n" ..
 			"Repeats third person reload animation if too short.",
-		["value_type"] = "boolean",
 		["options"] = {
 			{text = "Off", value = false},
 			{text = "On", value = true},

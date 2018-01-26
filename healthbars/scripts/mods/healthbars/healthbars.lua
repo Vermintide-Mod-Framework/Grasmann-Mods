@@ -36,7 +36,6 @@ local options_widgets = {
 			"",
 			"-- CUSTOM --",
 			"Choose which enemies should have a health bar.",
-		["value_type"] = "number",
 		["options"] = {
 			--{text = Localize("vmf_text_core_off"), value = 1},
 			{text = "All", value = 2},
@@ -53,7 +52,6 @@ local options_widgets = {
 				["text"] = "Position",
 				["tooltip"] = "Position",
 					 "Switch position of the enemy health bars.",
-				["value_type"] = "number",
 				["options"] = {
 					{text = "Bottom", value = 1},
 					{text = "Top", value = 2}

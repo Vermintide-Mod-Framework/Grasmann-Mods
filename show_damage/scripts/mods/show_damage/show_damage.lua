@@ -1,7 +1,7 @@
 local mod = get_mod("ShowDamage")
 --[[ 
 	Show Damage
-		- Shows damage / healing in chat and as floating numbers
+		- Shows damage / healing in chat and as floating numbers.
 	
 	Author: grasmann
 	Version: 1.2.0
@@ -206,6 +206,9 @@ local options_widgets = {
 -- ##### ██╔══╝   ██╔██╗    ██║   ██╔══╝  ██║╚██╗██║╚════██║██║██║   ██║██║╚██╗██║ ####################################
 -- ##### ███████╗██╔╝ ██╗   ██║   ███████╗██║ ╚████║███████║██║╚██████╔╝██║ ╚████║ ####################################
 -- ##### ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ####################################
+--[[
+	Replace the text of an initialized option widget
+--]]
 mod.update_setting_text = function(self, setting_name, text)
 	local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
 	if ingame_ui_exists then
@@ -241,8 +244,79 @@ mod.chat = {
 	units = {},
 	NAME_LENGTH = 20,
 }
+mod.floating = {
+	corpses = {},
+	units = {},
+	delete = {},
+	fade_time = 2,
+	definition = {
+		position = nil,
+		damage = 0,
+		color = nil,
+		timer = 0,
+	},
+}
+mod.enemies = {
+	specials = {
+		"skaven_storm_vermin",
+		"skaven_storm_vermin_commander",
+		"skaven_loot_rat",
+		"skaven_rat_ogre",
+		"skaven_gutter_runner",
+		"skaven_poison_wind_globadier",
+		"skaven_pack_master",
+		"skaven_ratling_gunner",
+		"skaven_grey_seer",
+		"skaven_storm_vermin_champion",
+	},
+	breed_names = {
+		skaven_slave = "Slave Rat",
+		skaven_storm_vermin = "Stormvermin",
+		skaven_storm_vermin_commander = "Stormvermin",
+		skaven_clan_rat = "Clan Rat",
+		skaven_loot_rat = "Loot Rat",
+		skaven_rat_ogre = "Rat Ogre",
+		skaven_gutter_runner = "Gutter Runner",
+		skaven_poison_wind_globadier = "Globadier",
+		skaven_pack_master = "Pack Master",
+		skaven_ratling_gunner = "Ratling Gunner",
+		skaven_grey_seer = "Grey Seer",
+		critter_pig = "Pig",
+		critter_rat = "Rat",
+		skaven_storm_vermin_champion = "Stormvermin Champion",
+	},
+	hit_zones = {
+		full = "",
+		head = "Head",
+		right_arm = "R. Arm",
+		left_arm = "L. Arm",
+		torso = "Torso",
+		right_leg = "R. Leg",
+		left_leg = "L. Leg",
+		tail = "Tail",
+		neck = "Neck",
+	},
+	offsets = {
+		default = 1,
+		skaven_slave = 1,
+		skaven_clan_rat = 1,
+		skaven_storm_vermin = 1,
+		skaven_storm_vermin_commander = 1,
+		skaven_gutter_runner = 1,
+		skaven_ratling_gunner = 1,
+		skaven_pack_master = 1,
+		skaven_poison_wind_globadier = 1,
+		skaven_rat_ogre = 2,
+		skaven_loot_rat = 1,
+		skaven_grey_seer = 2,
+		critter_pig = 0.5,
+		critter_rat = 0,
+		skaven_storm_vermin_champion = 2,
+	},
+}
 mod.players = {}
 mod.strings = {}
+mod.console = {}
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
 -- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
@@ -309,6 +383,25 @@ mod.strings.check = function(strings, default)
 	end
 	return "N/A"
 end
+--[[
+	Check if unit is player unit
+--]]
+mod.players.is_player_unit = function(unit)
+	return DamageUtils.is_player_unit(unit)
+end
+--[[
+	Get player from player unit
+--]]
+mod.players.from_player_unit = function(player_unit)
+	local player_manager = Managers.player
+	local players = player_manager:human_and_bot_players()
+	for _, player in pairs(players) do
+		if player.player_unit == player_unit then
+			return player
+		end
+	end
+	return nil
+end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
@@ -351,5 +444,4 @@ end
 mod.update = function(dt)
 end
 
---mod:update_setting_text("chat_player_1", mod.players.name_from_index(1))
 mod:create_options(options_widgets, true, "Show Damage", "Mod description")

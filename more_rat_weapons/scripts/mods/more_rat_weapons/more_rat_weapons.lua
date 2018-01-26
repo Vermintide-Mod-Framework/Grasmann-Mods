@@ -80,7 +80,6 @@ local options_widgets = {
 		["text"] = "Remove Running Attacks",
 		["tooltip"] =  "Remove Running Attacks [Server]\n" ..
 			"Removes the running attacks from rats that still have their shield.",
-		["value_type"] = "boolean",
 		["options"] = {
 			{text = "Off", value = false},
 			{text = "On", value = true},
@@ -93,7 +92,6 @@ local options_widgets = {
 		["text"] = "Shield Mechanics",
 		["tooltip"] =  "Shields Mechanics [Server]\n" ..
 			"Rats can block attacks with their shields.",
-		["value_type"] = "boolean",
 		["options"] = {
 			{text = "Off", value = false},
 			{text = "On", value = true},
@@ -113,7 +111,6 @@ local options_widgets = {
 					"Shields block a certain number of attacks depending on the difficulty\n\n" ..
 					"--- Never Break ---\n" ..
 					"Shields will never break",
-				["value_type"] = "number",
 				["options"] = {
 					{text = "Health", value = 1},
 					{text = "Points", value = 2},
@@ -128,7 +125,6 @@ local options_widgets = {
 				["text"] = "Play Armour Comments",
 				["tooltip"] =  "Play Armour Comments [Server]\n" ..
 					"Triggers comments about hitting armour on shield hits.",
-				["value_type"] = "boolean",
 				["options"] = {
 					{text = "Off", value = false},
 					{text = "On", value = true},
@@ -180,7 +176,6 @@ local options_widgets = {
 				["text"] = "Play Particle Effects",
 				["tooltip"] =  "Play Particle Effects\n" ..
 					"Triggers particle effects on shield hits.",
-				["value_type"] = "boolean",
 				["options"] = {
 					{text = "Off", value = false},
 					{text = "On", value = true},
@@ -194,7 +189,6 @@ local options_widgets = {
 				["text"] = "Play Shield Sounds",
 				["tooltip"] =  "Play Shield Sounds [Server]\n" ..
 					"Triggers sound effects on shield hits.",
-				["value_type"] = "boolean",
 				["options"] = {
 					{text = "Off", value = false},
 					{text = "On", value = true},
@@ -208,7 +202,6 @@ local options_widgets = {
 				["text"] = "Physically Drop Shields",
 				["tooltip"] =  "Physically Drop Shields\n" ..
 					"Physically drop shields after the health is empty.",
-				["value_type"] = "boolean",
 				["options"] = {
 					{text = "Off", value = false},
 					{text = "On", value = true},

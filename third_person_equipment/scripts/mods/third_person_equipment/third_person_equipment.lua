@@ -31,7 +31,6 @@ local options_widgets = {
 			"Weapons will be placed on the backpack.\n\n" ..
 			"-- Back --\n" ..
 			"Weapons will be placed on the back.",
-		["value_type"] = "number",
 		["options"] = {
 			{text = "Backpack", value = 1},
 			{text = "Back", value = 2},
@@ -49,7 +48,6 @@ local options_widgets = {
 			"Uses dwarf weapon position.\n\n" ..
 			"-- Belt --\n" ..
 			"Weapons will be placed on the belt.",
-		["value_type"] = "number",
 		["options"] = {
 			{text = "Dwarf Weapon Position", value = 1},
 			{text = "Belt", value = 2},
@@ -68,7 +66,6 @@ local options_widgets = {
 			"Weapons will be placed on the belt.\n\n" ..
 			"-- Back --\n" ..
 			"Weapons will be placed on the back.",
-		["value_type"] = "number",
 		["options"] = {
 			{text = "Belt", value = 1},
 			{text = "Back", value = 2},
@@ -86,7 +83,6 @@ local options_widgets = {
 			"Weapons will be placed on the belt.\n\n" ..
 			"-- Back --\n" ..
 			"Weapons will be placed on the back.",
-		["value_type"] = "number",
 		["options"] = {
 			{text = "Belt", value = 1},
 			{text = "Back", value = 2},
@@ -101,7 +97,6 @@ local options_widgets = {
 		["tooltip"] =  "Downscale Big Weapons\n" ..
 			"Downscale the biggest weapons in the game.\n\n" ..
 			"Affects: Red staffs, volley crossbow, wh crossbow",
-		["value_type"] = "number",
 		["options"] = {
 			{text = "Off", value = 100},
 			{text = "Slightly", value = 90},
