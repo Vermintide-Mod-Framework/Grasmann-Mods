@@ -409,7 +409,7 @@ mod.play_shield_particle = function(self, unit, damage_direction)
 		local unit_id = network_manager.unit_game_object_id(network_manager, unit)
 		-- Local
 		local local_player = Managers.player:local_player()
-		mod.execute_particle_effect(unit_id)
+		mod:execute_particle_effect(unit_id)
 		-- Network
 		for _, player in pairs(players) do
 			if player ~= local_player then
@@ -447,7 +447,7 @@ mod.drop_shield = function(self, unit, damage_direction)
 			local direction = {damage_direction[1], damage_direction[2], damage_direction[3]}
 			-- Local
 			local local_player = Managers.player:local_player()
-			mod.execute_drop_shield(unit_id, direction)
+			mod:execute_drop_shield(unit_id, direction)
 			-- Network
 			for _, player in pairs(players) do
 				if player ~= local_player then
@@ -700,21 +700,21 @@ end)
 --[[
 	Give stormvermin, clan rats, slave rats shields
 --]]
-mod:hook("ConflictDirector.spawn_unit", function(func, self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, inventory_template, group_data)
+mod:hook("ConflictDirector.spawn_unit", function(func, self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, inventory_template, group_data, ...)
 	local ai_unit = nil
 	if not mod:is_suspended() and Managers.player.is_server then
 		local luck = math.random(1, 100)
 		local storm_vermin = breed.name == "skaven_storm_vermin" or breed.name == "skaven_storm_vermin_commander"
 		if storm_vermin and luck <= mod:get("storm_shield_chance") then
-			ai_unit = func(self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, "sword_and_shield", group_data)
+			ai_unit = func(self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, "sword_and_shield", group_data, ...)
 		elseif breed.name == "skaven_clan_rat" and luck <= mod:get("clan_shield_chance") then
-			ai_unit = func(self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, "sword_and_shield", group_data)
+			ai_unit = func(self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, "sword_and_shield", group_data, ...)
 		elseif breed.name == "skaven_slave" and luck <= mod:get("slave_shield_chance") then
-			ai_unit = func(self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, "sword_and_shield", group_data)
+			ai_unit = func(self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, "sword_and_shield", group_data, ...)
 		end
 	end
 	if not ai_unit then
-		ai_unit = func(self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, inventory_template, group_data)
+		ai_unit = func(self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, inventory_template, group_data, ...)
 	end
 	return ai_unit
 end)
@@ -744,9 +744,9 @@ end)
 --[[
 	Play particle effect
 --]]
-mod.execute_particle_effect = function(unit_id)
+mod.execute_particle_effect = function(self, unit_id)
 	--safe_pcall(function()
-		if not mod:is_suspended() and mod:get("play_particle_effects") then
+		if not self:is_suspended() and self:get("play_particle_effects") then
 			local network_manager = Managers.state.network
 			local effect_name = "fx/hit_armored"
 			local unit = network_manager.game_object_or_level_unit(network_manager, unit_id)
@@ -785,7 +785,7 @@ end
 --[[
 	Drop shield
 --]]
-mod.execute_drop_shield = function(unit_id, damage_direction)
+mod.execute_drop_shield = function(self, unit_id, damage_direction)
 	--safe_pcall(function()
 		local network_manager = Managers.state.network
 		local unit = network_manager.game_object_or_level_unit(network_manager, unit_id)
@@ -798,7 +798,7 @@ mod.execute_drop_shield = function(unit_id, damage_direction)
 				local item_unit = inventory_extension.inventory_item_units[item_inventory_index]
 				if item_unit ~= nil then
 					-- Drop shield
-					if not mod:is_suspended() and mod:get("drop_shields") then
+					if not self:is_suspended() and self:get("drop_shields") then
 						local position = Unit.world_position(item_unit, 0)
 						local rotation = Unit.world_rotation(item_unit, 0)
 						local new_item_unit = World.spawn_unit(inventory_extension.world, item_unit_name, position, rotation, nil)
@@ -812,7 +812,7 @@ mod.execute_drop_shield = function(unit_id, damage_direction)
 					end
 					Unit.set_unit_visibility(item_unit, false)
 					inventory_extension.already_dropped_shield = true
-					mod:delete_projectiles(unit)
+					self:delete_projectiles(unit)
 					-- Switch to two-handed
 					local breed = Unit.get_data(unit, "breed")
 					if breed.name == "skaven_storm_vermin" or breed.name == "skaven_storm_vermin_commander" then
@@ -874,6 +874,7 @@ end
 -- ##### ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ###################################
 --[[
 	Link a unit
+	Note: Copied from game source
 --]]
 local function link_unit(attachment_node_linking, world, target, source)
 	for i, attachment_nodes in ipairs(attachment_node_linking) do
@@ -1064,24 +1065,22 @@ AIInventoryExtension.delete_visual_replacements = function(self)
 		end
 	end
 end
-
---AIInventorySystem.update = function (self, context, t, dt)
-mod:hook("AIInventorySystem.update", function(func, self, context, t, dt)
-	--safe_pcall(function()
-		if self.units_to_wield_n > 0 then
-			--EchoConsole("wield!")
-			for i = 1, self.units_to_wield_n, 1 do
-				local unit = self.units_to_wield[i]
-				local extension = self.unit_extension_data[unit]
-				local inventory_items_n = (not extension.dropped or 0) and extension.inventory_items_n
-				for j = 1, inventory_items_n, 1 do
-					local item_unit = extension.inventory_item_units[j]
-					extension:relink_visual_replacement(item_unit, nil, j, "wielded")
-				end
+--[[
+	AIInventorySystem.update
+--]]
+mod:hook("AIInventorySystem.update", function(func, self, ...)
+	if self.units_to_wield_n > 0 then
+		for i = 1, self.units_to_wield_n, 1 do
+			local unit = self.units_to_wield[i]
+			local extension = self.unit_extension_data[unit]
+			local inventory_items_n = (not extension.dropped or 0) and extension.inventory_items_n
+			for j = 1, inventory_items_n, 1 do
+				local item_unit = extension.inventory_item_units[j]
+				extension:relink_visual_replacement(item_unit, nil, j, "wielded")
 			end
 		end
-		func(self, context, t, dt)
-	--end)
+	end
+	func(self, ...)
 end)
 
 -- ####################################################################################################################
@@ -1213,33 +1212,21 @@ end
 --[[
 	Prevent shield from being dropped
 --]]
-mod:hook("AIInventoryExtension.drop_single_item", function(func, self, item_inventory_index)
+mod:hook("AIInventoryExtension.drop_single_item", function(func, self, item_inventory_index, ...)
 	if item_inventory_index == 2 and self.already_dropped_shield then
 		return
 	end
-	func(self, item_inventory_index)
-	--safe_pcall(function()
-		local item_unit = self.dropped_items[item_inventory_index]
-		local actor = Unit.actor(item_unit, "rp_dropped")
-		self:relink_visual_replacement(item_unit, actor, item_inventory_index, "dropped")
-	--end)
+	func(self, item_inventory_index, ...)
+	local item_unit = self.dropped_items[item_inventory_index]
+	local actor = Unit.actor(item_unit, "rp_dropped")
+	self:relink_visual_replacement(item_unit, actor, item_inventory_index, "dropped")
 end)
 --[[
 	Delete visual weapons
 --]]
-mod:hook("AIInventoryExtension.destroy", function(func, self)
-	--safe_pcall(function()
-		-- local unit_spawner = Managers.state.unit_spawner
-		-- local inventory_items_n = self.inventory_items_n
-		-- for i = 1, inventory_items_n, 1 do
-			-- if self.link_on_drop and self.link_on_drop[i] then
-				-- local item_unit = self.link_on_drop[i]
-				-- unit_spawner.mark_for_deletion(unit_spawner, item_unit)
-			-- end
-		-- end
-		self:delete_visual_replacements()		
-	--end)
-	func(self)
+mod:hook("AIInventoryExtension.destroy", function(func, self, ...)
+	self:delete_visual_replacements()
+	func(self, ...)
 end)
 --[[
 	Catch unit spawn to change equipment
@@ -1291,26 +1278,24 @@ end
 --[[
 	Catch missing hits to shields
 --]]
-mod:hook("PlayerProjectileHuskExtension.hit_non_level_unit", function(func, self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units)
-	--safe_pcall(function()
-		local hit, unit, breed = mod:check_hit_on_owner(hit_unit, impact_data)
-		if hit then
-			self.hit_enemy(self, impact_data, unit, hit_position, hit_direction, hit_normal, Unit.actor(unit, "c_lefthand"), breed)
-		else
-			func(self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor, hit_units)
-		end
-	--end)
+mod:hook("PlayerProjectileHuskExtension.hit_non_level_unit", function(func, self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
+	local hit, unit, breed = mod:check_hit_on_owner(hit_unit, impact_data)
+	if hit then
+		self.hit_enemy(self, impact_data, unit, hit_position, hit_direction, hit_normal, Unit.actor(unit, "c_lefthand"), breed)
+	else
+		func(self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
+	end
 end)
 --[[
 	Catch missing hits to shields
 --]]
-mod:hook("PlayerProjectileUnitExtension.hit_non_level_unit", function(func, self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor)
+mod:hook("PlayerProjectileUnitExtension.hit_non_level_unit", function(func, self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
 	--safe_pcall(function()
 		local hit, unit, breed = mod:check_hit_on_owner(hit_unit, impact_data)
 		if hit then
 			self.hit_enemy(self, impact_data, unit, hit_position, hit_direction, hit_normal, Unit.actor(unit, "c_lefthand"), breed)
 		else
-			func(self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, hit_actor)
+			func(self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
 		end
 	--end)
 end)

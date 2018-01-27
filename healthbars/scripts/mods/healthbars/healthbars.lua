@@ -246,10 +246,9 @@ mod_permanent_units = mod_permanent_units or {}
 --[[
 	Add a health bar to all units
 --]]
-mod.add_health_bar_all = function(unit)
+mod.add_health_bar_all = function(self, unit)
 	if not table.contains(mod_permanent_units, unit) then
 		local tutorial_system = Managers.state.entity:system("tutorial_system")
-		
 		if tutorial_system and tutorial_system.tutorial_ui then
 			tutorial_system.tutorial_ui:add_health_bar(unit)
 			mod_permanent_units[unit] = unit
@@ -259,51 +258,41 @@ end
 --[[
 	Add a health bar only to special units
 --]]
-mod.add_health_bar_specials = function(unit, enemie_setting)
-	if enemie_setting.special then
-		mod.add_health_bar_all(unit)
-	end
+mod.add_health_bar_specials = function(self, unit, enemie_setting)
+	if enemie_setting.special then self:add_health_bar_all(unit) end
 end
 --[[
 	Add a health bar only to custom units
 --]]
-mod.add_health_bar_custom = function(unit, enemie_setting)
-	-- local widget_setting = mod.widget_settings[enemie_setting.setting]
-	
-	-- if widget_setting and mod.get(widget_setting.save) then
-	if mod:get(enemie_setting.setting) then
-		mod.add_health_bar_all(unit)
-	end
+mod.add_health_bar_custom = function(self, unit, enemie_setting)
+	if self:get(enemie_setting.setting) then self:add_health_bar_all(unit) end
 end
 --[[
 	Add a health bar only to ogres
 --]]
-mod.add_health_bar_ogre = function(unit, enemie_setting)
-	if enemie_setting.name == "skaven_rat_ogre" then
-		mod.add_health_bar_all(unit)
-	end
+mod.add_health_bar_ogre = function(self, unit, enemie_setting)
+	if enemie_setting.name == "skaven_rat_ogre" then self:add_health_bar_all(unit) end
 end
 --[[
 	Add a health bar to the specified unit
 --]]
-mod.add_health_bar = function(unit, enemie_setting)		
-	if mod:get("mode") == 2 then
-		mod.add_health_bar_all(unit)
-	elseif mod:get("mode") == 3 then
-		mod.add_health_bar_specials(unit, enemie_setting)
-	elseif mod:get("mode") == 4 then
-		mod.add_health_bar_ogre(unit, enemie_setting)
-	elseif mod:get("mode") == 5 then
-		mod.add_health_bar_custom(unit, enemie_setting)
+mod.add_health_bar = function(self, unit, enemie_setting)		
+	if self:get("mode") == 2 then
+		self:add_health_bar_all(unit)
+	elseif self:get("mode") == 3 then
+		self:add_health_bar_specials(unit, enemie_setting)
+	elseif self:get("mode") == 4 then
+		self:add_health_bar_ogre(unit, enemie_setting)
+	elseif self:get("mode") == 5 then
+		self:add_health_bar_custom(unit, enemie_setting)
 	end
 end
 --[[
 	Remove a health bar from a unit
 --]]
-mod.remove_health_bar = function(unit)
+mod.remove_health_bar = function(self, unit)
 	if table.contains(mod_permanent_units, unit) then
 		local tutorial_system = Managers.state.entity:system("tutorial_system")
-		
 		if tutorial_system and tutorial_system.tutorial_ui then
 			tutorial_system.tutorial_ui:remove_health_bar(unit)
 			mod_permanent_units[unit] = nil
@@ -313,32 +302,32 @@ end
 --[[
 	Remove a health bar from a unit
 --]]
-mod.on_enemy_damage = function(health_extension)
-	if mod:get("mode") > 1 then
+mod.on_enemy_damage = function(self, health_extension)
+	if self:get("mode") > 1 then
 		if GenericHealthExtension.current_health(health_extension) > 0 then
 			local unit = health_extension.unit
 			local breed = Unit.get_data(unit, "breed")
 			
 			if breed and breed.name then
-				local enemie_setting = mod.enemie_settings[breed.name]
+				local enemie_setting = self.enemie_settings[breed.name]
 				enemie_setting.name = breed.name
 				
-				mod.add_health_bar(unit, enemie_setting)
+				self:add_health_bar(unit, enemie_setting)
 			end
 		else			
-			mod.remove_health_bar(health_extension.unit)
+			self:remove_health_bar(health_extension.unit)
 		end		
 	else
-		mod.remove_health_bar(health_extension.unit)
+		self:remove_health_bar(health_extension.unit)
 	end
 end
 --[[
 	Clean units in the health bar system
 --]]
-mod.clean_units = function()
+mod.clean_units = function(self)
 	for _, unit in pairs(mod_permanent_units) do
 		if not Unit.alive(unit) then
-			mod.remove_health_bar(unit)
+			self:remove_health_bar(unit)
 		else
 			local unit_pos = Unit.world_position(unit, 0)
 			local local_player = Managers.player:local_player()
@@ -346,8 +335,8 @@ mod.clean_units = function()
 			
 			local distance = Vector3.length(unit_pos - player_pos)
 			
-			if distance > mod.VERY_FAR or mod.obstructed_line_of_sight(local_player.player_unit, unit) then
-				mod.remove_health_bar(unit)
+			if distance > self.VERY_FAR or self:obstructed_line_of_sight(local_player.player_unit, unit) then
+				self:remove_health_bar(unit)
 			end
 		end
 	end
@@ -362,21 +351,21 @@ end
 --[[
 	Set sizes for all health bars
 --]]
-mod.set_sizes = function(tutorial_ui)
+mod.set_sizes = function(self, tutorial_ui)
 	for _, unit in pairs(mod_permanent_units) do
 		local breed = Unit.get_data(unit, "breed")
 		
 		if breed and breed.name then
-			local enemie_setting = mod.enemie_settings[breed.name] or mod.enemie_settings["default"]
+			local enemie_setting = self.enemie_settings[breed.name] or self.enemie_settings["default"]
 			
-			mod.set_size(unit, tutorial_ui, enemie_setting)
+			self:set_size(unit, tutorial_ui, enemie_setting)
 		end
 	end
 end
 --[[
 	Set size of units health bar
 --]]
-mod.set_size = function(unit, tutorial_ui, enemie_setting)
+mod.set_size = function(self, unit, tutorial_ui, enemie_setting)
 	for _, health_bar in pairs(tutorial_ui.health_bars) do
 		if health_bar.unit == unit then
 			local texture_bg = health_bar.widget.style.texture_bg
@@ -391,16 +380,16 @@ end
 --[[
 	Set offset for all health bars
 --]]
-mod.set_offsets = function(tutorial_ui)
-	if mod:get("position") ~= nil
-	and mod:get("position") == 2 then
+mod.set_offsets = function(self, tutorial_ui)
+	if self:get("position") ~= nil
+	and self:get("position") == 2 then
 		for _, unit in pairs(mod_permanent_units) do
 			local breed = Unit.get_data(unit, "breed")
 		
 			if breed and breed.name then
-				local enemie_setting = mod.enemie_settings[breed.name] or mod.enemie_settings["default"]
+				local enemie_setting = self.enemie_settings[breed.name] or self.enemie_settings["default"]
 			
-				mod.set_offset(unit, tutorial_ui, enemie_setting)
+				self:set_offset(unit, tutorial_ui, enemie_setting)
 			end
 		end
 	end
@@ -408,7 +397,7 @@ end
 --[[
 	Set offset for units health bar
 --]]
-mod.set_offset = function(unit, tutorial_ui, enemie_setting)
+mod.set_offset = function(self, unit, tutorial_ui, enemie_setting)
 	local player = Managers.player:local_player()
 	local world = tutorial_ui.world_manager:world("level_world")
 	local viewport = ScriptWorld.viewport(world, player.viewport_name)
@@ -453,28 +442,28 @@ end
 --]]
 mod:hook("GenericHealthExtension.add_damage", function(func, self, ...)
 	func(self, ...)
-	mod.on_enemy_damage(self)
+	mod:on_enemy_damage(self)
 end)
 --[[
 	GenericHealthExtension Set damage hook
 --]]
 mod:hook("GenericHealthExtension.set_current_damage", function(func, self, ...)
 	func(self, ...)
-	mod.on_enemy_damage(self)
+	mod:on_enemy_damage(self)
 end)
 --[[
 	RatOgreHealthExtension Add ogre damage hook
 --]]
 mod:hook("RatOgreHealthExtension.add_damage", function(func, self, ...)
 	func(self, ...)
-	mod.on_enemy_damage(self)
+	mod:on_enemy_damage(self)
 end)
 --[[
 	RatOgreHealthExtension Set ogre damage hook
 --]]
 mod:hook("RatOgreHealthExtension.set_current_damage", function(func, self, ...)
 	func(self, ...)
-	mod.on_enemy_damage(self)
+	mod:on_enemy_damage(self)
 end)
 --[[
 	Check units before updating health bars
@@ -482,9 +471,9 @@ end)
 --]]
 mod:hook("TutorialUI.update_health_bars", function(func, tutorial_ui, ...)
 	if mod:get("mode") then
-		mod.clean_units()
-		mod.set_sizes(tutorial_ui)
-		mod.set_offsets(tutorial_ui)
+		mod:clean_units()
+		mod:set_sizes(tutorial_ui)
+		mod:set_offsets(tutorial_ui)
 		
 		--safe_pcall(func, tutorial_ui, ...)
 		func(tutorial_ui, ...)
@@ -501,7 +490,7 @@ mod:hook("BTSelector_gutter_runner.run", function(func, self, unit, blackboard, 
 	local child_running = self.current_running_child(self, blackboard)
 	local node_ninja_vanish = self._children[5]
 	if node_ninja_vanish == child_running then
-		mod.remove_health_bar(unit)		
+		mod:remove_health_bar(unit)		
 	end
 	return result, evaluate
 end)
@@ -512,7 +501,6 @@ end)
 -- ##### ██╔══╝   ██╔██╗    ██║   ██╔══╝  ██║╚██╗██║██║  ██║ ##########################################################
 -- ##### ███████╗██╔╝ ██╗   ██║   ███████╗██║ ╚████║██████╔╝ ##########################################################
 -- ##### ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═══╝╚═════╝  ##########################################################
-                                                   
 --[[
 	UI definitions
 --]]
@@ -562,7 +550,7 @@ mod.ui = {
 --[[
 	Create healthbar widgets
 --]]
-mod.create_extra_health_bars = function(total)
+mod.create_extra_health_bars = function(self, total)
 	local script = package.loaded["scripts/ui/views/tutorial_ui_definitions"]
 	local scenegraph = nil
 	
@@ -580,13 +568,13 @@ mod.create_extra_health_bars = function(total)
 		local name = "health_bar_" .. tostring(x)
 		
 		-- definitions
-		mod.ui.item_definitions.scenegraph_id = name
-		mod.ui.item_definitions.style.texture_bg.scenegraph_id = name
-		mod.ui.item_definitions.style.texture_fg.scenegraph_id = name
+		self.ui.item_definitions.scenegraph_id = name
+		self.ui.item_definitions.style.texture_bg.scenegraph_id = name
+		self.ui.item_definitions.style.texture_fg.scenegraph_id = name
 		
-		script.health_bar_definitions[x] = table.clone(mod.ui.item_definitions)
+		script.health_bar_definitions[x] = table.clone(self.ui.item_definitions)
 		
-		scenegraph[name] = table.clone(mod.ui.item_scene_graph)
+		scenegraph[name] = table.clone(self.ui.item_scene_graph)
 	end
 
 	script.NUMBER_OF_HEALTH_BARS = total
@@ -603,7 +591,7 @@ end
 	Note: Copied over from QoL
 	Author: grimalackt?
 --]]
-mod.obstructed_line_of_sight = function(player_unit, target_unit)
+mod.obstructed_line_of_sight = function(self, player_unit, target_unit)
 	local INDEX_POSITION = 1
 	local INDEX_DISTANCE = 2
 	local INDEX_NORMAL = 3
@@ -688,5 +676,5 @@ end
 mod.update = function(dt)
 end
 
-mod.create_extra_health_bars(30)
+mod:create_extra_health_bars(30)
 mod:create_options(options_widgets, true, "Healthbars", "Mod description")
