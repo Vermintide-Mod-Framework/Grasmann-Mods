@@ -24,10 +24,10 @@ local options_widgets = {
 		["tooltip"] = "Third Person Side\n" ..
 			"Choose if the camera is to left or right of your character.",
 		["options"] = {
-			{text = "Left", value = false},
-			{text = "Right", value = true}
+			{text = "Right", value = false},
+			{text = "Left", value = true}
 		},
-		["default_value"] = true,
+		["default_value"] = false,
 	},
 	{
 		["setting_name"] = "offset",
@@ -569,6 +569,9 @@ end)
 	Mod Setting changed
 --]]
 mod.setting_changed = function(setting_name)
+	if setting_name == "side" then
+		mod:echo(tostring(mod:get(setting_name)))
+	end
 end
 --[[
 	Mod Suspended
