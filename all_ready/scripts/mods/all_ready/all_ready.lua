@@ -23,12 +23,7 @@ mod.options_widgets = {}
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
 mod:hook("MatchmakingManager.all_peers_ready", function(func, ...)
-	if not mod:is_suspended() then
-		return true
-	else
-		return func(...)
-	end
-	--return true
+	return true
 end)
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
@@ -41,13 +36,13 @@ end)
 	Mod Suspended
 --]]
 mod.suspended = function()
-	--mod:disable_all_hooks()
+	mod:disable_all_hooks()
 end
 --[[
 	Mod Unsuspended
 --]]
 mod.unsuspended = function()
-	--mod:enable_all_hooks()
+	mod:enable_all_hooks()
 end
 
 -- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
@@ -64,5 +59,5 @@ mod:create_options(mod.options_widgets, true, "AllReady", "Mod description")
 	Suspend mod if needed
 --]]
 if mod:is_suspended() then
-	--mod.suspended()
+	mod.suspended()
 end
