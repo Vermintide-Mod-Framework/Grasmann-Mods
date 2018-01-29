@@ -6,7 +6,9 @@ local mod = get_mod("MoreRatWeapons")
 		- Triggers custom sounds and particle effects for shield hits
 		- Unlocks player weapons for rats to use
 	Issues:
-		- Unlocking of player weapons is disabled because it leads to crashes when packages are unloaded
+		- ( Might be solved ) Unlocking of player weapons is disabled because it leads to crashes when packages are unloaded
+	ToDo:
+		- Network calls to trigger particle effects and shield drops
 	
 	Author: grasmann
 	Version: 2.1.0
@@ -15,6 +17,8 @@ local mod = get_mod("MoreRatWeapons")
 -- Global lists
 more_rat_weapons_shielded_units = more_rat_weapons_shielded_units or {}
 more_rat_weapons_ignored_units = more_rat_weapons_ignored_units or {}
+more_rat_weapons_loading_packages = more_rat_weapons_loading_packages or {}
+more_rat_weapons_loaded_packages = more_rat_weapons_loaded_packages or {}
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
 -- ##### ██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██║████╗  ██║██╔════╝ ██╔════╝ #############################################
@@ -210,54 +214,53 @@ local options_widgets = {
 			},
 		},
 	},
-	-- {
-		-- ["setting_name"] = "use_player_weapons",
-		-- ["widget_type"] = "stepper",
-		-- ["text"] = "Rats Use Player Weapons",
-		-- ["tooltip"] =  "Rats Use Player Weapons [Local]\n" ..
-			-- "Randomly give rats player weapons.",
-		-- ["value_type"] = "boolean",
+	{
+		["setting_name"] = "use_player_weapons",
+		--["widget_type"] = "stepper",
+		["widget_type"] = "checkbox",
+		["text"] = "Rats Use Player Weapons",
+		["tooltip"] =  "Rats Use Player Weapons [Local]\n" ..
+			"Randomly give rats player weapons.",
 		-- ["options"] = {
 			-- {text = "Off", value = false},
 			-- {text = "On", value = true},
 		-- },
-		-- ["default_value"] = false,
-		-- ["sub_widgets"] = {
-			-- {
-				-- ["show_widget_condition"] = {2},
-				-- ["setting_name"] = "player_weapons_count",
-				-- ["widget_type"] = "stepper",
-				-- ["text"] = "Weapon Count",
-				-- ["tooltip"] =  "Weapon Count [Local]\n" ..
-					-- "How many player weapons should be loaded and used?\n\n" ..
-					-- "--- Default ---\n" ..
-					-- "17 Weapons and 4 Shields.\n" ..
-					-- "--- More 1 ---\n" ..
-					-- "34 Weapons and 10 Shields.\n" ..
-					-- "--- More 2 ---\n" ..
-					-- "49 Weapons and 10 Shields.\n" ..
-					-- "--- More 3 ---\n" ..
-					-- "64 Weapons and 10 Shields.\n" ..
-					-- "--- More 4 ---\n" ..
-					-- "77 Weapons and 10 Shields.\n" ..
-					-- "--- More 5 ---\n" ..
-					-- "90 Weapons and 10 Shields.\n" ..
-					-- "--- More 6 ---\n" ..
-					-- "101 Weapons and 10 Shields.\n",
-				-- ["value_type"] = "number",
-				-- ["options"] = {
-					-- {text = "Default", value = 1},
-					-- {text = "More 1", value = 2},
-					-- {text = "More 2", value = 3},
-					-- {text = "More 3", value = 4},
-					-- {text = "More 4", value = 5},
-					-- {text = "More 5", value = 6},
-					-- {text = "More 6", value = 7},
-				-- },
-				-- ["default_value"] = 2,
-			-- },
-		-- },
-	-- },
+		["default_value"] = false,
+		["sub_widgets"] = {
+			{
+				["setting_name"] = "player_weapons_count",
+				["widget_type"] = "stepper",
+				["text"] = "Weapon Count",
+				["tooltip"] =  "Weapon Count [Local]\n" ..
+					"How many player weapons should be loaded and used?\n\n" ..
+					"--- Default ---\n" ..
+					"17 Weapons and 4 Shields.\n" ..
+					"--- More 1 ---\n" ..
+					"34 Weapons and 10 Shields.\n" ..
+					"--- More 2 ---\n" ..
+					"49 Weapons and 10 Shields.\n" ..
+					"--- More 3 ---\n" ..
+					"64 Weapons and 10 Shields.\n" ..
+					"--- More 4 ---\n" ..
+					"77 Weapons and 10 Shields.\n" ..
+					"--- More 5 ---\n" ..
+					"90 Weapons and 10 Shields.\n" ..
+					"--- More 6 ---\n" ..
+					"101 Weapons and 10 Shields.\n",
+				["value_type"] = "number",
+				["options"] = {
+					{text = "Default", value = 1},
+					{text = "More 1", value = 2},
+					{text = "More 2", value = 3},
+					{text = "More 3", value = 4},
+					{text = "More 4", value = 5},
+					{text = "More 5", value = 6},
+					{text = "More 6", value = 7},
+				},
+				["default_value"] = 1,
+			},
+		},
+	},
 }
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -266,6 +269,7 @@ local options_widgets = {
 -- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
+mod.first_load_of_packages = false
 --[[
 	Shield data
 --]]
@@ -764,23 +768,7 @@ mod.execute_particle_effect = function(self, unit_id)
 	--end)
 end
 -- Mods.network.register("rpc_mrw_play_particle", function(sender_peer_id, unit_id)
-	-- --safe_pcall(function()
-		-- if not mod:is_suspended() and mod:get("play_particle_effects") then
-			-- local network_manager = Managers.state.network
-			-- local effect_name = "fx/hit_armored"
-			-- local unit = network_manager.game_object_or_level_unit(network_manager, unit_id)
-			-- if unit and ScriptUnit.has_extension(unit, "ai_inventory_system") and AiUtils.unit_alive(unit) then
-				-- local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-				-- local shield_unit = inventory_extension.inventory_item_units[2]
-				-- if shield_unit then
-					-- local offset = Vector3(0,0,0)
-					-- local rotation = Unit.local_rotation(shield_unit, 0)
-					-- Managers.state.event:trigger("event_play_particle_effect", effect_name, shield_unit, 0, offset, rotation, false)
-					-- --Unit.flow_event(unit, "break_shield")
-				-- end
-			-- end
-		-- end
-	-- --end)
+	-- mod:execute_particle_effect(unit_id)
 -- end)
 --[[
 	Drop shield
@@ -826,44 +814,7 @@ mod.execute_drop_shield = function(self, unit_id, damage_direction)
 	--end)
 end
 -- Mods.network.register("rpc_mrw_drop_shield", function(sender_peer_id, unit_id, damage_direction)
-	-- --safe_pcall(function()
-		-- local network_manager = Managers.state.network
-		-- local unit = network_manager.game_object_or_level_unit(network_manager, unit_id)
-		-- if unit and ScriptUnit.has_extension(unit, "ai_inventory_system") and AiUtils.unit_alive(unit) then
-			-- local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-			-- if inventory_extension and not inventory_extension.already_dropped_shield then
-				-- local item_inventory_index = 2
-				-- local item = inventory_extension.inventory_item_definitions[item_inventory_index]
-				-- local item_unit_name = item.drop_unit_name or item.unit_name
-				-- local item_unit = inventory_extension.inventory_item_units[item_inventory_index]
-				-- if item_unit ~= nil then
-					-- -- Drop shield
-					-- if not mod:is_suspended() and mod:get("drop_shields") then
-						-- local position = Unit.world_position(item_unit, 0)
-						-- local rotation = Unit.world_rotation(item_unit, 0)
-						-- local new_item_unit = World.spawn_unit(inventory_extension.world, item_unit_name, position, rotation, nil)
-
-						-- Unit.flow_event(new_item_unit, "lua_dropped")
-						-- local actor = Unit.create_actor(new_item_unit, "rp_dropped")
-						-- Actor.add_angular_velocity(actor, Vector3(math.random(), math.random(), math.random())*10)
-						-- Actor.add_velocity(actor, Vector3(damage_direction[1], damage_direction[2], 1)*5)
-						
-						-- inventory_extension:relink_visual_replacement(new_item_unit, actor, item_inventory_index, "dropped")
-					-- end
-					-- Unit.set_unit_visibility(item_unit, false)
-					-- inventory_extension.already_dropped_shield = true
-					-- mod:delete_projectiles(unit)
-					-- -- Switch to two-handed
-					-- local breed = Unit.get_data(unit, "breed")
-					-- if breed.name == "skaven_storm_vermin" or breed.name == "skaven_storm_vermin_commander" then
-						-- Unit.animation_set_state(unit, 105)
-					-- elseif breed.name == "skaven_slave" or breed.name == "skaven_clan_rat" then
-						-- Unit.animation_set_state(unit, 375)
-					-- end
-				-- end
-			-- end
-		-- end
-	-- --end)
+	-- mod:execute_drop_shield(unit_id, damage_direction)
 -- end)
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
@@ -1013,7 +964,7 @@ AIInventoryExtension.replace_inventory_visually = function(self, inventory_templ
 								
 							end
 						else
-							EchoConsole("'"..item_unit_name.."' not loaded")
+							mod:echo("'"..item_unit_name.."' not loaded")
 						end
 
 					end
@@ -1086,69 +1037,50 @@ end)
 -- ####################################################################################################################
 -- ##### Player weapons and packages ##################################################################################
 -- ####################################################################################################################
-mod.loading_packages = {}
-mod.loaded_packages = {}
-mod.load_packages = function(self, unload)
-	--safe_pcall(function()
-		local manager = Managers.package
-		local reference = "MoreRatWeapons"
-		--local definitions = get_mod("MoreRatWeapons_Def") --Mods.MoreRatWeaponsDefinitions
-		--if definitions then
-			local active = self:get("use_player_weapons") or false
-			local setting = self:get("player_weapons_count") or 2
-			for i = 1, #mod.packages do
-				if i <= setting and active then
-					for _, name in pairs(mod.packages[i]) do
-						if not manager:is_loading(name) and not manager:has_loaded(name, reference) then
-							manager:load(name, reference, self.package_callback(self, name), true)
-							self.loading_packages[name] = true
-						end
-					end
-				-- elseif unload then
-					-- for _, name in pairs(mod.packages[i]) do
-						-- if manager:has_loaded(name, reference) and manager:can_unload(name) then
-							-- manager:unload(name, reference)
-							-- self.loading_packages[name] = nil
-							-- self.loaded_packages[name] = nil
-						-- end
-					-- end
+--[[
+	Load / unload player weapon packages
+--]]
+mod.load_packages = function(self)
+	local manager = Managers.package
+	local reference = "MoreRatWeapons"
+	local active = self:get("use_player_weapons") or false
+	local setting = self:get("player_weapons_count") or 1
+	for i = 1, #self.packages do
+		if i <= setting and active then
+			for _, name in pairs(self.packages[i]) do
+				if not manager:is_loading(name) and not manager:has_loaded(name, reference) then
+					self:echo("+'"..name.."'!")
+					manager:load(name, reference, self.package_callback(self, name), true)
+					more_rat_weapons_loading_packages[name] = true
 				end
 			end
-			mod.custom_1h_weapons.count = mod.custom_1h_weapons.count_settings[setting]
-			mod.custom_2h_weapons.count = mod.custom_2h_weapons.count_settings[setting]
-			mod.custom_shields.count = mod.custom_shields.count_settings[setting]
-		--end
-	--end)
+		else
+			for _, name in pairs(self.packages[i]) do
+				if manager:has_loaded(name, reference) and manager:can_unload(name) then
+					manager:unload(name, reference)
+					more_rat_weapons_loading_packages[name] = nil
+					more_rat_weapons_loaded_packages[name] = nil
+				end
+			end
+		end
+	end
+	self.custom_1h_weapons.count = self.custom_1h_weapons.count_settings[setting]
+	self.custom_2h_weapons.count = self.custom_2h_weapons.count_settings[setting]
+	self.custom_shields.count = self.custom_shields.count_settings[setting]
 end
-
+--[[
+	Check if all packages are loaded
+--]]
 mod.loaded_all = function(self)
-	return self.loading_packages and #self.loading_packages == 0
+	return more_rat_weapons_loading_packages and #more_rat_weapons_loading_packages == 0
 end
-
+--[[
+	Package load callback function
+--]]
 mod.package_callback = function(self, name)
-	self.loading_packages[name] = nil
-	self.loaded_packages[name] = true
+	more_rat_weapons_loading_packages[name] = nil
+	more_rat_weapons_loaded_packages[name] = true
 end
-
--- mod.player_weapons = mod.get(mod.widget_settings.USE_PLAYER_WEAPONS.save)
--- mod.player_weapons_count = mod.get(mod.widget_settings.USE_PLAYER_WEAPONS_COUNT.save)
--- mod:hook("MatchmakingManager.update", function(func, self, dt, t)
-	-- func(self, dt, t)
-	-- safe_pcall(function()
-		-- local load_packages = false
-		-- if mod.player_weapons ~= mod.get(mod.widget_settings.USE_PLAYER_WEAPONS.save) then
-			-- load_packages = true
-			-- mod.player_weapons = mod.get(mod.widget_settings.USE_PLAYER_WEAPONS.save)
-		-- end
-		-- if mod.player_weapons_count ~= mod.get(mod.widget_settings.USE_PLAYER_WEAPONS_COUNT.save) then
-			-- load_packages = true
-			-- mod.player_weapons_count = mod.get(mod.widget_settings.USE_PLAYER_WEAPONS_COUNT.save)
-		-- end
-		-- if load_packages then
-			-- mod:load_packages()
-		-- end
-	-- end)
--- end)
 
 -- ####################################################################################################################
 -- ##### Local stuff ##################################################################################################
@@ -1310,6 +1242,16 @@ end)
 	Mod Setting changed
 --]]
 mod.setting_changed = function(setting_name)
+	local load_packages = false
+	if setting_name == "use_player_weapons" then
+		load_packages = true
+	end
+	if setting_name == "player_weapons_count" then
+		load_packages = true
+	end
+	if load_packages then
+		mod:load_packages()
+	end
 end
 --[[
 	Mod Suspended
@@ -1325,6 +1267,19 @@ end
 	Mod Update
 --]]
 mod.update = function(dt)
+	if not mod.first_load_of_packages then
+		local manager = Managers.package
+		if manager then
+			mod:load_packages()
+			mod.first_load_of_packages = true
+		end
+	end
 end
 
+-- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
+-- ##### ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝ ###################################################################
+-- ##### ███████╗   ██║   ███████║██████╔╝   ██║    ###################################################################
+-- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
+-- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
+-- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
 mod:create_options(options_widgets, true, "More Rat Weapons", "Mod description")
