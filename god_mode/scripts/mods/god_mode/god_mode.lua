@@ -65,7 +65,7 @@ end
 --[[
 	Create option widgets
 --]]
-mod:create_options(mod.options_widgets, true, "God Mode", "Mod description")
+mod:create_options(mod.options_widgets, true, "God Mode", "Refills your life when it hits 0")
 --[[
 	Suspend mod if needed
 --]]

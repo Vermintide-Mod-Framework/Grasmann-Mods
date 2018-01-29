@@ -54,7 +54,7 @@ end
 --[[
 	Create option widgets
 --]]
-mod:create_options(mod.options_widgets, true, "All Ready", "Mod description")
+mod:create_options(mod.options_widgets, true, "All Ready", "Lets you start the game without waiting for people to press ready")
 --[[
 	Suspend mod if needed
 --]]

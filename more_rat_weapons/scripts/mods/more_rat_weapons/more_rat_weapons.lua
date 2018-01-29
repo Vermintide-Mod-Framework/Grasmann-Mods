@@ -1,6 +1,7 @@
 local mod = get_mod("MoreRatWeapons")
 --[[ 
 	More Rat Weapons
+		- Unlocks shields and visual weapons for rats
 		- Unlocks shields for rats
 		- Implements shield mechanics server-side; Only visual also possible
 		- Triggers custom sounds and particle effects for shield hits
@@ -1282,4 +1283,4 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
-mod:create_options(options_widgets, true, "More Rat Weapons", "Mod description")
+mod:create_options(options_widgets, true, "More Rat Weapons", "Unlocks shields and visual weapons for rats")

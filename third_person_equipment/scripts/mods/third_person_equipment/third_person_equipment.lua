@@ -3,8 +3,6 @@ local mod = get_mod("ThirdPersonEquipment")
 	Third person equipment
 		- Shows equipped items on characters
 		- Works with player and bots
-	Issues:
-		- Doesn't work after game start right away
 	
 	Author: grasmann
 	Version: 1.1.0
@@ -635,7 +633,7 @@ mod:delete_all_units()
 --[[
 	Create option widgets
 --]]
-mod:create_options(options_widgets, true, "Third Person Equipment", "Mod description")
+mod:create_options(options_widgets, true, "Third Person Equipment", "Shows equipped items on characters")
 --[[
 	Suspend mod if needed
 --]]

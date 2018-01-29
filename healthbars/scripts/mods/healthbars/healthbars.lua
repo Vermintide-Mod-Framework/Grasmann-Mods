@@ -682,7 +682,7 @@ mod:create_extra_health_bars(30)
 --[[
 	Create option widgets
 --]]
-mod:create_options(options_widgets, true, "Healthbars", "Mod description")
+mod:create_options(options_widgets, true, "Healthbars", "Shows healthbars for all or specific enemies")
 --[[
 	Suspend mod if needed
 --]]
