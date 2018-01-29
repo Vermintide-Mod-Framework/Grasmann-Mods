@@ -503,6 +503,9 @@ mod:hook("PackageManager.unload", function(func, self, package_name, ...)
 	end
 	return func(self, package_name, ...)
 end)
+--[[
+	Create items if needed
+--]]
 mod:hook("MatchmakingManager.update", function(func, ...)
 	func(...)
 	if not mod:is_suspended() then
@@ -598,16 +601,20 @@ end
 	Mod Suspended
 --]]
 mod.suspended = function()
+	mod:disable_all_hooks()
 	mod:delete_all_units()
 end
 --[[
 	Mod Unsuspended
 --]]
 mod.unsuspended = function()
-	local players = Managers.player:human_and_bot_players()
-	for k, player in pairs(players) do
-		mod:add_all_items(player.player_unit)
+	if Managers.player then
+		local players = Managers.player:human_and_bot_players()
+		for k, player in pairs(players) do
+			mod:add_all_items(player.player_unit)
+		end
 	end
+	mod:enable_all_hooks()
 end
 --[[
 	Mod update
@@ -615,6 +622,23 @@ end
 mod.update = function(dt)
 end
 
--- Delete
+-- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
+-- ##### ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝ ###################################################################
+-- ##### ███████╗   ██║   ███████║██████╔╝   ██║    ###################################################################
+-- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
+-- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
+-- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
+--[[
+	Delete existing items
+--]]
 mod:delete_all_units()
+--[[
+	Create option widgets
+--]]
 mod:create_options(options_widgets, true, "Third Person Equipment", "Mod description")
+--[[
+	Suspend mod if needed
+--]]
+if mod:is_suspended() then
+	mod.suspended()
+end
