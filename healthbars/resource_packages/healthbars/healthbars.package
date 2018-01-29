@@ -3,7 +3,7 @@ mod =  [
 ]
 
 package = [
-	"resource_packages/healthbars/healthbars_z"
+	"resource_packages/healthbars/healthbars"
 ]
 
 lua = [

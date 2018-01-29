@@ -324,9 +324,9 @@ end
 --[[
 	Clean units in the health bar system
 --]]
-mod.clean_units = function(self)
+mod.clean_units = function(self, clean_all)
 	for _, unit in pairs(mod_permanent_units) do
-		if not Unit.alive(unit) then
+		if not Unit.alive(unit) or clean_all then
 			self:remove_health_bar(unit)
 		else
 			local unit_pos = Unit.world_position(unit, 0)
@@ -656,25 +656,36 @@ end
 -- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
 -- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
 --[[
-	Mod Setting changed
---]]
-mod.setting_changed = function(setting_name)
-end
---[[
 	Mod Suspended
 --]]
 mod.suspended = function()
+	mod:disable_all_hooks()
+	mod:clean_units(true)
 end
 --[[
 	Mod Unsuspended
 --]]
 mod.unsuspended = function()
-end
---[[
-	Mod Update
---]]
-mod.update = function(dt)
+	mod:enable_all_hooks()
 end
 
+-- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
+-- ##### ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝ ###################################################################
+-- ##### ███████╗   ██║   ███████║██████╔╝   ██║    ###################################################################
+-- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
+-- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
+-- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
+--[[
+	Extend default healthbar count
+--]]
 mod:create_extra_health_bars(30)
+--[[
+	Create option widgets
+--]]
 mod:create_options(options_widgets, true, "Healthbars", "Mod description")
+--[[
+	Suspend mod if needed
+--]]
+if mod:is_suspended() then
+	mod.suspended()
+end
