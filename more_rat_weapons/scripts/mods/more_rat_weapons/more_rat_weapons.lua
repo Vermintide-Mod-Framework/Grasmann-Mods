@@ -964,10 +964,7 @@ AIInventoryExtension.replace_inventory_visually = function(self, inventory_templ
 								--self:relink_visual_replacement(self.inventory_item_units[i], nil, i, "wielded")
 								
 							end
-						else
-							mod:echo("'"..item_unit_name.."' not loaded")
 						end
-
 					end
 				end
 			end
@@ -1046,11 +1043,12 @@ mod.load_packages = function(self)
 	local reference = "MoreRatWeapons"
 	local active = self:get("use_player_weapons") or false
 	local setting = self:get("player_weapons_count") or 1
+	if mod:is_suspended() then setting = 0 end
 	for i = 1, #self.packages do
 		if i <= setting and active then
 			for _, name in pairs(self.packages[i]) do
 				if not manager:is_loading(name) and not manager:has_loaded(name, reference) then
-					self:echo("+'"..name.."'!")
+					--self:echo("+'"..name.."'!")
 					manager:load(name, reference, self.package_callback(self, name), true)
 					more_rat_weapons_loading_packages[name] = true
 				end
@@ -1065,9 +1063,11 @@ mod.load_packages = function(self)
 			end
 		end
 	end
-	self.custom_1h_weapons.count = self.custom_1h_weapons.count_settings[setting]
-	self.custom_2h_weapons.count = self.custom_2h_weapons.count_settings[setting]
-	self.custom_shields.count = self.custom_shields.count_settings[setting]
+	if setting > 0 then
+		self.custom_1h_weapons.count = self.custom_1h_weapons.count_settings[setting]
+		self.custom_2h_weapons.count = self.custom_2h_weapons.count_settings[setting]
+		self.custom_shields.count = self.custom_shields.count_settings[setting]
+	end
 end
 --[[
 	Check if all packages are loaded
@@ -1233,6 +1233,18 @@ mod:hook("PlayerProjectileUnitExtension.hit_non_level_unit", function(func, self
 	--end)
 end)
 
+-- mod:hook("Boot.shutdown", function(func, self, ...)
+	-- mod:echo("shutdown")
+	-- for i = #mod.packages, 1, -1 do
+		-- for j = #mod.packages[i], 1, -1 do
+			-- local name = mod.packages[i][j]
+			-- mod:echo(name)
+		-- end
+	-- end
+	-- mod:echo("shutdown")
+	-- func(self, ...)
+-- end)
+
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
 -- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
 -- ##### █████╗  ██║   ██║█████╗  ██╔██╗ ██║   ██║   ███████╗ #########################################################
@@ -1251,7 +1263,7 @@ mod.setting_changed = function(setting_name)
 		load_packages = true
 	end
 	if load_packages then
-		mod:load_packages()
+		--mod:load_packages()
 	end
 end
 --[[
@@ -1271,7 +1283,7 @@ mod.update = function(dt)
 	if not mod.first_load_of_packages then
 		local manager = Managers.package
 		if manager then
-			mod:load_packages()
+			--mod:load_packages()
 			mod.first_load_of_packages = true
 		end
 	end
