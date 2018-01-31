@@ -101,6 +101,38 @@ local options_widgets = {
 			"Repeats third person reload animation if too short.",
 		["default_value"] = true,
 	},
+	{
+	  ["setting_name"] = "toggle_suspension",
+	  ["widget_type"] = "keybind",
+	  ["text"] = "Toggle Third Person",
+	  ["tooltip"] = "Toggle third person on / off.",
+	  ["default_value"] = {},
+	  ["action"] = "toggle_suspension"
+	},
+	{
+	  ["setting_name"] = "toggle_side",
+	  ["widget_type"] = "keybind",
+	  ["text"] = "Toggle Side",
+	  ["tooltip"] = "Toggle side left / right.",
+	  ["default_value"] = {},
+	  ["action"] = "toggle_side"
+	},
+	{
+	  ["setting_name"] = "switch_offset",
+	  ["widget_type"] = "keybind",
+	  ["text"] = "Switch Offset",
+	  ["tooltip"] = "Switch camera offset.",
+	  ["default_value"] = {},
+	  ["action"] = "switch_offset"
+	},
+	{
+	  ["setting_name"] = "switch_zoom",
+	  ["widget_type"] = "keybind",
+	  ["text"] = "Switch Zoom",
+	  ["tooltip"] = "Switch camera zoom.",
+	  ["default_value"] = {},
+	  ["action"] = "switch_zoom"
+	},
 }
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -567,6 +599,11 @@ end)
 -- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
 -- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
 --[[
+	Mod Setting changed
+--]]
+mod.setting_changed = function(setting_name)
+end
+--[[
 	Mod Suspended
 --]]
 mod.suspended = function()
@@ -575,6 +612,38 @@ end
 	Mod Unsuspended
 --]]
 mod.unsuspended = function()
+end
+
+-- #####  █████╗  ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ######################################################
+-- ##### ██╔══██╗██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ######################################################
+-- ##### ███████║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗ ######################################################
+-- ##### ██╔══██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║ ######################################################
+-- ##### ██║  ██║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║ ######################################################
+-- ##### ╚═╝  ╚═╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ######################################################
+--[[
+	Toggle side
+--]]
+mod.toggle_side = function()
+	local side = not mod:get("side")
+	mod:set("side", side, true)
+end
+--[[
+	Switch offset
+--]]
+mod.switch_offset = function()
+	local offset = mod:get("offset")
+	offset = offset + 100
+	if offset > 400 then offset = 100 end
+	mod:set("offset", offset, true)
+end
+--[[
+	Switch zoom
+--]]
+mod.switch_zoom = function()
+	local zoom = mod:get("zoom")
+	zoom = zoom + 1
+	if zoom > 4 then zoom = 1 end
+	mod:set("zoom", zoom, true)
 end
 
 -- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
