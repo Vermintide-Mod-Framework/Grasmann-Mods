@@ -696,11 +696,9 @@ end
 --]]
 mod.toggle_mode = function()
 	local mode = mod:get("mode")
-	if mode < 5 then
-		mod:set("mode", mode + 1)
-	else
-		mod:set("mode", 2)
-	end
+	mode = mode + 1
+	if mode > 5 then mode = 2 end
+	mod:set("mode", mode, true)
 end
 
 -- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
