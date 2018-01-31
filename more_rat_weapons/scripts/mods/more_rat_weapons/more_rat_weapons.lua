@@ -7,7 +7,8 @@ local mod = get_mod("MoreRatWeapons")
 		- Triggers custom sounds and particle effects for shield hits
 		- Unlocks player weapons for rats to use
 	Issues:
-		- ( Might be solved ) Unlocking of player weapons is disabled because it leads to crashes when packages are unloaded
+		- Unlocking of player weapons is disabled because it leads to crashes when packages are unloaded
+			- Loading of packages disabled on line 1266 & 1286
 	ToDo:
 		- Network calls to trigger particle effects and shield drops
 	
