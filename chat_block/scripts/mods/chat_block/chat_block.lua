@@ -5,6 +5,7 @@ local mod = get_mod("ChatBlock")
 	
 	Author: IamLupo
 	Ported: Grasmann
+	Improvements: bi
 	Version: 1.1.0
 --]]
 
@@ -55,33 +56,6 @@ local mod_state = {
 	PUSH = 3
 }
 mod.block_state = block_state.NOT_BLOCKING
-mod.chat_defence = false
-mod.chat_hooked = false
-
--- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
--- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
--- ##### █████╗  ██║   ██║██╔██╗ ██║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗ ###################################
--- ##### ██╔══╝  ██║   ██║██║╚██╗██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║ ###################################
--- ##### ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║ ###################################
--- ##### ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ###################################
---[[
-	Set block
---]]
-mod.set_block = function(player_unit, status_extension, value)
-	if LevelHelper:current_level_settings().level_id == "inn_level" then
-		return
-	end
-	
-    local go_id = Managers.state.unit_storage:go_id(player_unit)
-   
-    if Managers.player.is_server then
-        Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, value)
-    else
-        Managers.state.network.network_transmit:send_rpc_server("rpc_set_blocking", go_id, value)
-    end
-   
-    status_extension.set_blocking(status_extension, value)
-end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
@@ -89,62 +63,6 @@ end
 -- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
---[[
-	Activate blocking when chat is open
---]]
---mod:hook("ChatManager.update", function(func, self, dt, t, ...)
-mod.chatmanager_update_hook = function(func, self, dt, t, ...)
-	local state = mod:get("mode")
-	
-	if state ~= mod_state.OFF then
-		local player = Managers.player:local_player()
-		
-		if player and player.player_unit then		
-			if state ~= mod_state.SIMPLE then
-
-				if self.chat_gui.chat_focused and mod.block_state == block_state.NOT_BLOCKING then				
-					mod.block_state = block_state.SHOULD_BLOCK
-					--EchoConsole(tostring(mod.block_state))
-				elseif not self.chat_gui.chat_focused and mod.block_state == block_state.BLOCKING then
-					if state == mod_state.PUSH then
-						mod.block_state = block_state.SHOULD_PUSH
-					else
-						mod.block_state = block_state.NOT_BLOCKING
-					end
-					--EchoConsole(tostring(mod.block_state))
-				elseif not self.chat_gui.chat_focused and mod.block_state ~= block_state.NOT_BLOCKING then
-					mod.block_state = block_state.NOT_BLOCKING
-					--EchoConsole(tostring(mod.block_state))
-				end
-
-			else
-
-			    local player = Managers.player:local_player()
-			   
-			    if player and player.player_unit then
-			        local player_unit = player.player_unit
-			        local status_extension = ScriptUnit.extension(player_unit, "status_system")
-			   
-			        if mod.chat_defence == true then
-			            if self.chat_gui.chat_focused == false then
-			                mod.set_block(player_unit, status_extension, false)
-			                mod.chat_defence = false
-			            elseif self.chat_gui.chat_focused == true and status_extension.fatigue > 99 then -- When stamina runs out
-			                mod.set_block(player_unit, status_extension, false)
-			            end
-			        else
-			            if self.chat_gui.chat_focused == true then
-			                mod.set_block(player_unit, status_extension, true)
-			                mod.chat_defence = true
-			            end
-			        end
-			    end
-			end
-		end
-	end
-	
-	return func(self, dt, t, ...)
-end
 --[[
 	Execute weapon action
 --]]
@@ -244,11 +162,30 @@ end
 	Update cycle - wait for chatmanager to be present
 --]]
 mod.update = function(dt)
-	if not mod.chat_hooked and Managers.chat then
-		mod:hook("ChatManager.update", mod.chatmanager_update_hook)
-		if mod:is_suspended() then mod:hook_disable("ChatManager.update") end
-		mod.chat_hooked = true
-	end
+  -- geting VMF input service for keybindings
+  local input_service = Managers.input:get_service("VMFMods")
+  if input_service then
+
+    local should_block = input_service:is_blocked()
+    local state = mod:get("mode")
+    
+    if should_block and mod.block_state == block_state.NOT_BLOCKING then	
+    
+      mod.block_state = block_state.SHOULD_BLOCK
+      
+    elseif not should_block and mod.block_state == block_state.BLOCKING then
+    
+      if state == mod_state.PUSH then
+        mod.block_state = block_state.SHOULD_PUSH
+      else
+        mod.block_state = block_state.NOT_BLOCKING
+      end
+      
+    elseif not should_block and mod.block_state ~= block_state.NOT_BLOCKING then
+    
+      mod.block_state = block_state.NOT_BLOCKING
+    end
+  end
 end
 
 -- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
