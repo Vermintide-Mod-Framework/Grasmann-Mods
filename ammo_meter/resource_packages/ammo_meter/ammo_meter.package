@@ -1,0 +1,11 @@
+mod =  [
+	"ammo_meter"
+]
+
+package = [
+	"resource_packages/ammo_meter/ammo_meter"
+]
+
+lua = [
+	"scripts/mods/ammo_meter/ammo_meter"
+]
