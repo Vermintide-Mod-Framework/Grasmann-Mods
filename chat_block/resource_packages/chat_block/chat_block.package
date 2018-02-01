@@ -1,0 +1,11 @@
+mod =  [
+	"chat_block"
+]
+
+package = [
+	"resource_packages/chat_block/chat_block"
+]
+
+lua = [
+	"scripts/mods/chat_block/chat_block"
+]
