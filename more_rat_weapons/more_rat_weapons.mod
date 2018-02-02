@@ -5,7 +5,7 @@ local ret = {
 		mod:dofile("scripts/mods/more_rat_weapons/more_rat_weapons")
 	end,
 	packages = {
-		"resource_packages/more_rat_weapons/more_rat_weapons"
+		"resource_packages/mods/more_rat_weapons/more_rat_weapons"
 	},
 }
 return ret
