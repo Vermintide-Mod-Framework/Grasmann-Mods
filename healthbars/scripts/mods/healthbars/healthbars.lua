@@ -718,6 +718,4 @@ mod:create_options(options_widgets, true, "Healthbars", "Shows healthbars for al
 --[[
 	Suspend mod if needed
 --]]
-if mod:is_suspended() then
-	mod.suspended()
-end
+if mod:is_suspended() then mod.suspended() end

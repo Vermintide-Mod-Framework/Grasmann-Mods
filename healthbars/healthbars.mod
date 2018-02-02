@@ -4,7 +4,7 @@ local ret = {
 		mod:dofile("scripts/mods/healthbars/healthbars")
 	end,
 	packages = {
-		"resource_packages/healthbars/healthbars"
+		"resource_packages/mods/healthbars/healthbars"
 	},
 }
 return ret
