@@ -58,6 +58,4 @@ mod:create_options(mod.options_widgets, true, "All Ready", "Lets you start the g
 --[[
 	Suspend mod if needed
 --]]
-if mod:is_suspended() then
-	mod.suspended()
-end
+if mod:is_suspended() then mod.suspended() end

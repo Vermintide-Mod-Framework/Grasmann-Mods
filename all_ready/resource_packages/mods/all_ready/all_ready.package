@@ -3,7 +3,7 @@ mod =  [
 ]
 
 package = [
-	"resource_packages/all_ready/all_ready"
+	"resource_packages/mods/all_ready/all_ready"
 ]
 
 lua = [
