@@ -1,0 +1,11 @@
+mod =  [
+	"heat_indicator"
+]
+
+package = [
+	"resource_packages/mods/heat_indicator/heat_indicator"
+]
+
+lua = [
+	"scripts/mods/heat_indicator/heat_indicator"
+]

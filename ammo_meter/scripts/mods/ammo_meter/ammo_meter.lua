@@ -149,7 +149,7 @@ end
 --[[
 	Add player unit info to unit frame to allow identification
 --]]	
-mod:hook("UnitFramesHandler.update", function(func, self, dt, t, my_player)
+mod:hook("UnitFramesHandler.update", function(func, self, dt, t, my_player, ...)
 	local player_unit = self.my_player.player_unit
 	
 	if player_unit then
@@ -162,12 +162,12 @@ mod:hook("UnitFramesHandler.update", function(func, self, dt, t, my_player)
 		end
 	end
 	
-	return func(self, dt, t, my_player)
+	return func(self, dt, t, my_player, ...)
 end)
 --[[
 	Render widgets
 --]]
-mod:hook("UnitFrameUI.draw", function(func, self, dt)
+mod:hook("UnitFrameUI.draw", function(func, self, dt, ...)
 	local data = self.data
 	
 	if self._is_visible then
@@ -199,19 +199,17 @@ mod:hook("UnitFrameUI.draw", function(func, self, dt)
 		UIRenderer.end_pass(ui_renderer)
 	end
  
-	return func(self, dt)
+	return func(self, dt, ...)
 end)
-
 --[[
 	When you join a room or you start a new game you
 	request every modded clients to give the ammo
 ]]--
-mod:hook("StateInGameRunning.event_game_started", function(func, self)
-	func(self)
+mod:hook("StateInGameRunning.event_game_started", function(func, self, ...)
+	func(self, ...)
 	
 	mod:request_player_ammo()
 end)
-
 --[[
 	When player leave a bot will spawn, the after bot is spawned
 	the ammo data needs to be sync with the modded clients
@@ -229,11 +227,10 @@ mod:hook("GenericAmmoUserExtension.init", function(func, self, ...)
 	-- Fix: When you start a new game the new ammo status will be sync
 	mod:request_player_ammo()
 end)
-
 --[[
 	When a player shoots it needs to send everyone a update
 --]]
-mod:hook("GenericAmmoUserExtension.use_ammo", function(func, self, ammo_used)
+mod:hook("GenericAmmoUserExtension.use_ammo", function(func, self, ammo_used, ...)
 	--safe_pcall(function()
 		if self.slot_name == "slot_ranged" then
 			if Managers.player.is_server then
@@ -249,14 +246,13 @@ mod:hook("GenericAmmoUserExtension.use_ammo", function(func, self, ammo_used)
 		end
 	--end)
 	
-	func(self, ammo_used)
+	func(self, ammo_used, ...)
 end)
-
 --[[
 	When picking up ammo on the floor it needs to send everyone a update
 ]]--
-mod:hook("GenericAmmoUserExtension.add_ammo", function (func, self)
-	func(self)
+mod:hook("GenericAmmoUserExtension.add_ammo", function(func, self, ...)
+	func(self, ...)
 	
 	--safe_pcall(function()
 		if Managers.player.is_server then
@@ -287,7 +283,6 @@ end)
 		* On fire/reload weapon
 		* On pick up ammo box
 ]]--
-
 --[[
 	Request all modded users to send there ammo
 ]]--
@@ -307,7 +302,6 @@ mod.request_player_ammo = function(self)
 		end
 	end
 end
-
 --[[
 	Send all users your new ammo state
 ]]--
