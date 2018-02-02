@@ -637,6 +637,4 @@ mod:create_options(options_widgets, true, "Third Person Equipment", "Shows equip
 --[[
 	Suspend mod if needed
 --]]
-if mod:is_suspended() then
-	mod.suspended()
-end
+if mod:is_suspended() then mod.suspended() end
