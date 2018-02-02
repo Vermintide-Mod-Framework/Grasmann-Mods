@@ -4,7 +4,7 @@ local ret = {
 		mod:dofile("scripts/mods/ammo_meter/ammo_meter")
 	end,
 	packages = {
-		"resource_packages/mods/ammo_meter/ammo_meter"
+		"resource_packages/ammo_meter/ammo_meter"
 	},
 }
 return ret

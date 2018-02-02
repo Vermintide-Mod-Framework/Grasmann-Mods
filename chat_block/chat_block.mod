@@ -4,7 +4,7 @@ local ret = {
 		mod:dofile("scripts/mods/chat_block/chat_block")
 	end,
 	packages = {
-		"resource_packages/mods/chat_block/chat_block"
+		"resource_packages/chat_block/chat_block"
 	},
 }
 return ret

@@ -4,7 +4,7 @@ local ret = {
 		mod:dofile("scripts/mods/all_ready/all_ready")
 	end,
 	packages = {
-		"resource_packages/mods/all_ready/all_ready"
+		"resource_packages/all_ready/all_ready"
 	},
 }
 return ret

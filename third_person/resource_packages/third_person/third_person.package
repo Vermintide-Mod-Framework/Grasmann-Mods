@@ -3,7 +3,7 @@ mod =  [
 ]
 
 package = [
-	"resource_packages/mods/third_person/third_person"
+	"resource_packages/third_person/third_person"
 ]
 
 lua = [

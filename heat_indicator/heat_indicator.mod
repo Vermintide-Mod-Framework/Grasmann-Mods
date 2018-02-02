@@ -4,7 +4,7 @@ local ret = {
 		mod:dofile("scripts/mods/heat_indicator/heat_indicator")
 	end,
 	packages = {
-		"resource_packages/mods/heat_indicator/heat_indicator"
+		"resource_packages/heat_indicator/heat_indicator"
 	},
 }
 return ret

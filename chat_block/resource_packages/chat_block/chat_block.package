@@ -3,7 +3,7 @@ mod =  [
 ]
 
 package = [
-	"resource_packages/mods/chat_block/chat_block"
+	"resource_packages/chat_block/chat_block"
 ]
 
 lua = [

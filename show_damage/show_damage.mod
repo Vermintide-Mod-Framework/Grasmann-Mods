@@ -4,7 +4,7 @@ local ret = {
 		mod:dofile("scripts/mods/show_damage/show_damage")
 	end,
 	packages = {
-		"resource_packages/mods/show_damage/show_damage"
+		"resource_packages/show_damage/show_damage"
 	},
 }
 return ret

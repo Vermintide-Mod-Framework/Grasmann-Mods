@@ -3,7 +3,7 @@ mod =  [
 ]
 
 package = [
-	"resource_packages/mods/show_damage/show_damage"
+	"resource_packages/show_damage/show_damage"
 ]
 
 lua = [
