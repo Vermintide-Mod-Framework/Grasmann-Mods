@@ -201,6 +201,4 @@ mod:create_options(options_widgets, true, "Chat Block", "Block attacks when typi
 --[[
 	Suspend if needed
 --]]
-if mod:is_suspended() then
-	mod.suspended()
-end
+if mod:is_suspended() then mod.suspended() end
