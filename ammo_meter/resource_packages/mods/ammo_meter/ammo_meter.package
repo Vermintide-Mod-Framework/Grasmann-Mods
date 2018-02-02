@@ -3,7 +3,7 @@ mod =  [
 ]
 
 package = [
-	"resource_packages/ammo_meter/ammo_meter"
+	"resource_packages/mods/ammo_meter/ammo_meter"
 ]
 
 lua = [
