@@ -27,121 +27,123 @@ local options_widgets = {
 		-- },
 		["default_value"] = false,
 		["sub_widgets"] = {
-			["setting_name"] = "mode",
-			--["widget_type"] = "dropdown",
-			["widget_type"] = "stepper",
-			["text"] = "Mode",
-			["tooltip"] = "Mode\n" ..
-				"Switch mode for the player damage output.\n\n" ..
-				"-- DEFAULT --\nShows damage, hit zone and kill confirmation.\n\n" ..
-				"-- KILLS --\nShows the default message but only on kills.\n\n" ..
-				"-- SIMPLE KILLS --\nShows a simple message on a kill.",
-			["options"] = {
-				--{ text = Localize("vmf_text_core_off"), value = 1 },
-				{text = "Default", value = 2},
-				{text = "Kills", value = 3},
-				{text = "Simple Kills", value = 4},
-			},
-			["default_value"] = 2,
-			["sub_widgets"] = {
-				{
-					["show_widget_condition"] = {1, 2, 3},
-					["setting_name"] = "system_chat",
-					["widget_type"] = "stepper",
-					["text"] = "Use System Chat",
-					["tooltip"] = "Use System Chat\n" ..
-						"Uses the system chat instead of normal chat.",
-					["options"] = {
-						{text = "Off", value = false},
-						{text = "On", value = true},
-					},
-					["default_value"] = true,
+			{
+				["setting_name"] = "mode",
+				--["widget_type"] = "dropdown",
+				["widget_type"] = "stepper",
+				["text"] = "Mode",
+				["tooltip"] = "Mode\n" ..
+					"Switch mode for the player damage output.\n\n" ..
+					"-- DEFAULT --\nShows damage, hit zone and kill confirmation.\n\n" ..
+					"-- KILLS --\nShows the default message but only on kills.\n\n" ..
+					"-- SIMPLE KILLS --\nShows a simple message on a kill.",
+				["options"] = {
+					--{ text = Localize("vmf_text_core_off"), value = 1 },
+					{text = "Default", value = 2},
+					{text = "Kills", value = 3},
+					{text = "Simple Kills", value = 4},
 				},
-				{
-					["show_widget_condition"] = {1, 2},
-					["setting_name"] = "hit_zone",
-					["widget_type"] = "stepper",
-					["text"] = "Show Hit Zone",
-					["tooltip"] = "Show Hit Zone\n" ..
-						"Will show the hit zone in output.",
-					["options"] = {
-						{text = "Off", value = false},
-						{text = "On", value = true},
-					},
-					["default_value"] = true,
-				},
-				{
-					["show_widget_condition"] = {1},
-					["setting_name"] = "kill",
-					["widget_type"] = "stepper",
-					["text"] = "Show Kill Indicator",
-					["tooltip"] = "Show Kill Indicator\n" ..
-						"Will show an indication in output if hit was a kill.",
-					["options"] = {
-						{text = "Off", value = false},
-						{text = "On", value = true},
-					},
-					["default_value"] = true,
-				},
-				{
-					["show_widget_condition"] = {1, 2, 3},
-					["setting_name"] = "send_chat",
-					["widget_type"] = "stepper",
-					["text"] = "Share to others",
-					["tooltip"] = "Share to others\n" ..
-						"Will send the damage messages to the chat for all to read.",
-					["options"] = {
-						{text = "Off", value = false},
-						{text = "On", value = true},
-					},
-					["default_value"] = false,
-				},
-				{
-					["show_widget_condition"] = {1, 2, 3},
-					["setting_name"] = "damage_source",
-					--["widget_type"] = "dropdown",
-					["widget_type"] = "stepper",
-					["text"] = "Source",
-					["tooltip"] = "Show Player Damage Source\n" ..
-						"Switch source for the player damage output.\n\n" ..
-						"-- OFF --\nNo messages will be posted.\n\n" ..
-						"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
-						"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
-						"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
-					["options"] = {
-						{text = "Me Only", value = 1},
-						{text = "All", value = 2},
-						{text = "Custom", value = 3},
-					},
-					["default_value"] = 1,
-					["sub_widgets"] = {
-						{
-							["show_widget_condition"] = {3},
-							["setting_name"] = "chat_player_1",
-							["widget_type"] = "checkbox",
-							["text"] = "N/A",
-							["default_value"] = false,
+				["default_value"] = 2,
+				["sub_widgets"] = {
+					{
+						["show_widget_condition"] = {1, 2, 3},
+						["setting_name"] = "system_chat",
+						["widget_type"] = "stepper",
+						["text"] = "Use System Chat",
+						["tooltip"] = "Use System Chat\n" ..
+							"Uses the system chat instead of normal chat.",
+						["options"] = {
+							{text = "Off", value = false},
+							{text = "On", value = true},
 						},
-						{
-							["show_widget_condition"] = {3},
-							["setting_name"] = "chat_player_2",
-							["widget_type"] = "checkbox",
-							["text"] = "N/A",
-							["default_value"] = false,
+						["default_value"] = true,
+					},
+					{
+						["show_widget_condition"] = {1, 2},
+						["setting_name"] = "hit_zone",
+						["widget_type"] = "stepper",
+						["text"] = "Show Hit Zone",
+						["tooltip"] = "Show Hit Zone\n" ..
+							"Will show the hit zone in output.",
+						["options"] = {
+							{text = "Off", value = false},
+							{text = "On", value = true},
 						},
-						{
-							["show_widget_condition"] = {3},
-							["setting_name"] = "chat_player_3",
-							["widget_type"] = "checkbox",
-							["text"] = "N/A",
-							["default_value"] = false,
+						["default_value"] = true,
+					},
+					{
+						["show_widget_condition"] = {1},
+						["setting_name"] = "kill",
+						["widget_type"] = "stepper",
+						["text"] = "Show Kill Indicator",
+						["tooltip"] = "Show Kill Indicator\n" ..
+							"Will show an indication in output if hit was a kill.",
+						["options"] = {
+							{text = "Off", value = false},
+							{text = "On", value = true},
 						},
-						{
-							["show_widget_condition"] = {3},
-							["setting_name"] = "chat_player_4",
-							["widget_type"] = "checkbox",
-							["text"] = "N/A",
-							["default_value"] = false,
+						["default_value"] = true,
+					},
+					{
+						["show_widget_condition"] = {1, 2, 3},
+						["setting_name"] = "send_chat",
+						["widget_type"] = "stepper",
+						["text"] = "Share to others",
+						["tooltip"] = "Share to others\n" ..
+							"Will send the damage messages to the chat for all to read.",
+						["options"] = {
+							{text = "Off", value = false},
+							{text = "On", value = true},
+						},
+						["default_value"] = false,
+					},
+					{
+						["show_widget_condition"] = {1, 2, 3},
+						["setting_name"] = "damage_source",
+						--["widget_type"] = "dropdown",
+						["widget_type"] = "stepper",
+						["text"] = "Source",
+						["tooltip"] = "Show Player Damage Source\n" ..
+							"Switch source for the player damage output.\n\n" ..
+							"-- OFF --\nNo messages will be posted.\n\n" ..
+							"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
+							"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+						["options"] = {
+							{text = "Me Only", value = 1},
+							{text = "All", value = 2},
+							{text = "Custom", value = 3},
+						},
+						["default_value"] = 1,
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_player_1",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_player_2",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_player_3",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_player_4",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
 						},
 					},
 				},
@@ -220,6 +222,22 @@ local options_widgets = {
 -- ##### ██╔══╝   ██╔██╗    ██║   ██╔══╝  ██║╚██╗██║╚════██║██║██║   ██║██║╚██╗██║ ####################################
 -- ##### ███████╗██╔╝ ██╗   ██║   ███████╗██║ ╚████║███████║██║╚██████╔╝██║ ╚████║ ####################################
 -- ##### ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ####################################
+--[[
+	Catch option menu being opened
+--]]
+mod.get_time = function(self)
+	return Managers.time and Managers.time:time("game") or 0
+end
+--[[
+	Update player names when option menu is open
+--]]
+mod:hook("VMFOptionsView.update", function(func, self, ...)
+	if mod:get_time() > mod.players.updated + mod.players.interval then
+		mod.players.updated = mod:get_time()
+		mod.players.set_names()
+	end
+	func(self, ...)
+end)
 --[[
 	Replace the text of an initialized option widget
 --]]
@@ -349,7 +367,10 @@ mod.enemies = {
 		skaven_storm_vermin_champion = 2,
 	},
 }
-mod.players = {}
+mod.players = {
+	interval = 3,
+	updated = 0,
+}
 mod.strings = {}
 mod.console = {}
 
@@ -388,6 +409,10 @@ mod.players.set_names = function()
 		mod:update_setting_text("chat_player_"..tostring(i), name)
 		mod:update_setting_text("floating_numbers_player_"..tostring(i), name)
 		i = i + 1
+	end
+	for j = i, 4 do
+		mod:update_setting_text("chat_player_"..tostring(j), "N/A")
+		mod:update_setting_text("floating_numbers_player_"..tostring(j), "N/A")
 	end
 end
 --[[
@@ -780,14 +805,6 @@ end
 -- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
---[[
-	Catch option menu being opened
---]]
-mod:hook("VMFOptionsView.on_enter", function(func, self)
-	mod.players.set_names()
-	func(self)
-end)
-
 --[[
 	Update - Add units to system if alive
 --]]
