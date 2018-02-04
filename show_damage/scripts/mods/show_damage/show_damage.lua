@@ -633,6 +633,12 @@ mod.floating.new = function(position, damage, color, healed, ammo, hit_zone_name
 	return unit_dmg
 end
 
+mod:hook("more_rat_weapons_ranged_shield_hit", function(hit_unit, damage_amount, hit_zone_name)
+	local position = Unit.world_position(hit_unit, 0)
+	local color = {255, 127, 127, 127}
+	mod.floating.units[hit_unit][#mod.floating.units[hit_unit]+1] = mod.floating.new(position, damage_amount, color, nil, nil, hit_zone_name, true)
+end)
+
 mod:hook("DamageUtils.buff_on_attack", function(func, unit, hit_unit, ...)
 	local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
 	

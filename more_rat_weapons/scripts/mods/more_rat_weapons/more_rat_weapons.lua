@@ -1209,12 +1209,15 @@ mod.check_hit_on_owner = function(self, hit_unit, impact_data)
 	end
 	return false, nil, nil
 end
+more_rat_weapons_ranged_shield_hit = function(hit_unit, damage, hit_zone_name)
+end
 --[[
 	Catch missing hits to shields
 --]]
 mod:hook("PlayerProjectileHuskExtension.hit_non_level_unit", function(func, self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
 	local hit, unit, breed = mod:check_hit_on_owner(hit_unit, impact_data)
 	if hit then
+		mod.ranged_shield_hit(hit_unit, impact_data.damage, "left_arm")
 		self.hit_enemy(self, impact_data, unit, hit_position, hit_direction, hit_normal, Unit.actor(unit, "c_lefthand"), breed)
 	else
 		func(self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
@@ -1227,6 +1230,7 @@ mod:hook("PlayerProjectileUnitExtension.hit_non_level_unit", function(func, self
 	--safe_pcall(function()
 		local hit, unit, breed = mod:check_hit_on_owner(hit_unit, impact_data)
 		if hit then
+			mod.ranged_shield_hit(hit_unit, impact_data.damage, "left_arm")
 			self.hit_enemy(self, impact_data, unit, hit_position, hit_direction, hit_normal, Unit.actor(unit, "c_lefthand"), breed)
 		else
 			func(self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
