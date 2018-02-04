@@ -685,6 +685,8 @@ mod:hook("DamageUtils.server_apply_hit", function(func, t, attack_template, atta
 										
 									end
 									
+									mod:show_damage_event(hit_unit, shield_damage, hit_zone_name)
+									
 									if piercing > 0 then
 										attack_damage_value_type = {0, piercing / 2, 0, 0}
 									else
@@ -1209,7 +1211,15 @@ mod.check_hit_on_owner = function(self, hit_unit, impact_data)
 	end
 	return false, nil, nil
 end
-more_rat_weapons_ranged_shield_hit = function(hit_unit, damage, hit_zone_name)
+-- mod.melee_shield_hit = function(self, hit_unit, damage, hit_zone_name)
+-- end
+-- mod.ranged_shield_hit = function(self, hit_unit, damage, hit_zone_name)
+-- end
+mod.show_damage_event = function(self, hit_unit, damage, hit_zone_name)
+	local show_damage = get_mod("ShowDamage")
+	if show_damage and show_damage.register_blocked_hit then
+		show_damage:register_blocked_hit(hit_unit, damage, hit_zone_name)
+	end
 end
 --[[
 	Catch missing hits to shields
@@ -1217,7 +1227,6 @@ end
 mod:hook("PlayerProjectileHuskExtension.hit_non_level_unit", function(func, self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
 	local hit, unit, breed = mod:check_hit_on_owner(hit_unit, impact_data)
 	if hit then
-		mod.ranged_shield_hit(hit_unit, impact_data.damage, "left_arm")
 		self.hit_enemy(self, impact_data, unit, hit_position, hit_direction, hit_normal, Unit.actor(unit, "c_lefthand"), breed)
 	else
 		func(self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
@@ -1230,7 +1239,6 @@ mod:hook("PlayerProjectileUnitExtension.hit_non_level_unit", function(func, self
 	--safe_pcall(function()
 		local hit, unit, breed = mod:check_hit_on_owner(hit_unit, impact_data)
 		if hit then
-			mod.ranged_shield_hit(hit_unit, impact_data.damage, "left_arm")
 			self.hit_enemy(self, impact_data, unit, hit_position, hit_direction, hit_normal, Unit.actor(unit, "c_lefthand"), breed)
 		else
 			func(self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)

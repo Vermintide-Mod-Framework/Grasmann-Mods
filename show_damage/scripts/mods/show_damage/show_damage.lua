@@ -492,16 +492,16 @@ mod.floating.handle = function(self, unit, biggest_hit, parameters)
 		local damage_amount = biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
 		local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
 		local unit_is_dead = parameters.death
-		local blocked = mod.check_blocked(attacker_unit, unit, hit_zone_name)
+		-- local blocked = mod.check_blocked(attacker_unit, unit, hit_zone_name)
 		--local critical = unit_is_dead or hit_zone_name == "head"
 		
 		if breed_data then
 			if mod:get("floating_numbers_source") == 1 then
-				mod.floating.local_player(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, blocked)
+				mod.floating.local_player(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, false)
 			elseif mod:get("floating_numbers_source") == 2 then
-				mod.floating.all(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, blocked)
+				mod.floating.all(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, false)
 			elseif mod:get("floating_numbers_source") == 3 then
-				mod.floating.custom(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, blocked)
+				mod.floating.custom(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, false)
 			end
 		end
 		
@@ -515,22 +515,22 @@ mod.floating.handle = function(self, unit, biggest_hit, parameters)
 		end
 	end
 end
-mod.check_blocked = function(attacker_unit, unit, hit_zone_name)
-	local more_rat_weapons = get_mod("MoreRatWeapons")
-	if more_rat_weapons then
-		if unit and ScriptUnit.has_extension(unit, "ai_inventory_system") then
-			local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-			if inventory_extension.shield_health and not inventory_extension.already_dropped_shield then
-				if table.contains(more_rat_weapons.shield_data.hit_zones, hit_zone_name) then
-					if not more_rat_weapons:check_backstab(attacker_unit, unit) then
-						return true
-					end
-				end
-			end
-		end
-	end
-	return false
-end
+-- mod.check_blocked = function(attacker_unit, unit, hit_zone_name)
+	-- local more_rat_weapons = get_mod("MoreRatWeapons")
+	-- if more_rat_weapons then
+		-- if unit and ScriptUnit.has_extension(unit, "ai_inventory_system") then
+			-- local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
+			-- if inventory_extension.shield_health and not inventory_extension.already_dropped_shield then
+				-- if table.contains(more_rat_weapons.shield_data.hit_zones, hit_zone_name) then
+					-- if not more_rat_weapons:check_backstab(attacker_unit, unit) then
+						-- return true
+					-- end
+				-- end
+			-- end
+		-- end
+	-- end
+	-- return false
+-- end
 --[[
 	Post message for local player
 --]]
@@ -633,11 +633,25 @@ mod.floating.new = function(position, damage, color, healed, ammo, hit_zone_name
 	return unit_dmg
 end
 
-mod:hook("more_rat_weapons_ranged_shield_hit", function(hit_unit, damage_amount, hit_zone_name)
+mod.register_blocked_hit = function(self, hit_unit, damage, hit_zone_name)
 	local position = Unit.world_position(hit_unit, 0)
 	local color = {255, 127, 127, 127}
-	mod.floating.units[hit_unit][#mod.floating.units[hit_unit]+1] = mod.floating.new(position, damage_amount, color, nil, nil, hit_zone_name, true)
-end)
+	self:echo("shield!")
+	self.floating.units[hit_unit][#self.floating.units[hit_unit]+1] = self.floating.new(position, damage, color, nil, nil, hit_zone_name, true)
+end
+
+-- get_mod("MoreRatWeapons").ranged_shield_hit = function(self, hit_unit, damage, hit_zone_name)
+	-- local position = Unit.world_position(hit_unit, 0)
+	-- local color = {255, 127, 127, 127}
+	-- mod:echo("shield!")
+	-- mod.floating.units[hit_unit][#mod.floating.units[hit_unit]+1] = mod.floating.new(position, damage_amount, color, nil, nil, hit_zone_name, true)
+-- end
+
+-- mod:hook("more_rat_weapons_ranged_shield_hit", function(hit_unit, damage_amount, hit_zone_name)
+	-- local position = Unit.world_position(hit_unit, 0)
+	-- local color = {255, 127, 127, 127}
+	-- mod.floating.units[hit_unit][#mod.floating.units[hit_unit]+1] = mod.floating.new(position, damage_amount, color, nil, nil, hit_zone_name, true)
+-- end)
 
 mod:hook("DamageUtils.buff_on_attack", function(func, unit, hit_unit, ...)
 	local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
