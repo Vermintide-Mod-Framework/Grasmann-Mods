@@ -297,10 +297,10 @@ mod.floating = {
 		hit_zone_name = "",
 		blocked = false,
 	},
-	horizontal_min = -200,
-	horizontal_max = 200,
-	vertical_min = 100,
-	vertical_max = 150,
+	horizontal_min = -100,
+	horizontal_max = 100,
+	vertical_min = 50,
+	vertical_max = 100,
 }
 mod.enemies = {
 	specials = {
