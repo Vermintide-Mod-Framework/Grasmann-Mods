@@ -1,0 +1,950 @@
+local mod = get_mod("ShowDamage")
+--[[ 
+	Show Damage
+		- Shows damage / healing in chat and as floating numbers.
+	
+	Author: grasmann
+	Version: 1.2.0
+--]]
+
+-- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
+-- ##### ██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██║████╗  ██║██╔════╝ ██╔════╝ #############################################
+-- ##### ███████╗█████╗     ██║      ██║   ██║██╔██╗ ██║██║  ███╗███████╗ #############################################
+-- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
+-- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
+-- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
+local options_widgets = {
+	{
+		["setting_name"] = "chat_output",
+		--["widget_type"] = "stepper",
+		["widget_type"] = "checkbox",
+		["text"] = "Chat Output",
+		["tooltip"] = "Chat Output\n" ..
+			"Show damage information in chat.",
+		-- ["options"] = {
+			-- {text = "Off", value = false},
+			-- {text = "On", value = true},
+		-- },
+		["default_value"] = false,
+		["sub_widgets"] = {
+			{
+				["setting_name"] = "mode",
+				--["widget_type"] = "dropdown",
+				["widget_type"] = "stepper",
+				["text"] = "Mode",
+				["tooltip"] = "Mode\n" ..
+					"Switch mode for the player damage output.\n\n" ..
+					"-- DEFAULT --\nShows damage, hit zone and kill confirmation.\n\n" ..
+					"-- KILLS --\nShows the default message but only on kills.\n\n" ..
+					"-- SIMPLE KILLS --\nShows a simple message on a kill.",
+				["options"] = {
+					--{ text = Localize("vmf_text_core_off"), value = 1 },
+					{text = "Default", value = 2},
+					{text = "Kills", value = 3},
+					{text = "Simple Kills", value = 4},
+				},
+				["default_value"] = 2,
+				["sub_widgets"] = {
+					{
+						["show_widget_condition"] = {1, 2, 3},
+						["setting_name"] = "system_chat",
+						["widget_type"] = "stepper",
+						["text"] = "Use System Chat",
+						["tooltip"] = "Use System Chat\n" ..
+							"Uses the system chat instead of normal chat.",
+						["options"] = {
+							{text = "Off", value = false},
+							{text = "On", value = true},
+						},
+						["default_value"] = true,
+					},
+					{
+						["show_widget_condition"] = {1, 2},
+						["setting_name"] = "hit_zone",
+						["widget_type"] = "stepper",
+						["text"] = "Show Hit Zone",
+						["tooltip"] = "Show Hit Zone\n" ..
+							"Will show the hit zone in output.",
+						["options"] = {
+							{text = "Off", value = false},
+							{text = "On", value = true},
+						},
+						["default_value"] = true,
+					},
+					{
+						["show_widget_condition"] = {1},
+						["setting_name"] = "kill",
+						["widget_type"] = "stepper",
+						["text"] = "Show Kill Indicator",
+						["tooltip"] = "Show Kill Indicator\n" ..
+							"Will show an indication in output if hit was a kill.",
+						["options"] = {
+							{text = "Off", value = false},
+							{text = "On", value = true},
+						},
+						["default_value"] = true,
+					},
+					{
+						["show_widget_condition"] = {1, 2, 3},
+						["setting_name"] = "send_chat",
+						["widget_type"] = "stepper",
+						["text"] = "Share to others",
+						["tooltip"] = "Share to others\n" ..
+							"Will send the damage messages to the chat for all to read.",
+						["options"] = {
+							{text = "Off", value = false},
+							{text = "On", value = true},
+						},
+						["default_value"] = false,
+					},
+					{
+						["show_widget_condition"] = {1, 2, 3},
+						["setting_name"] = "damage_source",
+						--["widget_type"] = "dropdown",
+						["widget_type"] = "stepper",
+						["text"] = "Source",
+						["tooltip"] = "Show Player Damage Source\n" ..
+							"Switch source for the player damage output.\n\n" ..
+							"-- OFF --\nNo messages will be posted.\n\n" ..
+							"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
+							"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+						["options"] = {
+							{text = "Me Only", value = 1},
+							{text = "All", value = 2},
+							{text = "Custom", value = 3},
+						},
+						["default_value"] = 1,
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_player_1",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_player_2",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_player_3",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_player_4",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+	{
+		["setting_name"] = "floating_numbers",
+		--["widget_type"] = "stepper",
+		["widget_type"] = "checkbox",
+		["text"] = "Floating Damage Numbers",
+		["tooltip"] = "Floating Damage Numbers\n" ..
+			"Switch floating damage numbers on / off.",
+		-- ["options"] = {
+			-- {text = "Off", value = false},
+			-- {text = "On", value = true},
+		-- },
+		["default_value"] = true,
+		["sub_widgets"] = {
+			{
+				--["show_widget_condition"] = {2},
+				["setting_name"] = "floating_numbers_source",
+				--["widget_type"] = "dropdown",
+				["widget_type"] = "stepper",
+				["text"] = "Source",
+				["tooltip"] = "Show Player Damage Source\n" ..
+					"Switch source for the player damage output.\n\n" ..
+					"-- OFF --\nNo messages will be posted.\n\n" ..
+					"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
+					"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
+					"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+				["options"] = {
+					{text = "Me Only", value = 1},
+					{text = "All", value = 2},
+					{text = "Custom", value = 3},
+				},
+				["default_value"] = 2,
+				["sub_widgets"] = {
+					{
+						["show_widget_condition"] = {3},
+						["setting_name"] = "floating_numbers_player_1",
+						["widget_type"] = "checkbox",
+						["text"] = "N/A",
+						["default_value"] = false,
+					},
+					{
+						["show_widget_condition"] = {3},
+						["setting_name"] = "floating_numbers_player_2",
+						["widget_type"] = "checkbox",
+						["text"] = "N/A",
+						["default_value"] = false,
+					},
+					{
+						["show_widget_condition"] = {3},
+						["setting_name"] = "floating_numbers_player_3",
+						["widget_type"] = "checkbox",
+						["text"] = "N/A",
+						["default_value"] = false,
+					},
+					{
+						["show_widget_condition"] = {3},
+						["setting_name"] = "floating_numbers_player_4",
+						["widget_type"] = "checkbox",
+						["text"] = "N/A",
+						["default_value"] = false,
+					},
+				},
+			},
+		},
+	},
+}
+
+-- ##### ███████╗██╗  ██╗████████╗███████╗███╗   ██╗███████╗██╗ ██████╗ ███╗   ██╗ ####################################
+-- ##### ██╔════╝╚██╗██╔╝╚══██╔══╝██╔════╝████╗  ██║██╔════╝██║██╔═══██╗████╗  ██║ ####################################
+-- ##### █████╗   ╚███╔╝    ██║   █████╗  ██╔██╗ ██║███████╗██║██║   ██║██╔██╗ ██║ ####################################
+-- ##### ██╔══╝   ██╔██╗    ██║   ██╔══╝  ██║╚██╗██║╚════██║██║██║   ██║██║╚██╗██║ ####################################
+-- ##### ███████╗██╔╝ ██╗   ██║   ███████╗██║ ╚████║███████║██║╚██████╔╝██║ ╚████║ ####################################
+-- ##### ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ####################################
+--[[
+	Catch option menu being opened
+--]]
+mod.get_time = function(self)
+	return Managers.time and Managers.time:time("game") or 0
+end
+--[[
+	Update player names when option menu is open
+--]]
+mod:hook("VMFOptionsView.update", function(func, self, ...)
+	if mod:get_time() > mod.players.updated + mod.players.interval then
+		mod.players.updated = mod:get_time()
+		mod.players.set_names()
+	end
+	func(self, ...)
+end)
+--[[
+	Replace the text of an initialized option widget
+--]]
+mod.update_setting_text = function(self, setting_name, text)
+	local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
+	if ingame_ui_exists then
+		local vmf_options_view = ingame_ui.views["vmf_options_view"]
+		if vmf_options_view then
+			local searched_widget = nil
+			
+			for _, mod_widgets in ipairs(vmf_options_view.settings_list_widgets) do
+				if mod_widgets[1].content.mod_name == self._name then
+					for _, widget in ipairs(mod_widgets) do
+						if widget.content.setting_name == setting_name then
+							-- do your thing
+							searched_widget = widget
+						end
+					end
+				end
+			end
+			
+			if searched_widget then
+				searched_widget.content.text = text
+			end
+		end
+	end
+end
+
+-- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
+-- ##### ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗ ############################################################################
+-- ##### ██║  ██║███████║   ██║   ███████║ ############################################################################
+-- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
+-- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
+-- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
+mod.t = 0
+mod.chat = {
+	units = {},
+	NAME_LENGTH = 20,
+}
+mod.floating = {
+	corpses = {},
+	units = {},
+	delete = {},
+	fade_time = 2,
+	definition = {
+		position = nil,
+		damage = 0,
+		color = nil,
+		timer = 0,
+		healed = 0,
+		ammo = 0,
+		horizontal_random = 0,
+		horizontal = 0,
+		vertical_random = 0,
+		vertical = 0,
+		critical = false,
+		hit_zone_name = "",
+		blocked = false,
+	},
+	horizontal_min = -100,
+	horizontal_max = 100,
+	vertical_min = 50,
+	vertical_max = 100,
+}
+mod.enemies = {
+	specials = {
+		"skaven_storm_vermin",
+		"skaven_storm_vermin_commander",
+		"skaven_loot_rat",
+		"skaven_rat_ogre",
+		"skaven_gutter_runner",
+		"skaven_poison_wind_globadier",
+		"skaven_pack_master",
+		"skaven_ratling_gunner",
+		"skaven_grey_seer",
+		"skaven_storm_vermin_champion",
+	},
+	breed_names = {
+		skaven_slave = "Slave Rat",
+		skaven_storm_vermin = "Stormvermin",
+		skaven_storm_vermin_commander = "Stormvermin",
+		skaven_clan_rat = "Clan Rat",
+		skaven_loot_rat = "Loot Rat",
+		skaven_rat_ogre = "Rat Ogre",
+		skaven_gutter_runner = "Gutter Runner",
+		skaven_poison_wind_globadier = "Globadier",
+		skaven_pack_master = "Pack Master",
+		skaven_ratling_gunner = "Ratling Gunner",
+		skaven_grey_seer = "Grey Seer",
+		critter_pig = "Pig",
+		critter_rat = "Rat",
+		skaven_storm_vermin_champion = "Stormvermin Champion",
+	},
+	hit_zones = {
+		full = "",
+		head = "Head",
+		right_arm = "R. Arm",
+		left_arm = "L. Arm",
+		torso = "Torso",
+		right_leg = "R. Leg",
+		left_leg = "L. Leg",
+		tail = "Tail",
+		neck = "Neck",
+	},
+	offsets = {
+		default = 1,
+		skaven_slave = 1,
+		skaven_clan_rat = 1,
+		skaven_storm_vermin = 1,
+		skaven_storm_vermin_commander = 1,
+		skaven_gutter_runner = 1,
+		skaven_ratling_gunner = 1,
+		skaven_pack_master = 1,
+		skaven_poison_wind_globadier = 1,
+		skaven_rat_ogre = 2,
+		skaven_loot_rat = 1,
+		skaven_grey_seer = 2,
+		critter_pig = 0.5,
+		critter_rat = 0,
+		skaven_storm_vermin_champion = 2,
+	},
+}
+mod.players = {
+	interval = 3,
+	updated = 0,
+}
+mod.strings = {}
+mod.console = {}
+
+-- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
+-- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
+-- ##### █████╗  ██║   ██║██╔██╗ ██║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗ ###################################
+-- ##### ██╔══╝  ██║   ██║██║╚██╗██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║ ###################################
+-- ##### ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║ ###################################
+-- ##### ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ###################################
+--[[
+	Get a generic character name
+--]]
+mod.players.unit_name = function(unit_name)
+	if unit_name == "empire_soldier" then
+		return "Empire Soldier"
+	elseif unit_name == "witch_hunter" then
+		return "Witch Hunter"
+	elseif unit_name == "bright_wizard" then
+		return "Bright Wizard"
+	elseif unit_name == "dwarf_ranger" then
+		return "Dwarf Ranger"
+	elseif unit_name == "wood_elf" then
+		return "Waywatcher"
+	end
+	return nil
+end
+--[[
+	Get player name from index
+--]]
+mod.players.set_names = function()
+	local player_manager = Managers.player
+	local players = player_manager:human_and_bot_players()
+	local i = 1
+	for _, player in pairs(players) do
+		local name = mod.strings.check({player._cached_name, mod.players.unit_name(player.player_name)}) or "N/A"
+		mod:update_setting_text("chat_player_"..tostring(i), name)
+		mod:update_setting_text("floating_numbers_player_"..tostring(i), name)
+		i = i + 1
+	end
+	for j = i, 4 do
+		mod:update_setting_text("chat_player_"..tostring(j), "N/A")
+		mod:update_setting_text("floating_numbers_player_"..tostring(j), "N/A")
+	end
+end
+--[[
+	Shorten string
+--]]
+mod.strings.shorten = function(str)
+	if string.len(str) >= mod.chat.NAME_LENGTH then
+		return string.sub(str, 1, mod.chat.NAME_LENGTH)
+	end
+	return str
+end
+--[[
+	Check if objects are strings
+	Returns first string
+--]]
+mod.strings.check = function(strings, default)
+	if type(strings) == "table" then
+		for _, str in pairs(strings) do
+			if type(str) == "string" and Utf8.valid(str) then
+				return mod.strings.shorten(str)
+			end
+		end
+	elseif type(strings) == "string" and Utf8.valid(strings) then
+		return mod.strings.shorten(strings)
+	end
+	if type(default) == "string" and Utf8.valid(default) then
+		return mod.strings.shorten(default)
+	end
+	return "N/A"
+end
+--[[
+	Check if unit is player unit
+--]]
+mod.players.is_player_unit = function(unit)
+	return DamageUtils.is_player_unit(unit)
+end
+--[[
+	Get player from player unit
+--]]
+mod.players.from_player_unit = function(player_unit)
+	local player_manager = Managers.player
+	local players = player_manager:human_and_bot_players()
+	for _, player in pairs(players) do
+		if player.player_unit == player_unit then
+			return player
+		end
+	end
+	return nil
+end
+--[[
+	Add unit to process
+--]]
+mod.add_unit = function(self, unit)
+	-- if not table.has_item2(mod.chat.units, unit) then
+		-- if self.health_extension.is_alive(self.health_extension) then
+			-- mod.chat.units[unit] = unit
+		-- end
+	-- end
+	if not mod.floating.has_unit(unit) then
+		if self.health_extension.is_alive(self.health_extension) then
+			mod.floating.units[unit] = {}
+		end
+	end
+end
+
+-- ##### ███████╗██╗      ██████╗  █████╗ ████████╗██╗███╗   ██╗ ██████╗  #############################################
+-- ##### ██╔════╝██║     ██╔═══██╗██╔══██╗╚══██╔══╝██║████╗  ██║██╔════╝  #############################################
+-- ##### █████╗  ██║     ██║   ██║███████║   ██║   ██║██╔██╗ ██║██║  ███╗ #############################################
+-- ##### ██╔══╝  ██║     ██║   ██║██╔══██║   ██║   ██║██║╚██╗██║██║   ██║ #############################################
+-- ##### ██║     ███████╗╚██████╔╝██║  ██║   ██║   ██║██║ ╚████║╚██████╔╝ #############################################
+-- ##### ╚═╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝  #############################################
+--[[
+	Post message for player in filter file
+--]]
+mod.floating.handle = function(self, unit, biggest_hit, parameters)
+	local healed = parameters.healed
+	local ammo = parameters.ammo
+	
+	--EchoConsole("healed = " .. tostring(healed))
+	
+	if mod:get("floating_numbers") and mod.floating.has_unit(unit) then
+		local breed_data = Unit.get_data(unit, "breed")
+		local attacker_unit = biggest_hit[DamageDataIndex.ATTACKER]
+		local damage_amount = biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
+		local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
+		local unit_is_dead = parameters.death
+		-- local blocked = mod.check_blocked(attacker_unit, unit, hit_zone_name)
+		--local critical = unit_is_dead or hit_zone_name == "head"
+		
+		if breed_data then
+			if mod:get("floating_numbers_source") == 1 then
+				mod.floating.local_player(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, false)
+			elseif mod:get("floating_numbers_source") == 2 then
+				mod.floating.all(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, false)
+			elseif mod:get("floating_numbers_source") == 3 then
+				mod.floating.custom(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, false)
+			end
+		end
+		
+		local health_extension = self and self.health_extension
+		if not health_extension and ScriptUnit.has_extension(unit, "health_system") then
+			health_extension =  ScriptUnit.extension(unit, "health_system")
+		end
+
+		if not health_extension:is_alive() then
+			mod.floating.delete[unit] = unit
+		end
+	end
+end
+-- mod.check_blocked = function(attacker_unit, unit, hit_zone_name)
+	-- local more_rat_weapons = get_mod("MoreRatWeapons")
+	-- if more_rat_weapons then
+		-- if unit and ScriptUnit.has_extension(unit, "ai_inventory_system") then
+			-- local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
+			-- if inventory_extension.shield_health and not inventory_extension.already_dropped_shield then
+				-- if table.contains(more_rat_weapons.shield_data.hit_zones, hit_zone_name) then
+					-- if not more_rat_weapons:check_backstab(attacker_unit, unit) then
+						-- return true
+					-- end
+				-- end
+			-- end
+		-- end
+	-- end
+	-- return false
+-- end
+--[[
+	Post message for local player
+--]]
+mod.floating.local_player = function(attacker_unit, unit, damage_amount, dead, breed, healed, ammo, hit_zone_name, blocked)
+	local local_player = Managers.player:local_player()
+	if attacker_unit == local_player.player_unit and (not mod.floating.corpses[unit]) then
+		local position = Unit.world_position(unit, 0)
+		--position[2] = position[2] + mod.enemies.offsets[breed]
+		local color = {255, 255, 255, 255}
+		
+		if dead then
+			color = {255, 255, 56, 56}
+			mod.floating.corpses[unit] = true
+		elseif hit_zone_name == "head" then
+			color = {255, 255, 127, 127}
+		elseif blocked then
+			color = {255, 127, 127, 127}
+		end
+		
+		if healed then color = {255, 56, 255, 56} end
+		if ammo then color = {255, 255,255,0} end
+		mod.floating.units[unit][#mod.floating.units[unit]+1] = mod.floating.new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+	end
+end
+--[[
+	Post message for every player
+--]]
+mod.floating.all = function(attacker_unit, unit, damage_amount, dead, breed, healed, ammo, hit_zone_name, blocked)
+	if mod.players.is_player_unit(attacker_unit) and (not mod.floating.corpses[unit]) then
+		local position = Unit.world_position(unit, 0)
+		--position[2] = position[2] + mod.enemies.offsets[breed]
+		local color = {255, 255, 255, 255}
+		
+		if dead then
+			color = {255, 255, 56, 56}
+			mod.floating.corpses[unit] = true
+		elseif hit_zone_name == "head" then
+			color = {255, 255, 127, 127}
+		elseif blocked then
+			color = {255, 127, 127, 127}
+		end
+		
+		if healed then color = {255, 56, 255, 56} end
+		if ammo then color = {255, 255,255,0} end
+		
+		mod.floating.units[unit][#mod.floating.units[unit]+1] = mod.floating.new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+	end
+end
+--[[
+	Post message for custom chosen player
+--]]
+mod.floating.custom = function(attacker_unit, unit, damage_amount, dead, breed, healed, ammo, hit_zone_name, blocked)
+	if mod.players.is_player_unit(attacker_unit) then			
+		local player_manager = Managers.player
+		local players = player_manager:human_and_bot_players()				
+		local i = 1
+		for _, p in pairs(players) do
+			if mod:get("floating_numbers_player_"..tostring(i)) then
+				if attacker_unit == p.player_unit and (not mod.floating.corpses[unit]) then
+					local position = Unit.world_position(unit, 0)
+					--position[2] = position[2] + mod.enemies.offsets[breed]
+					local color = {255, 255, 255, 255}
+					
+					if dead then
+						color = {255, 255, 56, 56}
+						mod.floating.corpses[unit] = true
+					elseif hit_zone_name == "head" then
+						color = {255, 255, 127, 127}
+					elseif blocked then
+						color = {255, 127, 127, 127}
+					end
+					
+					if healed then color = {255, 56, 255, 56} end
+					if ammo then color = {255, 255,255,0} end
+					mod.floating.units[unit][#mod.floating.units[unit]+1] = mod.floating.new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+				end
+			end
+			i = i + 1
+		end
+	end
+end
+
+mod.floating.has_unit = function(unit)
+	return mod.floating.units[unit] ~= nil
+end
+
+mod.floating.new = function(position, damage, color, healed, ammo, hit_zone_name, blocked)
+	local unit_dmg = table.clone(mod.floating.definition)
+	unit_dmg.position = Vector3Aux.box(nil, position)
+	unit_dmg.damage = damage or 0
+	unit_dmg.color = color or {255, 255, 255, 255}
+	unit_dmg.timer = mod:get_time()
+	unit_dmg.healed = healed
+	unit_dmg.ammo = ammo
+	unit_dmg.horizontal_random = math.random(mod.floating.horizontal_min, mod.floating.horizontal_max)
+	unit_dmg.vertical_random = math.random(mod.floating.vertical_min, mod.floating.vertical_max)
+	unit_dmg.hit_zone_name = hit_zone_name
+	unit_dmg.blocked = blocked
+	
+	return unit_dmg
+end
+
+mod.register_blocked_hit = function(self, hit_unit, damage, hit_zone_name)
+	local position = Unit.world_position(hit_unit, 0)
+	local color = {255, 127, 127, 127}
+	self:echo("shield!")
+	self.floating.units[hit_unit][#self.floating.units[hit_unit]+1] = self.floating.new(position, damage, color, nil, nil, hit_zone_name, true)
+end
+
+-- get_mod("MoreRatWeapons").ranged_shield_hit = function(self, hit_unit, damage, hit_zone_name)
+	-- local position = Unit.world_position(hit_unit, 0)
+	-- local color = {255, 127, 127, 127}
+	-- mod:echo("shield!")
+	-- mod.floating.units[hit_unit][#mod.floating.units[hit_unit]+1] = mod.floating.new(position, damage_amount, color, nil, nil, hit_zone_name, true)
+-- end
+
+-- mod:hook("more_rat_weapons_ranged_shield_hit", function(hit_unit, damage_amount, hit_zone_name)
+	-- local position = Unit.world_position(hit_unit, 0)
+	-- local color = {255, 127, 127, 127}
+	-- mod.floating.units[hit_unit][#mod.floating.units[hit_unit]+1] = mod.floating.new(position, damage_amount, color, nil, nil, hit_zone_name, true)
+-- end)
+
+mod:hook("DamageUtils.buff_on_attack", function(func, unit, hit_unit, ...)
+	local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
+	
+	BuffExtension.apply_buffs_to_value = function (self, value, stat_buff)
+		local amount, procced, parent_id = func_apply_buffs_to_value(self, value, stat_buff)
+		
+		if procced and (stat_buff == StatBuffIndex.HEAL_PROC or stat_buff == StatBuffIndex.LIGHT_HEAL_PROC or stat_buff == StatBuffIndex.HEAVY_HEAL_PROC) then
+			local biggest_hit = {}
+			biggest_hit[DamageDataIndex.ATTACKER] = unit
+			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
+			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
+			mod.floating.handle(nil, hit_unit, biggest_hit, {healed = true})
+		end
+		return amount, procced, parent_id
+	end
+
+	local value = func(unit, hit_unit, ...)
+
+	BuffExtension.apply_buffs_to_value = func_apply_buffs_to_value
+
+	return value
+end)
+
+local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
+	-- Health buff
+	local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
+	BuffExtension.apply_buffs_to_value = function (self, value, stat_buff)
+		local amount, procced, parent_id = func_apply_buffs_to_value(self, value, stat_buff)
+		
+		if procced and stat_buff == StatBuffIndex.HEAL_ON_KILL then
+			local biggest_hit = {}
+			biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
+			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
+			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
+			mod.floating.handle(nil, unit, biggest_hit, {healed = true})
+		end
+		
+		return amount, procced, parent_id
+	end
+	
+	-- Ammo buff
+	local func_add_ammo_to_reserve = GenericAmmoUserExtension.add_ammo_to_reserve
+	GenericAmmoUserExtension.add_ammo_to_reserve = function (self, amount)
+		if amount then
+			local biggest_hit = {}
+			biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
+			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
+			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
+			mod.floating.handle(nil, unit, biggest_hit, {ammo = true})
+		end
+		
+		return func_add_ammo_to_reserve(self, amount)
+	end
+	
+	-- Execute orginal function
+	local return_val_1, return_val_2 = func(unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
+
+	-- Restore functions
+	BuffExtension.apply_buffs_to_value = func_apply_buffs_to_value
+	GenericAmmoUserExtension.add_ammo_to_reserve = func_add_ammo_to_reserve
+	
+	mod.floating.corpses[unit] = true
+
+	return return_val_1, return_val_2
+end
+
+for breed_name, template in pairs(DeathReactions.templates) do
+	if template.unit and template.husk and template.unit.start and template.husk.start then
+		mod:hook("DeathReactions.templates."..breed_name..".unit.start", DeathReactions_start_hook)
+		mod:hook("DeathReactions.templates."..breed_name..".husk.start", DeathReactions_start_hook)
+	end
+end
+
+--[[
+	Floating number fonts
+--]]
+mod.floating.fonts = function(size)
+	-- Return font_group, font_path, font_size
+	if size == nil then size = 20 end
+	if size >= 32 then
+		return "gw_head_32", "materials/fonts/gw_head_32", size
+	else
+		return "gw_head_20", "materials/fonts/gw_head_32", size
+	end
+end
+
+
+local function inOutQuad(t, b, c, d)
+  t = t / d * 2
+  if t < 1 then
+    return c / 2 * math.pow(t, 2) + b
+  else
+    return -c / 2 * ((t - 1) * (t - 3) - 1) + b
+  end
+end
+
+mod.floating.render = function(unit)
+	if mod.floating.units[unit] ~= nil then
+		if #mod.floating.units[unit] > 0 then
+			local breed = Unit.get_data(unit, "breed")
+			local offset = breed.name and mod.enemies.offsets[breed.name] or mod.enemies.offsets.default
+			local player = Managers.player:local_player()
+			--local world = tutorial_ui.world_manager:world("level_world")
+			local world = Managers.world:world("level_world")
+			local viewport = ScriptWorld.viewport(world, player.viewport_name)
+			local camera = ScriptViewport.camera(viewport)
+			
+			--local color = Color(255, 255, 255, 255)
+			--local font_name, font_material, font_size = mod.floating.fonts(30)
+			local scale = UIResolutionScale()
+			
+			-- local enemy_pos = Unit.world_position(unit, 0)
+			-- local dmg_pos = Vector3(enemy_pos[1], enemy_pos[2], enemy_pos[3] + offset)
+			-- local hp_bar_pos_2d = Camera.world_to_screen(camera, dmg_pos)
+			
+			--EchoConsole(string.format("x=%i;y=%i", hp_bar_pos_2d[1], hp_bar_pos_2d[2]))
+			
+			local index = 1
+			local visibility_offset = 0
+			for _, unit_dmg in pairs(mod.floating.units[unit]) do
+				if mod:get_time() - unit_dmg.timer < mod.floating.fade_time then
+					
+					local damage = ""
+					if unit_dmg.damage > 0 or unit_dmg.blocked then
+						-- If damage is a integer
+						if unit_dmg.blocked then
+							damage = "Blocked"
+						elseif unit_dmg.damage == math.floor(unit_dmg.damage) then
+							damage = tostring(unit_dmg.damage)
+						else -- else we want the number with the 2 digits behind the dot
+							damage = string.format("%.2f", unit_dmg.damage)
+						end
+						
+						-- if not unit_dmg.widget then
+							-- unit_dmg.widget = UIWidget.init(mod.floating.widget)
+						-- end
+						
+						local life = (mod:get_time() - unit_dmg.timer) / mod.floating.fade_time
+						local alpha = life*2
+						if alpha > 1 then alpha = 2 - alpha end
+						local color = Color(unit_dmg.color[1] * alpha, unit_dmg.color[2], unit_dmg.color[3], unit_dmg.color[4])
+						--local color = Color(255 * alpha, 255, 127, 127)
+						local black = Color(255 * alpha, 0, 0, 0)
+						local position = Unit.world_position(unit, 0)
+						-- mod:pcall(function()
+							-- position = Vector3Aux.unbox(unit_dmg.position)
+						-- end)
+						--local position = Vector3Aux.unbox(unit_dmg.position)
+						position[3] = position[3] + offset
+						local position2d, depth = Camera.world_to_screen(camera, position)
+						-- local offset_height = (100 * scale) * life
+						-- local offset_vis = {0, 0}
+						-- if visibility_offset == 1 then
+							-- offset_vis[2] = -50 * scale
+						-- elseif visibility_offset == 2 then
+							-- offset_vis[1] = -50 * scale
+						-- elseif visibility_offset == 3 then
+							-- offset_vis[2] = 50 * scale
+						-- elseif visibility_offset == 4 then
+							-- offset_vis[1] = 50 * scale
+						-- end
+						-- local x = (unit_dmg.horizontal_random * scale) * life
+						-- local y = (unit_dmg.vertical_random * scale) * life
+						-- if life >= 0.5 then
+							-- y = (unit_dmg.vertical_random * scale) - ((unit_dmg.vertical_random * scale) * life)
+						-- end
+						
+						local x = inOutQuad(life, 0, unit_dmg.horizontal_random, 1)
+						local y = inOutQuad((life*2)-1, 0, -unit_dmg.vertical_random, 1)
+						local offset_vis = {x, y + unit_dmg.vertical_random}
+						--mod:echo(tostring(depth))
+						
+						--local scaled_font_size = (unit_dmg.healed or unit_dmg.ammo) and font_size*1.3 or font_size
+						if depth < 1 then
+							local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
+							if ingame_ui_exists then
+								local ui_renderer = ingame_ui.ui_top_renderer
+								if ui_renderer then
+									--mod:echo(damage)
+									--UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, input_service, dt, nil, self.render_settings)
+									--UIRenderer.draw_widget(ui_renderer, unit_dmg.widget)
+									mod:pcall(function()
+										local font_name, font_material, font_size = mod.floating.fonts(30)
+										if unit_dmg.hit_zone_name == "head" then
+											font_name, font_material, font_size = mod.floating.fonts(45)
+										elseif unit_dmg.healed or unit_dmg.ammo then
+											font_name, font_material, font_size = mod.floating.fonts(60)
+										elseif unit_dmg.blocked then
+											font_name, font_material, font_size = mod.floating.fonts(20)
+										end
+										--UIRenderer.draw_text(ui_renderer, damage, font_material, font_size, font_name, position, color) --, retained_id, color_override)
+										Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
+										Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
+										Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
+										Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
+										Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
+									end)
+									--local ui_position = UIScaleVectorToResolution(position)
+									--Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, ui_position, color)
+									--UIRenderer.end_pass(ui_renderer)
+								end
+							end
+							-- Mods.gui.text(damage, position2d[1]+2 + offset_vis[1], position2d[2]-2 + offset_vis[2] + offset_height, 1, font_size, black, font)
+							-- Mods.gui.text(damage, position2d[1]+2 + offset_vis[1], position2d[2]+2 + offset_vis[2] + offset_height, 1, font_size, black, font)
+							-- Mods.gui.text(damage, position2d[1]-2 + offset_vis[1], position2d[2]-2 + offset_vis[2] + offset_height, 1, font_size, black, font)
+							-- Mods.gui.text(damage, position2d[1]-2 + offset_vis[1], position2d[2]+2 + offset_vis[2] + offset_height, 1, font_size, black, font)
+							-- Mods.gui.text(damage, position2d[1] + offset_vis[1], position2d[2] + offset_vis[2] + offset_height, 1, font_size, color, font)
+							
+							-- visibility_offset = visibility_offset + 1
+							-- if visibility_offset > 4 then visibility_offset = 0 end
+						end
+					end
+				else
+					table.remove(mod.floating.units[unit], index)
+				end
+				index = index + 1
+			end
+		else
+			if table.contains(mod.floating.delete, unit) then
+				mod.floating.units[unit] = nil
+				mod.floating.delete[unit] = nil
+			end
+		end
+	end
+end
+
+-- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
+-- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
+-- ##### ███████║██║   ██║██║   ██║█████╔╝ ███████╗ ###################################################################
+-- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
+-- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
+-- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
+--[[
+	Update - Add units to system if alive
+--]]
+mod:hook("GenericHitReactionExtension.update", function(func, self, unit, input, dt, context, t, ...)
+	
+	-- Save current time
+	--mod.t = t
+	
+	-- Add new units to process
+	mod.add_unit(self, unit)
+	
+	-- Render damages
+	mod.floating.render(unit)
+	
+	-- Original function
+	func(self, unit, input, dt, context, t, ...)
+	
+end)
+
+--[[
+	Execute Effect - Post message and remove unit from system
+--]]
+mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, unit, effect_template, biggest_hit, parameters)
+	
+	-- Original function
+	func(self, unit, effect_template, biggest_hit, parameters)
+	
+	-- Chat output
+	--mod.chat.handle(self, unit, biggest_hit, parameters)
+	
+	-- Floating numbers
+	mod.floating.handle(self, unit, biggest_hit, parameters)
+	
+end)
+
+-- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
+-- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
+-- ##### █████╗  ██║   ██║█████╗  ██╔██╗ ██║   ██║   ███████╗ #########################################################
+-- ##### ██╔══╝  ╚██╗ ██╔╝██╔══╝  ██║╚██╗██║   ██║   ╚════██║ #########################################################
+-- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
+-- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
+--[[
+	Mod Setting changed
+--]]
+mod.setting_changed = function(setting_name)
+end
+--[[
+	Mod Suspended
+--]]
+mod.suspended = function()
+end
+--[[
+	Mod Unsuspended
+--]]
+mod.unsuspended = function()
+end
+--[[
+	Mod Update
+--]]
+mod.update = function(dt)
+end
+
+mod:create_options(options_widgets, true, "Show Damage", "Mod description")

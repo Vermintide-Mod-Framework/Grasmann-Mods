@@ -1,0 +1,12 @@
+mod =  [
+	"third_person_equipment"
+]
+
+package = [
+	"resource_packages/third_person_equipment/third_person_equipment"
+]
+
+lua = [
+	"scripts/mods/third_person_equipment/third_person_equipment_def"
+	"scripts/mods/third_person_equipment/third_person_equipment"
+]

@@ -1,0 +1,11 @@
+mod =  [
+	"god_mode"
+]
+
+package = [
+	"resource_packages/god_mode/god_mode"
+]
+
+lua = [
+	"scripts/mods/god_mode/god_mode"
+]

@@ -1,0 +1,11 @@
+mod =  [
+	"all_ready"
+]
+
+package = [
+	"resource_packages/all_ready/all_ready"
+]
+
+lua = [
+	"scripts/mods/all_ready/all_ready"
+]
