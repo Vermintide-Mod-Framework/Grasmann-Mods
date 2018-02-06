@@ -277,31 +277,6 @@ mod.chat = {
 	units = {},
 	NAME_LENGTH = 20,
 }
-mod.floating = {
-	corpses = {},
-	units = {},
-	delete = {},
-	fade_time = 2,
-	definition = {
-		position = nil,
-		damage = 0,
-		color = nil,
-		timer = 0,
-		healed = 0,
-		ammo = 0,
-		horizontal_random = 0,
-		horizontal = 0,
-		vertical_random = 0,
-		vertical = 0,
-		critical = false,
-		hit_zone_name = "",
-		blocked = false,
-	},
-	horizontal_min = -100,
-	horizontal_max = 100,
-	vertical_min = 50,
-	vertical_max = 100,
-}
 mod.enemies = {
 	specials = {
 		"skaven_storm_vermin",
@@ -464,11 +439,61 @@ mod.add_unit = function(self, unit)
 			-- mod.chat.units[unit] = unit
 		-- end
 	-- end
-	if not mod.floating.has_unit(unit) then
-		if self.health_extension.is_alive(self.health_extension) then
-			mod.floating.units[unit] = {}
+	if not self.floating:has_unit(unit) then
+		self.floating.units[unit] = {}
+	end
+end
+--[[
+	Check if unit is local player
+--]]
+mod.is_local_player = function(self, unit)
+	local local_player = Managers.player:local_player()
+	if unit == local_player.player_unit then
+		return true
+	end
+	return false
+end
+
+-- ##### ███████╗██╗  ██╗██╗███████╗██╗     ██████╗ ███████╗ ##########################################################
+-- ##### ██╔════╝██║  ██║██║██╔════╝██║     ██╔══██╗██╔════╝ ##########################################################
+-- ##### ███████╗███████║██║█████╗  ██║     ██║  ██║███████╗ ##########################################################
+-- ##### ╚════██║██╔══██║██║██╔══╝  ██║     ██║  ██║╚════██║ ##########################################################
+-- ##### ███████║██║  ██║██║███████╗███████╗██████╔╝███████║ ##########################################################
+-- ##### ╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═════╝ ╚══════╝ ##########################################################
+--[[
+	Check if attacker in backstab relation
+--]]
+mod.check_backstab = function(self, attacker, target)
+	local ax, ay, az = Quaternion.to_euler_angles_xyz(Unit.world_rotation(attacker, 0))
+	local tx, ty, tz = Quaternion.to_euler_angles_xyz(Unit.world_rotation(target, 0))
+	local diff = tz - az
+	if diff > -120 and diff < 120 then
+		return true
+	end
+	return false
+end
+--[[
+	Check if a hit was blocked by a shield
+--]]
+mod.blocked_hit = function(self, attacker_unit, unit, hit_zone)
+	local hit_zones = {"left_arm", "torso", "left_leg"}
+	local more_rat_weapons = get_mod("MoreRatWeapons")
+	if more_rat_weapons then 
+		hit_zones = more_rat_weapons.shield_data.hit_zones
+		mod.check_backstab = more_rat_weapons.check_backstab
+	end
+	
+	if unit and Unit.has_data(unit, "breed") and ScriptUnit.has_extension(unit, "ai_inventory_system") then
+		local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
+		local inv_template = inventory_extension.inventory_configuration_name
+		
+		if inv_template == "sword_and_shield" and not inventory_extension.already_dropped_shield then
+			if table.contains(hit_zones, hit_zone) and not mod:check_backstab(attacker_unit, unit) then
+				return true
+			end
 		end
 	end
+	return false
 end
 
 -- ##### ███████╗██╗      ██████╗  █████╗ ████████╗██╗███╗   ██╗ ██████╗  #############################################
@@ -477,182 +502,273 @@ end
 -- ##### ██╔══╝  ██║     ██║   ██║██╔══██║   ██║   ██║██║╚██╗██║██║   ██║ #############################################
 -- ##### ██║     ███████╗╚██████╔╝██║  ██║   ██║   ██║██║ ╚████║╚██████╔╝ #############################################
 -- ##### ╚═╝     ╚══════╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝  #############################################
---[[
-	Post message for player in filter file
---]]
-mod.floating.handle = function(self, unit, biggest_hit, parameters)
-	local healed = parameters.healed
-	local ammo = parameters.ammo
-	
-	--EchoConsole("healed = " .. tostring(healed))
-	
-	if mod:get("floating_numbers") and mod.floating.has_unit(unit) then
-		local breed_data = Unit.get_data(unit, "breed")
-		local attacker_unit = biggest_hit[DamageDataIndex.ATTACKER]
-		local damage_amount = biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
-		local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
-		local unit_is_dead = parameters.death
-		-- local blocked = mod.check_blocked(attacker_unit, unit, hit_zone_name)
-		--local critical = unit_is_dead or hit_zone_name == "head"
-		
-		if breed_data then
-			if mod:get("floating_numbers_source") == 1 then
-				mod.floating.local_player(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, false)
-			elseif mod:get("floating_numbers_source") == 2 then
-				mod.floating.all(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, false)
-			elseif mod:get("floating_numbers_source") == 3 then
-				mod.floating.custom(attacker_unit, unit, damage_amount, unit_is_dead, breed_data.name, healed, ammo, hit_zone_name, false)
+
+local function inOutQuad(t, b, c, d)
+	t = t / d * 2
+	if t < 1 then
+		return c / 2 * math.pow(t, 2) + b
+	else
+		return -c / 2 * ((t - 1) * (t - 3) - 1) + b
+	end
+end
+
+mod.floating = {
+	corpses = {},
+	units = {},
+	delete = {},
+	fade_time = 2,
+	definition = {
+		-- Data
+		damage = 0,
+		color = nil,
+		timer = 0,
+		blocked = false,
+		-- Movement
+		position = nil,
+		horizontal_random = 0,
+		horizontal = 0,
+		vertical_random = 0,
+		vertical = 0,
+		-- Font
+		font_name,
+		font_material,
+		font_size,
+	},
+	horizontal_min = -100,
+	horizontal_max = 100,
+	vertical_min = 50,
+	vertical_max = 100,
+	--[[
+		Floating number fonts
+	--]]
+	fonts = function(self, size)
+		if size == nil then size = 20 end
+		if size >= 32 then
+			return "gw_head_32", "materials/fonts/gw_head_32", size
+		else
+			return "gw_head_20", "materials/fonts/gw_head_32", size
+		end
+	end,
+	--[[
+		Show heal number
+	--]]
+	trigger_heal = function(self, unit, healed)
+		mod:add_unit(unit)
+		local position = Unit.world_position(unit, 0)
+		local color = {255, 56, 255, 56}
+		self:all(unit, unit, position, healed.amount, color, nil, nil, "head", false)
+	end,
+	--[[
+		Show ammo number
+	--]]
+	trigger_ammo = function(self, unit, ammo)
+		mod:add_unit(unit)
+		local position = Unit.world_position(unit, 0)
+		local color = {255, 255, 255, 0}
+		self:all(unit, unit, position, ammo.amount, color, nil, nil, "head", false)
+	end,
+	--[[
+		Post message for local player
+	--]]
+	local_player = function(self, attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+		local local_player = Managers.player:local_player()
+		if attacker_unit == local_player.player_unit and (not self.corpses[unit]) then
+			self.units[unit][#self.units[unit]+1] = self:new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+		end
+	end,
+	--[[
+		Post message for every player
+	--]]
+	all = function(self, attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+		if mod.players.is_player_unit(attacker_unit) and (not self.corpses[unit]) then
+			self.units[unit][#self.units[unit]+1] = self:new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+		end
+	end,
+	--[[
+		Post message for custom chosen player
+	--]]
+	custom = function(self, attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+		if mod.players.is_player_unit(attacker_unit) then			
+			local player_manager = Managers.player
+			local players = player_manager:human_and_bot_players()				
+			local i = 1
+			for _, p in pairs(players) do
+				if mod:get("floating_numbers_player_"..tostring(i)) then
+					if attacker_unit == p.player_unit and (not self.corpses[unit]) then
+						self.units[unit][#self.units[unit]+1] = self:new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+					end
+				end
+				i = i + 1
 			end
 		end
-		
-		local health_extension = self and self.health_extension
-		if not health_extension and ScriptUnit.has_extension(unit, "health_system") then
-			health_extension =  ScriptUnit.extension(unit, "health_system")
+	end,
+	--[[
+		Check if unit present in floating numbers system
+	--]]
+	has_unit = function(self, unit)
+		return self.units[unit] ~= nil
+	end,
+	--[[
+		Create new number entry
+	--]]
+	new = function(self, position, damage, color, healed, ammo, hit_zone_name, blocked)
+		local unit_dmg = table.clone(self.definition)
+		-- Data
+		unit_dmg.position = Vector3Aux.box(nil, position)
+		unit_dmg.damage = damage or 0
+		unit_dmg.color = color or {255, 255, 255, 255}
+		unit_dmg.timer = mod:get_time()
+		unit_dmg.blocked = blocked
+		-- Movement
+		unit_dmg.horizontal_random = math.random(self.horizontal_min, self.horizontal_max)
+		unit_dmg.vertical_random = math.random(self.vertical_min, self.vertical_max)
+		-- Fonts
+		local font_name, font_material, font_size = self:fonts(30)
+		if hit_zone_name == "head" then
+			font_name, font_material, font_size = self:fonts(45)
+		elseif healed or ammo then
+			font_name, font_material, font_size = self:fonts(60)
+		elseif blocked then
+			font_name, font_material, font_size = self:fonts(20)
 		end
+		unit_dmg.font_name = font_name
+		unit_dmg.font_material = font_material
+		unit_dmg.font_size = font_size
+		
+		return unit_dmg
+	end,
+	--[[
+		Post message for player in filter file
+	--]]
+	handle = function(self, unit, biggest_hit, parameters)
+		
+		if mod:get("floating_numbers") and self:has_unit(unit) then
+			local breed_data = Unit.get_data(unit, "breed")
+			local attacker_unit = biggest_hit[DamageDataIndex.ATTACKER]
+			local damage_amount = biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
+			local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
+			local unit_is_dead = parameters.death
+			local blocked = mod:blocked_hit(attacker_unit, unit, hit_zone_name)
+			local healed = parameters.healed
+			local ammo = parameters.ammo
 
-		if not health_extension:is_alive() then
-			mod.floating.delete[unit] = unit
-		end
-	end
-end
--- mod.check_blocked = function(attacker_unit, unit, hit_zone_name)
-	-- local more_rat_weapons = get_mod("MoreRatWeapons")
-	-- if more_rat_weapons then
-		-- if unit and ScriptUnit.has_extension(unit, "ai_inventory_system") then
-			-- local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-			-- if inventory_extension.shield_health and not inventory_extension.already_dropped_shield then
-				-- if table.contains(more_rat_weapons.shield_data.hit_zones, hit_zone_name) then
-					-- if not more_rat_weapons:check_backstab(attacker_unit, unit) then
-						-- return true
-					-- end
-				-- end
-			-- end
-		-- end
-	-- end
-	-- return false
--- end
---[[
-	Post message for local player
---]]
-mod.floating.local_player = function(attacker_unit, unit, damage_amount, dead, breed, healed, ammo, hit_zone_name, blocked)
-	local local_player = Managers.player:local_player()
-	if attacker_unit == local_player.player_unit and (not mod.floating.corpses[unit]) then
-		local position = Unit.world_position(unit, 0)
-		--position[2] = position[2] + mod.enemies.offsets[breed]
-		local color = {255, 255, 255, 255}
-		
-		if dead then
-			color = {255, 255, 56, 56}
-			mod.floating.corpses[unit] = true
-		elseif hit_zone_name == "head" then
-			color = {255, 255, 127, 127}
-		elseif blocked then
-			color = {255, 127, 127, 127}
-		end
-		
-		if healed then color = {255, 56, 255, 56} end
-		if ammo then color = {255, 255,255,0} end
-		mod.floating.units[unit][#mod.floating.units[unit]+1] = mod.floating.new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
-	end
-end
---[[
-	Post message for every player
---]]
-mod.floating.all = function(attacker_unit, unit, damage_amount, dead, breed, healed, ammo, hit_zone_name, blocked)
-	if mod.players.is_player_unit(attacker_unit) and (not mod.floating.corpses[unit]) then
-		local position = Unit.world_position(unit, 0)
-		--position[2] = position[2] + mod.enemies.offsets[breed]
-		local color = {255, 255, 255, 255}
-		
-		if dead then
-			color = {255, 255, 56, 56}
-			mod.floating.corpses[unit] = true
-		elseif hit_zone_name == "head" then
-			color = {255, 255, 127, 127}
-		elseif blocked then
-			color = {255, 127, 127, 127}
-		end
-		
-		if healed then color = {255, 56, 255, 56} end
-		if ammo then color = {255, 255,255,0} end
-		
-		mod.floating.units[unit][#mod.floating.units[unit]+1] = mod.floating.new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
-	end
-end
---[[
-	Post message for custom chosen player
---]]
-mod.floating.custom = function(attacker_unit, unit, damage_amount, dead, breed, healed, ammo, hit_zone_name, blocked)
-	if mod.players.is_player_unit(attacker_unit) then			
-		local player_manager = Managers.player
-		local players = player_manager:human_and_bot_players()				
-		local i = 1
-		for _, p in pairs(players) do
-			if mod:get("floating_numbers_player_"..tostring(i)) then
-				if attacker_unit == p.player_unit and (not mod.floating.corpses[unit]) then
-					local position = Unit.world_position(unit, 0)
-					--position[2] = position[2] + mod.enemies.offsets[breed]
-					local color = {255, 255, 255, 255}
-					
-					if dead then
-						color = {255, 255, 56, 56}
-						mod.floating.corpses[unit] = true
-					elseif hit_zone_name == "head" then
-						color = {255, 255, 127, 127}
-					elseif blocked then
-						color = {255, 127, 127, 127}
-					end
-					
-					if healed then color = {255, 56, 255, 56} end
-					if ammo then color = {255, 255,255,0} end
-					mod.floating.units[unit][#mod.floating.units[unit]+1] = mod.floating.new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+			if healed then
+				self:trigger_heal(attacker_unit, healed)
+			end
+			
+			if ammo then
+				self:trigger_ammo(attacker_unit, ammo)
+			end
+			
+			local position = Unit.world_position(unit, 0)
+			local color = {255, 255, 255, 255}
+			
+			if unit_is_dead then
+				color = {255, 255, 56, 56}
+			elseif hit_zone_name == "head" or hit_zone_name == "neck" then
+				color = {255, 255, 127, 127}
+			elseif blocked then
+				color = {255, 127, 127, 127}
+			end
+			
+			if breed_data then
+				if mod:get("floating_numbers_source") == 1 then
+					self:local_player(attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+				elseif mod:get("floating_numbers_source") == 2 then
+					self:all(attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+				elseif mod:get("floating_numbers_source") == 3 then
+					self:custom(attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
 				end
 			end
-			i = i + 1
+			
+			if unit_is_dead then
+				self.corpses[unit] = true
+				self.delete[unit] = unit
+			end
 		end
-	end
-end
+	end,
+	--[[
+		Render floating numbers
+	--]]
+	render = function(self, unit)
+		if self.units[unit] ~= nil then
+			if #self.units[unit] > 0 then
+				local breed = Unit.get_data(unit, "breed")
+				local offset = breed and breed.name and mod.enemies.offsets[breed.name] or mod.enemies.offsets.default
+				local player = Managers.player:local_player()
+				local world = Managers.world:world("level_world")
+				local viewport = ScriptWorld.viewport(world, player.viewport_name)
+				local camera = ScriptViewport.camera(viewport)
+				local scale = UIResolutionScale()
 
-mod.floating.has_unit = function(unit)
-	return mod.floating.units[unit] ~= nil
-end
+				local index = 1
+				for _, unit_dmg in pairs(self.units[unit]) do
+					if mod:get_time() - unit_dmg.timer < self.fade_time then
+						
+						local damage = ""
+						if unit_dmg.damage > 0 or unit_dmg.blocked then
+						
+							-- If damage is a integer
+							if unit_dmg.damage > 0 and unit_dmg.damage == math.floor(unit_dmg.damage) then
+								damage = tostring(unit_dmg.damage)
+							elseif unit_dmg.damage > 0 then -- else we want the number with the 2 digits behind the dot
+								damage = string.format("%.2f", unit_dmg.damage)
+							else
+								damage = "Blocked"
+							end
+							
+							local life = (mod:get_time() - unit_dmg.timer) / self.fade_time
+							local alpha = life*2
+							if alpha > 1 then alpha = 2 - alpha end
+							local color = Color(unit_dmg.color[1] * alpha, unit_dmg.color[2], unit_dmg.color[3], unit_dmg.color[4])
+							local black = Color(255 * alpha, 0, 0, 0)
+							local position = Unit.world_position(unit, 0)
+							--local position = Vector3Aux.unbox(unit_dmg.position)
+							position[3] = position[3] + offset
+							local position2d, depth = Camera.world_to_screen(camera, position)
 
-mod.floating.new = function(position, damage, color, healed, ammo, hit_zone_name, blocked)
-	local unit_dmg = table.clone(mod.floating.definition)
-	unit_dmg.position = Vector3Aux.box(nil, position)
-	unit_dmg.damage = damage or 0
-	unit_dmg.color = color or {255, 255, 255, 255}
-	unit_dmg.timer = mod:get_time()
-	unit_dmg.healed = healed
-	unit_dmg.ammo = ammo
-	unit_dmg.horizontal_random = math.random(mod.floating.horizontal_min, mod.floating.horizontal_max)
-	unit_dmg.vertical_random = math.random(mod.floating.vertical_min, mod.floating.vertical_max)
-	unit_dmg.hit_zone_name = hit_zone_name
-	unit_dmg.blocked = blocked
-	
-	return unit_dmg
-end
+							local x = inOutQuad(life, 0, unit_dmg.horizontal_random, 1)
+							local y = inOutQuad((life*2)-1, 0, -unit_dmg.vertical_random, 1)
+							local offset_vis = {x, y + unit_dmg.vertical_random}
 
-mod.register_blocked_hit = function(self, hit_unit, damage, hit_zone_name)
-	local position = Unit.world_position(hit_unit, 0)
-	local color = {255, 127, 127, 127}
-	self:echo("shield!")
-	self.floating.units[hit_unit][#self.floating.units[hit_unit]+1] = self.floating.new(position, damage, color, nil, nil, hit_zone_name, true)
-end
+							if depth < 1 or mod:is_local_player(unit) then
+								local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
+								if ingame_ui_exists then
+									local ui_renderer = ingame_ui.ui_top_renderer
+									if ui_renderer then
+										Gui.text(ui_renderer.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
+										Gui.text(ui_renderer.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
+										Gui.text(ui_renderer.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
+										Gui.text(ui_renderer.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
+										Gui.text(ui_renderer.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
+									end
+								end
+							end
+						end
+					else
+						table.remove(self.units[unit], index)
+					end
+					index = index + 1
+				end
+			else
+				if table.contains(self.delete, unit) then
+					self.units[unit] = nil
+					self.delete[unit] = nil
+				end
+			end
+		end
+	end,
+}
 
--- get_mod("MoreRatWeapons").ranged_shield_hit = function(self, hit_unit, damage, hit_zone_name)
-	-- local position = Unit.world_position(hit_unit, 0)
-	-- local color = {255, 127, 127, 127}
-	-- mod:echo("shield!")
-	-- mod.floating.units[hit_unit][#mod.floating.units[hit_unit]+1] = mod.floating.new(position, damage_amount, color, nil, nil, hit_zone_name, true)
--- end
-
--- mod:hook("more_rat_weapons_ranged_shield_hit", function(hit_unit, damage_amount, hit_zone_name)
-	-- local position = Unit.world_position(hit_unit, 0)
-	-- local color = {255, 127, 127, 127}
-	-- mod.floating.units[hit_unit][#mod.floating.units[hit_unit]+1] = mod.floating.new(position, damage_amount, color, nil, nil, hit_zone_name, true)
--- end)
-
+-- ##### ██████╗ ██╗   ██╗███████╗███████╗███████╗ ####################################################################
+-- ##### ██╔══██╗██║   ██║██╔════╝██╔════╝██╔════╝ ####################################################################
+-- ##### ██████╔╝██║   ██║█████╗  █████╗  ███████╗ ####################################################################
+-- ##### ██╔══██╗██║   ██║██╔══╝  ██╔══╝  ╚════██║ ####################################################################
+-- ##### ██████╔╝╚██████╔╝██║     ██║     ███████║ ####################################################################
+-- ##### ╚═════╝  ╚═════╝ ╚═╝     ╚═╝     ╚══════╝ ####################################################################
+--[[
+	Hook buff on attack
+--]]
 mod:hook("DamageUtils.buff_on_attack", function(func, unit, hit_unit, ...)
 	local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
 	
@@ -664,7 +780,7 @@ mod:hook("DamageUtils.buff_on_attack", function(func, unit, hit_unit, ...)
 			biggest_hit[DamageDataIndex.ATTACKER] = unit
 			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
 			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
-			mod.floating.handle(nil, hit_unit, biggest_hit, {healed = true})
+			mod.floating:handle(hit_unit, biggest_hit, {healed = {amount = amount}})
 		end
 		return amount, procced, parent_id
 	end
@@ -675,8 +791,11 @@ mod:hook("DamageUtils.buff_on_attack", function(func, unit, hit_unit, ...)
 
 	return value
 end)
-
+--[[
+	Hook buff on kill
+--]]
 local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
+	
 	-- Health buff
 	local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
 	BuffExtension.apply_buffs_to_value = function (self, value, stat_buff)
@@ -687,7 +806,7 @@ local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blo
 			biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
 			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
 			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
-			mod.floating.handle(nil, unit, biggest_hit, {healed = true})
+			mod.floating:handle(unit, biggest_hit, {healed = {amount = amount}})
 		end
 		
 		return amount, procced, parent_id
@@ -701,7 +820,7 @@ local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blo
 			biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
 			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
 			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
-			mod.floating.handle(nil, unit, biggest_hit, {ammo = true})
+			mod.floating:handle(unit, biggest_hit, {ammo = {amount = amount}})
 		end
 		
 		return func_add_ammo_to_reserve(self, amount)
@@ -718,164 +837,13 @@ local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blo
 
 	return return_val_1, return_val_2
 end
-
+--[[
+	Hook all breed templates
+--]]
 for breed_name, template in pairs(DeathReactions.templates) do
 	if template.unit and template.husk and template.unit.start and template.husk.start then
 		mod:hook("DeathReactions.templates."..breed_name..".unit.start", DeathReactions_start_hook)
 		mod:hook("DeathReactions.templates."..breed_name..".husk.start", DeathReactions_start_hook)
-	end
-end
-
---[[
-	Floating number fonts
---]]
-mod.floating.fonts = function(size)
-	-- Return font_group, font_path, font_size
-	if size == nil then size = 20 end
-	if size >= 32 then
-		return "gw_head_32", "materials/fonts/gw_head_32", size
-	else
-		return "gw_head_20", "materials/fonts/gw_head_32", size
-	end
-end
-
-
-local function inOutQuad(t, b, c, d)
-  t = t / d * 2
-  if t < 1 then
-    return c / 2 * math.pow(t, 2) + b
-  else
-    return -c / 2 * ((t - 1) * (t - 3) - 1) + b
-  end
-end
-
-mod.floating.render = function(unit)
-	if mod.floating.units[unit] ~= nil then
-		if #mod.floating.units[unit] > 0 then
-			local breed = Unit.get_data(unit, "breed")
-			local offset = breed.name and mod.enemies.offsets[breed.name] or mod.enemies.offsets.default
-			local player = Managers.player:local_player()
-			--local world = tutorial_ui.world_manager:world("level_world")
-			local world = Managers.world:world("level_world")
-			local viewport = ScriptWorld.viewport(world, player.viewport_name)
-			local camera = ScriptViewport.camera(viewport)
-			
-			--local color = Color(255, 255, 255, 255)
-			--local font_name, font_material, font_size = mod.floating.fonts(30)
-			local scale = UIResolutionScale()
-			
-			-- local enemy_pos = Unit.world_position(unit, 0)
-			-- local dmg_pos = Vector3(enemy_pos[1], enemy_pos[2], enemy_pos[3] + offset)
-			-- local hp_bar_pos_2d = Camera.world_to_screen(camera, dmg_pos)
-			
-			--EchoConsole(string.format("x=%i;y=%i", hp_bar_pos_2d[1], hp_bar_pos_2d[2]))
-			
-			local index = 1
-			local visibility_offset = 0
-			for _, unit_dmg in pairs(mod.floating.units[unit]) do
-				if mod:get_time() - unit_dmg.timer < mod.floating.fade_time then
-					
-					local damage = ""
-					if unit_dmg.damage > 0 or unit_dmg.blocked then
-						-- If damage is a integer
-						if unit_dmg.blocked then
-							damage = "Blocked"
-						elseif unit_dmg.damage == math.floor(unit_dmg.damage) then
-							damage = tostring(unit_dmg.damage)
-						else -- else we want the number with the 2 digits behind the dot
-							damage = string.format("%.2f", unit_dmg.damage)
-						end
-						
-						-- if not unit_dmg.widget then
-							-- unit_dmg.widget = UIWidget.init(mod.floating.widget)
-						-- end
-						
-						local life = (mod:get_time() - unit_dmg.timer) / mod.floating.fade_time
-						local alpha = life*2
-						if alpha > 1 then alpha = 2 - alpha end
-						local color = Color(unit_dmg.color[1] * alpha, unit_dmg.color[2], unit_dmg.color[3], unit_dmg.color[4])
-						--local color = Color(255 * alpha, 255, 127, 127)
-						local black = Color(255 * alpha, 0, 0, 0)
-						local position = Unit.world_position(unit, 0)
-						-- mod:pcall(function()
-							-- position = Vector3Aux.unbox(unit_dmg.position)
-						-- end)
-						--local position = Vector3Aux.unbox(unit_dmg.position)
-						position[3] = position[3] + offset
-						local position2d, depth = Camera.world_to_screen(camera, position)
-						-- local offset_height = (100 * scale) * life
-						-- local offset_vis = {0, 0}
-						-- if visibility_offset == 1 then
-							-- offset_vis[2] = -50 * scale
-						-- elseif visibility_offset == 2 then
-							-- offset_vis[1] = -50 * scale
-						-- elseif visibility_offset == 3 then
-							-- offset_vis[2] = 50 * scale
-						-- elseif visibility_offset == 4 then
-							-- offset_vis[1] = 50 * scale
-						-- end
-						-- local x = (unit_dmg.horizontal_random * scale) * life
-						-- local y = (unit_dmg.vertical_random * scale) * life
-						-- if life >= 0.5 then
-							-- y = (unit_dmg.vertical_random * scale) - ((unit_dmg.vertical_random * scale) * life)
-						-- end
-						
-						local x = inOutQuad(life, 0, unit_dmg.horizontal_random, 1)
-						local y = inOutQuad((life*2)-1, 0, -unit_dmg.vertical_random, 1)
-						local offset_vis = {x, y + unit_dmg.vertical_random}
-						--mod:echo(tostring(depth))
-						
-						--local scaled_font_size = (unit_dmg.healed or unit_dmg.ammo) and font_size*1.3 or font_size
-						if depth < 1 then
-							local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
-							if ingame_ui_exists then
-								local ui_renderer = ingame_ui.ui_top_renderer
-								if ui_renderer then
-									--mod:echo(damage)
-									--UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, input_service, dt, nil, self.render_settings)
-									--UIRenderer.draw_widget(ui_renderer, unit_dmg.widget)
-									mod:pcall(function()
-										local font_name, font_material, font_size = mod.floating.fonts(30)
-										if unit_dmg.hit_zone_name == "head" then
-											font_name, font_material, font_size = mod.floating.fonts(45)
-										elseif unit_dmg.healed or unit_dmg.ammo then
-											font_name, font_material, font_size = mod.floating.fonts(60)
-										elseif unit_dmg.blocked then
-											font_name, font_material, font_size = mod.floating.fonts(20)
-										end
-										--UIRenderer.draw_text(ui_renderer, damage, font_material, font_size, font_name, position, color) --, retained_id, color_override)
-										Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
-										Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
-										Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
-										Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
-										Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
-									end)
-									--local ui_position = UIScaleVectorToResolution(position)
-									--Gui.text(ui_renderer.gui, damage, font_material, font_size, font_name, ui_position, color)
-									--UIRenderer.end_pass(ui_renderer)
-								end
-							end
-							-- Mods.gui.text(damage, position2d[1]+2 + offset_vis[1], position2d[2]-2 + offset_vis[2] + offset_height, 1, font_size, black, font)
-							-- Mods.gui.text(damage, position2d[1]+2 + offset_vis[1], position2d[2]+2 + offset_vis[2] + offset_height, 1, font_size, black, font)
-							-- Mods.gui.text(damage, position2d[1]-2 + offset_vis[1], position2d[2]-2 + offset_vis[2] + offset_height, 1, font_size, black, font)
-							-- Mods.gui.text(damage, position2d[1]-2 + offset_vis[1], position2d[2]+2 + offset_vis[2] + offset_height, 1, font_size, black, font)
-							-- Mods.gui.text(damage, position2d[1] + offset_vis[1], position2d[2] + offset_vis[2] + offset_height, 1, font_size, color, font)
-							
-							-- visibility_offset = visibility_offset + 1
-							-- if visibility_offset > 4 then visibility_offset = 0 end
-						end
-					end
-				else
-					table.remove(mod.floating.units[unit], index)
-				end
-				index = index + 1
-			end
-		else
-			if table.contains(mod.floating.delete, unit) then
-				mod.floating.units[unit] = nil
-				mod.floating.delete[unit] = nil
-			end
-		end
 	end
 end
 
@@ -889,21 +857,19 @@ end
 	Update - Add units to system if alive
 --]]
 mod:hook("GenericHitReactionExtension.update", function(func, self, unit, input, dt, context, t, ...)
-	
-	-- Save current time
-	--mod.t = t
-	
+
 	-- Add new units to process
-	mod.add_unit(self, unit)
+	if not mod:is_suspended() and self.health_extension:is_alive() then
+		mod:add_unit(unit)
+	end
 	
 	-- Render damages
-	mod.floating.render(unit)
+	mod.floating:render(unit)
 	
 	-- Original function
 	func(self, unit, input, dt, context, t, ...)
 	
 end)
-
 --[[
 	Execute Effect - Post message and remove unit from system
 --]]
@@ -916,8 +882,15 @@ mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, uni
 	--mod.chat.handle(self, unit, biggest_hit, parameters)
 	
 	-- Floating numbers
-	mod.floating.handle(self, unit, biggest_hit, parameters)
-	
+	if not mod:is_suspended() then
+		mod.floating:handle(unit, biggest_hit, parameters)
+	else
+		if parameters.death then
+			mod.floating.corpses[unit] = true
+			mod.floating.delete[unit] = unit
+		end
+	end
+
 end)
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
@@ -935,11 +908,15 @@ end
 	Mod Suspended
 --]]
 mod.suspended = function()
+	mod:disable_all_hooks()
+	mod:hook_enable("GenericHitReactionExtension.update")
+	mod:hook_enable("GenericHitReactionExtension._execute_effect")
 end
 --[[
 	Mod Unsuspended
 --]]
 mod.unsuspended = function()
+	mod:enable_all_hooks()
 end
 --[[
 	Mod Update
@@ -947,4 +924,17 @@ end
 mod.update = function(dt)
 end
 
+-- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
+-- ##### ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝ ###################################################################
+-- ##### ███████╗   ██║   ███████║██████╔╝   ██║    ###################################################################
+-- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
+-- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
+-- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
+--[[
+	Create option widgets
+--]]
 mod:create_options(options_widgets, true, "Show Damage", "Mod description")
+--[[
+	Suspend if needed
+--]]
+if mod:is_suspended() then mod.suspended() end
