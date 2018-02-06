@@ -1,0 +1,14 @@
+melee = {
+	material_contexts = {
+		surface_material = ""
+	}
+	
+	shader = "gui:DIFFUSE_MAP"
+	
+	textures = {
+		diffuse_map = "textures/show_damage/melee"
+	}
+	
+	variables = {
+	}
+}

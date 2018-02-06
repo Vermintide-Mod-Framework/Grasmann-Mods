@@ -335,11 +335,6 @@ mod.enemies = {
 		skaven_storm_vermin_champion = 2,
 	},
 }
-mod.players = {
-	interval = 3,
-	updated = 0,
-}
-mod.strings = {}
 mod.console = {}
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
@@ -348,88 +343,6 @@ mod.console = {}
 -- ##### ██╔══╝  ██║   ██║██║╚██╗██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║ ###################################
 -- ##### ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║ ###################################
 -- ##### ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ###################################
---[[
-	Get a generic character name
---]]
-mod.players.unit_name = function(unit_name)
-	if unit_name == "empire_soldier" then
-		return "Empire Soldier"
-	elseif unit_name == "witch_hunter" then
-		return "Witch Hunter"
-	elseif unit_name == "bright_wizard" then
-		return "Bright Wizard"
-	elseif unit_name == "dwarf_ranger" then
-		return "Dwarf Ranger"
-	elseif unit_name == "wood_elf" then
-		return "Waywatcher"
-	end
-	return nil
-end
---[[
-	Get player name from index
---]]
-mod.players.set_names = function()
-	local player_manager = Managers.player
-	local players = player_manager:human_and_bot_players()
-	local i = 1
-	for _, player in pairs(players) do
-		local name = mod.strings.check({player._cached_name, mod.players.unit_name(player.player_name)}) or "N/A"
-		mod:update_setting_text("chat_player_"..tostring(i), name)
-		mod:update_setting_text("floating_numbers_player_"..tostring(i), name)
-		i = i + 1
-	end
-	for j = i, 4 do
-		mod:update_setting_text("chat_player_"..tostring(j), "N/A")
-		mod:update_setting_text("floating_numbers_player_"..tostring(j), "N/A")
-	end
-end
---[[
-	Shorten string
---]]
-mod.strings.shorten = function(str)
-	if string.len(str) >= mod.chat.NAME_LENGTH then
-		return string.sub(str, 1, mod.chat.NAME_LENGTH)
-	end
-	return str
-end
---[[
-	Check if objects are strings
-	Returns first string
---]]
-mod.strings.check = function(strings, default)
-	if type(strings) == "table" then
-		for _, str in pairs(strings) do
-			if type(str) == "string" and Utf8.valid(str) then
-				return mod.strings.shorten(str)
-			end
-		end
-	elseif type(strings) == "string" and Utf8.valid(strings) then
-		return mod.strings.shorten(strings)
-	end
-	if type(default) == "string" and Utf8.valid(default) then
-		return mod.strings.shorten(default)
-	end
-	return "N/A"
-end
---[[
-	Check if unit is player unit
---]]
-mod.players.is_player_unit = function(unit)
-	return DamageUtils.is_player_unit(unit)
-end
---[[
-	Get player from player unit
---]]
-mod.players.from_player_unit = function(player_unit)
-	local player_manager = Managers.player
-	local players = player_manager:human_and_bot_players()
-	for _, player in pairs(players) do
-		if player.player_unit == player_unit then
-			return player
-		end
-	end
-	return nil
-end
 --[[
 	Add unit to process
 --]]
@@ -444,15 +357,114 @@ mod.add_unit = function(self, unit)
 	end
 end
 --[[
-	Check if unit is local player
+	Create GUI
 --]]
-mod.is_local_player = function(self, unit)
-	local local_player = Managers.player:local_player()
-	if unit == local_player.player_unit then
-		return true
-	end
-	return false
+mod.gui = nil
+mod.create_gui = function(self)
+	local top_world = Managers.world:world("top_ingame_view")
+	self.gui = World.create_screen_gui(top_world, "immediate", "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_ingame_common", 
+		"material", "materials/show_damage/block", "material", "materials/show_damage/melee", "material", "materials/show_damage/ranged")
 end
+
+mod.strings = {
+	--[[
+		Shorten string
+	--]]
+	shorten = function(str)
+		if string.len(str) >= mod.chat.NAME_LENGTH then
+			return string.sub(str, 1, mod.chat.NAME_LENGTH)
+		end
+		return str
+	end,
+	--[[
+		Check if objects are strings
+		Returns first string
+	--]]
+	check = function(strings, default)
+		if type(strings) == "table" then
+			for _, str in pairs(strings) do
+				if type(str) == "string" and Utf8.valid(str) then
+					return mod.strings.shorten(str)
+				end
+			end
+		elseif type(strings) == "string" and Utf8.valid(strings) then
+			return mod.strings.shorten(strings)
+		end
+		if type(default) == "string" and Utf8.valid(default) then
+			return mod.strings.shorten(default)
+		end
+		return "N/A"
+	end,
+}
+
+mod.players = {
+	interval = 3,
+	updated = 0,
+	--[[
+		Get a generic character name
+	--]]
+	unit_name = function(unit_name)
+		if unit_name == "empire_soldier" then
+			return "Empire Soldier"
+		elseif unit_name == "witch_hunter" then
+			return "Witch Hunter"
+		elseif unit_name == "bright_wizard" then
+			return "Bright Wizard"
+		elseif unit_name == "dwarf_ranger" then
+			return "Dwarf Ranger"
+		elseif unit_name == "wood_elf" then
+			return "Waywatcher"
+		end
+		return nil
+	end,
+	--[[
+		Get player name from index
+	--]]
+	set_names = function()
+		local player_manager = Managers.player
+		local players = player_manager:human_and_bot_players()
+		local i = 1
+		for _, player in pairs(players) do
+			local name = mod.strings.check({player._cached_name, mod.players.unit_name(player.player_name)}) or "N/A"
+			mod:update_setting_text("chat_player_"..tostring(i), name)
+			mod:update_setting_text("floating_numbers_player_"..tostring(i), name)
+			i = i + 1
+		end
+		for j = i, 4 do
+			mod:update_setting_text("chat_player_"..tostring(j), "N/A")
+			mod:update_setting_text("floating_numbers_player_"..tostring(j), "N/A")
+		end
+	end,
+	--[[
+		Check if unit is player unit
+	--]]
+	is_player_unit = function(unit)
+		return DamageUtils.is_player_unit(unit)
+	end,
+	--[[
+		Get player from player unit
+	--]]
+	from_player_unit = function(player_unit)
+		local player_manager = Managers.player
+		local players = player_manager:human_and_bot_players()
+		for _, player in pairs(players) do
+			if player.player_unit == player_unit then
+				return player
+			end
+		end
+		return nil
+	end,
+	--[[
+		Check if unit is local player
+	--]]
+	is_local_player = function(self, unit)
+		local local_player = Managers.player:local_player()
+		if unit == local_player.player_unit then
+			return true
+		end
+		return false
+	end,
+}
 
 -- ##### ███████╗██╗  ██╗██╗███████╗██╗     ██████╗ ███████╗ ##########################################################
 -- ##### ██╔════╝██║  ██║██║██╔════╝██║     ██╔══██╗██╔════╝ ##########################################################
@@ -523,6 +535,7 @@ mod.floating = {
 		color = nil,
 		timer = 0,
 		blocked = false,
+		icon = "",
 		-- Movement
 		position = nil,
 		horizontal_random = 0,
@@ -626,10 +639,12 @@ mod.floating = {
 		local font_name, font_material, font_size = self:fonts(30)
 		if hit_zone_name == "head" then
 			font_name, font_material, font_size = self:fonts(45)
+			unit_dmg.icon = "materials/show_damage/melee"
 		elseif healed or ammo then
 			font_name, font_material, font_size = self:fonts(60)
 		elseif blocked then
 			font_name, font_material, font_size = self:fonts(20)
+			unit_dmg.icon = "materials/show_damage/block"
 		end
 		unit_dmg.font_name = font_name
 		unit_dmg.font_material = font_material
@@ -713,9 +728,10 @@ mod.floating = {
 								damage = tostring(unit_dmg.damage)
 							elseif unit_dmg.damage > 0 then -- else we want the number with the 2 digits behind the dot
 								damage = string.format("%.2f", unit_dmg.damage)
-							else
-								damage = "Blocked"
 							end
+							-- if unit_dmg.blocked then
+								-- damage = damage.." Blocked"
+							-- end
 							
 							local life = (mod:get_time() - unit_dmg.timer) / self.fade_time
 							local alpha = life*2
@@ -726,23 +742,42 @@ mod.floating = {
 							--local position = Vector3Aux.unbox(unit_dmg.position)
 							position[3] = position[3] + offset
 							local position2d, depth = Camera.world_to_screen(camera, position)
+							
+							local local_player = Managers.player:local_player()
+							local player_pos = Unit.local_position(local_player.player_unit, 0) 
+							-- local player_pos = Unit.local_position(player.player_unit, 0)
+							local distance = Vector3.distance(player_pos, position) / 5
+							--mod:echo("distance: "..tostring(distance))
+							local horizontal = unit_dmg.horizontal_random / distance
+							local vertical = unit_dmg.vertical_random / distance
+							local x = inOutQuad(life, 0, horizontal, 1)
+							local y = inOutQuad((life*2)-1, 0, -vertical, 1)
+							local offset_vis = {x, y + vertical}
 
-							local x = inOutQuad(life, 0, unit_dmg.horizontal_random, 1)
-							local y = inOutQuad((life*2)-1, 0, -unit_dmg.vertical_random, 1)
-							local offset_vis = {x, y + unit_dmg.vertical_random}
-
-							if depth < 1 or mod:is_local_player(unit) then
-								local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
-								if ingame_ui_exists then
-									local ui_renderer = ingame_ui.ui_top_renderer
-									if ui_renderer then
-										Gui.text(ui_renderer.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
-										Gui.text(ui_renderer.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
-										Gui.text(ui_renderer.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
-										Gui.text(ui_renderer.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
-										Gui.text(ui_renderer.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
-									end
-								end
+							if depth < 1 or mod.players:is_local_player(unit) then
+								-- local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
+								-- if ingame_ui_exists then
+									-- local ui_renderer = ingame_ui.ui_top_renderer
+									-- if ui_renderer then
+										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
+										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
+										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
+										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
+										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
+										mod:pcall(function()
+											-- local width, height, min = ui_renderer:text_size(damage, unit_dmg.font_material, unit_dmg.font_size)
+											local min, max, caret = Gui.text_extents(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size)
+											local inv_scaling = RESOLUTION_LOOKUP.inv_scale
+											local width = (max.x - min.x)*inv_scaling
+											local height = (max.y - min.y)*inv_scaling
+											
+											local icon_offset = {width / distance, 0}
+											local icon_pos = Vector3(position2d[1]+icon_offset[1], position2d[2]+icon_offset[2], 0)
+											local icon_size = Vector3(width / distance, height / distance, 0)
+											Gui.bitmap(mod.gui, "materials/show_damage/block", icon_pos, icon_size, color)
+										end)
+									-- end
+								-- end
 							end
 						end
 					else
@@ -933,6 +968,7 @@ end
 --[[
 	Create option widgets
 --]]
+mod:create_gui()
 mod:create_options(options_widgets, true, "Show Damage", "Mod description")
 --[[
 	Suspend if needed
