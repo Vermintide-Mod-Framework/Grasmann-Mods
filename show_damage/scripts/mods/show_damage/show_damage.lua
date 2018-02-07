@@ -705,11 +705,19 @@ mod.floating = {
 			--mod:echo("damage_type:'"..tostring(damage_type).."'")
 			
 			if healed then
-				self:trigger_heal(attacker_unit, healed)
+				if mod.players:is_local_player(attacker_unit) then
+					self:trigger_heal(unit, healed)
+				else
+					self:trigger_heal(attacker_unit, healed)
+				end
 			end
 			
 			if ammo then
-				self:trigger_ammo(attacker_unit, ammo)
+				if mod.players:is_local_player(attacker_unit) then
+					self:trigger_ammo(unit, ammo)
+				else
+					self:trigger_ammo(attacker_unit, ammo)
+				end
 			end
 			
 			--local position = Unit.world_position(unit, 0)
@@ -779,9 +787,11 @@ mod.floating = {
 							--local position = Vector3Aux.unbox(unit_dmg.position)
 							position[3] = position[3] + offset
 							local position2d, depth = Camera.world_to_screen(camera, position)
+							local player_pos = ScriptCamera.position(camera)
 							
-							local local_player = Managers.player:local_player()
-							local player_pos = Unit.local_position(local_player.player_unit, 0) 
+							-- local local_player = Managers.player:local_player()
+							-- local player_pos = local_player and Unit.local_position(local_player.player_unit, 0) or Vector3(0, 0, 0)
+							
 							-- local player_pos = Unit.local_position(player.player_unit, 0)
 							local distance = Vector3.distance(player_pos, position) / 5
 							--mod:echo("distance: "..tostring(distance))
@@ -796,12 +806,12 @@ mod.floating = {
 								-- if ingame_ui_exists then
 									-- local ui_renderer = ingame_ui.ui_top_renderer
 									-- if ui_renderer then
-										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
-										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
-										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
-										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
-										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
 										mod:pcall(function()
+											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
+											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
+											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
+											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
+											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
 											-- local width, height, min = ui_renderer:text_size(damage, unit_dmg.font_material, unit_dmg.font_size)
 											if unit_dmg.icon ~= "" then
 												local width = (48 * scale) 
@@ -813,9 +823,9 @@ mod.floating = {
 													local min, max, caret = Gui.text_extents(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size)
 													local inv_scaling = RESOLUTION_LOOKUP.inv_scale
 													local t_width = (max.x - min.x)*inv_scaling
-													local t_height = ((max.y - min.y)*inv_scaling) / 2
+													local t_height = (max.y - min.y)*inv_scaling
 													icon_size = Vector2(t_height, t_height)
-													icon_offset = {t_width - t_height/2, t_height/4}
+													icon_offset = {t_width - t_height/2, 0}
 												end
 												
 												--local icon_pos = Vector2(position2d[1]+offset_vis[1]+icon_offset[1], position2d[2]+offset_vis[2]+icon_offset[2]) --Vector3(position2d[1]+icon_offset[1], position2d[2]+icon_offset[2], 0)
