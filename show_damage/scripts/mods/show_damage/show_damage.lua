@@ -363,7 +363,7 @@ mod.gui = nil
 mod.create_gui = function(self)
 	local top_world = Managers.world:world("top_ingame_view")
 	self.gui = World.create_screen_gui(top_world, "immediate", "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_ingame_common", 
-		"material", "materials/show_damage/block", "material", "materials/show_damage/melee", "material", "materials/show_damage/ranged")
+		"material", "materials/show_damage/block", "material", "materials/show_damage/melee", "material", "materials/show_damage/ranged", "material", "materials/show_damage/health")
 end
 
 mod.strings = {
@@ -567,40 +567,50 @@ mod.floating = {
 	--]]
 	trigger_heal = function(self, unit, healed)
 		mod:add_unit(unit)
-		local position = Unit.world_position(unit, 0)
-		local color = {255, 56, 255, 56}
-		self:all(unit, unit, position, healed.amount, color, nil, nil, "head", false)
+		-- local color = {255, 56, 255, 56}
+		if mod:get("floating_numbers_source") == 1 then
+			self:local_player(unit, unit, false, healed.amount, healed, nil, "", false)
+		elseif mod:get("floating_numbers_source") == 2 then
+			self:all(unit, unit, false, healed.amount, healed, nil, "", false)
+		elseif mod:get("floating_numbers_source") == 3 then
+			self:custom(unit, unit, false, healed.amount, healed, nil, "", false)
+		end
 	end,
 	--[[
 		Show ammo number
 	--]]
 	trigger_ammo = function(self, unit, ammo)
 		mod:add_unit(unit)
-		local position = Unit.world_position(unit, 0)
-		local color = {255, 255, 255, 0}
-		self:all(unit, unit, position, ammo.amount, color, nil, nil, "head", false)
+		-- local color = {255, 255, 255, 0}
+		if mod:get("floating_numbers_source") == 1 then
+			self:local_player(unit, unit, false, ammo.amount, nil, ammo, "", false)
+		elseif mod:get("floating_numbers_source") == 2 then
+			self:all(unit, unit, false, ammo.amount, nil, ammo, "", false)
+		elseif mod:get("floating_numbers_source") == 3 then
+			self:custom(unit, unit, false, ammo.amount, nil, ammo, "", false)
+		end
 	end,
 	--[[
 		Post message for local player
 	--]]
-	local_player = function(self, attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+	local_player = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
 		local local_player = Managers.player:local_player()
 		if attacker_unit == local_player.player_unit and (not self.corpses[unit]) then
-			self.units[unit][#self.units[unit]+1] = self:new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+			self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
 		end
 	end,
 	--[[
 		Post message for every player
 	--]]
-	all = function(self, attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+	all = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
 		if mod.players.is_player_unit(attacker_unit) and (not self.corpses[unit]) then
-			self.units[unit][#self.units[unit]+1] = self:new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+			self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
 		end
 	end,
 	--[[
 		Post message for custom chosen player
 	--]]
-	custom = function(self, attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+	custom = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
 		if mod.players.is_player_unit(attacker_unit) then			
 			local player_manager = Managers.player
 			local players = player_manager:human_and_bot_players()				
@@ -608,7 +618,8 @@ mod.floating = {
 			for _, p in pairs(players) do
 				if mod:get("floating_numbers_player_"..tostring(i)) then
 					if attacker_unit == p.player_unit and (not self.corpses[unit]) then
-						self.units[unit][#self.units[unit]+1] = self:new(position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+						
+						self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
 					end
 				end
 				i = i + 1
@@ -624,12 +635,25 @@ mod.floating = {
 	--[[
 		Create new number entry
 	--]]
-	new = function(self, position, damage, color, healed, ammo, hit_zone_name, blocked)
+	new = function(self, unit, dead, damage, healed, ammo, hit_zone_name, blocked, damage_type)
 		local unit_dmg = table.clone(self.definition)
 		-- Data
-		unit_dmg.position = Vector3Aux.box(nil, position)
+		--unit_dmg.position = Vector3Aux.box(nil, position)
+		unit_dmg.position = Vector3Aux.box(nil, Unit.world_position(unit, 0))
 		unit_dmg.damage = damage or 0
-		unit_dmg.color = color or {255, 255, 255, 255}
+		local color = {255, 255, 255, 255}
+		if blocked then
+			color = {255, 127, 127, 127}
+		elseif dead then
+			color = {255, 255, 56, 56}
+		elseif hit_zone_name == "head" or hit_zone_name == "neck" then
+			color = {255, 255, 127, 127}
+		elseif healed then
+			color = {255, 56, 255, 56}
+		elseif ammo then
+			color = {255, 255, 255, 0}
+		end
+		unit_dmg.color = color
 		unit_dmg.timer = mod:get_time()
 		unit_dmg.blocked = blocked
 		-- Movement
@@ -637,14 +661,24 @@ mod.floating = {
 		unit_dmg.vertical_random = math.random(self.vertical_min, self.vertical_max)
 		-- Fonts
 		local font_name, font_material, font_size = self:fonts(30)
-		if hit_zone_name == "head" then
+		if damage_type == "shot_sniper" then
+			--unit_dmg.icon = "ranged"
+		else
+			--unit_dmg.icon = "melee"
+		end		
+		if hit_zone_name == "head" or hit_zone_name == "neck" then
 			font_name, font_material, font_size = self:fonts(45)
-			unit_dmg.icon = "materials/show_damage/melee"
+			unit_dmg.icon = "melee"
 		elseif healed or ammo then
 			font_name, font_material, font_size = self:fonts(60)
+			if ammo then
+				unit_dmg.icon = "ranged"
+			elseif healed then
+				unit_dmg.icon = "health"
+			end
 		elseif blocked then
 			font_name, font_material, font_size = self:fonts(20)
-			unit_dmg.icon = "materials/show_damage/block"
+			unit_dmg.icon = "block"
 		end
 		unit_dmg.font_name = font_name
 		unit_dmg.font_material = font_material
@@ -662,11 +696,14 @@ mod.floating = {
 			local attacker_unit = biggest_hit[DamageDataIndex.ATTACKER]
 			local damage_amount = biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
 			local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
-			local unit_is_dead = parameters.death
-			local blocked = mod:blocked_hit(attacker_unit, unit, hit_zone_name)
+			local damage_type = biggest_hit[DamageDataIndex.DAMAGE_TYPE]
+			local dead = parameters.death
+			local blocked = mod:blocked_hit(attacker_unit, unit, hit_zone_name) or damage_amount <= 0
 			local healed = parameters.healed
 			local ammo = parameters.ammo
 
+			--mod:echo("damage_type:'"..tostring(damage_type).."'")
+			
 			if healed then
 				self:trigger_heal(attacker_unit, healed)
 			end
@@ -675,28 +712,28 @@ mod.floating = {
 				self:trigger_ammo(attacker_unit, ammo)
 			end
 			
-			local position = Unit.world_position(unit, 0)
-			local color = {255, 255, 255, 255}
+			--local position = Unit.world_position(unit, 0)
+			-- local color = {255, 255, 255, 255}
 			
-			if unit_is_dead then
-				color = {255, 255, 56, 56}
-			elseif hit_zone_name == "head" or hit_zone_name == "neck" then
-				color = {255, 255, 127, 127}
-			elseif blocked then
-				color = {255, 127, 127, 127}
-			end
+			-- if unit_is_dead then
+				-- color = {255, 255, 56, 56}
+			-- elseif hit_zone_name == "head" or hit_zone_name == "neck" then
+				-- color = {255, 255, 127, 127}
+			-- elseif blocked then
+				-- color = {255, 127, 127, 127}
+			-- end
 			
 			if breed_data then
 				if mod:get("floating_numbers_source") == 1 then
-					self:local_player(attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+					self:local_player(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, damage_type)
 				elseif mod:get("floating_numbers_source") == 2 then
-					self:all(attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+					self:all(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, damage_type)
 				elseif mod:get("floating_numbers_source") == 3 then
-					self:custom(attacker_unit, unit, position, damage_amount, color, healed, ammo, hit_zone_name, blocked)
+					self:custom(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, damage_type)
 				end
 			end
 			
-			if unit_is_dead then
+			if dead then
 				self.corpses[unit] = true
 				self.delete[unit] = unit
 			end
@@ -730,7 +767,7 @@ mod.floating = {
 								damage = string.format("%.2f", unit_dmg.damage)
 							end
 							-- if unit_dmg.blocked then
-								-- damage = damage.." Blocked"
+								-- damage = "Blocked"
 							-- end
 							
 							local life = (mod:get_time() - unit_dmg.timer) / self.fade_time
@@ -766,15 +803,28 @@ mod.floating = {
 										Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
 										mod:pcall(function()
 											-- local width, height, min = ui_renderer:text_size(damage, unit_dmg.font_material, unit_dmg.font_size)
-											local min, max, caret = Gui.text_extents(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size)
-											local inv_scaling = RESOLUTION_LOOKUP.inv_scale
-											local width = (max.x - min.x)*inv_scaling
-											local height = (max.y - min.y)*inv_scaling
-											
-											local icon_offset = {width / distance, 0}
-											local icon_pos = Vector3(position2d[1]+icon_offset[1], position2d[2]+icon_offset[2], 0)
-											local icon_size = Vector3(width / distance, height / distance, 0)
-											Gui.bitmap(mod.gui, "materials/show_damage/block", icon_pos, icon_size, color)
+											if unit_dmg.icon ~= "" then
+												local width = (48 * scale) 
+												local height = (48 * scale) 
+												local icon_offset = {0, 0}
+												local icon_size = Vector2(width, height)
+												
+												if unit_dmg.damage > 0 then
+													local min, max, caret = Gui.text_extents(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size)
+													local inv_scaling = RESOLUTION_LOOKUP.inv_scale
+													local t_width = (max.x - min.x)*inv_scaling
+													local t_height = ((max.y - min.y)*inv_scaling) / 2
+													icon_size = Vector2(t_height, t_height)
+													icon_offset = {t_width - t_height/2, t_height/4}
+												end
+												
+												--local icon_pos = Vector2(position2d[1]+offset_vis[1]+icon_offset[1], position2d[2]+offset_vis[2]+icon_offset[2]) --Vector3(position2d[1]+icon_offset[1], position2d[2]+icon_offset[2], 0)
+												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]+2+offset_vis[1]+icon_offset[1], position2d[2]-2+offset_vis[2]+icon_offset[2]), icon_size, black)
+												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]+2+offset_vis[1]+icon_offset[1], position2d[2]+2+offset_vis[2]+icon_offset[2]), icon_size, black)
+												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]-2+offset_vis[1]+icon_offset[1], position2d[2]-2+offset_vis[2]+icon_offset[2]), icon_size, black)
+												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]-2+offset_vis[1]+icon_offset[1], position2d[2]+2+offset_vis[2]+icon_offset[2]), icon_size, black)
+												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]+offset_vis[1]+icon_offset[1], position2d[2]+offset_vis[2]+icon_offset[2]), icon_size, color)
+											end
 										end)
 									-- end
 								-- end
@@ -957,6 +1007,9 @@ end
 	Mod Update
 --]]
 mod.update = function(dt)
+	if not mod.gui and Managers.world:world("top_ingame_view") then
+		mod:create_gui()
+	end
 end
 
 -- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
@@ -968,7 +1021,6 @@ end
 --[[
 	Create option widgets
 --]]
-mod:create_gui()
 mod:create_options(options_widgets, true, "Show Damage", "Mod description")
 --[[
 	Suspend if needed
