@@ -152,63 +152,215 @@ local options_widgets = {
 	},
 	{
 		["setting_name"] = "floating_numbers",
-		--["widget_type"] = "stepper",
 		["widget_type"] = "checkbox",
-		["text"] = "Floating Damage Numbers",
-		["tooltip"] = "Floating Damage Numbers\n" ..
-			"Switch floating damage numbers on / off.",
-		-- ["options"] = {
-			-- {text = "Off", value = false},
-			-- {text = "On", value = true},
-		-- },
+		["text"] = "Floating Numbers",
+		["tooltip"] = "Floating Numbers\n" ..
+			"Switch floating numbers on / off.",
 		["default_value"] = true,
 		["sub_widgets"] = {
 			{
-				--["show_widget_condition"] = {2},
-				["setting_name"] = "floating_numbers_source",
-				--["widget_type"] = "dropdown",
-				["widget_type"] = "stepper",
-				["text"] = "Source",
-				["tooltip"] = "Show Player Damage Source\n" ..
-					"Switch source for the player damage output.\n\n" ..
-					"-- OFF --\nNo messages will be posted.\n\n" ..
-					"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
-					"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
-					"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
-				["options"] = {
-					{text = "Me Only", value = 1},
-					{text = "All", value = 2},
-					{text = "Custom", value = 3},
-				},
-				["default_value"] = 2,
+				["setting_name"] = "floating_damage_numbers",
+				["widget_type"] = "checkbox",
+				["text"] = "Damage Numbers",
+				["tooltip"] = "Damage Numbers\n" ..
+					"Switch floating damage numbers on / off.",
+				["default_value"] = true,
 				["sub_widgets"] = {
 					{
-						["show_widget_condition"] = {3},
-						["setting_name"] = "floating_numbers_player_1",
+						["setting_name"] = "floating_icons_headshot",
 						["widget_type"] = "checkbox",
-						["text"] = "N/A",
-						["default_value"] = false,
+						["text"] = "Headshot Icon",
+						["tooltip"] = "Headshot Icon\n" ..
+							"Switch floating headshot icons on / off.",
+						["default_value"] = true,
 					},
 					{
-						["show_widget_condition"] = {3},
-						["setting_name"] = "floating_numbers_player_2",
+						["setting_name"] = "floating_icons_block",
 						["widget_type"] = "checkbox",
-						["text"] = "N/A",
-						["default_value"] = false,
+						["text"] = "Block Icon",
+						["tooltip"] = "Block Icon\n" ..
+							"Switch floating block icons on / off.",
+						["default_value"] = true,
 					},
 					{
-						["show_widget_condition"] = {3},
-						["setting_name"] = "floating_numbers_player_3",
+						["setting_name"] = "floating_numbers_source",
+						--["widget_type"] = "dropdown",
+						["widget_type"] = "stepper",
+						["text"] = "Source",
+						["tooltip"] = "Show Player Damage Source\n" ..
+							"Switch source for the player damage output.\n\n" ..
+							"-- OFF --\nNo messages will be posted.\n\n" ..
+							"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
+							"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+						["options"] = {
+							{text = "Me Only", value = 1},
+							{text = "All", value = 2},
+							{text = "Custom", value = 3},
+						},
+						["default_value"] = 2,
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_numbers_player_1",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_numbers_player_2",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_numbers_player_3",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_numbers_player_4",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+						},
+					},
+				},
+			},
+			{
+				["setting_name"] = "floating_heal",
+				["widget_type"] = "checkbox",
+				["text"] = "Heal Numbers",
+				["tooltip"] = "Heal Numbers\n" ..
+					"Switch floating heal numbers on / off.",
+				["default_value"] = true,
+				["sub_widgets"] = {
+					{
+						["setting_name"] = "floating_icons_heal",
 						["widget_type"] = "checkbox",
-						["text"] = "N/A",
-						["default_value"] = false,
+						["text"] = "Heal Icon",
+						["tooltip"] = "Heal Icon\n" ..
+							"Switch floating heal icons on / off.",
+						["default_value"] = true,
 					},
 					{
-						["show_widget_condition"] = {3},
-						["setting_name"] = "floating_numbers_player_4",
+						["setting_name"] = "floating_heal_source",
+						--["widget_type"] = "dropdown",
+						["widget_type"] = "stepper",
+						["text"] = "Source",
+						["tooltip"] = "Heal Source\n" ..
+							"Switch source for the heal output.\n\n" ..
+							"-- OFF --\nNo messages will be posted.\n\n" ..
+							"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
+							"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+						["options"] = {
+							{text = "Me Only", value = 1},
+							{text = "All", value = 2},
+							{text = "Custom", value = 3},
+						},
+						["default_value"] = 2,
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_heal_player_1",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_heal_player_2",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_heal_player_3",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_heal_player_4",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+						},
+					},
+				},
+			},
+			{
+				["setting_name"] = "floating_ammo",
+				["widget_type"] = "checkbox",
+				["text"] = "Ammo Numbers",
+				["tooltip"] = "Floating Ammo Numbers\n" ..
+					"Switch ammo numbers on / off.",
+				["default_value"] = true,
+				["sub_widgets"] = {
+					{
+						["setting_name"] = "floating_icons_ammo",
 						["widget_type"] = "checkbox",
-						["text"] = "N/A",
-						["default_value"] = false,
+						["text"] = "Ammo Icon",
+						["tooltip"] = "Ammo Icon\n" ..
+							"Switch floating ammo icons on / off.",
+						["default_value"] = true,
+					},
+					{
+						["setting_name"] = "floating_ammo_source",
+						--["widget_type"] = "dropdown",
+						["widget_type"] = "stepper",
+						["text"] = "Source",
+						["tooltip"] = "Ammo Source\n" ..
+							"Switch source for the heal output.\n\n" ..
+							"-- OFF --\nNo messages will be posted.\n\n" ..
+							"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
+							"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+						["options"] = {
+							{text = "Me Only", value = 1},
+							{text = "All", value = 2},
+							{text = "Custom", value = 3},
+						},
+						["default_value"] = 2,
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_ammo_player_1",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_ammo_player_2",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_ammo_player_3",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "floating_ammo_player_4",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+						},
 					},
 				},
 			},
@@ -428,11 +580,15 @@ mod.players = {
 			local name = mod.strings.check({player._cached_name, mod.players.unit_name(player.player_name)}) or "N/A"
 			mod:update_setting_text("chat_player_"..tostring(i), name)
 			mod:update_setting_text("floating_numbers_player_"..tostring(i), name)
+			mod:update_setting_text("floating_heal_player_"..tostring(i), name)
+			mod:update_setting_text("floating_ammo_player_"..tostring(i), name)
 			i = i + 1
 		end
 		for j = i, 4 do
 			mod:update_setting_text("chat_player_"..tostring(j), "N/A")
 			mod:update_setting_text("floating_numbers_player_"..tostring(j), "N/A")
+			mod:update_setting_text("floating_heal_player_"..tostring(i), "N/A")
+			mod:update_setting_text("floating_ammo_player_"..tostring(i), "N/A")
 		end
 	end,
 	--[[
@@ -565,29 +721,29 @@ mod.floating = {
 	--[[
 		Show heal number
 	--]]
-	trigger_heal = function(self, unit, healed)
-		mod:add_unit(unit)
+	trigger_heal = function(self, attacker_unit, unit, healed)
+		--mod:add_unit(unit)
 		-- local color = {255, 56, 255, 56}
-		if mod:get("floating_numbers_source") == 1 then
-			self:local_player(unit, unit, false, healed.amount, healed, nil, "", false)
-		elseif mod:get("floating_numbers_source") == 2 then
-			self:all(unit, unit, false, healed.amount, healed, nil, "", false)
-		elseif mod:get("floating_numbers_source") == 3 then
-			self:custom(unit, unit, false, healed.amount, healed, nil, "", false)
+		if mod:get("floating_heal_source") == 1 then
+			self:local_player(attacker_unit, unit, false, healed.amount, healed, nil, "", false)
+		elseif mod:get("floating_heal_source") == 2 then
+			self:all(attacker_unit, unit, false, healed.amount, healed, nil, "", false)
+		elseif mod:get("floating_heal_source") == 3 then
+			self:custom(attacker_unit, unit, false, healed.amount, healed, nil, "", false)
 		end
 	end,
 	--[[
 		Show ammo number
 	--]]
-	trigger_ammo = function(self, unit, ammo)
-		mod:add_unit(unit)
+	trigger_ammo = function(self, attacker_unit, unit, ammo)
+		--mod:add_unit(unit)
 		-- local color = {255, 255, 255, 0}
-		if mod:get("floating_numbers_source") == 1 then
-			self:local_player(unit, unit, false, ammo.amount, nil, ammo, "", false)
-		elseif mod:get("floating_numbers_source") == 2 then
-			self:all(unit, unit, false, ammo.amount, nil, ammo, "", false)
-		elseif mod:get("floating_numbers_source") == 3 then
-			self:custom(unit, unit, false, ammo.amount, nil, ammo, "", false)
+		if mod:get("floating_ammo_source") == 1 then
+			self:local_player(attacker_unit, unit, false, ammo.amount, nil, ammo, "", false)
+		elseif mod:get("floating_ammo_source") == 2 then
+			self:all(attacker_unit, unit, false, ammo.amount, nil, ammo, "", false)
+		elseif mod:get("floating_ammo_source") == 3 then
+			self:custom(attacker_unit, unit, false, ammo.amount, nil, ammo, "", false)
 		end
 	end,
 	--[[
@@ -616,7 +772,13 @@ mod.floating = {
 			local players = player_manager:human_and_bot_players()				
 			local i = 1
 			for _, p in pairs(players) do
-				if mod:get("floating_numbers_player_"..tostring(i)) then
+				local setting = "floating_numbers_player_"..tostring(i)
+				if healed then
+					setting = "floating_heal_player_"..tostring(i)
+				elseif ammo then
+					setting = "floating_ammo_player_"..tostring(i)
+				end
+				if mod:get(setting) then
 					if attacker_unit == p.player_unit and (not self.corpses[unit]) then
 						
 						self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
@@ -641,6 +803,7 @@ mod.floating = {
 		--unit_dmg.position = Vector3Aux.box(nil, position)
 		unit_dmg.position = Vector3Aux.box(nil, Unit.world_position(unit, 0))
 		unit_dmg.damage = damage or 0
+		
 		local color = {255, 255, 255, 255}
 		if blocked then
 			color = {255, 127, 127, 127}
@@ -654,6 +817,7 @@ mod.floating = {
 			color = {255, 255, 255, 0}
 		end
 		unit_dmg.color = color
+		
 		unit_dmg.timer = mod:get_time()
 		unit_dmg.blocked = blocked
 		-- Movement
@@ -661,24 +825,32 @@ mod.floating = {
 		unit_dmg.vertical_random = math.random(self.vertical_min, self.vertical_max)
 		-- Fonts
 		local font_name, font_material, font_size = self:fonts(30)
-		if damage_type == "shot_sniper" then
-			--unit_dmg.icon = "ranged"
-		else
-			--unit_dmg.icon = "melee"
-		end		
+		-- if damage_type == "shot_sniper" then
+			-- --unit_dmg.icon = "ranged"
+		-- else
+			-- --unit_dmg.icon = "melee"
+		-- end		
 		if hit_zone_name == "head" or hit_zone_name == "neck" then
 			font_name, font_material, font_size = self:fonts(45)
-			unit_dmg.icon = "melee"
-		elseif healed or ammo then
-			font_name, font_material, font_size = self:fonts(60)
-			if ammo then
-				unit_dmg.icon = "ranged"
-			elseif healed then
-				unit_dmg.icon = "health"
+			if mod:get("floating_icons_headshot") then
+				unit_dmg.icon = "melee"
 			end
 		elseif blocked then
 			font_name, font_material, font_size = self:fonts(20)
-			unit_dmg.icon = "block"
+			if mod:get("floating_icons_block") then
+				unit_dmg.icon = "block"
+			end
+		elseif healed or ammo then
+			font_name, font_material, font_size = self:fonts(60)
+			if ammo then
+				if mod:get("floating_icons_ammo") then
+					unit_dmg.icon = "ranged"
+				end
+			elseif healed then
+				if mod:get("floating_icons_heal") then
+					unit_dmg.icon = "health"
+				end
+			end
 		end
 		unit_dmg.font_name = font_name
 		unit_dmg.font_material = font_material
@@ -698,25 +870,25 @@ mod.floating = {
 			local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
 			local damage_type = biggest_hit[DamageDataIndex.DAMAGE_TYPE]
 			local dead = parameters.death
-			local blocked = mod:blocked_hit(attacker_unit, unit, hit_zone_name) or damage_amount <= 0
+			local blocked = mod:blocked_hit(attacker_unit, unit, hit_zone_name) or damage_amount <= 0 and hit_zone_name ~= "" and hit_zone_name ~= "full"
 			local healed = parameters.healed
 			local ammo = parameters.ammo
 
 			--mod:echo("damage_type:'"..tostring(damage_type).."'")
 			
-			if healed then
+			if healed and mod:get("floating_heal") then
 				if mod.players:is_local_player(attacker_unit) then
-					self:trigger_heal(unit, healed)
+					self:trigger_heal(attacker_unit, unit, healed)
 				else
-					self:trigger_heal(attacker_unit, healed)
+					self:trigger_heal(attacker_unit, attacker_unit, healed)
 				end
 			end
 			
-			if ammo then
+			if ammo and mod:get("floating_ammo") then
 				if mod.players:is_local_player(attacker_unit) then
-					self:trigger_ammo(unit, ammo)
+					self:trigger_ammo(attacker_unit, unit, ammo)
 				else
-					self:trigger_ammo(attacker_unit, ammo)
+					self:trigger_ammo(attacker_unit, attacker_unit, ammo)
 				end
 			end
 			
@@ -731,7 +903,7 @@ mod.floating = {
 				-- color = {255, 127, 127, 127}
 			-- end
 			
-			if breed_data then
+			if breed_data and mod:get("floating_damage_numbers") then
 				if mod:get("floating_numbers_source") == 1 then
 					self:local_player(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, damage_type)
 				elseif mod:get("floating_numbers_source") == 2 then
@@ -742,7 +914,7 @@ mod.floating = {
 			end
 			
 			if dead then
-				self.corpses[unit] = true
+				--self.corpses[unit] = true
 				self.delete[unit] = unit
 			end
 		end
@@ -814,8 +986,8 @@ mod.floating = {
 											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
 											-- local width, height, min = ui_renderer:text_size(damage, unit_dmg.font_material, unit_dmg.font_size)
 											if unit_dmg.icon ~= "" then
-												local width = (48 * scale) 
-												local height = (48 * scale) 
+												local width = (64 * scale) 
+												local height = (64 * scale) 
 												local icon_offset = {0, 0}
 												local icon_size = Vector2(width, height)
 												
@@ -823,9 +995,9 @@ mod.floating = {
 													local min, max, caret = Gui.text_extents(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size)
 													local inv_scaling = RESOLUTION_LOOKUP.inv_scale
 													local t_width = (max.x - min.x)*inv_scaling
-													local t_height = (max.y - min.y)*inv_scaling
+													local t_height = ((max.y - min.y)*inv_scaling) * 0.75
 													icon_size = Vector2(t_height, t_height)
-													icon_offset = {t_width - t_height/2, 0}
+													icon_offset = {t_width, 0}
 												end
 												
 												--local icon_pos = Vector2(position2d[1]+offset_vis[1]+icon_offset[1], position2d[2]+offset_vis[2]+icon_offset[2]) --Vector3(position2d[1]+icon_offset[1], position2d[2]+icon_offset[2], 0)
