@@ -155,15 +155,31 @@ local options_widgets = {
 		["widget_type"] = "checkbox",
 		["text"] = "Floating Numbers",
 		["tooltip"] = "Floating Numbers\n" ..
-			"Switch floating numbers on / off.",
+			"Shows floating numbers for damage and certain buffs.",
 		["default_value"] = true,
 		["sub_widgets"] = {
 			{
+				["setting_name"] = "floating_numbers_size",
+				--["widget_type"] = "dropdown",
+				["widget_type"] = "stepper",
+				["text"] = "Size",
+				["tooltip"] = "Size\n" ..
+					"Set the preferred size for floating numbers / icons.",
+				["options"] = {
+					{text = "Very Small", value = 0.5},
+					{text = "Small", value = 0.75},
+					{text = "Default", value = 1},
+					{text = "Big", value = 1.25},
+					{text = "Very Big", value = 1.5},
+				},
+				["default_value"] = 1,
+			},
+			{
 				["setting_name"] = "floating_damage_numbers",
 				["widget_type"] = "checkbox",
-				["text"] = "Damage Numbers",
-				["tooltip"] = "Damage Numbers\n" ..
-					"Switch floating damage numbers on / off.",
+				["text"] = "Damage",
+				["tooltip"] = "Damage\n" ..
+					"Shows floating damage numbers.",
 				["default_value"] = true,
 				["sub_widgets"] = {
 					{
@@ -171,7 +187,7 @@ local options_widgets = {
 						["widget_type"] = "checkbox",
 						["text"] = "Headshot Icon",
 						["tooltip"] = "Headshot Icon\n" ..
-							"Switch floating headshot icons on / off.",
+							"Shows an icon on headshots.",
 						["default_value"] = true,
 					},
 					{
@@ -179,7 +195,7 @@ local options_widgets = {
 						["widget_type"] = "checkbox",
 						["text"] = "Block Icon",
 						["tooltip"] = "Block Icon\n" ..
-							"Switch floating block icons on / off.",
+							"Shows an icon when attacks are blocked.",
 						["default_value"] = true,
 					},
 					{
@@ -187,12 +203,11 @@ local options_widgets = {
 						--["widget_type"] = "dropdown",
 						["widget_type"] = "stepper",
 						["text"] = "Source",
-						["tooltip"] = "Show Player Damage Source\n" ..
-							"Switch source for the player damage output.\n\n" ..
-							"-- OFF --\nNo messages will be posted.\n\n" ..
-							"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
-							"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
-							"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+						["tooltip"] = "Source\n" ..
+							"Switch source for floating damage numbers.\n\n" ..
+							"-- ME ONLY --\nOnly show damage numbers for yourself.\n\n" ..
+							"-- ALL --\nShows damage numbers for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see damage numbers of.\n\n",
 						["options"] = {
 							{text = "Me Only", value = 1},
 							{text = "All", value = 2},
@@ -235,17 +250,17 @@ local options_widgets = {
 			{
 				["setting_name"] = "floating_heal",
 				["widget_type"] = "checkbox",
-				["text"] = "Heal Numbers",
-				["tooltip"] = "Heal Numbers\n" ..
-					"Switch floating heal numbers on / off.",
+				["text"] = "Bloodlust / Regrowth",
+				["tooltip"] = "Bloodlust / Regrowth\n" ..
+					"Shows floating heal numbers for bloodlust and regrowth.",
 				["default_value"] = true,
 				["sub_widgets"] = {
 					{
 						["setting_name"] = "floating_icons_heal",
 						["widget_type"] = "checkbox",
-						["text"] = "Heal Icon",
-						["tooltip"] = "Heal Icon\n" ..
-							"Switch floating heal icons on / off.",
+						["text"] = "Icon",
+						["tooltip"] = "Icon\n" ..
+							"Shows an icon when with the number.",
 						["default_value"] = true,
 					},
 					{
@@ -253,12 +268,11 @@ local options_widgets = {
 						--["widget_type"] = "dropdown",
 						["widget_type"] = "stepper",
 						["text"] = "Source",
-						["tooltip"] = "Heal Source\n" ..
-							"Switch source for the heal output.\n\n" ..
-							"-- OFF --\nNo messages will be posted.\n\n" ..
-							"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
-							"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
-							"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+						["tooltip"] = "Source\n" ..
+							"Switch source for floating heal numbers.\n\n" ..
+							"-- ME ONLY --\nOnly show heal numbers for yourself.\n\n" ..
+							"-- ALL --\nShows heal numbers for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see heal numbers of.\n\n",
 						["options"] = {
 							{text = "Me Only", value = 1},
 							{text = "All", value = 2},
@@ -301,17 +315,17 @@ local options_widgets = {
 			{
 				["setting_name"] = "floating_ammo",
 				["widget_type"] = "checkbox",
-				["text"] = "Ammo Numbers",
-				["tooltip"] = "Floating Ammo Numbers\n" ..
-					"Switch ammo numbers on / off.",
+				["text"] = "Scavenger",
+				["tooltip"] = "Scavenger\n" ..
+					"Shows floating heal numbers for scavenger.",
 				["default_value"] = true,
 				["sub_widgets"] = {
 					{
 						["setting_name"] = "floating_icons_ammo",
 						["widget_type"] = "checkbox",
-						["text"] = "Ammo Icon",
-						["tooltip"] = "Ammo Icon\n" ..
-							"Switch floating ammo icons on / off.",
+						["text"] = "Icon",
+						["tooltip"] = "Icon\n" ..
+							"Shows an icon when with the number.",
 						["default_value"] = true,
 					},
 					{
@@ -319,12 +333,11 @@ local options_widgets = {
 						--["widget_type"] = "dropdown",
 						["widget_type"] = "stepper",
 						["text"] = "Source",
-						["tooltip"] = "Ammo Source\n" ..
-							"Switch source for the heal output.\n\n" ..
-							"-- OFF --\nNo messages will be posted.\n\n" ..
-							"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
-							"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
-							"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+						["tooltip"] = "Source\n" ..
+							"Switch source for floating ammo numbers.\n\n" ..
+							"-- ME ONLY --\nOnly show ammo numbers for yourself.\n\n" ..
+							"-- ALL --\nShows ammo numbers for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see ammo numbers of.\n\n",
 						["options"] = {
 							{text = "Me Only", value = 1},
 							{text = "All", value = 2},
@@ -854,6 +867,7 @@ mod.floating = {
 		end
 		unit_dmg.font_name = font_name
 		unit_dmg.font_material = font_material
+		font_size = font_size * mod:get("floating_numbers_size")
 		unit_dmg.font_size = font_size
 		
 		return unit_dmg
@@ -986,8 +1000,8 @@ mod.floating = {
 											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
 											-- local width, height, min = ui_renderer:text_size(damage, unit_dmg.font_material, unit_dmg.font_size)
 											if unit_dmg.icon ~= "" then
-												local width = (64 * scale) 
-												local height = (64 * scale) 
+												local width = (64 * mod:get("floating_numbers_size")) * scale
+												local height = (64 * mod:get("floating_numbers_size")) * scale
 												local icon_offset = {0, 0}
 												local icon_size = Vector2(width, height)
 												
