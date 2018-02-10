@@ -3,12 +3,6 @@ local mod = get_mod("MoreRatWeapons")
 mod.packages = {
 	-- Default
 	{
-		-- Bases
-		es_base = "units/beings/player/empire_soldier/third_person_base/chr_third_person_variation_1_base",
-		ww_base = "units/beings/player/way_watcher/third_person_base/chr_third_person_variation_1_base",
-		dr_base = "units/beings/player/dwarf_ranger/third_person_base/chr_third_person_variation_1_base",
-		bw_base = "units/beings/player/bright_wizard/third_person_base/chr_third_person_variation_1_base",
-		wh_base = "units/beings/player/witch_hunter/third_person_base/chr_third_person_variation_1_base",
 		-- 2-handed weapons
 		mrw_2h_01 = "units/weapons/player/wpn_empire_2h_hammer_01_t1/wpn_2h_hammer_01_t1_3p",
 		mrw_2h_02 = "units/weapons/player/wpn_dw_2h_axe_01_t1/wpn_dw_2h_axe_01_t1_3p",
