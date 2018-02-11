@@ -16,130 +16,209 @@ local mod = get_mod("ShowDamage")
 local options_widgets = {
 	{
 		["setting_name"] = "chat_output",
-		--["widget_type"] = "stepper",
 		["widget_type"] = "checkbox",
 		["text"] = "Chat Output",
 		["tooltip"] = "Chat Output\n" ..
-			"Show damage information in chat.",
-		-- ["options"] = {
-			-- {text = "Off", value = false},
-			-- {text = "On", value = true},
-		-- },
+			"Show information in chat.",
 		["default_value"] = false,
 		["sub_widgets"] = {
 			{
-				["setting_name"] = "mode",
-				--["widget_type"] = "dropdown",
-				["widget_type"] = "stepper",
-				["text"] = "Mode",
-				["tooltip"] = "Mode\n" ..
-					"Switch mode for the player damage output.\n\n" ..
-					"-- DEFAULT --\nShows damage, hit zone and kill confirmation.\n\n" ..
-					"-- KILLS --\nShows the default message but only on kills.\n\n" ..
-					"-- SIMPLE KILLS --\nShows a simple message on a kill.",
-				["options"] = {
-					--{ text = Localize("vmf_text_core_off"), value = 1 },
-					{text = "Default", value = 2},
-					{text = "Kills", value = 3},
-					{text = "Simple Kills", value = 4},
-				},
-				["default_value"] = 2,
+				["setting_name"] = "chat_damage",
+				["widget_type"] = "checkbox",
+				["text"] = "Damage",
+				["tooltip"] = "Damage\n" ..
+					"Show damage information in chat.",
+				["default_value"] = false,
 				["sub_widgets"] = {
 					{
-						["show_widget_condition"] = {1, 2, 3},
-						["setting_name"] = "system_chat",
-						["widget_type"] = "stepper",
-						["text"] = "Use System Chat",
-						["tooltip"] = "Use System Chat\n" ..
-							"Uses the system chat instead of normal chat.",
+						["setting_name"] = "chat_mode",
+						["widget_type"] = "dropdown",
+						["text"] = "Mode",
+						["tooltip"] = "Mode\n" ..
+							"Switch mode for the player damage output.\n\n" ..
+							"-- DEFAULT --\nShows damage, hit zone and kill confirmation.\n\n" ..
+							"-- KILLS --\nShows the default message but only on kills.\n\n" ..
+							"-- SIMPLE KILLS --\nShows a simple message on a kill.",
 						["options"] = {
-							{text = "Off", value = false},
-							{text = "On", value = true},
+							{text = "Default", value = 2},
+							{text = "Kills", value = 3},
+							{text = "Simple Kills", value = 4},
 						},
-						["default_value"] = true,
-					},
-					{
-						["show_widget_condition"] = {1, 2},
-						["setting_name"] = "hit_zone",
-						["widget_type"] = "stepper",
-						["text"] = "Show Hit Zone",
-						["tooltip"] = "Show Hit Zone\n" ..
-							"Will show the hit zone in output.",
-						["options"] = {
-							{text = "Off", value = false},
-							{text = "On", value = true},
+						["default_value"] = 2,
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "chat_hit_zone",
+								["widget_type"] = "checkbox",
+								["text"] = "Hitzone",
+								["tooltip"] = "Hitzone\n" ..
+									"Will show the hitzone in chat output.",
+								["default_value"] = true,
+							},
+							{
+								["show_widget_condition"] = {1},
+								["setting_name"] = "chat_kill",
+								["widget_type"] = "checkbox",
+								["text"] = "Kill Indicator",
+								["tooltip"] = "Kill Indicator\n" ..
+									"Will show an indication in chat output if hit was a kill.",
+								["default_value"] = true,
+							},
+							{
+								["show_widget_condition"] = {1, 2, 3},
+								["setting_name"] = "chat_source",
+								["widget_type"] = "dropdown",
+								["text"] = "Source",
+								["tooltip"] = "Show Player Damage Source\n" ..
+									"Switch source for the player damage output.\n\n" ..
+									"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
+									"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
+									"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+								["options"] = {
+									{text = "Me Only", value = 1},
+									{text = "All", value = 2},
+									{text = "Custom", value = 3},
+								},
+								["default_value"] = 1,
+								["sub_widgets"] = {
+									{
+										["show_widget_condition"] = {3},
+										["setting_name"] = "chat_player_1",
+										["widget_type"] = "checkbox",
+										["text"] = "N/A",
+										["default_value"] = false,
+									},
+									{
+										["show_widget_condition"] = {3},
+										["setting_name"] = "chat_player_2",
+										["widget_type"] = "checkbox",
+										["text"] = "N/A",
+										["default_value"] = false,
+									},
+									{
+										["show_widget_condition"] = {3},
+										["setting_name"] = "chat_player_3",
+										["widget_type"] = "checkbox",
+										["text"] = "N/A",
+										["default_value"] = false,
+									},
+									{
+										["show_widget_condition"] = {3},
+										["setting_name"] = "chat_player_4",
+										["widget_type"] = "checkbox",
+										["text"] = "N/A",
+										["default_value"] = false,
+									},
+								},
+							},
 						},
-						["default_value"] = true,
 					},
+				},
+			},
+			{
+				["setting_name"] = "chat_heal",
+				["widget_type"] = "checkbox",
+				["text"] = "Bloodlust / Regrowth",
+				["tooltip"] = "Bloodlust / Regrowth\n" ..
+					"Shows heal numbers for bloodlust and regrowth in chat.",
+				["default_value"] = true,
+				["sub_widgets"] = {
 					{
-						["show_widget_condition"] = {1},
-						["setting_name"] = "kill",
-						["widget_type"] = "stepper",
-						["text"] = "Show Kill Indicator",
-						["tooltip"] = "Show Kill Indicator\n" ..
-							"Will show an indication in output if hit was a kill.",
-						["options"] = {
-							{text = "Off", value = false},
-							{text = "On", value = true},
-						},
-						["default_value"] = true,
-					},
-					{
-						["show_widget_condition"] = {1, 2, 3},
-						["setting_name"] = "send_chat",
-						["widget_type"] = "stepper",
-						["text"] = "Share to others",
-						["tooltip"] = "Share to others\n" ..
-							"Will send the damage messages to the chat for all to read.",
-						["options"] = {
-							{text = "Off", value = false},
-							{text = "On", value = true},
-						},
-						["default_value"] = false,
-					},
-					{
-						["show_widget_condition"] = {1, 2, 3},
-						["setting_name"] = "damage_source",
-						--["widget_type"] = "dropdown",
-						["widget_type"] = "stepper",
+						["setting_name"] = "chat_heal_source",
+						["widget_type"] = "dropdown",
 						["text"] = "Source",
-						["tooltip"] = "Show Player Damage Source\n" ..
-							"Switch source for the player damage output.\n\n" ..
-							"-- OFF --\nNo messages will be posted.\n\n" ..
-							"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
-							"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
-							"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+						["tooltip"] = "Source\n" ..
+							"Switch source for heal numbers in chat.\n\n" ..
+							"-- ME ONLY --\nOnly show heal numbers for yourself.\n\n" ..
+							"-- ALL --\nShows heal numbers for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see heal numbers of.\n\n",
 						["options"] = {
 							{text = "Me Only", value = 1},
 							{text = "All", value = 2},
 							{text = "Custom", value = 3},
 						},
-						["default_value"] = 1,
+						["default_value"] = 2,
 						["sub_widgets"] = {
 							{
 								["show_widget_condition"] = {3},
-								["setting_name"] = "chat_player_1",
+								["setting_name"] = "chat_heal_player_1",
 								["widget_type"] = "checkbox",
 								["text"] = "N/A",
 								["default_value"] = false,
 							},
 							{
 								["show_widget_condition"] = {3},
-								["setting_name"] = "chat_player_2",
+								["setting_name"] = "chat_heal_player_2",
 								["widget_type"] = "checkbox",
 								["text"] = "N/A",
 								["default_value"] = false,
 							},
 							{
 								["show_widget_condition"] = {3},
-								["setting_name"] = "chat_player_3",
+								["setting_name"] = "chat_heal_player_3",
 								["widget_type"] = "checkbox",
 								["text"] = "N/A",
 								["default_value"] = false,
 							},
 							{
 								["show_widget_condition"] = {3},
-								["setting_name"] = "chat_player_4",
+								["setting_name"] = "chat_heal_player_4",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+						},
+					},
+				},
+			},
+			{
+				["setting_name"] = "chat_ammo",
+				["widget_type"] = "checkbox",
+				["text"] = "Scavenger",
+				["tooltip"] = "Scavenger\n" ..
+					"Shows ammo numbers for scavenger in chat.",
+				["default_value"] = true,
+				["sub_widgets"] = {
+					{
+						["setting_name"] = "chat_ammo_source",
+						["widget_type"] = "dropdown",
+						["text"] = "Source",
+						["tooltip"] = "Source\n" ..
+							"Switch source for ammo numbers in chat.\n\n" ..
+							"-- ME ONLY --\nOnly show ammo numbers for yourself.\n\n" ..
+							"-- ALL --\nShows ammo numbers for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see ammo numbers of.\n\n",
+						["options"] = {
+							{text = "Me Only", value = 1},
+							{text = "All", value = 2},
+							{text = "Custom", value = 3},
+						},
+						["default_value"] = 2,
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_ammo_player_1",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_ammo_player_2",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_ammo_player_3",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_ammo_player_4",
 								["widget_type"] = "checkbox",
 								["text"] = "N/A",
 								["default_value"] = false,
@@ -160,8 +239,7 @@ local options_widgets = {
 		["sub_widgets"] = {
 			{
 				["setting_name"] = "floating_numbers_size",
-				--["widget_type"] = "dropdown",
-				["widget_type"] = "stepper",
+				["widget_type"] = "dropdown",
 				["text"] = "Size",
 				["tooltip"] = "Size\n" ..
 					"Set the preferred size for floating numbers / icons.",
@@ -200,8 +278,7 @@ local options_widgets = {
 					},
 					{
 						["setting_name"] = "floating_numbers_source",
-						--["widget_type"] = "dropdown",
-						["widget_type"] = "stepper",
+						["widget_type"] = "dropdown",
 						["text"] = "Source",
 						["tooltip"] = "Source\n" ..
 							"Switch source for floating damage numbers.\n\n" ..
@@ -265,8 +342,7 @@ local options_widgets = {
 					},
 					{
 						["setting_name"] = "floating_heal_source",
-						--["widget_type"] = "dropdown",
-						["widget_type"] = "stepper",
+						["widget_type"] = "dropdown",
 						["text"] = "Source",
 						["tooltip"] = "Source\n" ..
 							"Switch source for floating heal numbers.\n\n" ..
@@ -317,7 +393,7 @@ local options_widgets = {
 				["widget_type"] = "checkbox",
 				["text"] = "Scavenger",
 				["tooltip"] = "Scavenger\n" ..
-					"Shows floating heal numbers for scavenger.",
+					"Shows floating ammo numbers for scavenger.",
 				["default_value"] = true,
 				["sub_widgets"] = {
 					{
@@ -330,8 +406,7 @@ local options_widgets = {
 					},
 					{
 						["setting_name"] = "floating_ammo_source",
-						--["widget_type"] = "dropdown",
-						["widget_type"] = "stepper",
+						["widget_type"] = "dropdown",
 						["text"] = "Source",
 						["tooltip"] = "Source\n" ..
 							"Switch source for floating ammo numbers.\n\n" ..
@@ -438,10 +513,10 @@ end
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
 mod.t = 0
-mod.chat = {
-	units = {},
-	NAME_LENGTH = 20,
-}
+-- mod.chat = {
+	-- units = {},
+	-- NAME_LENGTH = 20,
+-- }
 mod.enemies = {
 	specials = {
 		"skaven_storm_vermin",
@@ -517,6 +592,9 @@ mod.add_unit = function(self, unit)
 			-- mod.chat.units[unit] = unit
 		-- end
 	-- end
+	if not self.chat:has_unit(unit) then
+		self.chat.units[unit] = unit
+	end
 	if not self.floating:has_unit(unit) then
 		self.floating.units[unit] = {}
 	end
@@ -1041,6 +1119,192 @@ mod.floating = {
 	end,
 }
 
+-- #####  ██████╗██╗  ██╗ █████╗ ████████╗ ############################################################################
+-- ##### ██╔════╝██║  ██║██╔══██╗╚══██╔══╝ ############################################################################
+-- ##### ██║     ███████║███████║   ██║    ############################################################################
+-- ##### ██║     ██╔══██║██╔══██║   ██║    ############################################################################
+-- ##### ╚██████╗██║  ██║██║  ██║   ██║    ############################################################################
+-- #####  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ############################################################################
+mod.chat = {
+	units = {},
+	NAME_LENGTH = 20,
+	--[[
+		Post healed message
+	--]]
+	trigger_heal = function(self, attacker_unit, healed)
+		if mod:get("chat_heal_source") == 1 then
+			self:local_player(attacker_unit, nil, nil, false, nil, healed)
+		elseif mod:get("chat_heal_source") == 2 then
+			self:all(attacker_unit, nil, nil, false, nil, healed)
+		elseif mod:get("chat_heal_source") == 3 then
+			self:custom(attacker_unit, nil, nil, false, nil, healed)
+		end
+	end,
+	--[[
+		Post ammo message
+	--]]
+	trigger_ammo = function(self, attacker_unit, ammo)
+		if mod:get("chat_ammo_source") == 1 then
+			self:local_player(attacker_unit, nil, nil, false, nil, nil, ammo)
+		elseif mod:get("chat_ammo_source") == 2 then
+			self:all(attacker_unit, nil, nil, false, nil, nil, ammo)
+		elseif mod:get("chat_ammo_source") == 3 then
+			self:custom(attacker_unit, nil, nil, false, nil, nil, ammo)
+		end
+	end,
+	--[[
+		Handle a hit reaction chat output
+	--]]
+	handle = function(self, unit, biggest_hit, parameters)
+		--if mod:get("chat_mode") > 1 and table.has_item2(mod.chat.units, unit) then
+		if mod:get("chat_output") and self:has_unit(unit) then
+
+			-- Get data
+			local breed_data = Unit.get_data(unit, "breed")
+			local attacker_unit = biggest_hit[DamageDataIndex.ATTACKER]
+			local damage_amount = biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
+			local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
+			local unit_is_dead = parameters.death
+			local healed = parameters.healed
+			local ammo = parameters.ammo
+			
+			-- Post option specific message
+			if mod:get("chat_mode") == 4 then
+				hit_zone_name = nil
+			end
+			
+			if healed and mod:get("chat_heal") then
+				self:trigger_heal(attacker_unit, healed)
+			end
+			if ammo and mod:get("chat_ammo") then
+				self:trigger_ammo(attacker_unit, ammo)
+			end
+			
+			if breed_data and mod:get("chat_damage") then
+				if mod:get("chat_source") == 1 and (mod:get("chat_mode") == 2 or unit_is_dead) then
+					self:local_player(attacker_unit, damage_amount, hit_zone_name, unit_is_dead, breed_data.name)
+				elseif mod:get("chat_source") == 2 and (mod:get("chat_mode") == 2 or unit_is_dead) then
+					self:all(attacker_unit, damage_amount, hit_zone_name, unit_is_dead, breed_data.name)
+				elseif mod:get("chat_source") == 3 and (mod:get("chat_mode") == 2 or unit_is_dead) then
+					self:custom(attacker_unit, damage_amount, hit_zone_name, unit_is_dead, breed_data.name)
+				end
+			end
+			
+			-- If unit dead remove from system
+			if unit_is_dead then
+				--self.units[unit] = nil
+			end
+
+		end
+	end,
+	--[[
+		Check if unit present in floating numbers system
+	--]]
+	has_unit = function(self, unit)
+		return self.units[unit] ~= nil
+	end,
+	--[[
+		Post message for local player
+	--]]
+	local_player = function(self, attacker_unit, damage_amount, hit_zone, dead, breed, healed, ammo)
+		local local_player = Managers.player:local_player()
+		if attacker_unit == local_player.player_unit then
+			local name = mod.strings.check({local_player._cached_name, mod.players.unit_name(local_player.player_name)})
+			self:post(name, damage_amount, hit_zone, dead, breed, healed, ammo)
+		end
+	end,
+	--[[
+		Post message for every player
+	--]]
+	all = function(self, attacker_unit, damage_amount, hit_zone, dead, breed, healed, ammo)
+		if mod.players.is_player_unit(attacker_unit) then
+			local player = mod.players.from_player_unit(attacker_unit)
+			local name = mod.strings.check({player._cached_name, mod.players.unit_name(player.player_name)})
+			self:post(name, damage_amount, hit_zone, dead, breed, healed, ammo)
+		end
+	end,
+	--[[
+		Post message for custom chosen player
+	--]]
+	custom = function(self, attacker_unit, damage_amount, hit_zone, dead, breed, healed, ammo)
+		if mod.players.is_player_unit(attacker_unit) then			
+			local player_manager = Managers.player
+			local players = player_manager:human_and_bot_players()				
+			local player = mod.players.from_player_unit(attacker_unit)
+			local name = mod.strings.check({player._cached_name, mod.players.unit_name(player.player_name)})
+			local i = 1
+			for _, p in pairs(players) do
+				if mod:get("chat_player_"..tostring(i)) then
+					if attacker_unit == p.player_unit then
+						self:post(name, damage_amount, hit_zone, dead, breed, healed, ammo)
+					end
+				end
+				i = i + 1
+			end
+		end
+	end,
+	--[[
+		Generic post message
+	--]]
+	post = function(self, name, damage, hit_zone, dead, breed, healed, ammo)
+		-- local onlysend = false
+		local breed_name = mod.enemies.breed_names[breed]
+		local hit_zone_name = mod.enemies.hit_zones[hit_zone]
+		--local message = string.format("%s %i dmg", name, damage)
+		local message = string.format("%s", name)
+		
+		-- Hit / Kill
+		if dead then
+			message = string.format("%s killed", message)
+		elseif damage then
+			message = string.format("%s hit", message)
+		end
+		
+		-- Damage
+		if damage ~= nil then
+			message = string.format("%s ( %i )", message, damage)
+		end
+		
+		-- Breed
+		if breed_name ~= nil then
+			--if table.has_item2(mod.enemies.specials, breed) then
+			if table.contains(mod.enemies.specials, breed) then
+				message = string.format("%s a ~ %s ~", message, breed_name)
+			else
+				message = string.format("%s a %s", message, breed_name)
+			end
+		elseif damage then
+			message = string.format("%s an enemy", message)
+		end
+		
+		-- Add hitzone
+		if mod:get("chat_hit_zone") and hit_zone_name ~= nil then		
+			message = string.format("%s ( %s )", message, hit_zone_name)
+		end
+		
+		-- Add kill indicator
+		if mod:get("chat_kill") and dead then
+			message = string.format("%s ( Kill )", message)
+		end
+		
+		if healed then
+			message = string.format("%s restored %i health", message, healed.amount)
+		end
+		
+		if ammo then
+			message = string.format("%s retrieved %i ammo", message, ammo.amount)
+		end
+		
+		-- -- Try console output
+		-- if mod.console.post(name, damage, hit_zone_name, dead, breed) then
+			-- onlysend = true
+		-- end
+		
+		-- mod.chat.send(message, onlysend)
+		mod:echo(message)
+	end,
+}
+
 -- ##### ██████╗ ██╗   ██╗███████╗███████╗███████╗ ####################################################################
 -- ##### ██╔══██╗██║   ██║██╔════╝██╔════╝██╔════╝ ####################################################################
 -- ##### ██████╔╝██║   ██║█████╗  █████╗  ███████╗ ####################################################################
@@ -1062,6 +1326,8 @@ mod:hook("DamageUtils.buff_on_attack", function(func, unit, hit_unit, ...)
 			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
 			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
 			mod.floating:handle(hit_unit, biggest_hit, {healed = {amount = amount}})
+			mod.chat:handle(hit_unit, biggest_hit, {healed = {amount = amount}})
+			--mod.chat:trigger_heal(unit, {healed = {amount = amount}})
 		end
 		return amount, procced, parent_id
 	end
@@ -1088,6 +1354,8 @@ local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blo
 			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
 			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
 			mod.floating:handle(unit, biggest_hit, {healed = {amount = amount}})
+			mod.chat:handle(unit, biggest_hit, {healed = {amount = amount}})
+			--mod.chat:trigger_heal(killing_blow[DamageDataIndex.ATTACKER], {healed = {amount = amount}})
 		end
 		
 		return amount, procced, parent_id
@@ -1102,6 +1370,8 @@ local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blo
 			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
 			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
 			mod.floating:handle(unit, biggest_hit, {ammo = {amount = amount}})
+			mod.chat:handle(unit, biggest_hit, {ammo = {amount = amount}})
+			--mod.chat:trigger_ammo(killing_blow[DamageDataIndex.ATTACKER], {ammo = {amount = amount}})
 		end
 		
 		return func_add_ammo_to_reserve(self, amount)
@@ -1115,6 +1385,7 @@ local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blo
 	GenericAmmoUserExtension.add_ammo_to_reserve = func_add_ammo_to_reserve
 	
 	mod.floating.corpses[unit] = true
+	mod.chat.units[unit] = nil
 
 	return return_val_1, return_val_2
 end
@@ -1160,7 +1431,13 @@ mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, uni
 	func(self, unit, effect_template, biggest_hit, parameters)
 	
 	-- Chat output
-	--mod.chat.handle(self, unit, biggest_hit, parameters)
+	if not mod:is_suspended() then
+		mod.chat:handle(unit, biggest_hit, parameters)
+	else
+		if parameters.death then
+			mod.chat.units[unit] = nil
+		end
+	end
 	
 	-- Floating numbers
 	if not mod:is_suspended() then
@@ -1168,7 +1445,7 @@ mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, uni
 	else
 		if parameters.death then
 			mod.floating.corpses[unit] = true
-			mod.floating.delete[unit] = unit
+			--mod.floating.delete[unit] = unit
 		end
 	end
 
