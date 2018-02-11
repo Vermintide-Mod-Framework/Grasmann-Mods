@@ -20,7 +20,7 @@ local mod = get_mod("ThirdPerson")
 local options_widgets = {
 	{
 		["setting_name"] = "side",
-		["widget_type"] = "stepper",
+		["widget_type"] = "dropdown",
 		["text"] = "Side",
 		["tooltip"] = "Third Person Side\n" ..
 			"Choose if the camera is to left or right of your character.",
@@ -32,24 +32,17 @@ local options_widgets = {
 	},
 	{
 		["setting_name"] = "offset",
-		--["widget_type"] = "slider",
-		["widget_type"] = "stepper",
+		["widget_type"] = "numeric",
 		["text"] = "Offset",
+		["unit_text"] = "",
 		["tooltip"] = "Third Person Offset\n" ..
 			"Change the distance between the camera and the character.",
-		--["range"] = {50, 400},
-		["options"] = {
-			{text = "Default", value = 100},
-			{text = "Medium", value = 200},
-			{text = "Far", value = 300},
-			{text = "Very Far", value = 400},
-		},
+		["range"] = {50, 400},
 		["default_value"] = 100,
 	},
 	{
 		["setting_name"] = "zoom",
-		--["widget_type"] = "dropdown",
-		["widget_type"] = "stepper",
+		["widget_type"] = "dropdown",
 		["text"] = "Zoom",
 		["tooltip"] = "Third Person Zoom\n" ..
 			"Change the zoom strength for third person.",
@@ -77,7 +70,7 @@ local options_widgets = {
 					"Apply zoom changes to first person zoom.",
 				["default_value"] = false,
 			},
-		}
+		},
 	},
 	{
 		["setting_name"] = "reload_stop_when_finished",
@@ -104,34 +97,34 @@ local options_widgets = {
 	{
 	  ["setting_name"] = "toggle_suspension",
 	  ["widget_type"] = "keybind",
-	  ["text"] = "Toggle Third Person",
+	  ["text"] = "Toggle",
 	  ["tooltip"] = "Toggle third person on / off.",
 	  ["default_value"] = {},
 	  ["action"] = "toggle_suspension"
 	},
 	{
-	  ["setting_name"] = "toggle_side",
-	  ["widget_type"] = "keybind",
-	  ["text"] = "Toggle Side",
-	  ["tooltip"] = "Toggle side left / right.",
-	  ["default_value"] = {},
-	  ["action"] = "toggle_side"
+		["setting_name"] = "toggle_side",
+		["widget_type"] = "keybind",
+		["text"] = "Toggle Side",
+		["tooltip"] = "Toggle side left / right.",
+		["default_value"] = {},
+		["action"] = "toggle_side"
 	},
 	{
-	  ["setting_name"] = "switch_offset",
-	  ["widget_type"] = "keybind",
-	  ["text"] = "Switch Offset",
-	  ["tooltip"] = "Switch camera offset.",
-	  ["default_value"] = {},
-	  ["action"] = "switch_offset"
+		["setting_name"] = "switch_offset",
+		["widget_type"] = "keybind",
+		["text"] = "Switch Offset",
+		["tooltip"] = "Switch camera offset.",
+		["default_value"] = {},
+		["action"] = "switch_offset"
 	},
 	{
-	  ["setting_name"] = "switch_zoom",
-	  ["widget_type"] = "keybind",
-	  ["text"] = "Switch Zoom",
-	  ["tooltip"] = "Switch camera zoom.",
-	  ["default_value"] = {},
-	  ["action"] = "switch_zoom"
+		["setting_name"] = "switch_zoom",
+		["widget_type"] = "keybind",
+		["text"] = "Switch Zoom",
+		["tooltip"] = "Switch camera zoom.",
+		["default_value"] = {},
+		["action"] = "switch_zoom"
 	},
 }
 
