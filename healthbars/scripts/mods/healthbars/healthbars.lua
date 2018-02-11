@@ -16,7 +16,7 @@ local mod = get_mod("Healthbars")
 local options_widgets = {
 	{
 		["setting_name"] = "position",
-		["widget_type"] = "stepper",
+		["widget_type"] = "dropdown",
 		["text"] = "Position",
 		["tooltip"] = "Position",
 			 "Switch position of the enemy health bars.",
@@ -28,14 +28,10 @@ local options_widgets = {
 	},
 	{
 		["setting_name"] = "mode",
-		--["widget_type"] = "dropdown",
-		["widget_type"] = "stepper",
+		["widget_type"] = "dropdown",
 		["text"] = "Mode",
 		["tooltip"] = "Mode",
 			"Switch mode for the enemy health bars.",
-			"",
-			"-- OFF --",
-			"No health bars will be created.",
 			"",
 			"-- All --",
 			"Create health bars for all wounded enemies.",
@@ -49,14 +45,22 @@ local options_widgets = {
 			"-- CUSTOM --",
 			"Choose which enemies should have a health bar.",
 		["options"] = {
-			--{text = Localize("vmf_text_core_off"), value = 1},
-			{text = "All", value = 2},
-			{text = "Specials", value = 3}, 
-			{text = "Ogre", value = 4},
-			{text = "Custom", value = 5},
+			{--[[1]] text = "All", value = 2},
+			{--[[2]] text = "Specials", value = 3}, 
+			{--[[3]] text = "Ogre", value = 4},
+			{--[[4]] text = "Custom", value = 5},
 		},
 		["default_value"] = 2,
 		["sub_widgets"] = {
+			{
+				["show_widget_condition"] = {1, 2, 3, 4},
+				["setting_name"] = "toggle_mode",
+				["widget_type"] = "keybind",
+				["text"] = "Switch",
+				["tooltip"] = "Switch healthbar mode.",
+				["default_value"] = {},
+				["action"] = "toggle_mode"
+			},
 			{
 				["show_widget_condition"] = {4},
 				["setting_name"] = "slave_rat",
@@ -130,12 +134,12 @@ local options_widgets = {
 		},
 	},
 	{
-	  ["setting_name"] = "toggle_mode",
-	  ["widget_type"] = "keybind",
-	  ["text"] = "Toggle Mode",
-	  ["tooltip"] = "Toggle healthbar mode.",
-	  ["default_value"] = {},
-	  ["action"] = "toggle_mode"
+		["setting_name"] = "toggle_suspension",
+		["widget_type"] = "keybind",
+		["text"] = "Toggle",
+		["tooltip"] = "Toggle healthbars on / off.",
+		["default_value"] = {},
+		["action"] = "toggle_suspension"
 	},
 }
 
