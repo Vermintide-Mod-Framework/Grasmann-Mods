@@ -34,85 +34,58 @@ more_rat_weapons_loaded_packages = more_rat_weapons_loaded_packages or {}
 local options_widgets = {
 	{
 		["setting_name"] = "slave_shield_chance",
-		--["widget_type"] = "slider",
-		["widget_type"] = "stepper",
+		["widget_type"] = "numeric",
 		["text"] = "Slave Rat Shield Chance",
-		["tooltip"] =  "Slave Rate Shield Chance [Server]\n" ..
+		["unit_text"] = "%",
+		["tooltip"] =  "Slave Rate Shield Chance\n" ..
 			"Set the chance for slave rats to have shields.",
-		--["range"] = {0, 100},
-		["options"] = {
-			{text = "Off", value = 0},
-			{text = "Few", value = 25},
-			{text = "Medium", value = 50},
-			{text = "Many", value = 75},
-			{text = "All", value = 100},
-		},
+		["range"] = {0, 100},
+		["decimals_number"] = 0,
 		["default_value"] = 25,
 	},
 	{
 		["setting_name"] = "clan_shield_chance",
-		--["widget_type"] = "slider",
-		["widget_type"] = "stepper",
+		["widget_type"] = "numeric",
 		["text"] = "Clan Rat Shield Chance",
-		["tooltip"] =  "Clan Rat Shield Chance [Server]\n" ..
+		["unit_text"] = "%",
+		["tooltip"] =  "Clan Rat Shield Chance\n" ..
 			"Set the chance for clan rats to have shields.",
-		--["range"] = {0, 100},
-		["options"] = {
-			{text = "Off", value = 0},
-			{text = "Few", value = 25},
-			{text = "Medium", value = 50},
-			{text = "Many", value = 75},
-			{text = "All", value = 100},
-		},
+		["range"] = {0, 100},
+		["decimals_number"] = 0,
 		["default_value"] = 25,
 	},
 	{
 		["setting_name"] = "storm_shield_chance",
-		--["widget_type"] = "slider",
-		["widget_type"] = "stepper",
+		["widget_type"] = "numeric",
 		["text"] = "Stormvermin Shield Chance",
-		["tooltip"] =  "Stormvermin Shield Chance [Server]\n" ..
+		["unit_text"] = "%",
+		["tooltip"] =  "Stormvermin Shield Chance\n" ..
 			"Set the chance for stormvermin to have shields.",
-		--["range"] = {0, 100},
-		["options"] = {
-			{text = "Off", value = 0},
-			{text = "Few", value = 25},
-			{text = "Medium", value = 50},
-			{text = "Many", value = 75},
-			{text = "All", value = 100},
-		},
+		["range"] = {0, 100},
+		["decimals_number"] = 0,
 		["default_value"] = 25,
 	},
 	{
 		["setting_name"] = "remove_running_attacks",
-		["widget_type"] = "stepper",
+		["widget_type"] = "checkbox",
 		["text"] = "Remove Running Attacks",
-		["tooltip"] =  "Remove Running Attacks [Server]\n" ..
+		["tooltip"] =  "Remove Running Attacks\n" ..
 			"Removes the running attacks from rats that still have their shield.",
-		["options"] = {
-			{text = "Off", value = false},
-			{text = "On", value = true},
-		},
 		["default_value"] = true,
 	},
 	{
 		["setting_name"] = "shield_mechanics",
-		["widget_type"] = "stepper",
+		["widget_type"] = "checkbox",
 		["text"] = "Shield Mechanics",
-		["tooltip"] =  "Shields Mechanics [Server]\n" ..
+		["tooltip"] =  "Shields Mechanics\n" ..
 			"Rats can block attacks with their shields.",
-		["options"] = {
-			{text = "Off", value = false},
-			{text = "On", value = true},
-		},
 		["default_value"] = false,
 		["sub_widgets"] = {
 			{
-				["show_widget_condition"] = {2},
 				["setting_name"] = "shield_type",
-				["widget_type"] = "stepper",
+				["widget_type"] = "dropdown",
 				["text"] = "Shields Type",
-				["tooltip"] =  "Shields Type [Server]\n" ..
+				["tooltip"] =  "Shields Type\n" ..
 					"Choose how the shields are implemented.\n\n" ..
 					"--- Health ---\n" ..
 					"Shields have a certain health depending on the difficulty\n\n" ..
@@ -128,93 +101,59 @@ local options_widgets = {
 				["default_value"] = 1,
 			},
 			{
-				["show_widget_condition"] = {2},
 				["setting_name"] = "play_comments",
-				["widget_type"] = "stepper",
+				["widget_type"] = "checkbox",
 				["text"] = "Play Armour Comments",
-				["tooltip"] =  "Play Armour Comments [Server]\n" ..
+				["tooltip"] =  "Play Armour Comments\n" ..
 					"Triggers comments about hitting armour on shield hits.",
-				["options"] = {
-					{text = "Off", value = false},
-					{text = "On", value = true},
-				},
 				["default_value"] = true,
 				["sub_widgets"] = {
 					{
-						["show_widget_condition"] = {2},
 						["setting_name"] = "comment_pause",
-						--["widget_type"] = "slider",
-						["widget_type"] = "stepper",
+						["widget_type"] = "numeric",
 						["text"] = "Pause Between Comments",
-						["tooltip"] =  "Pause Between Comments [Server]\n" ..
+						["unit_text"] = "sec",
+						["tooltip"] =  "Pause Between Comments\n" ..
 							"Seconds between armour comments.",
-						--["range"] = {10, 120},
-						["options"] = {
-							{text = "Very Short", value = 10},
-							{text = "Short", value = 30},
-							{text = "Medium", value = 60},
-							{text = "Long", value = 90},
-							{text = "Very Long", value = 120},
-						},
+						["range"] = {10, 120},
+						["decimals_number"] = 0,
 						["default_value"] = 30,
 					},
 					{
-						["show_widget_condition"] = {2},
 						["setting_name"] = "comment_distance",
-						--["widget_type"] = "slider",
-						["widget_type"] = "stepper",
+						["widget_type"] = "numeric",
 						["text"] = "Comment Distance",
-						["tooltip"] =  "Comment Distance [Server]\n" ..
+						["unit_text"] = "units",
+						["tooltip"] =  "Comment Distance\n" ..
 							"The maximum distance another hero can be away to comment.",
-						--["range"] = {3, 30},
-						["options"] = {
-							{text = "Very Close", value = 3},
-							{text = "Close", value = 8},
-							{text = "Medium", value = 16},
-							{text = "Far", value = 24},
-							{text = "Very Far", value = 30},
-						},
+						["range"] = {3, 30},
+						["decimals_number"] = 0,
 						["default_value"] = 10,
 					},
 				},
 			},
 			{
-				["show_widget_condition"] = {2},
 				["setting_name"] = "play_particle_effects",
-				["widget_type"] = "stepper",
+				["widget_type"] = "checkbox",
 				["text"] = "Play Particle Effects",
 				["tooltip"] =  "Play Particle Effects\n" ..
 					"Triggers particle effects on shield hits.",
-				["options"] = {
-					{text = "Off", value = false},
-					{text = "On", value = true},
-				},
 				["default_value"] = true,
 			},
 			{
-				["show_widget_condition"] = {2},
 				["setting_name"] = "play_shield_sounds",
-				["widget_type"] = "stepper",
+				["widget_type"] = "checkbox",
 				["text"] = "Play Shield Sounds",
-				["tooltip"] =  "Play Shield Sounds [Server]\n" ..
+				["tooltip"] =  "Play Shield Sounds\n" ..
 					"Triggers sound effects on shield hits.",
-				["options"] = {
-					{text = "Off", value = false},
-					{text = "On", value = true},
-				},
 				["default_value"] = true,
 			},
 			{
-				["show_widget_condition"] = {2},
 				["setting_name"] = "drop_shields",
-				["widget_type"] = "stepper",
+				["widget_type"] = "checkbox",
 				["text"] = "Physically Drop Shields",
 				["tooltip"] =  "Physically Drop Shields\n" ..
 					"Physically drop shields after the health is empty.",
-				["options"] = {
-					{text = "Off", value = false},
-					{text = "On", value = true},
-				},
 				["default_value"] = true,
 			},
 		},
@@ -418,7 +357,7 @@ mod.play_shield_particle = function(self, unit, damage_direction)
 		local unit_id = network_manager.unit_game_object_id(network_manager, unit)
 		-- Local
 		local local_player = Managers.player:local_player()
-		mod:execute_particle_effect(unit_id)
+		self:execute_particle_effect(unit_id)
 		-- Network
 		for _, player in pairs(players) do
 			if player ~= local_player then
@@ -456,7 +395,7 @@ mod.drop_shield = function(self, unit, damage_direction)
 			local direction = {damage_direction[1], damage_direction[2], damage_direction[3]}
 			-- Local
 			local local_player = Managers.player:local_player()
-			mod:execute_drop_shield(unit_id, direction)
+			self:execute_drop_shield(unit_id, direction)
 			-- Network
 			for _, player in pairs(players) do
 				if player ~= local_player then
@@ -524,7 +463,7 @@ mod.players_near_unit = function(self, unit)
 		if player and player.player_unit and Unit.alive(player.player_unit) then
 			local position = Unit.world_position(player.player_unit, 0)
 			local distance = Vector3.distance(event_pos, position)
-			local max_distance = mod:get("comment_distance")
+			local max_distance = self:get("comment_distance")
 			if distance <= max_distance and player.player_unit ~= unit then
 				players_near[#players_near+1] = player
 			end
@@ -547,7 +486,7 @@ end
 --]]
 mod.play_dialogue = function(self, player, t)
 	-- Check dialogue time
-	local pause = mod:get("comment_pause")
+	local pause = self:get("comment_pause")
 	if player.player_unit and self.dialogue.t + pause < t then
 		local profile_synchronizer = Managers.state.network.profile_synchronizer
 		local entity_manager = Managers.state.entity
@@ -561,7 +500,7 @@ mod.play_dialogue = function(self, player, t)
 			
 			if other_player and other_player.player_unit and ScriptUnit.has_extension(other_player.player_unit, "dialogue_system") then
 				-- Try to let dialog mod play the dialog
-				if mod:dialog_mod_installed() then
+				if self:dialog_mod_installed() then
 					local other_profile_index = profile_synchronizer:profile_by_peer(other_player:network_id(), other_player:local_player_id())
 					local other_profile_name = SPProfiles[other_profile_index].unit_name
 					local dialogue_name = self.dialogue.armor[other_profile_name][profile_name]
@@ -687,8 +626,6 @@ mod:hook("DamageUtils.server_apply_hit", function(func, t, attack_template, atta
 										inventory_extension.shield_health = inventory_extension.shield_health - 1
 										
 									end
-									
-									--mod:show_damage_event(hit_unit, shield_damage, hit_zone_name)
 									
 									if piercing > 0 then
 										attack_damage_value_type = {0, piercing / 2, 0, 0}
@@ -1055,7 +992,7 @@ mod.load_packages = function(self)
 	local reference = "MoreRatWeapons"
 	local active = self:get("use_player_weapons") or false
 	local setting = self:get("player_weapons_count") or 1
-	if mod:is_suspended() then setting = 0 end
+	if self:is_suspended() then setting = 0 end
 	for i = 1, #self.packages do
 		if i <= setting and active then
 			for _, name in pairs(self.packages[i]) do
@@ -1134,7 +1071,7 @@ mod.init_enemy_unit = function(self, go_id)
 			if inv_template == "sword_and_shield" and not inventory_extension.was_changed then
 			
 				-- Set inventory
-				mod_config = mod.shield_data.inventory_config[breed.name]
+				mod_config = self.shield_data.inventory_config[breed.name]
 				--mod_config = "test"
 				inventory_extension:set_inventory(mod_config)
 				inventory_extension.was_changed = true
@@ -1143,9 +1080,9 @@ mod.init_enemy_unit = function(self, go_id)
 				
 				-- Set Health
 				local diff = Managers.state.difficulty:get_difficulty_rank()
-				if mod:get("shield_type") == 1 then
-					inventory_extension.shield_health = mod.shield_data.health[diff]
-				elseif mod:get("shield_type") == 2 then
+				if self:get("shield_type") == 1 then
+					inventory_extension.shield_health = self.shield_data.health[diff]
+				elseif self:get("shield_type") == 2 then
 					inventory_extension.shield_health = 3
 				else
 					inventory_extension.shield_health = 1
