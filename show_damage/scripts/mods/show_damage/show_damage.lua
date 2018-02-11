@@ -31,6 +31,52 @@ local options_widgets = {
 				["default_value"] = false,
 				["sub_widgets"] = {
 					{
+						["setting_name"] = "chat_damage_source",
+						["widget_type"] = "dropdown",
+						["text"] = "Source",
+						["tooltip"] = "Show Player Damage Source\n" ..
+							"Switch source for the player damage output.\n\n" ..
+							"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
+							"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
+							"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
+						["options"] = {
+							{text = "Me Only", value = 1},
+							{text = "All", value = 2},
+							{text = "Custom", value = 3},
+						},
+						["default_value"] = 1,
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_damage_player_1",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_damage_player_2",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_damage_player_3",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+							{
+								["show_widget_condition"] = {3},
+								["setting_name"] = "chat_damage_player_4",
+								["widget_type"] = "checkbox",
+								["text"] = "N/A",
+								["default_value"] = false,
+							},
+						},
+					},
+					{
 						["setting_name"] = "chat_mode",
 						["widget_type"] = "dropdown",
 						["text"] = "Mode",
@@ -63,53 +109,6 @@ local options_widgets = {
 								["tooltip"] = "Kill Indicator\n" ..
 									"Will show an indication in chat output if hit was a kill.",
 								["default_value"] = true,
-							},
-							{
-								["show_widget_condition"] = {1, 2, 3},
-								["setting_name"] = "chat_source",
-								["widget_type"] = "dropdown",
-								["text"] = "Source",
-								["tooltip"] = "Show Player Damage Source\n" ..
-									"Switch source for the player damage output.\n\n" ..
-									"-- ME ONLY --\nOnly show damage messages for yourself.\n\n" ..
-									"-- ALL --\nShows damage messages for all players, including bots.\n\n" ..
-									"-- CUSTOM --\nChoose the players you want to see damage messages of.\n\n",
-								["options"] = {
-									{text = "Me Only", value = 1},
-									{text = "All", value = 2},
-									{text = "Custom", value = 3},
-								},
-								["default_value"] = 1,
-								["sub_widgets"] = {
-									{
-										["show_widget_condition"] = {3},
-										["setting_name"] = "chat_player_1",
-										["widget_type"] = "checkbox",
-										["text"] = "N/A",
-										["default_value"] = false,
-									},
-									{
-										["show_widget_condition"] = {3},
-										["setting_name"] = "chat_player_2",
-										["widget_type"] = "checkbox",
-										["text"] = "N/A",
-										["default_value"] = false,
-									},
-									{
-										["show_widget_condition"] = {3},
-										["setting_name"] = "chat_player_3",
-										["widget_type"] = "checkbox",
-										["text"] = "N/A",
-										["default_value"] = false,
-									},
-									{
-										["show_widget_condition"] = {3},
-										["setting_name"] = "chat_player_4",
-										["widget_type"] = "checkbox",
-										["text"] = "N/A",
-										["default_value"] = false,
-									},
-								},
 							},
 						},
 					},
@@ -669,14 +668,18 @@ mod.players = {
 		local i = 1
 		for _, player in pairs(players) do
 			local name = mod.strings.check({player._cached_name, mod.players.unit_name(player.player_name)}) or "N/A"
-			mod:update_setting_text("chat_player_"..tostring(i), name)
+			mod:update_setting_text("chat_damage_player_"..tostring(i), name)
+			mod:update_setting_text("chat_ammo_player_"..tostring(i), name)
+			mod:update_setting_text("chat_heal_player_"..tostring(i), name)
 			mod:update_setting_text("floating_numbers_player_"..tostring(i), name)
 			mod:update_setting_text("floating_heal_player_"..tostring(i), name)
 			mod:update_setting_text("floating_ammo_player_"..tostring(i), name)
 			i = i + 1
 		end
 		for j = i, 4 do
-			mod:update_setting_text("chat_player_"..tostring(j), "N/A")
+			mod:update_setting_text("chat_damage_player_"..tostring(j), "N/A")
+			mod:update_setting_text("chat_ammo_player_"..tostring(j), "N/A")
+			mod:update_setting_text("chat_heal_player_"..tostring(j), "N/A")
 			mod:update_setting_text("floating_numbers_player_"..tostring(j), "N/A")
 			mod:update_setting_text("floating_heal_player_"..tostring(i), "N/A")
 			mod:update_setting_text("floating_ammo_player_"..tostring(i), "N/A")
@@ -1181,11 +1184,11 @@ mod.chat = {
 			end
 			
 			if breed_data and mod:get("chat_damage") then
-				if mod:get("chat_source") == 1 and (mod:get("chat_mode") == 2 or unit_is_dead) then
+				if mod:get("chat_damage_source") == 1 and (mod:get("chat_mode") == 2 or unit_is_dead) then
 					self:local_player(attacker_unit, damage_amount, hit_zone_name, unit_is_dead, breed_data.name)
-				elseif mod:get("chat_source") == 2 and (mod:get("chat_mode") == 2 or unit_is_dead) then
+				elseif mod:get("chat_damage_source") == 2 and (mod:get("chat_mode") == 2 or unit_is_dead) then
 					self:all(attacker_unit, damage_amount, hit_zone_name, unit_is_dead, breed_data.name)
-				elseif mod:get("chat_source") == 3 and (mod:get("chat_mode") == 2 or unit_is_dead) then
+				elseif mod:get("chat_damage_source") == 3 and (mod:get("chat_mode") == 2 or unit_is_dead) then
 					self:custom(attacker_unit, damage_amount, hit_zone_name, unit_is_dead, breed_data.name)
 				end
 			end
@@ -1234,7 +1237,7 @@ mod.chat = {
 			local name = mod.strings.check({player._cached_name, mod.players.unit_name(player.player_name)})
 			local i = 1
 			for _, p in pairs(players) do
-				if mod:get("chat_player_"..tostring(i)) then
+				if mod:get("chat_damage_player_"..tostring(i)) then
 					if attacker_unit == p.player_unit then
 						self:post(name, damage_amount, hit_zone, dead, breed, healed, ammo)
 					end
