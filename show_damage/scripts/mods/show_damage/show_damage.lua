@@ -238,17 +238,13 @@ local options_widgets = {
 		["sub_widgets"] = {
 			{
 				["setting_name"] = "floating_numbers_size",
-				["widget_type"] = "dropdown",
+				["widget_type"] = "numeric",
 				["text"] = "Size",
+				["unit_text"] = "",
 				["tooltip"] = "Size\n" ..
 					"Set the preferred size for floating numbers / icons.",
-				["options"] = {
-					{text = "Very Small", value = 0.5},
-					{text = "Small", value = 0.75},
-					{text = "Default", value = 1},
-					{text = "Big", value = 1.25},
-					{text = "Very Big", value = 1.5},
-				},
+				["range"] = {0.5, 1.5},
+				["decimals_number"] = 2,
 				["default_value"] = 1,
 			},
 			{
@@ -452,6 +448,14 @@ local options_widgets = {
 				},
 			},
 		},
+	},
+	{
+		["setting_name"] = "toggle_suspension",
+		["widget_type"] = "keybind",
+		["text"] = "Toggle",
+		["tooltip"] = "Toggle show damage on / off.",
+		["default_value"] = {},
+		["action"] = "toggle_suspension"
 	},
 }
 
@@ -732,7 +736,7 @@ mod.blocked_hit = function(self, attacker_unit, unit, hit_zone)
 	local more_rat_weapons = get_mod("MoreRatWeapons")
 	if more_rat_weapons then 
 		hit_zones = more_rat_weapons.shield_data.hit_zones
-		mod.check_backstab = more_rat_weapons.check_backstab
+		self.check_backstab = more_rat_weapons.check_backstab
 	end
 	
 	if unit and Unit.has_data(unit, "breed") and ScriptUnit.has_extension(unit, "ai_inventory_system") then
@@ -740,7 +744,7 @@ mod.blocked_hit = function(self, attacker_unit, unit, hit_zone)
 		local inv_template = inventory_extension.inventory_configuration_name
 		
 		if inv_template == "sword_and_shield" and not inventory_extension.already_dropped_shield then
-			if table.contains(hit_zones, hit_zone) and not mod:check_backstab(attacker_unit, unit) then
+			if table.contains(hit_zones, hit_zone) and not self:check_backstab(attacker_unit, unit) then
 				return true
 			end
 		end
