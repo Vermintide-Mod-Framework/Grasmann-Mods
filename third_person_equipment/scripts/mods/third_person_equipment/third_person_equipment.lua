@@ -20,8 +20,7 @@ equipment_3p_spawned_items = equipment_3p_spawned_items or {}
 local options_widgets = {
 	{
 		["setting_name"] = "dwarf_weapon_position",
-		--["widget_type"] = "dropdown",
-		["widget_type"] = "stepper",
+		["widget_type"] = "dropdown",
 		["text"] = "Dwarf Weapon Position",
 		["tooltip"] =  "Dwarf Weapon Position\n" ..
 			"Choose the position of the dwarf weapons.\n\n" ..
@@ -37,8 +36,7 @@ local options_widgets = {
 	},
 	{
 		["setting_name"] = "dwarf_onehand_weapon_position",
-		--["widget_type"] = "dropdown",
-		["widget_type"] = "stepper",
+		["widget_type"] = "dropdown",
 		["text"] = "Dwarf One-Handed Weapon Position",
 		["tooltip"] =  "Dwarf One-Handed Weapon Position\n" ..
 			"Choose the position of the one-handed dwarf weapons.\n\n" ..
@@ -55,8 +53,7 @@ local options_widgets = {
 	},
 	{
 		["setting_name"] = "waywatcher_dualweapon_position",
-		--["widget_type"] = "dropdown",
-		["widget_type"] = "stepper",
+		["widget_type"] = "dropdown",
 		["text"] = "Waywatcher Dual Weapon Position",
 		["tooltip"] =  "Waywatcher Dual Weapon Position\n" ..
 			"Choose the position of the waywatcher dual weapons.\n\n" ..
@@ -72,8 +69,7 @@ local options_widgets = {
 	},
 	{
 		["setting_name"] = "onehand_weapon_position",
-		--["widget_type"] = "dropdown",
-		["widget_type"] = "stepper",
+		["widget_type"] = "dropdown",
 		["text"] = "One-Handed Weapon Position",
 		["tooltip"] =  "One-Handed Weapon Position\n" ..
 			"Choose the position of the one-handed weapons.\n\n" ..
@@ -89,19 +85,13 @@ local options_widgets = {
 	},
 	{
 		["setting_name"] = "downscale_big_weapons",
-		--["widget_type"] = "slider",
-		["widget_type"] = "stepper",
+		["widget_type"] = "numeric",
 		["text"] = "Downscale Big Weapons",
+		["unit_text"] = "%",
 		["tooltip"] =  "Downscale Big Weapons\n" ..
 			"Downscale the biggest weapons in the game.\n\n" ..
 			"Affects: Red staffs, volley crossbow, wh crossbow",
-		["options"] = {
-			{text = "Off", value = 100},
-			{text = "Slightly", value = 90},
-			{text = "More", value = 75},
-			{text = "Max", value = 50},
-		},
-		--["range"] = {50, 100},
+		["range"] = {50, 100},
 		["default_value"] = 75,
 	},
 }
