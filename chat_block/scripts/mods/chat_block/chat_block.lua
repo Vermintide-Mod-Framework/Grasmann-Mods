@@ -18,7 +18,7 @@ local mod = get_mod("ChatBlock")
 local options_widgets = {
 	{
 		["setting_name"] = "mode",
-		["widget_type"] = "stepper",
+		["widget_type"] = "dropdown",
 		["text"] = "Mode",
 		["tooltip"] = "Automatically block when you're chatting.\n\n"..
 			"Your block will still break if your stamina runs out.\n\n"..
