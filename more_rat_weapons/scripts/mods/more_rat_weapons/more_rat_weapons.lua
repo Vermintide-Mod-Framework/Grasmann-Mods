@@ -219,53 +219,53 @@ local options_widgets = {
 			},
 		},
 	},
-	{
-		["setting_name"] = "use_player_weapons",
-		--["widget_type"] = "stepper",
-		["widget_type"] = "checkbox",
-		["text"] = "Rats Use Player Weapons",
-		["tooltip"] =  "Rats Use Player Weapons [Local]\n" ..
-			"Randomly give rats player weapons.",
-		-- ["options"] = {
-			-- {text = "Off", value = false},
-			-- {text = "On", value = true},
+	-- {
+		-- ["setting_name"] = "use_player_weapons",
+		-- --["widget_type"] = "stepper",
+		-- ["widget_type"] = "checkbox",
+		-- ["text"] = "Rats Use Player Weapons",
+		-- ["tooltip"] =  "Rats Use Player Weapons [Local]\n" ..
+			-- "Randomly give rats player weapons.",
+		-- -- ["options"] = {
+			-- -- {text = "Off", value = false},
+			-- -- {text = "On", value = true},
+		-- -- },
+		-- ["default_value"] = false,
+		-- ["sub_widgets"] = {
+			-- {
+				-- ["setting_name"] = "player_weapons_count",
+				-- ["widget_type"] = "stepper",
+				-- ["text"] = "Weapon Count",
+				-- ["tooltip"] =  "Weapon Count [Local]\n" ..
+					-- "How many player weapons should be loaded and used?\n\n" ..
+					-- "--- Default ---\n" ..
+					-- "17 Weapons and 4 Shields.\n" ..
+					-- "--- More 1 ---\n" ..
+					-- "34 Weapons and 10 Shields.\n" ..
+					-- "--- More 2 ---\n" ..
+					-- "49 Weapons and 10 Shields.\n" ..
+					-- "--- More 3 ---\n" ..
+					-- "64 Weapons and 10 Shields.\n" ..
+					-- "--- More 4 ---\n" ..
+					-- "77 Weapons and 10 Shields.\n" ..
+					-- "--- More 5 ---\n" ..
+					-- "90 Weapons and 10 Shields.\n" ..
+					-- "--- More 6 ---\n" ..
+					-- "101 Weapons and 10 Shields.\n",
+				-- ["value_type"] = "number",
+				-- ["options"] = {
+					-- {text = "Default", value = 1},
+					-- {text = "More 1", value = 2},
+					-- {text = "More 2", value = 3},
+					-- {text = "More 3", value = 4},
+					-- {text = "More 4", value = 5},
+					-- {text = "More 5", value = 6},
+					-- {text = "More 6", value = 7},
+				-- },
+				-- ["default_value"] = 1,
+			-- },
 		-- },
-		["default_value"] = false,
-		["sub_widgets"] = {
-			{
-				["setting_name"] = "player_weapons_count",
-				["widget_type"] = "stepper",
-				["text"] = "Weapon Count",
-				["tooltip"] =  "Weapon Count [Local]\n" ..
-					"How many player weapons should be loaded and used?\n\n" ..
-					"--- Default ---\n" ..
-					"17 Weapons and 4 Shields.\n" ..
-					"--- More 1 ---\n" ..
-					"34 Weapons and 10 Shields.\n" ..
-					"--- More 2 ---\n" ..
-					"49 Weapons and 10 Shields.\n" ..
-					"--- More 3 ---\n" ..
-					"64 Weapons and 10 Shields.\n" ..
-					"--- More 4 ---\n" ..
-					"77 Weapons and 10 Shields.\n" ..
-					"--- More 5 ---\n" ..
-					"90 Weapons and 10 Shields.\n" ..
-					"--- More 6 ---\n" ..
-					"101 Weapons and 10 Shields.\n",
-				["value_type"] = "number",
-				["options"] = {
-					{text = "Default", value = 1},
-					{text = "More 1", value = 2},
-					{text = "More 2", value = 3},
-					{text = "More 3", value = 4},
-					{text = "More 4", value = 5},
-					{text = "More 5", value = 6},
-					{text = "More 6", value = 7},
-				},
-				["default_value"] = 1,
-			},
-		},
-	},
+	-- },
 }
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -1095,6 +1095,14 @@ mod.package_callback = function(self, name)
 	more_rat_weapons_loaded_packages[name] = true
 end
 
+-- mod:hook("PackageManager.unload", function(func, self, package_name, reference_name, ...)
+	-- if more_rat_weapons_loading_packages[package_name] or more_rat_weapons_loaded_packages[package_name] then
+		-- mod:echo("lol")
+		-- return
+	-- end
+	-- func(self, package_name, reference_name, ...)
+-- end)
+
 -- ##### ██╗      ██████╗  ██████╗ █████╗ ██╗         ███████╗████████╗██╗   ██╗███████╗███████╗ ######################
 -- ##### ██║     ██╔═══██╗██╔════╝██╔══██╗██║         ██╔════╝╚══██╔══╝██║   ██║██╔════╝██╔════╝ ######################
 -- ##### ██║     ██║   ██║██║     ███████║██║         ███████╗   ██║   ██║   ██║█████╗  █████╗   ######################
@@ -1269,7 +1277,7 @@ mod.setting_changed = function(setting_name)
 		load_packages = true
 	end
 	if load_packages then
-		mod:load_packages()
+		--mod:load_packages()
 	end
 end
 --[[
@@ -1289,7 +1297,7 @@ mod.update = function(dt)
 	if not mod.first_load_of_packages then
 		local manager = Managers.package
 		if manager then
-			mod:load_packages()
+			--mod:load_packages()
 			mod.first_load_of_packages = true
 		end
 	end
