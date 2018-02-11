@@ -99,7 +99,7 @@ local options_widgets = {
 								["text"] = "Hitzone",
 								["tooltip"] = "Hitzone\n" ..
 									"Will show the hitzone in chat output.",
-								["default_value"] = true,
+								["default_value"] = false,
 							},
 							{
 								["show_widget_condition"] = {1},
@@ -108,7 +108,7 @@ local options_widgets = {
 								["text"] = "Kill Indicator",
 								["tooltip"] = "Kill Indicator\n" ..
 									"Will show an indication in chat output if hit was a kill.",
-								["default_value"] = true,
+								["default_value"] = false,
 							},
 						},
 					},
@@ -120,7 +120,7 @@ local options_widgets = {
 				["text"] = "Bloodlust / Regrowth",
 				["tooltip"] = "Bloodlust / Regrowth\n" ..
 					"Shows heal numbers for bloodlust and regrowth in chat.",
-				["default_value"] = true,
+				["default_value"] = false,
 				["sub_widgets"] = {
 					{
 						["setting_name"] = "chat_heal_source",
@@ -136,7 +136,7 @@ local options_widgets = {
 							{text = "All", value = 2},
 							{text = "Custom", value = 3},
 						},
-						["default_value"] = 2,
+						["default_value"] = 1,
 						["sub_widgets"] = {
 							{
 								["show_widget_condition"] = {3},
@@ -176,7 +176,7 @@ local options_widgets = {
 				["text"] = "Scavenger",
 				["tooltip"] = "Scavenger\n" ..
 					"Shows ammo numbers for scavenger in chat.",
-				["default_value"] = true,
+				["default_value"] = false,
 				["sub_widgets"] = {
 					{
 						["setting_name"] = "chat_ammo_source",
@@ -192,7 +192,7 @@ local options_widgets = {
 							{text = "All", value = 2},
 							{text = "Custom", value = 3},
 						},
-						["default_value"] = 2,
+						["default_value"] = 1,
 						["sub_widgets"] = {
 							{
 								["show_widget_condition"] = {3},
@@ -234,7 +234,7 @@ local options_widgets = {
 		["text"] = "Floating Numbers",
 		["tooltip"] = "Floating Numbers\n" ..
 			"Shows floating numbers for damage and certain buffs.",
-		["default_value"] = true,
+		["default_value"] = false,
 		["sub_widgets"] = {
 			{
 				["setting_name"] = "floating_numbers_size",
@@ -257,7 +257,7 @@ local options_widgets = {
 				["text"] = "Damage",
 				["tooltip"] = "Damage\n" ..
 					"Shows floating damage numbers.",
-				["default_value"] = true,
+				["default_value"] = false,
 				["sub_widgets"] = {
 					{
 						["setting_name"] = "floating_icons_headshot",
@@ -265,7 +265,7 @@ local options_widgets = {
 						["text"] = "Headshot Icon",
 						["tooltip"] = "Headshot Icon\n" ..
 							"Shows an icon on headshots.",
-						["default_value"] = true,
+						["default_value"] = false,
 					},
 					{
 						["setting_name"] = "floating_icons_block",
@@ -273,7 +273,7 @@ local options_widgets = {
 						["text"] = "Block Icon",
 						["tooltip"] = "Block Icon\n" ..
 							"Shows an icon when attacks are blocked.",
-						["default_value"] = true,
+						["default_value"] = false,
 					},
 					{
 						["setting_name"] = "floating_numbers_source",
@@ -289,7 +289,7 @@ local options_widgets = {
 							{text = "All", value = 2},
 							{text = "Custom", value = 3},
 						},
-						["default_value"] = 2,
+						["default_value"] = 1,
 						["sub_widgets"] = {
 							{
 								["show_widget_condition"] = {3},
@@ -329,7 +329,7 @@ local options_widgets = {
 				["text"] = "Bloodlust / Regrowth",
 				["tooltip"] = "Bloodlust / Regrowth\n" ..
 					"Shows floating heal numbers for bloodlust and regrowth.",
-				["default_value"] = true,
+				["default_value"] = false,
 				["sub_widgets"] = {
 					{
 						["setting_name"] = "floating_icons_heal",
@@ -337,7 +337,7 @@ local options_widgets = {
 						["text"] = "Icon",
 						["tooltip"] = "Icon\n" ..
 							"Shows an icon when with the number.",
-						["default_value"] = true,
+						["default_value"] = false,
 					},
 					{
 						["setting_name"] = "floating_heal_source",
@@ -353,7 +353,7 @@ local options_widgets = {
 							{text = "All", value = 2},
 							{text = "Custom", value = 3},
 						},
-						["default_value"] = 2,
+						["default_value"] = 1,
 						["sub_widgets"] = {
 							{
 								["show_widget_condition"] = {3},
@@ -393,7 +393,7 @@ local options_widgets = {
 				["text"] = "Scavenger",
 				["tooltip"] = "Scavenger\n" ..
 					"Shows floating ammo numbers for scavenger.",
-				["default_value"] = true,
+				["default_value"] = false,
 				["sub_widgets"] = {
 					{
 						["setting_name"] = "floating_icons_ammo",
@@ -401,7 +401,7 @@ local options_widgets = {
 						["text"] = "Icon",
 						["tooltip"] = "Icon\n" ..
 							"Shows an icon when with the number.",
-						["default_value"] = true,
+						["default_value"] = false,
 					},
 					{
 						["setting_name"] = "floating_ammo_source",
@@ -417,7 +417,7 @@ local options_widgets = {
 							{text = "All", value = 2},
 							{text = "Custom", value = 3},
 						},
-						["default_value"] = 2,
+						["default_value"] = 1,
 						["sub_widgets"] = {
 							{
 								["show_widget_condition"] = {3},
@@ -511,11 +511,6 @@ end
 -- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
-mod.t = 0
--- mod.chat = {
-	-- units = {},
-	-- NAME_LENGTH = 20,
--- }
 mod.enemies = {
 	specials = {
 		"skaven_storm_vermin",
@@ -586,11 +581,6 @@ mod.console = {}
 	Add unit to process
 --]]
 mod.add_unit = function(self, unit)
-	-- if not table.has_item2(mod.chat.units, unit) then
-		-- if self.health_extension.is_alive(self.health_extension) then
-			-- mod.chat.units[unit] = unit
-		-- end
-	-- end
 	if not self.chat:has_unit(unit) then
 		self.chat.units[unit] = unit
 	end
@@ -1330,7 +1320,6 @@ mod:hook("DamageUtils.buff_on_attack", function(func, unit, hit_unit, ...)
 			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
 			mod.floating:handle(hit_unit, biggest_hit, {healed = {amount = amount}})
 			mod.chat:handle(hit_unit, biggest_hit, {healed = {amount = amount}})
-			--mod.chat:trigger_heal(unit, {healed = {amount = amount}})
 		end
 		return amount, procced, parent_id
 	end
@@ -1358,7 +1347,6 @@ local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blo
 			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
 			mod.floating:handle(unit, biggest_hit, {healed = {amount = amount}})
 			mod.chat:handle(unit, biggest_hit, {healed = {amount = amount}})
-			--mod.chat:trigger_heal(killing_blow[DamageDataIndex.ATTACKER], {healed = {amount = amount}})
 		end
 		
 		return amount, procced, parent_id
@@ -1374,7 +1362,6 @@ local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blo
 			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
 			mod.floating:handle(unit, biggest_hit, {ammo = {amount = amount}})
 			mod.chat:handle(unit, biggest_hit, {ammo = {amount = amount}})
-			--mod.chat:trigger_ammo(killing_blow[DamageDataIndex.ATTACKER], {ammo = {amount = amount}})
 		end
 		
 		return func_add_ammo_to_reserve(self, amount)
@@ -1448,7 +1435,6 @@ mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, uni
 	else
 		if parameters.death then
 			mod.floating.corpses[unit] = true
-			--mod.floating.delete[unit] = unit
 		end
 	end
 
