@@ -30,11 +30,7 @@ mod:hook("PlayerUnitHealthExtension._knock_down", function(func, self, unit, ...
 	
 	-- Reset health
 	Managers.state.network.network_transmit:send_rpc_server(
-		"rpc_request_heal",
-		unit_id,
-		150,
-		NetworkLookup.heal_types.healing_draught
-	)
+		"rpc_request_heal", unit_id, 150, NetworkLookup.heal_types.healing_draught)
 end)
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
