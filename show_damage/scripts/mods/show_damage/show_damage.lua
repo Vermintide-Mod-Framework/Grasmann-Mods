@@ -959,7 +959,7 @@ mod.floating = {
 			local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
 			local damage_type = biggest_hit[DamageDataIndex.DAMAGE_TYPE]
 			local dead = parameters.death
-			local blocked = mod:blocked_hit(attacker_unit, unit, hit_zone_name) or damage_amount <= 0 and hit_zone_name ~= "" and hit_zone_name ~= "full"
+			local blocked = mod:blocked_hit(attacker_unit, unit, hit_zone_name) or (damage_amount <= 0 and (hit_zone_name ~= "" and hit_zone_name ~= "full"))
 			local healed = parameters.healed
 			local ammo = parameters.ammo
 
