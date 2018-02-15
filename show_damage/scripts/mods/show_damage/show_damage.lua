@@ -996,10 +996,10 @@ mod.floating = {
 			local healed = parameters.healed
 			local ammo = parameters.ammo
 			
-			mod:pcall(function()
-				table.dump(biggest_hit, "biggest_hit", 4)
-				mod:echo(tostring(damage_type))
-			end)
+			-- mod:pcall(function()
+				-- table.dump(biggest_hit, "biggest_hit", 4)
+				-- mod:echo(tostring(damage_type))
+			-- end)
 			
 			--mod:echo("damage_type:'"..tostring(damage_type).."'")
 			
