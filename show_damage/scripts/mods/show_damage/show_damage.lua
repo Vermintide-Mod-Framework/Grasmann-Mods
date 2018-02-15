@@ -272,6 +272,22 @@ local options_widgets = {
 						["default_value"] = false,
 					},
 					{
+						["setting_name"] = "floating_icons_poison",
+						["widget_type"] = "checkbox",
+						["text"] = "Poison Icon",
+						["tooltip"] = "Poison Icon\n" ..
+							"Shows an icon on poison damage.",
+						["default_value"] = false,
+					},
+					{
+						["setting_name"] = "floating_icons_burn",
+						["widget_type"] = "checkbox",
+						["text"] = "Burn Icon",
+						["tooltip"] = "Burn Icon\n" ..
+							"Shows an icon on burning damage.",
+						["default_value"] = false,
+					},
+					{
 						["setting_name"] = "floating_numbers_source",
 						["widget_type"] = "dropdown",
 						["text"] = "Source",
@@ -599,7 +615,8 @@ mod.gui = nil
 mod.create_gui = function(self)
 	local top_world = Managers.world:world("top_ingame_view")
 	self.gui = World.create_screen_gui(top_world, "immediate", "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_ingame_common", 
-		"material", "materials/show_damage/block", "material", "materials/show_damage/melee", "material", "materials/show_damage/ranged", "material", "materials/show_damage/health")
+		"material", "materials/show_damage/block", "material", "materials/show_damage/melee", "material", "materials/show_damage/ranged", 
+		"material", "materials/show_damage/health", "material", "materials/show_damage/poison", "material", "materials/show_damage/flame")
 end
 
 mod.strings = {
@@ -837,24 +854,24 @@ mod.floating = {
 	--[[
 		Post message for local player
 	--]]
-	local_player = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
+	local_player = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 		local local_player = Managers.player:local_player()
 		if attacker_unit == local_player.player_unit and (not self.corpses[unit]) then
-			self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
+			self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 		end
 	end,
 	--[[
 		Post message for every player
 	--]]
-	all = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
+	all = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 		if mod.players.is_player_unit(attacker_unit) and (not self.corpses[unit]) then
-			self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
+			self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 		end
 	end,
 	--[[
 		Post message for custom chosen player
 	--]]
-	custom = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
+	custom = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 		if mod.players.is_player_unit(attacker_unit) then			
 			local player_manager = Managers.player
 			local players = player_manager:human_and_bot_players()				
@@ -869,7 +886,7 @@ mod.floating = {
 				if mod:get(setting) then
 					if attacker_unit == p.player_unit and (not self.corpses[unit]) then
 						
-						self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, damage_type)
+						self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 					end
 				end
 				i = i + 1
@@ -885,7 +902,7 @@ mod.floating = {
 	--[[
 		Create new number entry
 	--]]
-	new = function(self, unit, dead, damage, healed, ammo, hit_zone_name, blocked, damage_type)
+	new = function(self, unit, dead, damage, healed, ammo, hit_zone_name, blocked, poison, burn)
 		local unit_dmg = table.clone(self.definition)
 		-- Data
 		--unit_dmg.position = Vector3Aux.box(nil, position)
@@ -893,7 +910,11 @@ mod.floating = {
 		unit_dmg.damage = damage or 0
 		
 		local color = {255, 255, 255, 255}
-		if blocked then
+		if poison then
+			color = {255, 128, 0, 128}
+		elseif burn then
+			color = {255, 255, 165, 0}
+		elseif blocked then
 			color = {255, 127, 127, 127}
 		elseif dead then
 			color = {255, 255, 56, 56}
@@ -922,6 +943,16 @@ mod.floating = {
 			font_name, font_material, font_size = self:fonts(45)
 			if mod:get("floating_icons_headshot") then
 				unit_dmg.icon = "melee"
+			end
+		elseif poison then
+			font_name, font_material, font_size = self:fonts(20)
+			if mod:get("floating_icons_poison") then
+				unit_dmg.icon = "poison"
+			end
+		elseif burn then
+			font_name, font_material, font_size = self:fonts(20)
+			if mod:get("floating_icons_burn") then
+				unit_dmg.icon = "flame"
 			end
 		elseif blocked then
 			font_name, font_material, font_size = self:fonts(20)
@@ -959,10 +990,17 @@ mod.floating = {
 			local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
 			local damage_type = biggest_hit[DamageDataIndex.DAMAGE_TYPE]
 			local dead = parameters.death
-			local blocked = mod:blocked_hit(attacker_unit, unit, hit_zone_name) or (damage_amount <= 0 and (hit_zone_name ~= "" and hit_zone_name ~= "full"))
+			local blocked = mod:blocked_hit(attacker_unit, unit, hit_zone_name) or damage_amount <= 0
+			local poison = damage_type == "arrow_poison" or damage_type == "arrow_poison_dot"
+			local burn = damage_type == "burn" or damage_type == "burninating" or damage_type == "fire_grenade_glance"
 			local healed = parameters.healed
 			local ammo = parameters.ammo
-
+			
+			mod:pcall(function()
+				table.dump(biggest_hit, "biggest_hit", 4)
+				mod:echo(tostring(damage_type))
+			end)
+			
 			--mod:echo("damage_type:'"..tostring(damage_type).."'")
 			
 			if healed and mod:get("floating_heal") then
@@ -994,11 +1032,11 @@ mod.floating = {
 			
 			if breed_data and mod:get("floating_damage_numbers") then
 				if mod:get("floating_numbers_source") == 1 then
-					self:local_player(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, damage_type)
+					self:local_player(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, poison, burn)
 				elseif mod:get("floating_numbers_source") == 2 then
-					self:all(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, damage_type)
+					self:all(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, poison, burn)
 				elseif mod:get("floating_numbers_source") == 3 then
-					self:custom(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, damage_type)
+					self:custom(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, poison, burn)
 				end
 			end
 			
