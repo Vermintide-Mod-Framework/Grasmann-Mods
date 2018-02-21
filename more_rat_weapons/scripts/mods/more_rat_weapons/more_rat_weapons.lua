@@ -36,7 +36,7 @@ local options_widgets = {
 		["setting_name"] = "slave_shield_chance",
 		["widget_type"] = "numeric",
 		["text"] = "Slave Rat Shield Chance",
-		["unit_text"] = "%",
+		["unit_text"] = " %",
 		["tooltip"] =  "Slave Rate Shield Chance\n" ..
 			"Set the chance for slave rats to have shields.",
 		["range"] = {0, 100},
@@ -47,7 +47,7 @@ local options_widgets = {
 		["setting_name"] = "clan_shield_chance",
 		["widget_type"] = "numeric",
 		["text"] = "Clan Rat Shield Chance",
-		["unit_text"] = "%",
+		["unit_text"] = " %",
 		["tooltip"] =  "Clan Rat Shield Chance\n" ..
 			"Set the chance for clan rats to have shields.",
 		["range"] = {0, 100},
@@ -58,7 +58,7 @@ local options_widgets = {
 		["setting_name"] = "storm_shield_chance",
 		["widget_type"] = "numeric",
 		["text"] = "Stormvermin Shield Chance",
-		["unit_text"] = "%",
+		["unit_text"] = " %",
 		["tooltip"] =  "Stormvermin Shield Chance\n" ..
 			"Set the chance for stormvermin to have shields.",
 		["range"] = {0, 100},
@@ -112,7 +112,7 @@ local options_widgets = {
 						["setting_name"] = "comment_pause",
 						["widget_type"] = "numeric",
 						["text"] = "Pause Between Comments",
-						["unit_text"] = "sec",
+						["unit_text"] = " sec",
 						["tooltip"] =  "Pause Between Comments\n" ..
 							"Seconds between armour comments.",
 						["range"] = {10, 120},
@@ -123,7 +123,7 @@ local options_widgets = {
 						["setting_name"] = "comment_distance",
 						["widget_type"] = "numeric",
 						["text"] = "Comment Distance",
-						["unit_text"] = "units",
+						["unit_text"] = " units",
 						["tooltip"] =  "Comment Distance\n" ..
 							"The maximum distance another hero can be away to comment.",
 						["range"] = {3, 30},
@@ -569,7 +569,7 @@ mod:hook("DamageUtils.server_apply_hit", function(func, t, attack_template, atta
 	--local args = table.pack(...)
 	
 	--safe_pcall(function()
-		if not mod:is_suspended() and mod:get("shield_mechanics") then
+		if mod:is_enabled() and mod:get("shield_mechanics") then
 			if Managers.player.is_server then
 				if ScriptUnit.has_extension(hit_unit, "ai_system") and ScriptUnit.has_extension(hit_unit, "ai_inventory_system") and
 						AiUtils.unit_alive(hit_unit) then
@@ -650,7 +650,7 @@ end)
 --]]
 mod:hook("ConflictDirector.spawn_unit", function(func, self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, inventory_template, group_data, ...)
 	local ai_unit = nil
-	if not mod:is_suspended() and Managers.player.is_server then
+	if mod:is_enabled() and Managers.player.is_server then
 		local luck = math.random(1, 100)
 		local storm_vermin = breed.name == "skaven_storm_vermin" or breed.name == "skaven_storm_vermin_commander"
 		if storm_vermin and luck <= mod:get("storm_shield_chance") then
@@ -671,7 +671,7 @@ end)
 --]]
 mod:hook("BTAttackAction.run", function(func, self, unit, blackboard, ...)
 	--safe_pcall(function()
-		if not mod:is_suspended() and mod:get("remove_running_attacks") then
+		if mod:is_enabled() and mod:get("remove_running_attacks") then
 			if unit and ScriptUnit.has_extension(unit, "ai_inventory_system") and AiUtils.unit_alive(unit) then
 				local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
 				if blackboard.action.moving_attack and inventory_extension.shield_health and not inventory_extension.already_dropped_shield then
@@ -694,7 +694,7 @@ end)
 --]]
 mod.execute_particle_effect = function(self, unit_id)
 	--safe_pcall(function()
-		if not self:is_suspended() and self:get("play_particle_effects") then
+		if self:is_enabled() and self:get("play_particle_effects") then
 			local network_manager = Managers.state.network
 			local effect_name = "fx/hit_armored"
 			local unit = network_manager.game_object_or_level_unit(network_manager, unit_id)
@@ -730,7 +730,7 @@ mod.execute_drop_shield = function(self, unit_id, damage_direction)
 				local item_unit = inventory_extension.inventory_item_units[item_inventory_index]
 				if item_unit ~= nil then
 					-- Drop shield
-					if not self:is_suspended() and self:get("drop_shields") then
+					if self:is_enabled() and self:get("drop_shields") then
 						local position = Unit.world_position(item_unit, 0)
 						local rotation = Unit.world_rotation(item_unit, 0)
 						local new_item_unit = World.spawn_unit(inventory_extension.world, item_unit_name, position, rotation, nil)
@@ -992,7 +992,7 @@ mod.load_packages = function(self)
 	local reference = "MoreRatWeapons"
 	local active = self:get("use_player_weapons") or false
 	local setting = self:get("player_weapons_count") or 1
-	if self:is_suspended() then setting = 0 end
+	if not self:is_enabled() then setting = 0 end
 	for i = 1, #self.packages do
 		if i <= setting and active then
 			for _, name in pairs(self.packages[i]) do
@@ -1205,7 +1205,7 @@ end)
 --[[
 	Mod Setting changed
 --]]
-mod.setting_changed = function(setting_name)
+mod.on_setting_changed = function(setting_name)
 	local load_packages = false
 	if setting_name == "use_player_weapons" then
 		load_packages = true
@@ -1220,12 +1220,12 @@ end
 --[[
 	Mod Suspended
 --]]
-mod.suspended = function()
+mod.on_disabled = function(initial_call)
 end
 --[[
 	Mod Unsuspended
 --]]
-mod.unsuspended = function()
+mod.on_enabled = function(initial_call)
 end
 --[[
 	Mod Update
