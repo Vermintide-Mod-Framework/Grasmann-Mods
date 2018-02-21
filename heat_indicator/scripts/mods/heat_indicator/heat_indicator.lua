@@ -30,7 +30,6 @@ local options_widgets = {
 		["tooltip"] = "Change display mode",
 		["options"] = {
 			{--[[1]] text = "Rectangle", value = 1},
-			{--[[2]] text = "Circle", value = 3},
 			{--[[3]] text = "Line", value = 2},
 		},
 		["default_value"] = 2,
@@ -361,13 +360,6 @@ mod:hook("OverchargeBarUI.update", function(func, self, dt, ...)
 				widget.style.indicator.offset[1] = 232
 				widget.style.indicator.offset[2] = -45
 				widget.style.indicator.corner_radius = 5
-			elseif mod:get("mode") == 3 then
-				-- Circle
-				widget.style.indicator.size[1] = 48
-				widget.style.indicator.size[2] = 48
-				widget.style.indicator.offset[1] = 232
-				widget.style.indicator.offset[2] = -45
-				widget.style.indicator.corner_radius = 24
 			elseif mod:get("mode") == 2 then
 				-- Line
 				local screen_w, screen_h = UIResolution()
@@ -414,18 +406,18 @@ end)
 --[[
 	Mod Setting changed
 --]]
-mod.setting_changed = function(setting_name)
+mod.on_setting_changed = function(setting_name)
 end
 --[[
 	Mod Suspended
 --]]
-mod.suspended = function()
+mod.on_disabled = function(initial_call)
 	mod:disable_all_hooks()
 end
 --[[
 	Mod Unsuspended
 --]]
-mod.unsuspended = function()
+mod.on_enabled = function(initial_call)
 	mod:enable_all_hooks()
 end
 
@@ -435,13 +427,5 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
---[[
-	Create option widgets
---]]
 mod:create_options(options_widgets, true, "Heat Indicator", "Shows heat generation of current charge with staff")
---[[
-	Suspend if needed
---]]
-if mod:is_suspended() then
-	mod.suspended()
-end
+mod:init_state()
