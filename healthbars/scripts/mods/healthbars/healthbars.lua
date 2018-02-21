@@ -39,8 +39,8 @@ local options_widgets = {
 			"-- SPECIALS ONLY --",
 			"Create health bars for specials only.",
 			"",
-			"-- OGRE ONLY --",
-			"Create health bars only for the ogre unit.",
+			"-- BOSSES ONLY --",
+			"Create health bars only for bosses.",
 			"",
 			"-- CUSTOM --",
 			"Choose which enemies should have a health bar.",
@@ -134,12 +134,12 @@ local options_widgets = {
 		},
 	},
 	{
-		["setting_name"] = "toggle_suspension",
+		["setting_name"] = "toggle_mod",
 		["widget_type"] = "keybind",
 		["text"] = "Toggle",
 		["tooltip"] = "Toggle healthbars on / off.",
 		["default_value"] = {},
-		["action"] = "toggle_suspension"
+		["action"] = "toggle_mod"
 	},
 }
 
@@ -282,8 +282,11 @@ end
 --[[
 	Add a health bar only to ogres
 --]]
-mod.add_health_bar_ogre = function(self, unit, enemie_setting)
-	if enemie_setting.name == "skaven_rat_ogre" then self:add_health_bar_all(unit) end
+mod.add_health_bar_bosses = function(self, unit, enemie_setting)
+	if enemie_setting.name == "skaven_rat_ogre" 
+	or enemie_setting.name == "skaven_storm_vermin_champion" then
+		self:add_health_bar_all(unit)
+	end
 end
 --[[
 	Add a health bar to the specified unit
@@ -294,7 +297,7 @@ mod.add_health_bar = function(self, unit, enemie_setting)
 	elseif self:get("mode") == 3 then
 		self:add_health_bar_specials(unit, enemie_setting)
 	elseif self:get("mode") == 4 then
-		self:add_health_bar_ogre(unit, enemie_setting)
+		self:add_health_bar_bosses(unit, enemie_setting)
 	elseif self:get("mode") == 5 then
 		self:add_health_bar_custom(unit, enemie_setting)
 	end
@@ -670,7 +673,7 @@ end
 --[[
 	Settings changed
 --]]
-mod.setting_changed = function(setting_name)
+mod.on_setting_changed = function(setting_name)
 	if setting_name == "mode" then
 		mod:clean_units(true)
 	end
@@ -678,14 +681,14 @@ end
 --[[
 	Mod Suspended
 --]]
-mod.suspended = function()
+mod.on_disabled = function(initial_call)
 	mod:disable_all_hooks()
 	mod:clean_units(true)
 end
 --[[
 	Mod Unsuspended
 --]]
-mod.unsuspended = function()
+mod.on_enabled = function(initial_call)
 	mod:enable_all_hooks()
 end
 
@@ -711,15 +714,6 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
---[[
-	Extend default healthbar count
---]]
 mod:create_extra_health_bars(30)
---[[
-	Create option widgets
---]]
 mod:create_options(options_widgets, true, "Healthbars", "Shows healthbars for all or specific enemies")
---[[
-	Suspend mod if needed
---]]
-if mod:is_suspended() then mod.suspended() end
+mod:init_state()
