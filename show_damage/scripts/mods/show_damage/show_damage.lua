@@ -1443,7 +1443,7 @@ end
 mod:hook("GenericHitReactionExtension.update", function(func, self, unit, input, dt, context, t, ...)
 
 	-- Add new units to process
-	if not mod:is_suspended() and self.health_extension:is_alive() then
+	if mod:is_enabled() and self.health_extension:is_alive() then
 		mod:add_unit(unit)
 	end
 	
@@ -1463,7 +1463,7 @@ mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, uni
 	func(self, unit, effect_template, biggest_hit, parameters)
 	
 	-- Chat output
-	if not mod:is_suspended() then
+	if mod:is_enabled() then
 		mod.chat:handle(unit, biggest_hit, parameters)
 	else
 		if parameters.death then
@@ -1472,7 +1472,7 @@ mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, uni
 	end
 	
 	-- Floating numbers
-	if not mod:is_suspended() then
+	if mod:is_enabled() then
 		mod.floating:handle(unit, biggest_hit, parameters)
 	else
 		if parameters.death then
@@ -1491,12 +1491,12 @@ end)
 --[[
 	Mod Setting changed
 --]]
-mod.setting_changed = function(setting_name)
+mod.on_setting_changed = function(setting_name)
 end
 --[[
 	Mod Suspended
 --]]
-mod.suspended = function()
+mod.on_disabled = function(initial_call)
 	mod:disable_all_hooks()
 	mod:hook_enable("GenericHitReactionExtension.update")
 	mod:hook_enable("GenericHitReactionExtension._execute_effect")
@@ -1504,7 +1504,7 @@ end
 --[[
 	Mod Unsuspended
 --]]
-mod.unsuspended = function()
+mod.on_enabled = function(initial_call)
 	mod:enable_all_hooks()
 end
 --[[
@@ -1522,11 +1522,5 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
---[[
-	Create option widgets
---]]
 mod:create_options(options_widgets, true, "Show Damage", "Mod description")
---[[
-	Suspend if needed
---]]
-if mod:is_suspended() then mod.suspended() end
+mod:init_state()
