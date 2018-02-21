@@ -9,7 +9,7 @@ local mod = get_mod("ThirdPersonEquipment")
 --]]
 
 -- Global to keep track of spawned units
-equipment_3p_spawned_items = equipment_3p_spawned_items or {}
+third_person_equipment_spawned_items = third_person_equipment_spawned_items or {}
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
 -- ##### ██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██║████╗  ██║██╔════╝ ██╔════╝ #############################################
@@ -118,14 +118,14 @@ mod.current = {
 	Delete all spawned units
 --]]
 mod.delete_all_units = function(self)
-	if equipment_3p_spawned_items then
-		for _, unit in pairs(equipment_3p_spawned_items) do
+	if third_person_equipment_spawned_items then
+		for _, unit in pairs(third_person_equipment_spawned_items) do
 			if unit ~= nil and Unit.alive(unit) then
 				local world = Managers.world:world("level_world")
 				World.destroy_unit(world, unit)
 			end
 		end
-		equipment_3p_spawned_items = {}
+		third_person_equipment_spawned_items = {}
 		self.current.equipment = {}
 	end
 end
@@ -134,14 +134,14 @@ end
 --]]
 mod.delete_i_unit = function(self, i_unit)
 	if i_unit.right ~= nil then
-		equipment_3p_spawned_items[i_unit.right] = nil
+		third_person_equipment_spawned_items[i_unit.right] = nil
 		if Unit.alive(i_unit.right) then
 			local world = Managers.world:world("level_world")
 			World.destroy_unit(world, i_unit.right)
 		end
 	end
 	if i_unit.left ~= nil then
-		equipment_3p_spawned_items[i_unit.left] = nil
+		third_person_equipment_spawned_items[i_unit.left] = nil
 		if Unit.alive(i_unit.left) then
 			local world = Managers.world:world("level_world")
 			World.destroy_unit(world, i_unit.left)
@@ -169,7 +169,7 @@ mod.spawn = function(self, package_name, unit, item_setting)
 	
 	s_unit = World.spawn_unit(world, package_name)
 	World.link_unit(world, s_unit, unit, node)
-	equipment_3p_spawned_items[s_unit] = s_unit
+	third_person_equipment_spawned_items[s_unit] = s_unit
 	
 	local i_pos = item_setting.position
 	local pos_offset = i_pos ~= nil and Vector3(i_pos[1], i_pos[2], i_pos[3]) or Vector3(0,0,0)
@@ -448,47 +448,44 @@ end
 --]]
 mod:hook("InventorySystem.rpc_wield_equipment", function(func, self, sender, go_id, slot_id, ...)
 	func(self, sender, go_id, slot_id, ...)
-	if not mod:is_suspended() then
-		local unit = self.unit_storage:unit(go_id)
-		local slot_name = NetworkLookup.equipment_slots[slot_id]
-		mod:wield_equipment(unit, slot_name)
-	end
+	local unit = self.unit_storage:unit(go_id)
+	local slot_name = NetworkLookup.equipment_slots[slot_id]
+	mod:wield_equipment(unit, slot_name)
 end)
 mod:hook("SimpleInventoryExtension.wield", function(func, self, slot_name, ...)
 	func(self, slot_name, ...)
-	if not mod:is_suspended() then mod:wield_equipment(self._unit, slot_name) end
+	mod:wield_equipment(self._unit, slot_name)
 end)
 mod:hook("SimpleHuskInventoryExtension.wield", function(func, self, slot_name, ...)
 	func(self, slot_name, ...)
-	if not mod:is_suspended() then mod:wield_equipment(self._unit, slot_name) end
+	mod:wield_equipment(self._unit, slot_name)
 end)
 --[[
 	Despawn equipment
 --]]
 mod:hook("SimpleInventoryExtension.destroy_slot", function(func, self, ...)
 	func(self, ...)
-	if not mod:is_suspended() then mod:delete_units(self._unit) end
+	mod:delete_units(self._unit)
 end)
 mod:hook("SimpleHuskInventoryExtension.destroy_slot", function(func, self, ...)
 	func(self, ...)
-	if not mod:is_suspended() then mod:delete_units(self._unit) end
+	mod:delete_units(self._unit)
 end)
 mod:hook("PlayerUnitHealthExtension.die", function(func, self, ...)
 	func(self, ...)
-	if not mod:is_suspended() then mod:delete_units(self.unit) end
+	mod:delete_units(self.unit)
 end)
 --[[
 	Unloading packages
 --]]
 mod:hook("PackageManager.unload", function(func, self, package_name, ...)
-	if not mod:is_suspended() then
-		for unit, equip in pairs(mod.current.equipment) do
-			for _, i_unit in pairs(equip) do
-				if i_unit.right_pack and i_unit.right_pack == package_name then mod:delete_units(unit) end
-				if i_unit.left_pack and i_unit.left_pack == package_name then mod:delete_units(unit) end
-			end
+	for unit, equip in pairs(mod.current.equipment) do
+		for _, i_unit in pairs(equip) do
+			if i_unit.right_pack and i_unit.right_pack == package_name then mod:delete_units(unit) end
+			if i_unit.left_pack and i_unit.left_pack == package_name then mod:delete_units(unit) end
 		end
 	end
+	
 	return func(self, package_name, ...)
 end)
 --[[
@@ -496,55 +493,53 @@ end)
 --]]
 mod:hook("MatchmakingManager.update", function(func, ...)
 	func(...)
-	if not mod:is_suspended() then
-		local players = Managers.player:human_and_bot_players()
-		for k, player in pairs(players) do
-			if player then
-				local player_unit = player.player_unit
-				if player_unit ~= nil then
-				
-					local profile_synchronizer = Managers.state.network.profile_synchronizer
-					local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
-					if profile_index ~= nil then
-						mod.current.profile[player_unit] = SPProfiles[profile_index].unit_name
+	
+	local players = Managers.player:human_and_bot_players()
+	for k, player in pairs(players) do
+		if player then
+			local player_unit = player.player_unit
+			if player_unit ~= nil then
+			
+				local profile_synchronizer = Managers.state.network.profile_synchronizer
+				local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
+				if profile_index ~= nil then
+					mod.current.profile[player_unit] = SPProfiles[profile_index].unit_name
 
-						if ScriptUnit.has_extension(player_unit, "health_system") and ScriptUnit.has_extension(player_unit, "status_system") then
-							local health_extension = ScriptUnit.extension(player_unit, "health_system")
-							local status_extension = ScriptUnit.extension(player_unit, "status_system")
-							local is_alive = health_extension.is_alive(health_extension) and not status_extension.is_disabled(status_extension)
-							if is_alive and mod:is_not_loading() and mod.current.profile[player_unit] and not mod.current.equipment[player_unit] then
-								mod:add_all_items(player_unit)
-							end
+					if ScriptUnit.has_extension(player_unit, "health_system") and ScriptUnit.has_extension(player_unit, "status_system") then
+						local health_extension = ScriptUnit.extension(player_unit, "health_system")
+						local status_extension = ScriptUnit.extension(player_unit, "status_system")
+						local is_alive = health_extension.is_alive(health_extension) and not status_extension.is_disabled(status_extension)
+						if is_alive and mod:is_not_loading() and mod.current.profile[player_unit] and not mod.current.equipment[player_unit] then
+							mod:add_all_items(player_unit)
+						elseif not is_alive then
+							mod:delete_units(player_unit)
 						end
 					end
 				end
 			end
 		end
-		-- First person
-		local player = Managers.player:local_player()
-		if player then
-			local third_person_mod = get_mod("ThirdPerson")
-			local third_person = third_person_mod and not third_person_mod.firstperson.value or mod:is_first_person_blocked(player.player_unit) or false
-			mod:set_equipment_visibility(player.player_unit, not third_person)
-		end
-	else
-		mod:delete_all_units()
+	end
+	-- First person
+	local player = Managers.player:local_player()
+	if player then
+		local third_person_mod = get_mod("ThirdPerson")
+		local third_person = third_person_mod and not third_person_mod.firstperson.value or mod:is_first_person_blocked(player.player_unit) or false
+		mod:set_equipment_visibility(player.player_unit, not third_person)
 	end
 end)
 --[[
 	Inventory synchronizer hook
 --]]
 mod:hook("InventoryPackageSynchronizer.set_inventory_list", function(func, self, profile_index, ...)
-	if not mod:is_suspended() then
-		local players = Managers.player:human_and_bot_players()
-		for k, player in pairs(players) do
-			local profile_synchronizer = Managers.state.network.profile_synchronizer
-			local profile_index_ = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
-			if profile_index == profile_index_ then
-				mod:delete_units(player.player_unit)
-			end
+	local players = Managers.player:human_and_bot_players()
+	for k, player in pairs(players) do
+		local profile_synchronizer = Managers.state.network.profile_synchronizer
+		local profile_index_ = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
+		if profile_index == profile_index_ then
+			mod:delete_units(player.player_unit)
 		end
 	end
+	
 	func(self, profile_index, ...)
 end)
 
@@ -557,7 +552,7 @@ end)
 --[[
 	Mod Setting changed
 --]]
-mod.setting_changed = function(setting_name)
+mod.on_setting_changed = function(setting_name)
 	-- Dwarf weapons
 	if setting_name == "dwarf_weapon_position" then
 		for unit, name in pairs(mod.current.profile) do
@@ -588,20 +583,14 @@ end
 --[[
 	Mod Suspended
 --]]
-mod.suspended = function()
+mod.on_disabled = function(initial_call)
 	mod:disable_all_hooks()
 	mod:delete_all_units()
 end
 --[[
 	Mod Unsuspended
 --]]
-mod.unsuspended = function()
-	if Managers.player then
-		local players = Managers.player:human_and_bot_players()
-		for k, player in pairs(players) do
-			mod:add_all_items(player.player_unit)
-		end
-	end
+mod.on_enabled = function(initial_call)
 	mod:enable_all_hooks()
 end
 --[[
@@ -616,15 +605,6 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
---[[
-	Delete existing items
---]]
 mod:delete_all_units()
---[[
-	Create option widgets
---]]
 mod:create_options(options_widgets, true, "Third Person Equipment", "Shows equipped items on characters")
---[[
-	Suspend mod if needed
---]]
-if mod:is_suspended() then mod.suspended() end
+mod:init_state()
