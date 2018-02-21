@@ -35,13 +35,13 @@ end)
 --[[
 	Mod Suspended
 --]]
-mod.suspended = function()
+mod.on_disabled = function(initial_call)
 	mod:disable_all_hooks()
 end
 --[[
 	Mod Unsuspended
 --]]
-mod.unsuspended = function()
+mod.on_enabled = function(initial_call)
 	mod:enable_all_hooks()
 end
 
@@ -51,11 +51,5 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
---[[
-	Create option widgets
---]]
 mod:create_options(mod.options_widgets, true, "All Ready", "Lets you start the game without waiting for people to press ready")
---[[
-	Suspend mod if needed
---]]
-if mod:is_suspended() then mod.suspended() end
+mod:init_state()
