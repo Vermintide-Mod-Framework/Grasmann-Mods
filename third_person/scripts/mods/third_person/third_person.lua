@@ -95,12 +95,12 @@ local options_widgets = {
 		["default_value"] = true,
 	},
 	{
-	  ["setting_name"] = "toggle_suspension",
+	  ["setting_name"] = "toggle_mod",
 	  ["widget_type"] = "keybind",
 	  ["text"] = "Toggle",
 	  ["tooltip"] = "Toggle third person on / off.",
 	  ["default_value"] = {},
-	  ["action"] = "toggle_suspension"
+	  ["action"] = "toggle_mod"
 	},
 	{
 		["setting_name"] = "toggle_side",
@@ -186,7 +186,7 @@ mod.set_zoom_values = function(self, current_node)
 	local degrees_to_radians = math.pi/180
 	local zoom_fov = 65
 	local zoom_setting = self:get("zoom")
-	if self:is_suspended() then zoom_setting = 1 end
+	if not self:is_enabled() then zoom_setting = 1 end
 	if self.first_person_zoom.active and not self:get("first_person_zoom_apply_zoom_change") then zoom_setting = 1 end
 	
 	if current_node._name == "zoom_in" then
@@ -237,7 +237,7 @@ end
 	Check if third person is active
 --]]
 mod.is_third_person_active = function(self)
-	return not self:is_suspended() and not self.first_person_zoom.active
+	return self:is_enabled() and not self.first_person_zoom.active
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -594,17 +594,21 @@ end)
 --[[
 	Mod Setting changed
 --]]
-mod.setting_changed = function(setting_name)
+mod.on_setting_changed = function(setting_name)
 end
 --[[
 	Mod Suspended
 --]]
-mod.suspended = function()
+mod.on_disabled = function(initial_call)
+	mod:disable_all_hooks()
+	mod:hook_enable("CameraManager.post_update")
+	mod:hook_enable("PlayerUnitFirstPerson.update")
 end
 --[[
 	Mod Unsuspended
 --]]
-mod.unsuspended = function()
+mod.on_enabled = function(initial_call)
+	mod:enable_all_hooks()
 end
 
 -- #####  █████╗  ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ######################################################
@@ -645,11 +649,5 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
---[[
-	Create option widgets
---]]
 mod:create_options(options_widgets, true, "Third Person", "Lets you play the game in third person")
---[[
-	Suspend if needed
---]]
-if mod:is_suspended() then mod.suspended() end
+mod:init_state()
