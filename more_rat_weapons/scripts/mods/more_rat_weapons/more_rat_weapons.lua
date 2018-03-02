@@ -359,11 +359,12 @@ mod.play_shield_particle = function(self, unit, damage_direction)
 		local local_player = Managers.player:local_player()
 		self:execute_particle_effect(unit_id)
 		-- Network
-		for _, player in pairs(players) do
-			if player ~= local_player then
-				--Mods.network.send_rpc("rpc_mrw_play_particle", player.peer_id, unit_id)
-			end
-		end
+		mod:network_send("rpc_mrw_play_particle", "others", unit_id)
+		-- for _, player in pairs(players) do
+			-- if player ~= local_player then
+				-- --Mods.network.send_rpc("rpc_mrw_play_particle", player.peer_id, unit_id)
+			-- end
+		-- end
 	end
 end
 --[[
@@ -397,11 +398,12 @@ mod.drop_shield = function(self, unit, damage_direction)
 			local local_player = Managers.player:local_player()
 			self:execute_drop_shield(unit_id, direction)
 			-- Network
-			for _, player in pairs(players) do
-				if player ~= local_player then
-					--Mods.network.send_rpc("rpc_mrw_drop_shield", player.peer_id, unit_id, direction)
-				end
-			end
+			mod:network_send("rpc_mrw_drop_shield", "others", unit_id, damage_direction)
+			-- for _, player in pairs(players) do
+				-- if player ~= local_player then
+					-- --Mods.network.send_rpc("rpc_mrw_drop_shield", player.peer_id, unit_id, direction)
+				-- end
+			-- end
 		end
 	end
 end
@@ -714,6 +716,9 @@ end
 -- Mods.network.register("rpc_mrw_play_particle", function(sender_peer_id, unit_id)
 	-- mod:execute_particle_effect(unit_id)
 -- end)
+mod:network_register("rpc_mrw_play_particle", function(sender_peer_id, unit_id)
+	mod:execute_particle_effect(unit_id)
+end)
 --[[
 	Drop shield
 --]]
@@ -760,6 +765,9 @@ end
 -- Mods.network.register("rpc_mrw_drop_shield", function(sender_peer_id, unit_id, damage_direction)
 	-- mod:execute_drop_shield(unit_id, damage_direction)
 -- end)
+mod:network_register("rpc_mrw_drop_shield", function(sender_peer_id, unit_id, damage_direction)
+	mod:execute_drop_shield(unit_id, damage_direction)
+end)
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
 -- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
