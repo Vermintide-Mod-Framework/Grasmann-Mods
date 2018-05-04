@@ -17,7 +17,12 @@ local mod = get_mod("ThirdPerson")
 -- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
 -- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
 -- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
-local options_widgets = {
+local mod_data = {}
+mod_data.name = "Third Person" -- Readable mod name
+mod_data.description = "Lets you play the game in third person." -- Readable mod description
+mod_data.is_togglable = true -- If the mod can be enabled/disabled
+mod_data.is_mutator = false -- If the mod is mutator
+mod_data.options_widgets = {
 	{
 		["setting_name"] = "mode",
 		["widget_type"] = "dropdown",
@@ -1528,5 +1533,5 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
-mod:create_options(options_widgets, true, "Third Person", "Lets you play the game in third person")
-mod:init_state()
+--mod:create_options(options_widgets, true, "Third Person", "Lets you play the game in third person")
+mod:initialize_data(mod_data)
