@@ -57,7 +57,7 @@ local options_widgets = {
 								["setting_name"] = "automatic_ranged_side",
 								["widget_type"] = "dropdown",
 								["text"] = "Side",
-								["tooltip"] = "Third Person Side\n" ..
+								["tooltip"] = "Side\n" ..
 									"Choose if the camera is to left or right of your character.",
 								["options"] = {
 									{text = "Right", value = "right"},
@@ -71,10 +71,34 @@ local options_widgets = {
 								["widget_type"] = "numeric",
 								["text"] = "Offset",
 								["unit_text"] = "",
-								["tooltip"] = "Third Person Offset\n" ..
+								["tooltip"] = "Offset\n" ..
 									"Change the distance between the camera and the character.",
 								["range"] = {50, 400},
 								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_ranged_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_ranged_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
 							},
 						},
 					},
@@ -106,7 +130,7 @@ local options_widgets = {
 								["setting_name"] = "automatic_aim_side",
 								["widget_type"] = "dropdown",
 								["text"] = "Side",
-								["tooltip"] = "Third Person Side\n" ..
+								["tooltip"] = "Side\n" ..
 									"Choose if the camera is to left or right of your character.",
 								["options"] = {
 									{text = "Right", value = "right"},
@@ -120,7 +144,7 @@ local options_widgets = {
 								["widget_type"] = "numeric",
 								["text"] = "Offset",
 								["unit_text"] = "",
-								["tooltip"] = "Third Person Offset\n" ..
+								["tooltip"] = "Offset\n" ..
 									"Change the distance between the camera and the character.",
 								["range"] = {50, 400},
 								["default_value"] = 100,
@@ -130,7 +154,7 @@ local options_widgets = {
 								["setting_name"] = "automatic_aim_zoom",
 								["widget_type"] = "dropdown",
 								["text"] = "Zoom",
-								["tooltip"] = "Third Person Zoom\n" ..
+								["tooltip"] = "Zoom\n" ..
 									"Change the zoom strength for third person.",
 								["options"] = {
 									{text = "Default", value = 1},
@@ -139,6 +163,30 @@ local options_widgets = {
 									{text = "Off", value = 4},
 								},
 								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_aim_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_aim_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
 							},
 						},
 					},
@@ -170,7 +218,7 @@ local options_widgets = {
 								["setting_name"] = "automatic_reload_side",
 								["widget_type"] = "dropdown",
 								["text"] = "Side",
-								["tooltip"] = "Third Person Side\n" ..
+								["tooltip"] = "Side\n" ..
 									"Choose if the camera is to left or right of your character.",
 								["options"] = {
 									{text = "Right", value = "right"},
@@ -184,10 +232,34 @@ local options_widgets = {
 								["widget_type"] = "numeric",
 								["text"] = "Offset",
 								["unit_text"] = "",
-								["tooltip"] = "Third Person Offset\n" ..
+								["tooltip"] = "Offset\n" ..
 									"Change the distance between the camera and the character.",
 								["range"] = {50, 400},
 								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_reload_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_reload_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
 							},
 						},
 					},
@@ -219,7 +291,7 @@ local options_widgets = {
 								["setting_name"] = "automatic_vent_side",
 								["widget_type"] = "dropdown",
 								["text"] = "Side",
-								["tooltip"] = "Third Person Side\n" ..
+								["tooltip"] = "Side\n" ..
 									"Choose if the camera is to left or right of your character.",
 								["options"] = {
 									{text = "Right", value = "right"},
@@ -233,10 +305,34 @@ local options_widgets = {
 								["widget_type"] = "numeric",
 								["text"] = "Offset",
 								["unit_text"] = "",
-								["tooltip"] = "Third Person Offset\n" ..
+								["tooltip"] = "Offset\n" ..
 									"Change the distance between the camera and the character.",
 								["range"] = {50, 400},
 								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_vent_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_vent_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
 							},
 						},
 					},
@@ -268,7 +364,7 @@ local options_widgets = {
 								["setting_name"] = "automatic_melee_side",
 								["widget_type"] = "dropdown",
 								["text"] = "Side",
-								["tooltip"] = "Third Person Side\n" ..
+								["tooltip"] = "Side\n" ..
 									"Choose if the camera is to left or right of your character.",
 								["options"] = {
 									{text = "Right", value = "right"},
@@ -282,10 +378,34 @@ local options_widgets = {
 								["widget_type"] = "numeric",
 								["text"] = "Offset",
 								["unit_text"] = "",
-								["tooltip"] = "Third Person Offset\n" ..
+								["tooltip"] = "Offset\n" ..
 									"Change the distance between the camera and the character.",
 								["range"] = {50, 400},
 								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_melee_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_melee_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
 							},
 						},
 					},
@@ -317,7 +437,7 @@ local options_widgets = {
 								["setting_name"] = "automatic_block_side",
 								["widget_type"] = "dropdown",
 								["text"] = "Side",
-								["tooltip"] = "Third Person Side\n" ..
+								["tooltip"] = "Side\n" ..
 									"Choose if the camera is to left or right of your character.",
 								["options"] = {
 									{text = "Right", value = "right"},
@@ -331,10 +451,34 @@ local options_widgets = {
 								["widget_type"] = "numeric",
 								["text"] = "Offset",
 								["unit_text"] = "",
-								["tooltip"] = "Third Person Offset\n" ..
+								["tooltip"] = "Offset\n" ..
 									"Change the distance between the camera and the character.",
 								["range"] = {50, 400},
 								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_block_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_block_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.5,
 							},
 						},
 					},
@@ -366,7 +510,7 @@ local options_widgets = {
 								["setting_name"] = "automatic_push_side",
 								["widget_type"] = "dropdown",
 								["text"] = "Side",
-								["tooltip"] = "Third Person Side\n" ..
+								["tooltip"] = "Side\n" ..
 									"Choose if the camera is to left or right of your character.",
 								["options"] = {
 									{text = "Right", value = "right"},
@@ -380,10 +524,34 @@ local options_widgets = {
 								["widget_type"] = "numeric",
 								["text"] = "Offset",
 								["unit_text"] = "",
-								["tooltip"] = "Third Person Offset\n" ..
+								["tooltip"] = "Offset\n" ..
 									"Change the distance between the camera and the character.",
 								["range"] = {50, 400},
 								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_push_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_push_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
 							},
 						},
 					},
@@ -415,7 +583,7 @@ local options_widgets = {
 								["setting_name"] = "automatic_stunned_side",
 								["widget_type"] = "dropdown",
 								["text"] = "Side",
-								["tooltip"] = "Third Person Side\n" ..
+								["tooltip"] = "Side\n" ..
 									"Choose if the camera is to left or right of your character.",
 								["options"] = {
 									{text = "Right", value = "right"},
@@ -429,10 +597,34 @@ local options_widgets = {
 								["widget_type"] = "numeric",
 								["text"] = "Offset",
 								["unit_text"] = "",
-								["tooltip"] = "Third Person Offset\n" ..
+								["tooltip"] = "Offset\n" ..
 									"Change the distance between the camera and the character.",
 								["range"] = {50, 400},
 								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_stunned_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_stunned_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
 							},
 						},
 					},
@@ -464,7 +656,7 @@ local options_widgets = {
 								["setting_name"] = "automatic_carry_side",
 								["widget_type"] = "dropdown",
 								["text"] = "Side",
-								["tooltip"] = "Third Person Side\n" ..
+								["tooltip"] = "Side\n" ..
 									"Choose if the camera is to left or right of your character.",
 								["options"] = {
 									{text = "Right", value = "right"},
@@ -478,10 +670,34 @@ local options_widgets = {
 								["widget_type"] = "numeric",
 								["text"] = "Offset",
 								["unit_text"] = "",
-								["tooltip"] = "Third Person Offset\n" ..
+								["tooltip"] = "Offset\n" ..
 									"Change the distance between the camera and the character.",
 								["range"] = {50, 400},
 								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_carry_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_carry_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
 							},
 						},
 					},
@@ -597,17 +813,17 @@ local options_widgets = {
 mod.reset = true
 mod.firstperson = false
 mod.zoom = {
-	default = {
-		default = 30,
-		medium = 40,
-		low = 50,
-		off = 65,
+	zoom_in = {
+		["1"] = 30,
+		["2"] = 40,
+		["3"] = 50,
+		["4"] = 65,
 	},
-	increased = {
-		default = 16,
-		medium = 30,
-		low = 45,
-		off = 65,
+	increased_zoom_in = {
+		["1"] = 16,
+		["2"] = 30,
+		["3"] = 45,
+		["4"] = 65,
 	},
 }
 mod.reload = {
@@ -649,81 +865,6 @@ mod.camera = {
 }
 mod.camera.current_view = mod.camera.views.first_person
 
---[[
-	Get current time
---]]
-mod.get_time = function(self)
-	return Managers.time and Managers.time:time("game") or 0
-end
---[[
-	Calculate offset value
---]]
-mod.calculate_offset = function(self)
-	
-	-- Set empty values
-	-- if not mod.camera.current_view then
-		-- mod.camera.current_view = mod.camera.views.first_person
-		-- --mod.camera.previous_view = mod.camera.current_view
-		-- mod:echo("views set")
-	-- end
-	
-	-- Get current view offset
-	local offset = Vector3(mod.camera.current_view.offset[1], mod.camera.current_view.offset[2] * mod.camera.current_view.modifier, mod.camera.current_view.offset[3])
-	local t = mod:get_time()
-
-	-- Do transitions
-	if #mod.camera.transitions > 0 and Managers.player:local_player().player_unit then
-		-- Get transition
-		local tr = mod.camera.transitions[#mod.camera.transitions]
-		
-		if tr.delay then
-			if not tr.start then
-				-- Setup delay
-				tr.start = t
-				tr.wait = tr.delay
-				
-			elseif t > tr.start + tr.wait then
-				-- End delay
-				tr.delay = nil
-				tr.start = nil
-				tr.wait = nil
-			end
-		else
-			if not tr.start then
-				-- Setup transition
-				tr.start = t
-				tr.wait = 0.2 * tr.length
-				tr.value = 0
-				
-			elseif t < tr.start + tr.wait then
-				-- Running transition
-				tr.value = (t - tr.start) / tr.wait
-				local start_pos = Vector3(mod.camera.current_view.offset[1], mod.camera.current_view.offset[2] * mod.camera.current_view.modifier, mod.camera.current_view.offset[3])
-				local end_pos = Vector3(tr.view.offset[1], tr.view.offset[2] * tr.view.modifier, tr.view.offset[3])
-				offset = Vector3.lerp(start_pos, end_pos, tr.value)
-				-- Update model on value
-				if tr.value > tr.view.models.value then
-					mod.camera.model = tr.view.models.name
-				end
-				
-			elseif t > tr.start + tr.wait then
-				-- End transition
-				mod.camera.current_view = tr.view
-				mod.camera.model = tr.view.models.name
-				offset = Vector3(tr.view.offset[1], tr.view.offset[2] * tr.view.modifier, tr.view.offset[3]) --* tr.view.modifier
-				table.remove(mod.camera.transitions)
-				if tr.callback then
-					tr.callback()
-				end
-			end
-		end
-	end
-	
-	-- Set camera offset
-	mod.camera.offset = {x = offset[1], y = offset[2], z = offset[3]}
-
-end
-
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
 -- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
 -- ##### █████╗  ██║   ██║██╔██╗ ██║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗ ###################################
@@ -731,37 +872,26 @@ end
 -- ##### ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║ ###################################
 -- ##### ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ###################################
 --[[
+	Get current time
+--]]
+mod.get_time = function(self)
+	return Managers.time and Managers.time:time("game") or 0
+end
+--[[
 	Set zoom values
 --]]
 mod.set_zoom_values = function(self, current_node)
-	local degrees_to_radians = math.pi/180
-	local zoom_fov = 65
-	local zoom_setting = self:get("zoom")
+	
+	local zoom_setting = self:get("zoom") or 1
 	if not self:is_enabled() then zoom_setting = 1 end
 	
-	if current_node._name == "zoom_in" then
-		if zoom_setting == 2 then
-			zoom_fov = self.zoom.default.medium
-		elseif zoom_setting == 3 then
-			zoom_fov = self.zoom.default.low
-		elseif zoom_setting == 4 then
-			zoom_fov = self.zoom.default.off
-		else
-			zoom_fov = self.zoom.default.default
-		end
-		current_node._vertical_fov = zoom_fov*degrees_to_radians				
-	elseif current_node._name == "increased_zoom_in" then
-		if zoom_setting == 2 then
-			zoom_fov = self.zoom.increased.medium
-		elseif zoom_setting == 3 then
-			zoom_fov = self.zoom.increased.low
-		elseif zoom_setting == 4 then
-			zoom_fov = self.zoom.increased.off
-		else
-			zoom_fov = self.zoom.increased.default
-		end
-		current_node._vertical_fov = zoom_fov*degrees_to_radians
-	end	
+	local zoom_entry = self.zoom[current_node._name]
+	if zoom_entry then
+		local zoom_fov = zoom_entry[zoom_setting] or 65
+		local degrees_to_radians = math.pi/180
+		current_node._vertical_fov = zoom_fov * degrees_to_radians
+	end
+
 end
 --[[
 	Check if first person is blocked
@@ -787,7 +917,130 @@ end
 	Check if third person is active
 --]]
 mod.is_third_person_active = function(self)
-	return self:is_enabled() and mod.camera.model == "third_person"
+	return self:is_enabled() and self.camera.model == "third_person"
+end
+--[[
+	Calculate offset value
+--]]
+mod.calculate_offset = function(self)
+
+	-- Get current view offset
+	local view = self.camera.current_view
+	local offset = Vector3(view.offset[1], view.offset[2] * view.modifier, view.offset[3])
+	local t = self:get_time()
+
+	-- Do transitions
+	if #self.camera.transitions > 0 and Managers.player:local_player().player_unit then
+		-- Get transition
+		local tr = self.camera.transitions[#self.camera.transitions]
+		
+		if tr.delay then
+			if not tr.start then
+				-- Setup delay
+				tr.start = t
+				tr.wait = tr.delay
+				
+			elseif t > tr.start + tr.wait then
+				-- End delay
+				tr.delay = nil
+				tr.start = nil
+				tr.wait = nil
+			end
+		else
+			if not tr.start then
+				-- Setup transition
+				tr.start = t
+				tr.wait = 0.2 * tr.length
+				tr.value = 0
+				
+			elseif t < tr.start + tr.wait then
+				-- Running transition
+				tr.value = (t - tr.start) / tr.wait
+				local start_pos = Vector3(view.offset[1], view.offset[2] * view.modifier, view.offset[3])
+				local end_pos = Vector3(tr.view.offset[1], tr.view.offset[2] * tr.view.modifier, tr.view.offset[3])
+				offset = Vector3.lerp(start_pos, end_pos, tr.value)
+				-- Update model on value
+				if tr.value > tr.view.models.value then
+					self.camera.model = tr.view.models.name
+				end
+				
+			elseif t > tr.start + tr.wait then
+				-- End transition
+				self.camera.current_view = tr.view
+				self.camera.model = tr.view.models.name
+				offset = Vector3(tr.view.offset[1], tr.view.offset[2] * tr.view.modifier, tr.view.offset[3])
+				-- Remove transition
+				table.remove(self.camera.transitions)
+				-- Execute callback
+				if tr.callback then
+					tr.callback()
+				end
+			end
+		end
+	end
+	
+	-- Set camera offset
+	self.camera.offset = {x = offset[1], y = offset[2], z = offset[3]}
+
+end
+--[[
+	Transition to first person
+--]]
+mod.start_first_person = function(self, callback)
+	local view = table.clone(self.camera.views.first_person)
+	self.camera:transition_to(view, 0.2, 1.0, callback)
+end
+--[[
+	Transition to third person
+--]]
+mod.start_third_person = function(self)
+	
+	if self:get("mode") == "third_person" then
+		local view = table.clone(self.camera.views.third_person_left)
+		if self:get("side") == "right" then
+			view = table.clone(self.camera.views.third_person_right)
+		end
+		view.modifier = (self:get("offset") or 100) / 100
+		view.zoom = self:get("zoom") or 1
+		self.camera:transition_to(view, 0.2, 1.0)
+	end
+	
+end
+--[[
+	Transition to automatic
+--]]
+mod.start_view = function(self, name)
+
+	if self:get("mode") == "automatic" then
+		if name and self:get(name) then
+			local view = table.clone(self.camera.views.first_person)
+			local length = self:get(name.."_length") or 1.0
+			local delay = self:get(name.."_delay") or 0.05
+			if self:get(name.."_mode") == "third_person" then
+				if self:get(name.."_side") == "right" then
+					view = table.clone(self.camera.views.third_person_right)
+				else
+					view = table.clone(self.camera.views.third_person_left)
+				end
+				view.modifier = (self:get(name.."_offset") or 100) / 100
+				view.zoom = self:get(name.."_zoom") or 1
+			end
+			self.camera:transition_to(view, delay, length)
+		else
+			local player_unit = Managers.player and Managers.player:local_player().player_unit
+			if player_unit then
+				local inventory_system = ScriptUnit.extension(player_unit, "inventory_system")
+				local equipment = inventory_system.equipment(inventory_system)
+				local slot_name = equipment.wielded_slot
+				if slot_name == "slot_melee" then
+					self:start_view("automatic_melee") --, delay, length)
+				elseif slot_name == "slot_ranged" then
+					self:start_view("automatic_ranged") --, delay, length)
+				end
+			end
+		end
+	end
+	
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -864,7 +1117,7 @@ mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
 
 	if mod.reset then
 		self.set_first_person_mode(self, not mod:is_third_person_active())
-		mod:start_view(nil, 0.05)
+		mod:start_view(nil)
 		mod:start_third_person()
 		mod.reset = false
 	end
@@ -898,48 +1151,6 @@ mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
 	end
 	
 end)
-
--- ##### ██████╗ ███████╗███████╗███████╗████████╗ ####################################################################
--- ##### ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝ ####################################################################
--- ##### ██████╔╝█████╗  ███████╗█████╗     ██║    ####################################################################
--- ##### ██╔══██╗██╔══╝  ╚════██║██╔══╝     ██║    ####################################################################
--- ##### ██║  ██║███████╗███████║███████╗   ██║    ####################################################################
--- ##### ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝    ####################################################################
---[[
-	A game was started
---]]
-mod:hook("StateInGameRunning.event_game_started", function(func, self, ...)
-	func(self, ...)
-	mod.reset = true
-end)
---[[
-	Set first person mode for cutscenes
---]]
-mod:hook("CutsceneSystem.set_first_person_mode", function(func, self, enabled, ...)
-	func(self, enabled, ...)
-	mod.reset = true
-end)
---[[
-	Reset view after character change
---]]
-mod:hook("ProfileView.on_exit", function(func, ...)
-	func(...)
-	mod.reset = true
-end)
---[[
-	Reset view after equipment change
---]]
-mod:hook("InventoryView.on_exit", function(func, self)
-	func(self)
-	mod.reset = true
-end)
-
--- ##### ██████╗ ██████╗  ██████╗      ██╗███████╗ ██████╗████████╗██╗██╗     ███████╗███████╗ ########################
--- ##### ██╔══██╗██╔══██╗██╔═══██╗     ██║██╔════╝██╔════╝╚══██╔══╝██║██║     ██╔════╝██╔════╝ ########################
--- ##### ██████╔╝██████╔╝██║   ██║     ██║█████╗  ██║        ██║   ██║██║     █████╗  ███████╗ ########################
--- ##### ██╔═══╝ ██╔══██╗██║   ██║██   ██║██╔══╝  ██║        ██║   ██║██║     ██╔══╝  ╚════██║ ########################
--- ##### ██║     ██║  ██║╚██████╔╝╚█████╔╝███████╗╚██████╗   ██║   ██║███████╗███████╗███████║ ########################
--- ##### ╚═╝     ╚═╝  ╚═╝ ╚═════╝  ╚════╝ ╚══════╝ ╚═════╝   ╚═╝   ╚═╝╚══════╝╚══════╝╚══════╝ ########################
 --[[
 	Fix to apply camera offset to projectiles
 --]]
@@ -986,6 +1197,42 @@ mod:hook("ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, 
 	func(owner_unit, target_unit, true_flight_template_id, position, ...)
 end)
 
+-- ##### ██████╗ ███████╗███████╗███████╗████████╗ ####################################################################
+-- ##### ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝ ####################################################################
+-- ##### ██████╔╝█████╗  ███████╗█████╗     ██║    ####################################################################
+-- ##### ██╔══██╗██╔══╝  ╚════██║██╔══╝     ██║    ####################################################################
+-- ##### ██║  ██║███████╗███████║███████╗   ██║    ####################################################################
+-- ##### ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝   ╚═╝    ####################################################################
+--[[
+	On some occasions it's necessary to reset the visibility of first- and third person model
+	A game was started
+--]]
+mod:hook("StateInGameRunning.event_game_started", function(func, self, ...)
+	func(self, ...)
+	mod.reset = true
+end)
+--[[
+	Set first person mode for cutscenes
+--]]
+mod:hook("CutsceneSystem.set_first_person_mode", function(func, self, enabled, ...)
+	func(self, enabled, ...)
+	mod.reset = true
+end)
+--[[
+	Reset view after character change
+--]]
+mod:hook("ProfileView.on_exit", function(func, ...)
+	func(...)
+	mod.reset = true
+end)
+--[[
+	Reset view after equipment change
+--]]
+mod:hook("InventoryView.on_exit", function(func, self)
+	func(self)
+	mod.reset = true
+end)
+
 -- ##### ██████╗ ███████╗██╗      ██████╗  █████╗ ██████╗  ############################################################
 -- ##### ██╔══██╗██╔════╝██║     ██╔═══██╗██╔══██╗██╔══██╗ ############################################################
 -- ##### ██████╔╝█████╗  ██║     ██║   ██║███████║██║  ██║ ############################################################
@@ -1008,9 +1255,12 @@ mod:hook("GenericAmmoUserExtension.start_reload_animation", function(func, self,
 		}
 	end
 end)
+--[[
+	Start reload
+--]]
 mod:hook("GenericAmmoUserExtension.start_reload", function(func, self, ...)
 	if self.reload_event and Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_reload", 0.05)
+		mod:start_view("automatic_reload")
 	end
 	func(self, ...)
 end)
@@ -1039,7 +1289,7 @@ mod:hook("GenericAmmoUserExtension.update", function(func, self, unit, input, dt
 			mod.reload.extended[self.owner_unit] = nil
 			
 			if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-				mod:start_view("automatic_ranged", 0.1)
+				mod:start_view("automatic_ranged")
 			end
 		elseif not mod.reload.extended[self.owner_unit] and mod:get("reload_extend_too_short") then
 			local t, length = Unit.animation_layer_info(self.owner_unit, 2)
@@ -1059,7 +1309,7 @@ mod:hook("GenericAmmoUserExtension.abort_reload", function(func, self, ...)
 	mod.reload.reloading[self.owner_unit] = nil
 	mod.reload.extended[self.owner_unit] = nil
 	if self.reload_event and Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_ranged", 0.1)
+		mod:start_view("automatic_ranged")
 	end
 end)
 
@@ -1069,68 +1319,18 @@ end)
 -- ##### ██╔══██║██║   ██║   ██║   ██║   ██║██║╚██╔╝██║██╔══██║   ██║   ██║██║      ###################################
 -- ##### ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚═╝ ██║██║  ██║   ██║   ██║╚██████╗ ###################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ###################################
-mod.start_first_person = function(self, length, delay, callback)
-	local view = table.clone(mod.camera.views.first_person)
-	mod.camera:transition_to(view, delay, length, callback)
-end
-
-mod.start_third_person = function(self, length, delay)
-	
-	if mod:get("mode") == "third_person" then
-		local view = table.clone(mod.camera.views.third_person_left)
-		if mod:get("side") == "right" then
-			view = table.clone(mod.camera.views.third_person_right)
-		end
-		view.modifier = (mod:get("offset") or 100) / 100
-		view.zoom = mod:get("zoom") or 1
-		mod.camera:transition_to(view, delay or 0.1, length or 1.0)
-	end
-	
-end
-
-mod.start_view = function(self, name, delay, length)
-
-	if mod:get("mode") == "automatic" then
-		if name and mod:get(name) then
-			local view = table.clone(mod.camera.views.first_person)
-			if mod:get(name.."_mode") == "third_person" then
-				if mod:get(name.."_side") == "right" then
-					view = table.clone(mod.camera.views.third_person_right)
-				else
-					view = table.clone(mod.camera.views.third_person_left)
-				end
-				view.modifier = (mod:get(name.."_offset") or 100) / 100
-				view.zoom = mod:get(name.."_zoom") or 1
-			end
-			mod.camera:transition_to(view, delay, length)
-		else
-			local player_unit = Managers.player:local_player() and Managers.player:local_player().player_unit
-			if player_unit then
-				local inventory_system = ScriptUnit.extension(player_unit, "inventory_system")
-				local equipment = inventory_system.equipment(inventory_system)
-				local slot_name = equipment.wielded_slot
-				if slot_name == "slot_melee" then
-					mod:start_view("automatic_melee", delay, length)
-				elseif slot_name == "slot_ranged" then
-					mod:start_view("automatic_ranged", delay, length)
-				end
-			end
-		end
-	end
-	
-end
 --[[
-	aim
+	Aim
 --]]
 mod:hook("ActionAim.client_owner_start_action", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_aim", 0.05)
+		mod:start_view("automatic_aim")
 	end
 	func(self, ...)
 end)
 mod:hook("ActionAim.finish", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_ranged", 0.1)
+		mod:start_view("automatic_ranged")
 	end
 	func(self, ...)
 end)
@@ -1139,13 +1339,13 @@ end)
 --]]
 mod:hook("ActionTrueFlightBowAim.client_owner_start_action", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_aim", 0.05)
+		mod:start_view("automatic_aim")
 	end
 	func(self, ...)
 end)
 mod:hook("ActionTrueFlightBowAim.finish", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_ranged", 0.1)
+		mod:start_view("automatic_ranged")
 	end
 	return func(self, ...)
 end)
@@ -1154,13 +1354,13 @@ end)
 --]]
 mod:hook("ActionBlock.client_owner_start_action", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_block", 0.05)
+		mod:start_view("automatic_block", 0.2)
 	end
 	func(self, ...)
 end)
 mod:hook("ActionBlock.finish", function(func, self, reason)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() and reason == "hold_input_released" then
-		mod:start_view("automatic_melee", 0.1)
+		mod:start_view("automatic_melee", 0.2)
 	end
 	func(self, reason)
 end)
@@ -1260,7 +1460,7 @@ end
 	Mod Suspended
 --]]
 mod.on_disabled = function(initial_call)
-	mod:start_first_person(1.0, 0.05, function()
+	mod:start_first_person(function()
 		mod:disable_all_hooks()
 	end)
 end
@@ -1272,6 +1472,12 @@ mod.on_enabled = function(initial_call)
 	
 	mod:start_view(nil, 0.05)
 	mod:start_third_person()
+end
+--[[
+	Update cycle - wait for chatmanager to be present
+--]]
+mod.update = function(dt)
+	mod:calculate_offset()
 end
 
 -- #####  █████╗  ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ######################################################
@@ -1314,15 +1520,6 @@ mod.switch_zoom = function()
 	mod:set("zoom", zoom, true)
 	
 	mod:start_third_person()
-end
---[[
-	Update cycle - wait for chatmanager to be present
---]]
-mod.update = function(dt)
-
-	-- ##### Calculate transition values ##############################################################################
-	mod:calculate_offset()
-	
 end
 
 -- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
