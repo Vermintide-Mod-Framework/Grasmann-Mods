@@ -27,8 +27,9 @@ mod_data.options_widgets = {
 		["setting_name"] = "mode",
 		["widget_type"] = "dropdown",
 		["text"] = "Mode",
-		["tooltip"] = "Mode\n" ..
-			"Camera mode.",
+		["tooltip"] = "Mode\n\n" ..
+			"-- THIRD PERSON --\nCamera is always in third person.\n\n" ..
+			"-- AUTOMATIC --\nSetup camera settings for specific situations.",
 		["options"] = {
 			{text = "Third Person", value = "third_person"}, --1
 			{text = "Automatic", value = "automatic"}, --2
@@ -40,9 +41,9 @@ mod_data.options_widgets = {
 				["show_widget_condition"] = {2},
 				["setting_name"] = "automatic_ranged",
 				["widget_type"] = "checkbox",
-				["text"] = "Ranged",
-				["tooltip"] = "Ranged\n" ..
-					"Camera settings with a ranged weapon.",
+				["text"] = "Ranged Weapon",
+				["tooltip"] = "Ranged Weapon\n" ..
+					"Camera settings when holding a ranged weapon.",
 				["default_value"] = false,
 				["sub_widgets"] = {
 					{
@@ -113,8 +114,8 @@ mod_data.options_widgets = {
 				["show_widget_condition"] = {2},
 				["setting_name"] = "automatic_aim",
 				["widget_type"] = "checkbox",
-				["text"] = "Aim",
-				["tooltip"] = "Aim\n" ..
+				["text"] = "Aiming",
+				["tooltip"] = "Aiming\n" ..
 					"Camera settings for aiming with a ranged weapon.",
 				["default_value"] = false,
 				["sub_widgets"] = {
@@ -160,7 +161,7 @@ mod_data.options_widgets = {
 								["widget_type"] = "dropdown",
 								["text"] = "Zoom",
 								["tooltip"] = "Zoom\n" ..
-									"Change the zoom strength for third person.",
+									"Change the zoom strength.",
 								["options"] = {
 									{text = "Default", value = 1},
 									{text = "Medium", value = 2},
@@ -201,8 +202,8 @@ mod_data.options_widgets = {
 				["show_widget_condition"] = {2},
 				["setting_name"] = "automatic_reload",
 				["widget_type"] = "checkbox",
-				["text"] = "Reload",
-				["tooltip"] = "Reload\n" ..
+				["text"] = "Reloading",
+				["tooltip"] = "Reloading\n" ..
 					"Camera settings for reloading a ranged weapon.",
 				["default_value"] = false,
 				["sub_widgets"] = {
@@ -274,9 +275,9 @@ mod_data.options_widgets = {
 				["show_widget_condition"] = {2},
 				["setting_name"] = "automatic_vent",
 				["widget_type"] = "checkbox",
-				["text"] = "Vent",
-				["tooltip"] = "Vent\n" ..
-					"Camera settings for reloading a ranged weapon.",
+				["text"] = "Venting Overcharge",
+				["tooltip"] = "Venting Overcharge\n" ..
+					"Camera settings when venting overcharge.",
 				["default_value"] = false,
 				["sub_widgets"] = {
 					{
@@ -347,8 +348,8 @@ mod_data.options_widgets = {
 				["show_widget_condition"] = {2},
 				["setting_name"] = "automatic_melee",
 				["widget_type"] = "checkbox",
-				["text"] = "Melee",
-				["tooltip"] = "Melee\n" ..
+				["text"] = "Melee Weapon",
+				["tooltip"] = "Melee Weapon\n" ..
 					"Camera settings with a melee weapon.",
 				["default_value"] = false,
 				["sub_widgets"] = {
@@ -420,8 +421,8 @@ mod_data.options_widgets = {
 				["show_widget_condition"] = {2},
 				["setting_name"] = "automatic_block",
 				["widget_type"] = "checkbox",
-				["text"] = "Block",
-				["tooltip"] = "Block\n" ..
+				["text"] = "Blocking",
+				["tooltip"] = "Blocking\n" ..
 					"Camera settings for blocking with a melee weapon.",
 				["default_value"] = false,
 				["sub_widgets"] = {
@@ -493,8 +494,8 @@ mod_data.options_widgets = {
 				["show_widget_condition"] = {2},
 				["setting_name"] = "automatic_push",
 				["widget_type"] = "checkbox",
-				["text"] = "Push",
-				["tooltip"] = "Push\n" ..
+				["text"] = "Pushing",
+				["tooltip"] = "Pushing\n" ..
 					"Camera settings for pushing with a melee weapon.",
 				["default_value"] = false,
 				["sub_widgets"] = {
@@ -639,8 +640,8 @@ mod_data.options_widgets = {
 				["show_widget_condition"] = {2},
 				["setting_name"] = "automatic_carry",
 				["widget_type"] = "checkbox",
-				["text"] = "Carry",
-				["tooltip"] = "Carry\n" ..
+				["text"] = "Carrying Event Item",
+				["tooltip"] = "Carrying Event Item\n" ..
 					"Camera settings when carrying objective items.",
 				["default_value"] = false,
 				["sub_widgets"] = {
@@ -714,7 +715,7 @@ mod_data.options_widgets = {
 				["setting_name"] = "side",
 				["widget_type"] = "dropdown",
 				["text"] = "Side",
-				["tooltip"] = "Third Person Side\n" ..
+				["tooltip"] = "Side\n" ..
 					"Choose if the camera is to left or right of your character.",
 				["options"] = {
 					{text = "Right", value = "right"},
@@ -728,7 +729,7 @@ mod_data.options_widgets = {
 				["widget_type"] = "numeric",
 				["text"] = "Offset",
 				["unit_text"] = "",
-				["tooltip"] = "Third Person Offset\n" ..
+				["tooltip"] = "Offset\n" ..
 					"Change the distance between the camera and the character.",
 				["range"] = {50, 400},
 				["default_value"] = 100,
@@ -738,8 +739,8 @@ mod_data.options_widgets = {
 				["setting_name"] = "zoom",
 				["widget_type"] = "dropdown",
 				["text"] = "Zoom",
-				["tooltip"] = "Third Person Zoom\n" ..
-					"Change the zoom strength for third person.",
+				["tooltip"] = "Zoom\n" ..
+					"Change the zoom strength.",
 				["options"] = {
 					{text = "Default", value = 1},
 					{text = "Medium", value = 2},
@@ -747,6 +748,36 @@ mod_data.options_widgets = {
 					{text = "Off", value = 4},
 				},
 				["default_value"] = 1,
+			},
+			{
+				["show_widget_condition"] = {1, 2},
+				["setting_name"] = "sway",
+				["widget_type"] = "checkbox",
+				["text"] = "Dynamic Swaying",
+				["tooltip"] = "Dynamic Swaying\n" ..
+					"In third person the camera smoothly sways from left to right when strafing.",
+				["default_value"] = false,
+				["sub_widgets"] = {
+					{
+						["setting_name"] = "sway_speed",
+						["widget_type"] = "numeric",
+						["text"] = "Speed",
+						["unit_text"] = "",
+						["tooltip"] = "Speed\n" ..
+							"Camera sway speed.",
+						["range"] = {0.1, 1},
+						["decimals_number"] = 1,
+						["default_value"] = 0.5,
+					},
+					{
+						["setting_name"] = "sway_normalize",
+						["widget_type"] = "checkbox",
+						["text"] = "Normalize",
+						["tooltip"] = "Normalize\n" ..
+							"Smoothly resets sway amount when not strafing.",
+						["default_value"] = false,
+					},
+				},
 			},
 			{
 				["show_widget_condition"] = {1},
@@ -854,7 +885,7 @@ mod.camera = {
 			modifier = 1,
 		},
 		third_person_right = {
-			offset = {-0.6, -0.8, 0.1},
+			offset = {-0.5, -0.8, 0.1},
 			models = {name = "third_person", value = 0.5},
 			modifier = 1,
 		},
@@ -867,6 +898,12 @@ mod.camera = {
 		self.transitions = {}
 		table.insert(self.transitions, 1, {view = view, delay = delay, length = length or 1.0, callback = callback})
 	end,
+	sway = {
+		frequency = 0.01,
+		updated = 0,
+		increment = 0.05,
+		offset = 0,
+	},
 }
 mod.camera.current_view = mod.camera.views.first_person
 
@@ -905,16 +942,19 @@ mod.is_first_person_blocked = function(self, unit)
 	local blocked = false
 	local state_system = ScriptUnit.extension(unit, "character_state_machine_system")
 	if state_system ~= nil then
-		blocked = blocked or state_system.state_machine.state_current.name == "dead"
-		blocked = blocked or state_system.state_machine.state_current.name == "grabbed_by_pack_master"
-		blocked = blocked or state_system.state_machine.state_current.name == "inspecting"
-		blocked = blocked or state_system.state_machine.state_current.name == "interacting"
-		blocked = blocked or state_system.state_machine.state_current.name == "knocked_down"
-		--blocked = blocked or state_system.state_machine.state_current.name == "leave_ledge_hanging_falling"
-		--blocked = blocked or state_system.state_machine.state_current.name == "leave_ledge_hanging_pull_up"
-		blocked = blocked or state_system.state_machine.state_current.name == "ledge_hanging"
-		blocked = blocked or state_system.state_machine.state_current.name == "pounced_down"
-		blocked = blocked or state_system.state_machine.state_current.name == "waiting_for_assisted_respawn"
+		local state = state_system.state_machine.state_current
+		blocked = blocked or state.name == "dead"
+		blocked = blocked or state.name == "grabbed_by_pack_master"
+		blocked = blocked or state.name == "inspecting"
+		blocked = blocked or state.name == "interacting"
+		blocked = blocked or state.name == "knocked_down"
+		blocked = blocked or state.name == "leave_ledge_hanging_falling"
+		blocked = blocked or state.name == "leave_ledge_hanging_pull_up"
+		blocked = blocked or state.name == "ledge_hanging"
+		blocked = blocked or state.name == "pounced_down"
+		blocked = blocked or state.name == "waiting_for_assisted_respawn"
+		blocked = blocked or state.name == "catapulted"
+		blocked = blocked or state.name == "overcharge_exploding"
 	end
 	return blocked
 end
@@ -984,8 +1024,59 @@ mod.calculate_offset = function(self)
 		end
 	end
 	
+	local third_person = mod.camera.model == "third_person"
+	if self:get("sway") and third_person then
+		if t > self.camera.sway.updated + self.camera.sway.frequency then
+			local input_manager = Managers.input
+			local input_service = input_manager:get_service("Player")
+			local move_left = input_service:get("move_left")
+			local move_right = input_service:get("move_right")
+			
+			local sway_offset = self.camera.sway.offset
+			local increment = self.camera.sway.increment * mod:get("sway_speed") or 0.5
+			
+			if move_left > 0 then
+				sway_offset = sway_offset - increment
+			elseif move_right > 0 then
+				sway_offset = sway_offset + increment
+			else
+				if mod:get("sway_normalize") then
+					if sway_offset > 0 then
+						sway_offset = sway_offset - increment
+						if sway_offset < 0 then sway_offset = 0 end
+					elseif sway_offset < 0 then
+						sway_offset = sway_offset + increment
+						if sway_offset > 0 then sway_offset = 0 end
+					end
+				end
+			end
+			
+			local view = mod.camera.current_view
+			local diff = mod.camera.views.third_person_left.offset[1] - mod.camera.views.third_person_right.offset[1]
+			if view.offset[1] > 0 then
+				self.camera.sway.offset = math.clamp(sway_offset, -diff, 0)
+				if self.camera.sway.offset == -diff then
+					view.offset = mod.camera.views.third_person_right.offset
+					offset = Vector3(view.offset[1], view.offset[2] * view.modifier, view.offset[3])
+					self.camera.sway.offset = 0
+				end
+			elseif view.offset[1] < 0 then
+				self.camera.sway.offset = math.clamp(sway_offset, 0, diff)
+				if self.camera.sway.offset == diff then
+					view.offset = mod.camera.views.third_person_left.offset
+					offset = Vector3(view.offset[1], view.offset[2] * view.modifier, view.offset[3])
+					self.camera.sway.offset = 0
+				end
+			end
+			
+			self.camera.sway.updated = t
+		end
+	else
+		self.camera.sway.offset = 0
+	end
+	
 	-- Set camera offset
-	self.camera.offset = {x = offset[1], y = offset[2], z = offset[3]}
+	self.camera.offset = {x = offset[1] + self.camera.sway.offset, y = offset[2], z = offset[3]}
 
 end
 --[[
@@ -1085,7 +1176,7 @@ mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name,
 	-- ##### Counter offset #######################################################################################
 	local offset = Vector3(mod.camera.offset.x, mod.camera.offset.y, mod.camera.offset.z)
 	camera_data.position = self._calculate_sequence_event_position(self, camera_data, offset)
-
+	
 	-- ##### Change zoom ##############################################################################################
 	mod:set_zoom_values(current_node)
 	
@@ -1101,7 +1192,7 @@ end)
 mod:hook("PlayerUnitFirstPerson.current_position", function(func, self, ...)
 
 	-- ##### Get data #############################################################################################
-	local position = Unit.world_position(self.first_person_unit, 0) --+ Vector3(0, 0, 1.5)
+	local position = Unit.local_position(self.first_person_unit, 0)
 	local current_rot = Unit.local_rotation(self.first_person_unit, 0)
 
 	-- ##### Counter offset #######################################################################################
@@ -1132,13 +1223,18 @@ mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
 	
 	if not mod:is_first_person_blocked(self.unit) then
 		local first_person = mod.camera.model == "first_person"
-		if first_person then
+		if mod:get("mode") == "first_person" then
+			--if mod.firstperson then
+				self.set_first_person_mode(self, false)
+				mod.firstperson = false
+			--end
+		elseif mod.camera.model == "first_person" then
 			-- ##### Enable first person ##############################################################################
 				if not mod.firstperson then
 					self.set_first_person_mode(self, true)
 					mod.firstperson = true
 				end
-		else
+		elseif mod.camera.model == "third_person" then
 			-- ##### Disable first person #############################################################################
 			if mod.firstperson then
 				self.set_first_person_mode(self, false)
@@ -1164,7 +1260,7 @@ mod:hook("ActionUtils.spawn_player_projectile", function(func, owner_unit, posit
 	-- ##### Get data #############################################################################################
 	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 	local first_person_unit = first_person_extension.get_first_person_unit(first_person_extension)	
-	position = Unit.world_position(first_person_unit, 0) --+ Vector3(0, 0, 1.5)
+	position = Unit.local_position(first_person_unit, 0)
 	local current_rot = Unit.local_rotation(first_person_unit, 0)
 
 	-- ##### Counter offset #######################################################################################
@@ -1187,7 +1283,7 @@ mod:hook("ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, 
 	-- ##### Get data #############################################################################################
 	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 	local first_person_unit = first_person_extension.get_first_person_unit(first_person_extension)	
-	position = Unit.world_position(owner_unit, 0) + Vector3(0, 0, 1.5)
+	position = Unit.local_position(first_person_unit, 0)
 	local current_rot = Unit.local_rotation(first_person_unit, 0)
 	
 	-- ##### Create offset ########################################################################################
@@ -1359,13 +1455,13 @@ end)
 --]]
 mod:hook("ActionBlock.client_owner_start_action", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_block", 0.2)
+		mod:start_view("automatic_block")
 	end
 	func(self, ...)
 end)
 mod:hook("ActionBlock.finish", function(func, self, reason)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() and reason == "hold_input_released" then
-		mod:start_view("automatic_melee", 0.2)
+		mod:start_view("automatic_melee")
 	end
 	func(self, reason)
 end)
@@ -1381,7 +1477,7 @@ mod:hook("ActionWield.finish", function(func, self)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 		local view_name = mod.wield_views[self.new_slot]
 		if view_name then
-			mod:start_view(view_name, 0.1)
+			mod:start_view(view_name)
 		end
 	end
 	func(self)
@@ -1391,13 +1487,13 @@ end)
 --]]
 mod:hook("ActionPushStagger.client_owner_start_action", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_push", 0.05)
+		mod:start_view("automatic_push")
 	end
 	func(self, ...)
 end)
 mod:hook("ActionPushStagger.finish", function(func, self, reason)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_melee", 0.1)
+		mod:start_view("automatic_melee")
 	end
 	func(self, reason)
 end)
@@ -1406,13 +1502,13 @@ end)
 --]]
 mod:hook("PlayerCharacterStateStunned.on_enter", function(func, self, unit, ...)
 	if Managers.player:owner(unit) == Managers.player:local_player() then
-		mod:start_view("automatic_stunned", 0.05)
+		mod:start_view("automatic_stunned")
 	end
 	func(self, unit, ...)
 end)
 mod:hook("PlayerCharacterStateStunned.on_exit", function(func, self, unit, ...)
 	if Managers.player:owner(unit) == Managers.player:local_player() then
-		mod:start_view("automatic_melee", 0.1)
+		mod:start_view("automatic_melee")
 	end
 	func(self, unit, ...)
 end)
@@ -1421,13 +1517,13 @@ end)
 --]]
 mod:hook("OverChargeExtension.vent_overcharge", function(func, self)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_vent", 0.05)
+		mod:start_view("automatic_vent")
 	end
 	func(self)
 end)
 mod:hook("OverChargeExtension.vent_overcharge_done", function(func, self)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_ranged", 0.1)
+		mod:start_view("automatic_ranged")
 	end
 	func(self)
 end)
@@ -1439,10 +1535,10 @@ mod:hook("SimpleInventoryExtension.wield", function(func, self, slot_name)
 	func(self, slot_name)
 	if Managers.player:owner(self._unit) == Managers.player:local_player() then
 		if not mod.level_event_item and slot_name == "slot_level_event" then
-			mod:start_view("automatic_carry", 0.05)
+			mod:start_view("automatic_carry")
 			mod.level_event_item = true
 		elseif mod.level_event_item then
-			mod:start_view(nil, 0.05)
+			mod:start_view(nil)
 			mod.level_event_item = false
 		end
 	end
@@ -1458,7 +1554,7 @@ end)
 	Mod Setting changed
 --]]
 mod.on_setting_changed = function(setting_name)
-	mod:start_view(nil, 0.05)
+	mod:start_view(nil)
 	mod:start_third_person()
 end
 --[[
@@ -1474,8 +1570,7 @@ end
 --]]
 mod.on_enabled = function(initial_call)
 	mod:enable_all_hooks()
-	
-	mod:start_view(nil, 0.05)
+	mod:start_view(nil)
 	mod:start_third_person()
 end
 --[[
@@ -1496,11 +1591,8 @@ end
 --]]
 mod.toggle_side = function()
 	local side = mod:get("side")
-	if side == "left" then
-		mod:set("side", "right", true)
-	else
-		mod:set("side", "left", true)
-	end
+	if side == "left" then mod:set("side", "right", true)
+	else mod:set("side", "left", true) end
 	
 	mod:start_third_person()
 end
@@ -1533,5 +1625,4 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
---mod:create_options(options_widgets, true, "Third Person", "Lets you play the game in third person")
 mod:initialize_data(mod_data)
