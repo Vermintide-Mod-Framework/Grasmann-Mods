@@ -13,7 +13,7 @@ local mod = get_mod("HeatIndicator")
 	
 	Author: walterr
 	Ported: grasmann
-	Version: 1.3.0
+	Version: 1.4.0
 --]]
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -22,7 +22,12 @@ local mod = get_mod("HeatIndicator")
 -- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
 -- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
 -- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
-local options_widgets = {
+local mod_data = {}
+mod_data.name = "Heat Indicator" -- Readable mod name
+mod_data.description = "Shows heat generation of current charge with staff." -- Readable mod description
+mod_data.is_togglable = true -- If the mod can be enabled/disabled
+mod_data.is_mutator = false -- If the mod is mutator
+mod_data.options_widgets = {
 	{
 		["setting_name"] = "mode",
 		["widget_type"] = "dropdown",
@@ -427,5 +432,4 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
-mod:create_options(options_widgets, true, "Heat Indicator", "Shows heat generation of current charge with staff")
-mod:init_state()
+mod:initialize_data(mod_data)
