@@ -5,7 +5,7 @@ local mod = get_mod("AllReady")
 	
 	Author: IamLupo
 	Ported: Grasmann
-	Version: 1.1.0
+	Version: 1.2.0
 --]]
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -14,7 +14,12 @@ local mod = get_mod("AllReady")
 -- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
 -- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
 -- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
-mod.options_widgets = {}
+local mod_data = {}
+mod_data.name = "All Ready" -- Readable mod name
+mod_data.description = "Lets you start the game without waiting for people to press ready." -- Readable mod description
+mod_data.is_togglable = true -- If the mod can be enabled/disabled
+mod_data.is_mutator = false -- If the mod is mutator
+mod_data.options_widgets = {}
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
@@ -51,5 +56,4 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
-mod:create_options(mod.options_widgets, true, "All Ready", "Lets you start the game without waiting for people to press ready")
-mod:init_state()
+mod:initialize_data(mod_data)
