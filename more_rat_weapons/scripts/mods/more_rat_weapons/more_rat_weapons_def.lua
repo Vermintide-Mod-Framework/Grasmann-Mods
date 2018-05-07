@@ -1,4 +1,11 @@
 local mod = get_mod("MoreRatWeapons")
+--[[ 
+	More Rat Weapons Definitions
+		- Provides different values for the mod functionality
+
+	Author: grasmann
+	Version: 2.2.0
+--]]
 
 mod.packages = {
 	-- Default
