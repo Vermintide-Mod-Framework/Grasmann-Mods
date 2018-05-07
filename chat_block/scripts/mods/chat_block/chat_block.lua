@@ -6,7 +6,7 @@ local mod = get_mod("ChatBlock")
 	Author: IamLupo
 	Ported: Grasmann
 	Improvements: bi
-	Version: 1.1.0
+	Version: 1.2.0
 --]]
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -15,7 +15,12 @@ local mod = get_mod("ChatBlock")
 -- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
 -- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
 -- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
-local options_widgets = {
+local mod_data = {}
+mod_data.name = "Chat Block" -- Readable mod name
+mod_data.description = "Block attacks when typing in chat." -- Readable mod description
+mod_data.is_togglable = true -- If the mod can be enabled/disabled
+mod_data.is_mutator = false -- If the mod is mutator
+mod_data.options_widgets = {
 	{
 		["setting_name"] = "mode",
 		["widget_type"] = "dropdown",
@@ -186,5 +191,4 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
-mod:create_options(options_widgets, true, "Chat Block", "Block attacks when typing in chat")
-mod:init_state()
+mod:initialize_data(mod_data)
