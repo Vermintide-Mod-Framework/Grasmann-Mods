@@ -4,7 +4,7 @@ local mod = get_mod("Healthbars")
 		- Shows healthbars for all or specific enemies
 	
 	Author: grasmann
-	Version: 1.2.0
+	Version: 1.3.0
 --]]
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -13,7 +13,12 @@ local mod = get_mod("Healthbars")
 -- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
 -- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
 -- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
-local options_widgets = {
+local mod_data = {}
+mod_data.name = "Healthbars" -- Readable mod name
+mod_data.description = "Shows healthbars for all or specific enemies." -- Readable mod description
+mod_data.is_togglable = true -- If the mod can be enabled/disabled
+mod_data.is_mutator = false -- If the mod is mutator
+mod_data.options_widgets = {
 	{
 		["setting_name"] = "position",
 		["widget_type"] = "dropdown",
@@ -715,5 +720,4 @@ end
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
 mod:create_extra_health_bars(30)
-mod:create_options(options_widgets, true, "Healthbars", "Shows healthbars for all or specific enemies")
-mod:init_state()
+mod:initialize_data(mod_data)
