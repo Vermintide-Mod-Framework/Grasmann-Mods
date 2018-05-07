@@ -4,7 +4,7 @@ local mod = get_mod("ThirdPersonEquipment")
 		- Provides configurations for equipment positions
 	
 	Author: grasmann
-	Version: 1.1.0
+	Version: 1.2.0
 --]]
 
 local default_node = "j_spine"

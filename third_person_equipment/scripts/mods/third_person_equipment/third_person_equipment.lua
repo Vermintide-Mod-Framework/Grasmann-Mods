@@ -5,7 +5,7 @@ local mod = get_mod("ThirdPersonEquipment")
 		- Works with player and bots
 	
 	Author: grasmann
-	Version: 1.1.0
+	Version: 1.2.0
 --]]
 
 -- Global to keep track of spawned units
@@ -17,7 +17,12 @@ third_person_equipment_spawned_items = third_person_equipment_spawned_items or {
 -- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
 -- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
 -- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
-local options_widgets = {
+local mod_data = {}
+mod_data.name = "Third Person Equipment" -- Readable mod name
+mod_data.description = "Shows equipped items on characters." -- Readable mod description
+mod_data.is_togglable = true -- If the mod can be enabled/disabled
+mod_data.is_mutator = false -- If the mod is mutator
+mod_data.options_widgets = {
 	{
 		["setting_name"] = "dwarf_weapon_position",
 		["widget_type"] = "dropdown",
@@ -523,7 +528,7 @@ mod:hook("MatchmakingManager.update", function(func, ...)
 	local player = Managers.player:local_player()
 	if player then
 		local third_person_mod = get_mod("ThirdPerson")
-		local third_person = third_person_mod and not third_person_mod.firstperson.value or mod:is_first_person_blocked(player.player_unit) or false
+		local third_person = third_person_mod and not third_person_mod.firstperson or mod:is_first_person_blocked(player.player_unit) or false
 		mod:set_equipment_visibility(player.player_unit, not third_person)
 	end
 end)
@@ -606,5 +611,4 @@ end
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
 mod:delete_all_units()
-mod:create_options(options_widgets, true, "Third Person Equipment", "Shows equipped items on characters")
-mod:init_state()
+mod:initialize_data(mod_data)
