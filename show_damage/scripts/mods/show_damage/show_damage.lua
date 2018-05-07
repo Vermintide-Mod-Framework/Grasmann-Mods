@@ -4,7 +4,7 @@ local mod = get_mod("ShowDamage")
 		- Shows damage / healing in chat and as floating numbers.
 	
 	Author: grasmann
-	Version: 1.2.0
+	Version: 2.0.0
 --]]
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -13,7 +13,12 @@ local mod = get_mod("ShowDamage")
 -- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
 -- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
 -- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
-local options_widgets = {
+local mod_data = {}
+mod_data.name = "Show Damage" -- Readable mod name
+mod_data.description = "Shows damage / healing in chat and as floating numbers." -- Readable mod description
+mod_data.is_togglable = true -- If the mod can be enabled/disabled
+mod_data.is_mutator = false -- If the mod is mutator
+mod_data.options_widgets = {
 	{
 		["setting_name"] = "chat_output",
 		["widget_type"] = "checkbox",
@@ -1522,5 +1527,4 @@ end
 -- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
 -- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
 -- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
-mod:create_options(options_widgets, true, "Show Damage", "Mod description")
-mod:init_state()
+mod:initialize_data(mod_data)
