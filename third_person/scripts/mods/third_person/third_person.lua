@@ -8,7 +8,7 @@ local mod = get_mod("ThirdPerson")
 		- When camera collides backwards with map aiming inaccurate
 	
 	Author: grasmann
-	Version: 1.3.0
+	Version: 2.0.0
 --]]
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -777,6 +777,50 @@ mod_data.options_widgets = {
 							"Smoothly resets sway amount when not strafing.",
 						["default_value"] = false,
 					},
+					{
+						["setting_name"] = "sway_input",
+						["widget_type"] = "dropdown",
+						["text"] = "Input Type",
+						["tooltip"] = "Input Type\n" ..
+							"The type of input used for camera sway.",
+						["options"] = {
+							{text = "Keyboard", value = "keyboard"},
+							{text = "Mouse", value = "mouse"},
+						},
+						["default_value"] = "mouse",
+					},
+					{
+						["setting_name"] = "sway_avoid_character",
+						["widget_type"] = "checkbox",
+						["text"] = "Avoid Character",
+						["tooltip"] = "Avoid Character\n" ..
+							"Avoids the character being in front of the camera.",
+						["default_value"] = false,
+						["sub_widgets"] = {
+							{
+								["setting_name"] = "sway_avoid_vertical",
+								["widget_type"] = "numeric",
+								["text"] = "Vertical",
+								["unit_text"] = "",
+								["tooltip"] = "Vertical\n" ..
+									"The strength of sway applied vertically to avoid the character.",
+								["range"] = {0, 1},
+								["decimals_number"] = 1,
+								["default_value"] = 0.75,
+							},
+							{
+								["setting_name"] = "sway_avoid_backwards",
+								["widget_type"] = "numeric",
+								["text"] = "Backwards",
+								["unit_text"] = "",
+								["tooltip"] = "Backwards\n" ..
+									"The strength of sway applied backwards to avoid the character.",
+								["range"] = {0, 1},
+								["decimals_number"] = 1,
+								["default_value"] = 0.75,
+							},
+						}
+					},
 				},
 			},
 			{
@@ -899,10 +943,11 @@ mod.camera = {
 		table.insert(self.transitions, 1, {view = view, delay = delay, length = length or 1.0, callback = callback})
 	end,
 	sway = {
-		frequency = 0.01,
+		frequency = 0.001,
 		updated = 0,
-		increment = 0.05,
-		offset = 0,
+		increment = 0.025,
+		mouse = {x = 0, y = 0},
+		offset = {x = 0, y = 0, z = 0},
 	},
 }
 mod.camera.current_view = mod.camera.views.first_person
@@ -1024,61 +1069,95 @@ mod.calculate_offset = function(self)
 		end
 	end
 	
-	local third_person = mod.camera.model == "third_person"
+	local third_person = self.camera.model == "third_person"
 	if self:get("sway") and third_person then
 		if t > self.camera.sway.updated + self.camera.sway.frequency then
 			local input_manager = Managers.input
 			local input_service = input_manager:get_service("Player")
+			
+			-- ##### Keyboard Input ###################################################################################
 			local move_left = input_service:get("move_left")
 			local move_right = input_service:get("move_right")
 			
-			local sway_offset = self.camera.sway.offset
-			local increment = self.camera.sway.increment * mod:get("sway_speed") or 0.5
+			-- ##### Mouse Input ######################################################################################
+			local look_left = self.camera.sway.mouse.x < 0
+			local look_right = self.camera.sway.mouse.x > 0
 			
-			if move_left > 0 then
-				sway_offset = sway_offset - increment
-			elseif move_right > 0 then
-				sway_offset = sway_offset + increment
+			-- ##### Values ###########################################################################################
+			local view = self.camera.current_view
+			local diff = self.camera.views.third_person_left.offset[1] - self.camera.views.third_person_right.offset[1]
+			local sway_offset = self.camera.sway.offset
+			local increment = self.camera.sway.increment * self:get("sway_speed") or 0.5
+			
+			-- ##### Move left / right ################################################################################
+			if (self:get("sway_input") == "keyboard" and move_left > 0) or (self:get("sway_input") == "mouse" and look_left) then
+				sway_offset.x = sway_offset.x - increment
+			elseif (self:get("sway_input") == "keyboard" and move_right > 0) or (self:get("sway_input") == "mouse" and look_right) then
+				sway_offset.x = sway_offset.x + increment
 			else
-				if mod:get("sway_normalize") then
-					if sway_offset > 0 then
-						sway_offset = sway_offset - increment
-						if sway_offset < 0 then sway_offset = 0 end
-					elseif sway_offset < 0 then
-						sway_offset = sway_offset + increment
-						if sway_offset > 0 then sway_offset = 0 end
+				if self:get("sway_normalize") then
+					if sway_offset.x > 0 then
+						sway_offset.x = sway_offset.x - increment
+						if sway_offset.x < 0 then sway_offset.x = 0 end
+					elseif sway_offset.x < 0 then
+						sway_offset.x = sway_offset.x + increment
+						if sway_offset.x > 0 then sway_offset.x = 0 end
 					end
 				end
 			end
 			
-			local view = mod.camera.current_view
-			local diff = mod.camera.views.third_person_left.offset[1] - mod.camera.views.third_person_right.offset[1]
+			-- ##### Avoid Character ##################################################################################
+			if self:get("sway_avoid_character") then
+				
+				-- ##### Vertical #####################################################################################
+				local max_val = 0.5 * self:get("sway_avoid_vertical") or 0.5
+				if self.camera.offset.x <= max_val or self.camera.offset.x >= -max_val then
+					sway_offset.z = math.clamp(max_val - math.abs(self.camera.offset.x), 0, max_val)
+				end
+				
+				-- ##### Backwards ####################################################################################
+				local max_val = 0.5 * self:get("sway_avoid_backwards") or 0.5
+				if self.camera.offset.x <= max_val or self.camera.offset.x >= -max_val then
+					sway_offset.y = math.clamp(math.abs(self.camera.offset.x) - max_val, -max_val, 0)
+				end
+				
+			end
+			
+			-- ##### Change side ######################################################################################
 			if view.offset[1] > 0 then
-				self.camera.sway.offset = math.clamp(sway_offset, -diff, 0)
-				if self.camera.sway.offset == -diff then
-					view.offset = mod.camera.views.third_person_right.offset
+				self.camera.sway.offset = {x = math.clamp(sway_offset.x, -diff, 0), y = sway_offset.y, z = sway_offset.z}
+				if self.camera.sway.offset.x == -diff then
+					view.offset = self.camera.views.third_person_right.offset
 					offset = Vector3(view.offset[1], view.offset[2] * view.modifier, view.offset[3])
-					self.camera.sway.offset = 0
+					self.camera.sway.offset = {x = 0, y = 0, z = 0}
 				end
 			elseif view.offset[1] < 0 then
-				self.camera.sway.offset = math.clamp(sway_offset, 0, diff)
-				if self.camera.sway.offset == diff then
-					view.offset = mod.camera.views.third_person_left.offset
+				self.camera.sway.offset = {x = math.clamp(sway_offset.x, 0, diff), y = sway_offset.y, z = sway_offset.z}
+				if self.camera.sway.offset.x == diff then
+					view.offset = self.camera.views.third_person_left.offset
 					offset = Vector3(view.offset[1], view.offset[2] * view.modifier, view.offset[3])
-					self.camera.sway.offset = 0
+					self.camera.sway.offset = {x = 0, y = 0, z = 0}
 				end
 			end
 			
 			self.camera.sway.updated = t
 		end
 	else
-		self.camera.sway.offset = 0
+		self.camera.sway.offset = {x = 0, y = 0, z = 0}
 	end
 	
 	-- Set camera offset
-	self.camera.offset = {x = offset[1] + self.camera.sway.offset, y = offset[2], z = offset[3]}
+	self.camera.offset = {x = offset[1] + self.camera.sway.offset.x, y = offset[2] + self.camera.sway.offset.y, z = offset[3] + self.camera.sway.offset.z}
 
 end
+--[[
+	Get look input
+--]]
+mod:hook("PlayerUnitFirstPerson.calculate_look_rotation", function(func, self, current_rotation, look_delta)
+	mod.camera.sway.mouse.x = look_delta.x
+	mod.camera.sway.mouse.y = look_delta.y
+	return func(self, current_rotation, look_delta)
+end)
 --[[
 	Transition to first person
 --]]
@@ -1221,6 +1300,7 @@ mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
 	-- ##### Original function ########################################################################################
 	func(self, unit, ...)
 	
+	-- ##### Update visibility of weapons #############################################################################
 	if not mod:is_first_person_blocked(self.unit) then
 		local first_person = mod.camera.model == "first_person"
 		if mod:get("mode") == "first_person" then

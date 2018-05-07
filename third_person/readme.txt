@@ -2,8 +2,19 @@ Author : Grasmann
 
 Description :
 Adds third person camera mode.
+
+Modes:
+	- Third Person ( Oldschool third person mod behaviour ).
+	- Automatic ( Switches between camera views depending on situation ).
+Options:
+	- Camera sway ( Camera sways from left to right in third person ).
 	
 Changelog:
+2.0.0
+	- Compatibility for latest vmf
+	- Added automatic mode
+	- Added camera sway
+	- Optimized code
 1.3.0 - Port to official bundle format
 1.2.4 - Fix null 'start_time' on reload
 1.2.3 - Changed options
