@@ -1,0 +1,12 @@
+mod =  [
+	"gui"
+]
+
+package = [
+	"resource_packages/gui/gui"
+]
+
+lua = [
+	"scripts/mods/gui/gui"
+	"scripts/mods/basic_gui/basic_gui"
+]

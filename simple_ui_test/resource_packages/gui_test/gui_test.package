@@ -1,0 +1,11 @@
+mod =  [
+	"gui_test"
+]
+
+package = [
+	"resource_packages/gui_test/gui_test"
+]
+
+lua = [
+	"scripts/mods/gui_test/gui_test"
+]

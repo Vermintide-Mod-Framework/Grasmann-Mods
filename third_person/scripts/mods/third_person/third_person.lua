@@ -1511,7 +1511,8 @@ mod:hook("ActionAim.client_owner_start_action", function(func, self, ...)
 end)
 mod:hook("ActionAim.finish", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_ranged")
+		--mod:start_view("automatic_ranged")
+		mod:start_view(nil)
 	end
 	func(self, ...)
 end)
@@ -1526,7 +1527,8 @@ mod:hook("ActionTrueFlightBowAim.client_owner_start_action", function(func, self
 end)
 mod:hook("ActionTrueFlightBowAim.finish", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_ranged")
+		--mod:start_view("automatic_ranged")
+		mod:start_view(nil)
 	end
 	return func(self, ...)
 end)
@@ -1541,7 +1543,8 @@ mod:hook("ActionBlock.client_owner_start_action", function(func, self, ...)
 end)
 mod:hook("ActionBlock.finish", function(func, self, reason)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() and reason == "hold_input_released" then
-		mod:start_view("automatic_melee")
+		--mod:start_view("automatic_melee")
+		mod:start_view(nil)
 	end
 	func(self, reason)
 end)
@@ -1573,7 +1576,8 @@ mod:hook("ActionPushStagger.client_owner_start_action", function(func, self, ...
 end)
 mod:hook("ActionPushStagger.finish", function(func, self, reason)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_melee")
+		--mod:start_view("automatic_melee")
+		mod:start_view(nil)
 	end
 	func(self, reason)
 end)
@@ -1588,7 +1592,8 @@ mod:hook("PlayerCharacterStateStunned.on_enter", function(func, self, unit, ...)
 end)
 mod:hook("PlayerCharacterStateStunned.on_exit", function(func, self, unit, ...)
 	if Managers.player:owner(unit) == Managers.player:local_player() then
-		mod:start_view("automatic_melee")
+		--mod:start_view("automatic_melee")
+		mod:start_view(nil)
 	end
 	func(self, unit, ...)
 end)
@@ -1603,7 +1608,8 @@ mod:hook("OverChargeExtension.vent_overcharge", function(func, self)
 end)
 mod:hook("OverChargeExtension.vent_overcharge_done", function(func, self)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_ranged")
+		--mod:start_view("automatic_ranged")
+		mod:start_view(nil)
 	end
 	func(self)
 end)
