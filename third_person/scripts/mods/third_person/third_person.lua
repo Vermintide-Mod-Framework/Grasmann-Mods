@@ -1020,7 +1020,7 @@ mod.calculate_offset = function(self)
 	local t = self:get_time()
 
 	-- Do transitions
-	if #self.camera.transitions > 0 and Managers.player:local_player().player_unit then
+	if #self.camera.transitions > 0 then --and Managers.player:local_player().player_unit then
 		-- Get transition
 		local tr = self.camera.transitions[#self.camera.transitions]
 		
