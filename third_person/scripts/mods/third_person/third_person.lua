@@ -638,15 +638,15 @@ mod_data.options_widgets = {
 			},
 			{
 				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_carry",
+				["setting_name"] = "automatic_potion",
 				["widget_type"] = "checkbox",
-				["text"] = "Carrying Event Item",
-				["tooltip"] = "Carrying Event Item\n" ..
-					"Camera settings when carrying objective items.",
+				["text"] = "Holding Potion",
+				["tooltip"] = "Holding Potion\n" ..
+					"Camera settings when holding a potion.",
 				["default_value"] = false,
 				["sub_widgets"] = {
 					{
-						["setting_name"] = "automatic_carry_mode",
+						["setting_name"] = "automatic_potion_mode",
 						["widget_type"] = "dropdown",
 						["text"] = "Mode",
 						["tooltip"] = "Mode\n" ..
@@ -659,7 +659,7 @@ mod_data.options_widgets = {
 						["sub_widgets"] = {
 							{
 								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_carry_side",
+								["setting_name"] = "automatic_potion_side",
 								["widget_type"] = "dropdown",
 								["text"] = "Side",
 								["tooltip"] = "Side\n" ..
@@ -672,7 +672,7 @@ mod_data.options_widgets = {
 							},
 							{
 								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_carry_offset",
+								["setting_name"] = "automatic_potion_offset",
 								["widget_type"] = "numeric",
 								["text"] = "Offset",
 								["unit_text"] = "",
@@ -683,7 +683,7 @@ mod_data.options_widgets = {
 							},
 							{
 								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_carry_length",
+								["setting_name"] = "automatic_potion_length",
 								["widget_type"] = "numeric",
 								["text"] = "Length",
 								["unit_text"] = "",
@@ -695,7 +695,226 @@ mod_data.options_widgets = {
 							},
 							{
 								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_carry_delay",
+								["setting_name"] = "automatic_potion_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
+							},
+						},
+					},
+				},
+			},
+			{
+				["show_widget_condition"] = {2},
+				["setting_name"] = "automatic_healthkit",
+				["widget_type"] = "checkbox",
+				["text"] = "Holding Healing Item",
+				["tooltip"] = "Holding Healing Item\n" ..
+					"Camera settings when holding a healing item.",
+				["default_value"] = false,
+				["sub_widgets"] = {
+					{
+						["setting_name"] = "automatic_healthkit_mode",
+						["widget_type"] = "dropdown",
+						["text"] = "Mode",
+						["tooltip"] = "Mode\n" ..
+							"Camera mode to be used by this event.",
+						["options"] = {
+							{text = "First Peson", value = "first_person"}, --1
+							{text = "Third Person", value = "third_person"}, --2
+						},
+						["default_value"] = "first_person",
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {2},
+								["setting_name"] = "automatic_healthkit_side",
+								["widget_type"] = "dropdown",
+								["text"] = "Side",
+								["tooltip"] = "Side\n" ..
+									"Choose if the camera is to left or right of your character.",
+								["options"] = {
+									{text = "Right", value = "right"},
+									{text = "Left", value = "left"},
+								},
+								["default_value"] = "right",
+							},
+							{
+								["show_widget_condition"] = {2},
+								["setting_name"] = "automatic_healthkit_offset",
+								["widget_type"] = "numeric",
+								["text"] = "Offset",
+								["unit_text"] = "",
+								["tooltip"] = "Offset\n" ..
+									"Change the distance between the camera and the character.",
+								["range"] = {50, 400},
+								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_healthkit_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_healthkit_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
+							},
+						},
+					},
+				},
+			},
+			{
+				["show_widget_condition"] = {2},
+				["setting_name"] = "automatic_grenade",
+				["widget_type"] = "checkbox",
+				["text"] = "Holding Grenades",
+				["tooltip"] = "Holding Grenades\n" ..
+					"Camera settings when holding a grenade.",
+				["default_value"] = false,
+				["sub_widgets"] = {
+					{
+						["setting_name"] = "automatic_grenade_mode",
+						["widget_type"] = "dropdown",
+						["text"] = "Mode",
+						["tooltip"] = "Mode\n" ..
+							"Camera mode to be used by this event.",
+						["options"] = {
+							{text = "First Peson", value = "first_person"}, --1
+							{text = "Third Person", value = "third_person"}, --2
+						},
+						["default_value"] = "first_person",
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {2},
+								["setting_name"] = "automatic_grenade_side",
+								["widget_type"] = "dropdown",
+								["text"] = "Side",
+								["tooltip"] = "Side\n" ..
+									"Choose if the camera is to left or right of your character.",
+								["options"] = {
+									{text = "Right", value = "right"},
+									{text = "Left", value = "left"},
+								},
+								["default_value"] = "right",
+							},
+							{
+								["show_widget_condition"] = {2},
+								["setting_name"] = "automatic_grenade_offset",
+								["widget_type"] = "numeric",
+								["text"] = "Offset",
+								["unit_text"] = "",
+								["tooltip"] = "Offset\n" ..
+									"Change the distance between the camera and the character.",
+								["range"] = {50, 400},
+								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_grenade_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_grenade_delay",
+								["widget_type"] = "numeric",
+								["text"] = "Delay",
+								["unit_text"] = " sec",
+								["tooltip"] = "Delay\n" ..
+									"Change the delay of the transition.",
+								["range"] = {0, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 0.1,
+							},
+						},
+					},
+				},
+			},
+			{
+				["show_widget_condition"] = {2},
+				["setting_name"] = "automatic_level_event",
+				["widget_type"] = "checkbox",
+				["text"] = "Carrying Event Item",
+				["tooltip"] = "Carrying Event Item\n" ..
+					"Camera settings when carrying objective items.",
+				["default_value"] = false,
+				["sub_widgets"] = {
+					{
+						["setting_name"] = "automatic_level_event_mode",
+						["widget_type"] = "dropdown",
+						["text"] = "Mode",
+						["tooltip"] = "Mode\n" ..
+							"Camera mode to be used by this event.",
+						["options"] = {
+							{text = "First Peson", value = "first_person"}, --1
+							{text = "Third Person", value = "third_person"}, --2
+						},
+						["default_value"] = "first_person",
+						["sub_widgets"] = {
+							{
+								["show_widget_condition"] = {2},
+								["setting_name"] = "automatic_level_event_side",
+								["widget_type"] = "dropdown",
+								["text"] = "Side",
+								["tooltip"] = "Side\n" ..
+									"Choose if the camera is to left or right of your character.",
+								["options"] = {
+									{text = "Right", value = "right"},
+									{text = "Left", value = "left"},
+								},
+								["default_value"] = "right",
+							},
+							{
+								["show_widget_condition"] = {2},
+								["setting_name"] = "automatic_level_event_offset",
+								["widget_type"] = "numeric",
+								["text"] = "Offset",
+								["unit_text"] = "",
+								["tooltip"] = "Offset\n" ..
+									"Change the distance between the camera and the character.",
+								["range"] = {50, 400},
+								["default_value"] = 100,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_level_event_length",
+								["widget_type"] = "numeric",
+								["text"] = "Length",
+								["unit_text"] = "",
+								["tooltip"] = "Length\n" ..
+									"Change the length of the transition.",
+								["range"] = {0.1, 2},
+								["decimals_number"] = 1,
+								["default_value"] = 1,
+							},
+							{
+								["show_widget_condition"] = {1, 2},
+								["setting_name"] = "automatic_level_event_delay",
 								["widget_type"] = "numeric",
 								["text"] = "Delay",
 								["unit_text"] = " sec",
@@ -1291,6 +1510,7 @@ end)
 mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
 
 	if mod.reset then
+		mod.camera.sway.updated = 0
 		self.set_first_person_mode(self, not mod:is_third_person_active())
 		mod:start_view(nil)
 		mod:start_third_person()
@@ -1616,17 +1836,21 @@ end)
 --[[
 	Carry
 --]]
-mod.level_event_item = false
+--mod.slot = false
 mod:hook("SimpleInventoryExtension.wield", function(func, self, slot_name)
 	func(self, slot_name)
 	if Managers.player:owner(self._unit) == Managers.player:local_player() then
-		if not mod.level_event_item and slot_name == "slot_level_event" then
-			mod:start_view("automatic_carry")
-			mod.level_event_item = true
-		elseif mod.level_event_item then
-			mod:start_view(nil)
-			mod.level_event_item = false
-		end
+		mod:start_view("automatic_"..string.sub(slot_name, 6))
+		-- mod:echo("slot: "..tostring(slot_name))
+		-- mod:echo("cut: "..string.sub(slot_name, 6))
+		-- potion, healthkit, grenade
+		-- if not mod.slot and slot_name == "slot_level_event" then
+			-- mod:start_view("automatic_carry")
+			-- mod.slot = slot_name
+		-- elseif mod.slot then
+			-- mod:start_view(nil)
+			-- mod.slot = slot_name
+		-- end
 	end
 end)
 
