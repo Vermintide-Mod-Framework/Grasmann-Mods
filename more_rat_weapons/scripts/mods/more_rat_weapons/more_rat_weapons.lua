@@ -16,6 +16,9 @@ local mod = get_mod("MoreRatWeapons")
 	Version: 2.1.0
 --]]
 
+-- Load data
+mod:dofile("scripts/mods/more_rat_weapons/more_rat_weapons_def")
+
 -- Global lists
 more_rat_weapons_shielded_units = more_rat_weapons_shielded_units or {}
 more_rat_weapons_ignored_units = more_rat_weapons_ignored_units or {}
