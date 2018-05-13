@@ -1389,7 +1389,7 @@ end
 --]]
 mod.start_third_person = function(self)
 	
-	if self:get("mode") == "third_person" then
+	if mod:is_enabled() and self:get("mode") == "third_person" then
 		local view = table.clone(self.camera.views.third_person_left)
 		if self:get("side") == "right" then
 			view = table.clone(self.camera.views.third_person_right)
@@ -1405,7 +1405,7 @@ end
 --]]
 mod.start_view = function(self, name)
 
-	if self:get("mode") == "automatic" then
+	if mod:is_enabled() and self:get("mode") == "automatic" then
 		if name and self:get(name) then
 			local view = table.clone(self.camera.views.first_person)
 			local length = self:get(name.."_length") or 1.0
