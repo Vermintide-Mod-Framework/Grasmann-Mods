@@ -1406,20 +1406,22 @@ end
 mod.start_view = function(self, name)
 
 	if mod:is_enabled() and self:get("mode") == "automatic" then
-		if name and self:get(name) then
-			local view = table.clone(self.camera.views.first_person)
-			local length = self:get(name.."_length") or 1.0
-			local delay = self:get(name.."_delay") or 0.05
-			if self:get(name.."_mode") == "third_person" then
-				if self:get(name.."_side") == "right" then
-					view = table.clone(self.camera.views.third_person_right)
-				else
-					view = table.clone(self.camera.views.third_person_left)
+		if name then
+			if self:get(name) then
+				local view = table.clone(self.camera.views.first_person)
+				local length = self:get(name.."_length") or 1.0
+				local delay = self:get(name.."_delay") or 0.05
+				if self:get(name.."_mode") == "third_person" then
+					if self:get(name.."_side") == "right" then
+						view = table.clone(self.camera.views.third_person_right)
+					else
+						view = table.clone(self.camera.views.third_person_left)
+					end
+					view.modifier = (self:get(name.."_offset") or 100) / 100
+					view.zoom = self:get(name.."_zoom") or 1
 				end
-				view.modifier = (self:get(name.."_offset") or 100) / 100
-				view.zoom = self:get(name.."_zoom") or 1
+				self.camera:transition_to(view, delay, length)
 			end
-			self.camera:transition_to(view, delay, length)
 		else
 			local player_unit = Managers.player and Managers.player:local_player().player_unit
 			if player_unit then
@@ -1427,9 +1429,9 @@ mod.start_view = function(self, name)
 				local equipment = inventory_system.equipment(inventory_system)
 				local slot_name = equipment.wielded_slot
 				if slot_name == "slot_melee" then
-					self:start_view("automatic_melee") --, delay, length)
+					self:start_view("automatic_melee")
 				elseif slot_name == "slot_ranged" then
-					self:start_view("automatic_ranged") --, delay, length)
+					self:start_view("automatic_ranged")
 				end
 			end
 		end
@@ -1785,20 +1787,20 @@ end)
 --[[
 	Wield
 --]]
-mod.wield_views = {
-	slot_ranged = "automatic_ranged",
-	slot_melee = "automatic_melee",
-	slot_level_event = "automatic_vent",
-}
-mod:hook("ActionWield.finish", function(func, self)
-	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		local view_name = mod.wield_views[self.new_slot]
-		if view_name then
-			mod:start_view(view_name)
-		end
-	end
-	func(self)
-end)
+-- mod.wield_views = {
+	-- slot_ranged = "automatic_ranged",
+	-- slot_melee = "automatic_melee",
+	-- slot_level_event = "automatic_vent",
+-- }
+-- mod:hook("ActionWield.finish", function(func, self)
+	-- if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
+		-- local view_name = mod.wield_views[self.new_slot]
+		-- if view_name then
+			-- mod:start_view(view_name)
+		-- end
+	-- end
+	-- func(self)
+-- end)
 --[[
 	Push
 --]]
@@ -1864,23 +1866,13 @@ else
 	end)
 end
 --[[
-	Carry
+	Wield
 --]]
 --mod.slot = false
 mod:hook("SimpleInventoryExtension.wield", function(func, self, slot_name)
 	func(self, slot_name)
 	if Managers.player:owner(self._unit) == Managers.player:local_player() then
 		mod:start_view("automatic_"..string.sub(slot_name, 6))
-		-- mod:echo("slot: "..tostring(slot_name))
-		-- mod:echo("cut: "..string.sub(slot_name, 6))
-		-- potion, healthkit, grenade
-		-- if not mod.slot and slot_name == "slot_level_event" then
-			-- mod:start_view("automatic_carry")
-			-- mod.slot = slot_name
-		-- elseif mod.slot then
-			-- mod:start_view(nil)
-			-- mod.slot = slot_name
-		-- end
 	end
 end)
 
