@@ -11,6 +11,8 @@ local mod = get_mod("ThirdPersonEquipment")
 -- Global to keep track of spawned units
 third_person_equipment_spawned_items = third_person_equipment_spawned_items or {}
 
+mod:dofile("scripts/mods/third_person_equipment/third_person_equipment_def")
+
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
 -- ##### ██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██║████╗  ██║██╔════╝ ██╔════╝ #############################################
 -- ##### ███████╗█████╗     ██║      ██║   ██║██╔██╗ ██║██║  ███╗███████╗ #############################################
@@ -227,7 +229,7 @@ mod.get_item_setting = function(self, unit, slot_name, item_data, left)
 	-- ####### Fixes and options #######
 	--mod:pcall(function()
 	if slot_name == "slot_melee" or slot_name == "slot_ranged" then
-
+		
 		-- Dwarf
 		if table.contains(def.dwarf_weapons, item_data.item_type) then
 			local dwarf_weapon_position = self:get("dwarf_weapon_position")
@@ -334,8 +336,19 @@ mod.add_item = function(self, unit, slot_name, item_data)
 		if item_data.right_hand_unit ~= nil then
 			local item_setting = self:get_item_setting(unit, slot_name, item_data)
 			if item_setting.node ~= nil then
-				right_pack = item_data.right_hand_unit.."_3p"
-				right = self:spawn(right_pack, unit, item_setting)
+				--right_pack = WeaponSkins and WeaponSkins.skins[equipment.slots[slot_name].skin].right_hand_unit.."_3p"
+				if VT1 then
+					right_pack = item_data.right_hand_unit.."_3p"
+				else
+					right_pack = WeaponSkins and equipment.slots[slot_name] and WeaponSkins.skins[equipment.slots[slot_name].skin] and
+						WeaponSkins.skins[equipment.slots[slot_name].skin].right_hand_unit.."_3p"
+				end
+				--right_pack = item_data.right_unit_3p
+				--mod:echo(right_pack)
+				--mod:dump(equipment, "equipment", 3)
+				if right_pack then
+					right = self:spawn(right_pack, unit, item_setting)
+				end
 			else
 				mod:echo(slot_name)
 			end
@@ -343,8 +356,19 @@ mod.add_item = function(self, unit, slot_name, item_data)
 		if item_data.left_hand_unit ~= nil then
 			local item_setting = self:get_item_setting(unit, slot_name, item_data, true)
 			if item_setting.node ~= nil then
-				left_pack = item_data.left_hand_unit.."_3p"
-				left = self:spawn(left_pack, unit, item_setting)
+				--left_pack = WeaponSkins and WeaponSkins.skins[equipment.slots[slot_name].skin].left_hand_unit.."_3p"
+				if VT1 then
+					left_pack = item_data.left_hand_unit.."_3p"
+				else
+					left_pack = WeaponSkins and equipment.slots[slot_name] and WeaponSkins.skins[equipment.slots[slot_name].skin] and
+						WeaponSkins.skins[equipment.slots[slot_name].skin].left_hand_unit.."_3p"
+				end
+				--left_pack = item_data.left_unit_3p
+				--mod:echo(left_pack)
+				--mod:dump(equipment, "equipment", 3)
+				if left_pack then
+					left = self:spawn(left_pack, unit, item_setting)
+				end
 			else
 				mod:echo(slot_name)
 			end
@@ -497,6 +521,7 @@ end)
 	Create items if needed
 --]]
 mod:hook("MatchmakingManager.update", function(func, ...)
+--mod:hook("WorldManager.update", function(func, ...)
 	func(...)
 	
 	local players = Managers.player:human_and_bot_players()

@@ -1622,17 +1622,31 @@ end)
 --[[
 	Reset view after character change
 --]]
-mod:hook("ProfileView.on_exit", function(func, ...)
-	func(...)
-	mod.reset = true
-end)
+if VT1 then
+	mod:hook("ProfileView.on_exit", function(func, ...)
+		func(...)
+		mod.reset = true
+	end)
+else
+	mod:hook("CharacterSelectionView.on_exit", function(func, ...)
+		func(...)
+		mod.reset = true
+	end)
+end
 --[[
 	Reset view after equipment change
 --]]
-mod:hook("InventoryView.on_exit", function(func, self)
-	func(self)
-	mod.reset = true
-end)
+if VT1 then
+	mod:hook("InventoryView.on_exit", function(func, ...)
+		func(...)
+		mod.reset = true
+	end)
+else
+	mod:hook("HeroView.on_exit", function(func, ...)
+		func(...)
+		mod.reset = true
+	end)
+end
 
 -- ##### ██████╗ ███████╗██╗      ██████╗  █████╗ ██████╗  ############################################################
 -- ##### ██╔══██╗██╔════╝██║     ██╔═══██╗██╔══██╗██╔══██╗ ############################################################
@@ -1820,19 +1834,35 @@ end)
 --[[
 	Vent
 --]]
-mod:hook("OverChargeExtension.vent_overcharge", function(func, self)
-	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		mod:start_view("automatic_vent")
-	end
-	func(self)
-end)
-mod:hook("OverChargeExtension.vent_overcharge_done", function(func, self)
-	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		--mod:start_view("automatic_ranged")
-		mod:start_view(nil)
-	end
-	func(self)
-end)
+if VT1 then
+	mod:hook("OverChargeExtension.vent_overcharge", function(func, self)
+		if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
+			mod:start_view("automatic_vent")
+		end
+		func(self)
+	end)
+	mod:hook("OverChargeExtension.vent_overcharge_done", function(func, self)
+		if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
+			--mod:start_view("automatic_ranged")
+			mod:start_view(nil)
+		end
+		func(self)
+	end)
+else
+	mod:hook("PlayerUnitOverchargeExtension.vent_overcharge", function(func, self)
+		if Managers.player:owner(self.unit) == Managers.player:local_player() then
+			mod:start_view("automatic_vent")
+		end
+		func(self)
+	end)
+	mod:hook("PlayerUnitOverchargeExtension.vent_overcharge_done", function(func, self)
+		if Managers.player:owner(self.unit) == Managers.player:local_player() then
+			--mod:start_view("automatic_ranged")
+			mod:start_view(nil)
+		end
+		func(self)
+	end)
+end
 --[[
 	Carry
 --]]
