@@ -1,0 +1,11 @@
+mod =  [
+	"loadout_manager"
+]
+
+package = [
+	"resource_packages/loadout_manager/loadout_manager"
+]
+
+lua = [
+	"scripts/mods/loadout_manager/loadout_manager"
+]

@@ -6,7 +6,7 @@
 	author: grasmann
 	version: 1.2
 --]]
-local basic_gui = get_mod("basic_gui")
+local basic_gui = get_mod("BasicUI")
 
 basic_gui.gui = nil
 basic_gui.default_world = "top_ingame_view"
@@ -296,6 +296,14 @@ end
 
 basic_gui.on_game_state_changed = function(status, state)
 	if status == "enter" and state == "StateIngame" then
+		if not basic_gui.gui then
+			basic_gui.init()
+		end
+	end
+end
+
+if Managers.world then
+	if not basic_gui.gui then
 		basic_gui.init()
 	end
 end

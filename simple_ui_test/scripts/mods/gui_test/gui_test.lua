@@ -14,7 +14,7 @@ local function create_window()
 	local window_size = {170, 330}
 	local window_position = {500, 500}
 
-	window = get_mod("simple_ui").create_window("test", window_position, window_size, nil, function() end, true)
+	window = get_mod("SimpleUI").create_window("test", window_position, window_size, nil, function() end, true)
 
 	window:create_title("title", "Window Title")
 	--window:create_resizer("resizer")

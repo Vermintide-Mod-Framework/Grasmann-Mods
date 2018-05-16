@@ -7,8 +7,8 @@
 	version: 1.2
 --]]
 
-local gui = get_mod("simple_ui")
-local basic_gui = get_mod("basic_gui")
+local gui = get_mod("SimpleUI")
+local basic_gui = get_mod("BasicUI")
 
 -- ################################################################################################################
 -- ##### UTF8 #####################################################################################################
@@ -801,14 +801,15 @@ gui.widgets = {
 		--[[
 			Create button
 		--]]
-		create_button = function(self, name, position, size, text, on_click, anchor)
+		create_button = function(self, name, position, size, text, anchor, params)
 			-- Base widget
 			local widget = self:create_widget(name, position, size, "button", anchor)
 			-- Set attributes
 			widget:set("text", text or "")
-			if on_click then
-				widget:set("on_click", on_click)
-			end
+			-- if on_click then
+				-- widget:set("on_click", on_click)
+			-- end
+			widget.params = params
 			-- Add widget
 			self:add_widget(widget)
 			return widget
@@ -1366,6 +1367,7 @@ gui.widgets = {
 		z_order = 0,
 		visible = true,
 		theme = {},
+		params = {},
 		
 		-- ################################################################################################################
 		-- ##### widget Methods ##########################################################################################

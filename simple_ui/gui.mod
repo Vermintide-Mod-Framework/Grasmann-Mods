@@ -5,9 +5,9 @@ print("'" ..file_name.. "' Mod loading...")
 
 return {
 	run = function()
-		local mod = new_mod("basic_gui")
+		local mod = new_mod("BasicUI")
 		mod:initialize("scripts/mods/basic_gui/basic_gui")
-		local mod = new_mod("simple_ui")
+		local mod = new_mod("SimpleUI")
 		mod:initialize("scripts/mods/gui/gui")
 	end,
 	packages = {
