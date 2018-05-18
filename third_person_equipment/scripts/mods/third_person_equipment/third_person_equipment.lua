@@ -320,7 +320,7 @@ mod.add_item = function(self, unit, slot_name, item_data)
 		local career_extension = ScriptUnit.extension(unit, "career_system")
 		career_name = career_extension._career_data.name
 	end
-
+	
 	if self.definitions[item_data.item_type] ~= nil then
 		local right, left, right_pack, left_pack = nil
 		if item_data.right_hand_unit ~= nil then
@@ -343,10 +343,10 @@ mod.add_item = function(self, unit, slot_name, item_data)
 				if right_pack then
 					right = self:spawn(right_pack, unit, item_setting, item_data)
 				else
-					self:echo("right_pack "..tostring(item_data.item_type).." missing")
+					--self:echo("right_pack "..tostring(item_data.item_type).." missing")
 				end
 			else
-				self:echo(slot_name)
+				--self:echo(slot_name)
 			end
 		end
 		if item_data.left_hand_unit ~= nil then
@@ -367,10 +367,10 @@ mod.add_item = function(self, unit, slot_name, item_data)
 				if left_pack then
 					left = self:spawn(left_pack, unit, item_setting, item_data)
 				else
-					self:echo("left_pack "..tostring(item_data.item_type).." missing")
+					--self:echo("left_pack "..tostring(item_data.item_type).." missing")
 				end
 			else
-				self:echo(slot_name)
+				--self:echo(slot_name)
 			end
 		end
 		
@@ -383,7 +383,7 @@ mod.add_item = function(self, unit, slot_name, item_data)
 			left_pack = left_pack,
 		}
 	elseif item_data.item_type ~= nil and item_data.item_type ~= "inventory_item" then
-		self:echo(tostring(item_data.item_type).." is missing!")
+		--self:echo(tostring(item_data.item_type).." is missing!")
 	end
 end
 --[[
@@ -570,23 +570,8 @@ mod:hook("InventoryPackageSynchronizer.set_inventory_list", function(func, self,
 			mod:delete_units(player.player_unit)
 		end
 	end
-	
 	func(self, profile_index, ...)
 end)
---[[
-	Reset view after character change
---]]
-if VT1 then
-	-- mod:hook("ProfileView.on_exit", function(func, ...)
-		-- func(...)
-		-- mod.reset = true
-	-- end)
-else
-	mod:hook("CharacterSelectionView.on_exit", function(func, ...)
-		func(...)
-		mod:delete_all_units()
-	end)
-end
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
 -- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
@@ -613,12 +598,7 @@ mod.on_setting_changed = function(setting_name)
 	-- Waywatcher dual weapons
 	if setting_name == "waywatcher_dualweapon_position" then
 		for unit, name in pairs(mod.current.profile) do
-			--mod:echo(name)
-			if VT1 then
-				if name == "wood_elf" then mod:delete_units(unit) end
-			else
-				if name == "way_watcher" then mod:delete_units(unit) end
-			end
+			if name == "way_watcher" then mod:delete_units(unit) end
 		end
 	end
 	-- One-handed weapons

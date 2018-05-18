@@ -12,6 +12,7 @@ local default_node_2 = "j_spine2"
 local backpack_node = VT1 and "a_hanging_trophy_3" or default_node
 local hip_node = "j_hips"
 mod.definitions = {
+	
 	-- Soldier
 	es_handgun = {
 		right = {
@@ -33,6 +34,11 @@ mod.definitions = {
 				node = hip_node,
 				position = {0.1, 0, -0.21},
 				rotation = {150, -70, 150},
+				es_mercenary = {
+					node = hip_node,
+					position = {0.2, 0, -0.21},
+					rotation = {150, -70, 150},
+				},
 			},
 			back = {
 				node = default_node,
@@ -44,7 +50,7 @@ mod.definitions = {
 	es_2h_war_hammer = {
 		right = {
 			node = default_node,
-			position = {0.8, -0.22, 0.1},
+			position = {0.8, -0.22, 0.2},
 			rotation = {0, -110, 90},
 		},
 	},
@@ -54,6 +60,11 @@ mod.definitions = {
 				node = hip_node,
 				position = {0.1, 0, -0.21},
 				rotation = {150, -70, 150},
+				es_mercenary = {
+					node = hip_node,
+					position = {0.2, 0, -0.21},
+					rotation = {150, -70, 150},
+				},
 			},
 			back = {
 				node = default_node,
@@ -66,18 +77,28 @@ mod.definitions = {
 				node = default_node,
 				position = {0.3, -0.22, 0.1},
 				rotation = {0, 90, 90},
+				es_knight = {
+					node = default_node,
+					position = {0.3, -0.25, 0.1},
+					rotation = {0, 90, 90},
+				},
 			},
 			back = {
 				node = default_node,
 				position = {0.3, -0.22, 0.1},
 				rotation = {0, 90, 90},
+				es_knight = {
+					node = default_node,
+					position = {0.3, -0.25, 0.1},
+					rotation = {0, 90, 90},
+				},
 			},
 		},
 	},
 	es_2h_sword = {
 		right = {
 			node = default_node,
-			position = {0.7, -0.22, 0.1},
+			position = {0.7, -0.22, 0.2},
 			rotation = {0, -110, 90},
 		},
 	},
@@ -124,7 +145,7 @@ mod.definitions = {
 	es_repeating_handgun = {
 		right = {
 			node = default_node,
-			position = {0.5, -0.25, -0.2},
+			position = {0.5, -0.22, -0.2},
 			rotation = {0, 30, 90},
 		},
 	},
@@ -150,6 +171,7 @@ mod.definitions = {
 			rotation = {0, -110, 90},
 		},
 	},
+	
 	--- Mage
 	bw_flame_sword = {
 		right = {
@@ -257,11 +279,12 @@ mod.definitions = {
 			rotation = {0, 110, 180},
 		},
 	},
+	
 	-- Witchhunter
 	wh_2h_sword = {
 		right = {
 			node = default_node_2,
-			position = {0.4, -0.19, 0.2},
+			position = {0.4, -0.17, 0.2},
 			rotation = {0, -110, 90},
 		},
 	},
@@ -281,20 +304,20 @@ mod.definitions = {
 			},
 			back = {
 				node = default_node_2,
-				position = {0.3, -0.2, 0.1},
+				position = {0.3, -0.17, 0.1},
 				rotation = {0, -110, 90},
 			},
 		},
 		left = {
 			belt = {
 				node = hip_node,
-				position = {0.1, 0, 0.2},
-				rotation = {270, 0, 90},
+				position = {0, 0, 0.2},
+				rotation = {70, 50, 100},
 			},
 			back = {
 				node = hip_node,
-				position = {0.1, 0, -0.2},
-				rotation = {270, 0, 90},
+				position = {0, 0, -0.2},
+				rotation = {70, 50, -240},
 			},
 		},
 	},
@@ -307,7 +330,7 @@ mod.definitions = {
 			},
 			back = {
 				node = default_node_2,
-				position = {0.3, -0.2, 0.1},
+				position = {0.3, -0.16, 0.1},
 				rotation = {0, -110, 90},
 			},
 		},
@@ -321,19 +344,19 @@ mod.definitions = {
 			},
 			back = {
 				node = default_node_2,
-				position = {0.3, -0.19, 0.1},
+				position = {0.3, -0.17, 0.1},
 				rotation = {0, -110, 90},
 			},
 		},
 	},
 	wh_brace_of_pisols = {
 		right = {
-			node = "j_hips",
+			node = hip_node,
 			position = {0, 0, 0.2},
 			rotation = {70, 50, 100},
 		},
 		left = {
-			node = "j_hips",
+			node = hip_node,
 			position = {0, 0, -0.2},
 			rotation = {70, 50, -240},
 		},
@@ -341,14 +364,14 @@ mod.definitions = {
 	wh_crossbow = {
 		left = {
 			node = default_node_2,
-			position = {0.15, -0.2, -0.1},
+			position = {0.15, -0.18, -0.1},
 			rotation = {270, 0, 110},
 		},
 	},
 	wh_repeating_pistol = {
 		right = {
 			node = default_node_2,
-			position = {0.2, -0.2, -0.1},
+			position = {0.1, -0.17, -0.1},
 			rotation = {0, 30, 90},
 		},
 	},
@@ -367,6 +390,7 @@ mod.definitions = {
 			},
 		},
 	},
+	
 	-- Waywatcher
 	ww_2h_axe = {
 		right = {
@@ -515,6 +539,7 @@ mod.definitions = {
 			rotation = {0, -110, 90},
 		},
 	},
+	
 	-- Dwarf
 	dr_1h_axe_shield = {
 		right = {
@@ -542,6 +567,11 @@ mod.definitions = {
 				node = hip_node,
 				position = {0.13, 0.1, -0.27},
 				rotation = {130, -70, 110},
+				dr_slayer = {
+					node = hip_node,
+					position = {0.13, 0.1, -0.25},
+					rotation = {130, -70, 110},
+				},
 			},
 		},
 		left = {
@@ -556,7 +586,7 @@ mod.definitions = {
 				},
 				dr_ironbreaker = {
 					node = default_node_2,
-					position = {0.1, -0.15, 0.12},
+					position = {0.1, -0.21, 0.12},
 					rotation = {0, 120, 90},
 				},
 			},
@@ -576,7 +606,7 @@ mod.definitions = {
 				},
 				dr_ironbreaker = {
 					node = default_node_2,
-					position = {0.1, -0.15, 0.12},
+					position = {0.1, -0.21, 0.12},
 					rotation = {0, 120, 90},
 				},
 			},
@@ -602,6 +632,11 @@ mod.definitions = {
 				node = default_node_2,
 				position = {0.4, -0.2, 0.1},
 				rotation = {0, -110, 90},
+				dr_slayer = {
+					node = default_node_2,
+					position = {0.2, -0.2, 0.1},
+					rotation = {0, -110, 90},
+				},
 			},
 			backpack = {
 				node = backpack_node,
@@ -612,6 +647,11 @@ mod.definitions = {
 				node = hip_node,
 				position = {0.13, 0.1, -0.28},
 				rotation = {130, -70, 110},
+				dr_slayer = {
+					node = hip_node,
+					position = {0.13, 0.1, -0.25},
+					rotation = {130, -70, 110},
+				},
 			},
 		},
 	},
@@ -621,6 +661,16 @@ mod.definitions = {
 				node = default_node_2,
 				position = {0.5, -0.15, 0.2},
 				rotation = {0, -110, 90},
+				dr_ironbreaker = {
+					node = default_node_2,
+					position = {0.5, -0.22, 0.2},
+					rotation = {0, -110, 90},
+				},
+				dr_slayer = {
+					node = default_node_2,
+					position = {0.5, -0.22, 0.2},
+					rotation = {0, -110, 90},
+				},
 			},
 			backpack = {
 				node = backpack_node,
@@ -635,6 +685,11 @@ mod.definitions = {
 				node = default_node_2,
 				position = {0.4, -0.2, 0.1},
 				rotation = {0, -110, 90},
+				dr_slayer = {
+					node = default_node_2,
+					position = {0.2, -0.2, 0.1},
+					rotation = {0, -110, 90},
+				},
 			},
 			backpack = {
 				node = backpack_node,
@@ -645,6 +700,11 @@ mod.definitions = {
 				node = hip_node,
 				position = {0.13, 0.1, -0.27},
 				rotation = {130, -70, 110},
+				dr_slayer = {
+					node = hip_node,
+					position = {0.13, 0.1, -0.25},
+					rotation = {130, -70, 110},
+				},
 			},
 		},
 	},
@@ -674,6 +734,11 @@ mod.definitions = {
 				node = hip_node,
 				position = {0.13, 0.1, -0.27},
 				rotation = {130, -70, 110},
+				dr_slayer = {
+					node = hip_node,
+					position = {0.13, 0.1, -0.25},
+					rotation = {130, -70, 110},
+				},
 			},
 		},
 		left = {
@@ -688,7 +753,7 @@ mod.definitions = {
 				},
 				dr_ironbreaker = {
 					node = default_node_2,
-					position = {0.1, -0.15, 0.12},
+					position = {0.1, -0.21, 0.12},
 					rotation = {0, 120, 90},
 				},
 			},
@@ -708,7 +773,7 @@ mod.definitions = {
 				},
 				dr_ironbreaker = {
 					node = default_node_2,
-					position = {0.1, -0.15, 0.12},
+					position = {0.1, -0.21, 0.12},
 					rotation = {0, 120, 90},
 				},
 			},
@@ -720,6 +785,11 @@ mod.definitions = {
 				node = default_node_2,
 				position = {0.5, -0.2, 0.2},
 				rotation = {0, -110, 90},
+				dr_ironbreaker = {
+					node = default_node_2,
+					position = {0.5, -0.22, 0.2},
+					rotation = {0, -110, 90},
+				},
 			},
 			backpack = {
 				node = backpack_node,
@@ -734,6 +804,16 @@ mod.definitions = {
 				node = default_node_2,
 				position = {0.5, -0.17, 0.2},
 				rotation = {0, -110, 90},
+				dr_ironbreaker = {
+					node = default_node_2,
+					position = {0.5, -0.22, 0.2},
+					rotation = {0, -110, 90},
+				},
+				dr_slayer = {
+					node = default_node_2,
+					position = {0.5, -0.22, 0.2},
+					rotation = {0, -110, 90},
+				},
 			},
 			backpack = {
 				node = backpack_node,
@@ -790,20 +870,62 @@ mod.definitions = {
 			rotation = {90, 0, 0},
 		},
 	},
+	dr_dual_axes = {
+		right = {
+			belt = {
+				node = hip_node,
+				position = {0.2, 0.1, -0.25},
+				rotation = {110, -70, -70},
+			},
+			back = {
+				node = default_node_2,
+				position = {0.2, -0.2, 0.1},
+				rotation = {0, -110, 90},
+			},
+		},
+		left = {
+			belt = {
+				node = hip_node,
+				position = {0.2, 0, 0.25},
+				rotation = {40, -70, 180},
+			},
+			back = {
+				node = default_node_2,
+				position = {0.2, -0.2, -0.2},
+				rotation = {0, -50, -90},
+			},
+		},
+	},
+	
 	-- Common
 	potion = {
 		empire_soldier = {
 			left = {
 				node = default_node,
-				position = {0.05, -0.12, -0.15},
-				rotation = {-60, 60, 0},
+				position = {-0.05, -0.12, -0.15},
+				rotation = {-60, 70, -90},
 			},
 		},
 		bright_wizard = {
 			left = {
 				node = default_node,
-				position = {0.05, -0.1, -0.13},
-				rotation = {-60, 60, 0},
+				position = {-0.05, -0.1, -0.13},
+				rotation = {-60, 60, -90},
+				bw_adept = {
+					node = default_node,
+					position = {-0.08, 0.17, 0.05},
+					rotation = {-70, 110, -90},
+				},
+				bw_scholar = {
+					node = default_node,
+					position = {-0.09, 0.15, 0.05},
+					rotation = {-70, 110, -90},
+				},
+				bw_unchained = {
+					node = default_node,
+					position = {-0.09, 0.15, 0.05},
+					rotation = {-70, 110, -90},
+				},
 			},
 		},
 		wood_elf = {
@@ -811,36 +933,95 @@ mod.definitions = {
 				node = default_node,
 				position = {-0.1, -0.15, -0.1},
 				rotation = {120, 110, 90},
+				we_waywatcher = {
+					node = default_node,
+					position = {0, 0.15, 0.05},
+					rotation = {0, 90, 20},
+				},
+				we_maidenguard = {
+					node = default_node,
+					position = {0, 0.15, 0.05},
+					rotation = {0, 90, 20},
+				},
+				we_shade = {
+					node = default_node,
+					position = {0, 0.15, 0.05},
+					rotation = {0, 90, 20},
+				},
 			},
 		},
 		witch_hunter = {
 			left = {
 				node = default_node,
-				position = {0.05, -0.12, -0.15},
-				rotation = {-60, 60, 0},
+				position = {-0.05, -0.16, -0.16},
+				rotation = {-60, 60, -90},
+				wh_captain = {
+					node = default_node,
+					position = {0, 0.17, 0.05},
+					rotation = {-70, 110, -90},
+				},
+				wh_bountyhunter = {
+					node = default_node,
+					position = {0, 0.17, 0.05},
+					rotation = {-70, 110, -90},
+				},
+				wh_zealot = {
+					node = default_node,
+					position = {0.03, 0.2, 0.05},
+					rotation = {-70, 110, -90},
+				},
 			},
 		},
 		dwarf_ranger = {
 			left = {
-				node = default_node,
-				position = {0, -0.15, -0.18},
-				rotation = {-70, 70, 0},
+				node = backpack_node,
+				position = {0.07, 0.04, -0.04},
+				rotation = {40, -20, -10},
+				dr_ranger = {
+					node = default_node,
+					position = {-0.05, 0.3, 0.1},
+					rotation = {-70, 110, -90},
+				},
+				dr_ironbreaker = {
+					node = default_node,
+					position = {-0.05, 0.3, 0.1},
+					rotation = {-70, 110, -90},
+				},
+				dr_slayer = {
+					node = default_node,
+					position = {-0.05, 0.3, 0.1},
+					rotation = {-70, 110, -90},
+				},
 			},
+		},
+		left = {
+			node = default_node,
+			position = {-0.1, -0.3, -0.15},
+			rotation = {40, 90, 0},
 		},
 		-- VT2
 		way_watcher = {
 			left = {
 				node = default_node,
-				position = {0.05, 0, -0.16},
-				rotation = {-10, 60, 0},
+				position = {-0.1, -0.15, -0.1},
+				rotation = {120, 110, 90},
+				we_waywatcher = {
+					node = default_node,
+					position = {0, 0.15, 0.05},
+					rotation = {0, 90, 20},
+				},
+				we_maidenguard = {
+					node = default_node,
+					position = {0, 0.15, 0.05},
+					rotation = {0, 90, 20},
+				},
+				we_shade = {
+					node = default_node,
+					position = {0, 0.15, 0.05},
+					rotation = {0, 90, 20},
+				},
 			},
 		},
-		-- VT2
-		left = {
-			node = default_node,
-			position = {-0.1, -0.3, -0.15},
-			rotation = {40, 90, 0},
-		}
 	},
 	grenade = {
 		empire_soldier = {
@@ -858,24 +1039,54 @@ mod.definitions = {
 		bright_wizard = {
 			right = {
 				node = default_node,
-				position = {0, -0.18, 0.08},
+				position = {0, -0.13, 0.08},
 				rotation = {60, 120, 0},
+				bw_adept = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 0},
+				},
+				bw_scholar = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 0},
+				},
+				bw_unchained = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 0},
+				},
 			},
 			left = {
 				node = default_node,
-				position = {0, -0.18, 0.08},
+				position = {0, -0.13, 0.08},
 				rotation = {60, 120, 30},
+				bw_adept = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 30},
+				},
+				bw_scholar = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 30},
+				},
+				bw_unchained = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 30},
+				},
 			},
 		},
 		wood_elf = {
 			right = {
 				node = default_node,
-				position = {0, -0.18, 0.08},
+				position = {-0.1, -0.18, 0.08},
 				rotation = {60, 120, 0},
 			},
 			left = {
 				node = default_node,
-				position = {0, -0.18, 0.08},
+				position = {-0.1, -0.18, 0.08},
 				rotation = {60, 120, 30},
 			},
 		},
@@ -884,23 +1095,83 @@ mod.definitions = {
 				node = default_node,
 				position = {0, -0.18, 0.08},
 				rotation = {60, 120, 0},
+				wh_captain = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 0},
+				},
+				wh_bountyhunter = {
+					node = default_node,
+					position = {0, -0.18, 0.1},
+					rotation = {60, 120, 0},
+				},
+				wh_zealot = {
+					node = default_node,
+					position = {0, -0.19, 0.1},
+					rotation = {60, 120, 0},
+				},
 			},
 			left = {
 				node = default_node,
 				position = {0, -0.18, 0.08},
 				rotation = {60, 120, 30},
+				wh_captain = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 30},
+				},
+				wh_bountyhunter = {
+					node = default_node,
+					position = {0, -0.18, 0.1},
+					rotation = {60, 120, 30},
+				},
+				wh_zealot = {
+					node = default_node,
+					position = {0, -0.19, 0.1},
+					rotation = {60, 120, 30},
+				},
 			},
 		},
 		dwarf_ranger = {
 			right = {
-				node = default_node,
-				position = {0, -0.18, 0.08},
-				rotation = {60, 120, 0},
+				node = backpack_node,
+				position = {0.35, -0.13, -0.07},
+				rotation = {60, -20, -10},
+				dr_ranger = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 0},
+				},
+				dr_ironbreaker = {
+					node = default_node,
+					position = {-0.1, -0.24, 0.1},
+					rotation = {60, 120, 0},
+				},
+				dr_slayer = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 0},
+				},
 			},
 			left = {
-				node = default_node,
-				position = {0, -0.18, 0.08},
-				rotation = {60, 120, 30},
+				node = backpack_node,
+				position = {0.35, -0.13, -0.07},
+				rotation = {60, -20, -10},
+				dr_ranger = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 30},
+				},
+				dr_ironbreaker = {
+					node = default_node,
+					position = {-0.1, -0.24, 0.1},
+					rotation = {60, 120, 30},
+				},
+				dr_slayer = {
+					node = default_node,
+					position = {-0.1, -0.18, 0.1},
+					rotation = {60, 120, 30},
+				},
 			},
 		},
 		right = {
@@ -913,6 +1184,19 @@ mod.definitions = {
 			position = {0, -0.1, 0.2},
 			rotation = {40, 90, 0},
 		},
+		-- VT2
+		way_watcher = {
+			right = {
+				node = default_node,
+				position = {-0.1, -0.18, 0.08},
+				rotation = {60, 120, 0},
+			},
+			left = {
+				node = default_node,
+				position = {-0.1, -0.18, 0.08},
+				rotation = {60, 120, 30},
+			},
+		},
 	},
 	healthkit = {
 		empire_soldier = {
@@ -920,6 +1204,21 @@ mod.definitions = {
 				node = default_node,
 				position = {0, -0.15, 0.03},
 				rotation = {0, 90, 0},
+				es_mercenary = {
+					node = default_node,
+					position = {0, -0.15, 0.03},
+					rotation = {10, 100, 150},
+				},
+				es_huntsman = {
+					node = default_node,
+					position = {0, -0.15, 0.03},
+					rotation = {10, 100, 150},
+				},
+				es_knight = {
+					node = default_node,
+					position = {0, -0.15, 0.03},
+					rotation = {10, 100, 150},
+				},
 			},
 		},
 		bright_wizard = {
@@ -927,6 +1226,21 @@ mod.definitions = {
 				node = default_node,
 				position = {0, 0.15, 0.05},
 				rotation = {0, 90, 20},
+				bw_adept = {
+					node = default_node,
+					position = {-0.05, -0.16, -0.05},
+					rotation = {0, 0, 170},
+				},
+				bw_scholar = {
+					node = default_node,
+					position = {-0.05, -0.16, -0.05},
+					rotation = {0, 0, 170},
+				},
+				bw_unchained = {
+					node = default_node,
+					position = {-0.05, -0.16, -0.05},
+					rotation = {0, 0, 170},
+				},
 			},
 		},
 		wood_elf = {
@@ -934,6 +1248,21 @@ mod.definitions = {
 				node = default_node,
 				position = {0, 0.15, 0.05},
 				rotation = {0, 90, 20},
+				we_waywatcher = {
+					node = default_node,
+					position = {-0.1, -0.1, -0.13},
+					rotation = {100, 110, 90},
+				},
+				we_maidenguard = {
+					node = default_node,
+					position = {-0.1, -0.1, -0.13},
+					rotation = {100, 110, 90},
+				},
+				we_shade = {
+					node = default_node,
+					position = {-0.1, -0.1, -0.13},
+					rotation = {100, 110, 110},
+				},
 			},
 		},
 		witch_hunter = {
@@ -941,6 +1270,21 @@ mod.definitions = {
 				node = default_node,
 				position = {0, 0.15, 0.05},
 				rotation = {0, 90, 20},
+				wh_captain = {
+					node = default_node,
+					position = {-0.05, -0.16, -0.05},
+					rotation = {0, 0, 170},
+				},
+				wh_bountyhunter = {
+					node = default_node,
+					position = {-0.05, -0.16, -0.05},
+					rotation = {0, 0, 170},
+				},
+				wh_zealot = {
+					node = default_node,
+					position = {0.05, -0.17, -0.05},
+					rotation = {0, 0, 170},
+				},
 			},
 		},
 		dwarf_ranger = {
@@ -948,6 +1292,21 @@ mod.definitions = {
 				node = backpack_node,
 				position = {0.15, -0.2, 0.13},
 				rotation = {60, -20, -10},
+				dr_ranger = {
+					node = default_node,
+					position = {-0.05, -0.16, -0.05},
+					rotation = {0, 0, 170},
+				},
+				dr_ironbreaker = {
+					node = default_node,
+					position = {0, -0.15, -0.18},
+					rotation = {-70, 70, -90},
+				},
+				dr_slayer = {
+					node = default_node,
+					position = {-0.05, -0.16, -0.05},
+					rotation = {0, 0, 170},
+				},
 			},
 		},
 		left = {
@@ -955,7 +1314,31 @@ mod.definitions = {
 			position = {0, -0.15, 0.03},
 			rotation = {0, 90, 0},
 		},
+		-- VT2
+		way_watcher = {
+			left = {
+				node = default_node,
+				position = {0, 0.15, 0.05},
+				rotation = {0, 90, 20},
+				we_waywatcher = {
+					node = default_node,
+					position = {-0.1, -0.1, -0.13},
+					rotation = {100, 110, 90},
+				},
+				we_maidenguard = {
+					node = default_node,
+					position = {-0.1, -0.1, -0.13},
+					rotation = {100, 110, 90},
+				},
+				we_shade = {
+					node = default_node,
+					position = {-0.1, -0.1, -0.13},
+					rotation = {100, 110, 110},
+				},
+			},
+		},
 	},
+	
 	-- Default
 	default = {
 		right = {
@@ -981,6 +1364,7 @@ mod.definitions.dwarf_weapons = {
 	"dr_grudgeraker",
 	"dr_crossbow",
 	"dr_2h_picks",
+	"dr_dual_axes",
 }
 mod.definitions.one_handed = {
 	"es_1h_sword",
@@ -1004,6 +1388,7 @@ mod.definitions.one_handed = {
 	"dr_1h_hammer",
 	"dr_1h_axes",
 	"dr_1h_hammer_shield",
+	"dr_dual_axes",
 }
 mod.definitions.waywatcher_dual = {
 	"ww_dual_swords",
