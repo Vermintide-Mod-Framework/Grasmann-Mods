@@ -1,0 +1,1 @@
+vmb upload show_damage -g 2

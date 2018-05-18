@@ -619,7 +619,7 @@ end
 mod.gui = nil
 mod.create_gui = function(self)
 	local top_world = Managers.world:world("top_ingame_view")
-	self.gui = World.create_screen_gui(top_world, "immediate", "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_ingame_common", 
+	self.gui = World.create_screen_gui(top_world, "immediate", "material", "materials/fonts/gw_fonts", --"material", "materials/ui/ui_1080p_ingame_common", 
 		"material", "materials/show_damage/block", "material", "materials/show_damage/melee", "material", "materials/show_damage/ranged", 
 		"material", "materials/show_damage/health", "material", "materials/show_damage/poison", "material", "materials/show_damage/flame")
 end
