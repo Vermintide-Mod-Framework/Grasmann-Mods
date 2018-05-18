@@ -1798,23 +1798,6 @@ mod:hook("ActionBlock.finish", function(func, self, reason)
 	func(self, reason)
 end)
 --[[
-	Wield
---]]
--- mod.wield_views = {
-	-- slot_ranged = "automatic_ranged",
-	-- slot_melee = "automatic_melee",
-	-- slot_level_event = "automatic_vent",
--- }
--- mod:hook("ActionWield.finish", function(func, self)
-	-- if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
-		-- local view_name = mod.wield_views[self.new_slot]
-		-- if view_name then
-			-- mod:start_view(view_name)
-		-- end
-	-- end
-	-- func(self)
--- end)
---[[
 	Push
 --]]
 mod:hook("ActionPushStagger.client_owner_start_action", function(func, self, ...)
@@ -1881,7 +1864,6 @@ end
 --[[
 	Wield
 --]]
---mod.slot = false
 mod:hook("SimpleInventoryExtension.wield", function(func, self, slot_name)
 	func(self, slot_name)
 	if Managers.player:owner(self._unit) == Managers.player:local_player() then
