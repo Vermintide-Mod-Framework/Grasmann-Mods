@@ -5,12 +5,11 @@ local mod = get_mod("ThirdPersonEquipment")
 		- Works with player and bots
 	
 	Author: grasmann
-	Version: 1.2.0
+	Version: 2.0.0
 --]]
 
 -- Global to keep track of spawned units
 third_person_equipment_spawned_items = third_person_equipment_spawned_items or {}
-
 mod:dofile("scripts/mods/third_person_equipment/third_person_equipment_def")
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -29,17 +28,19 @@ mod_data.options_widgets = {
 		["setting_name"] = "dwarf_weapon_position",
 		["widget_type"] = "dropdown",
 		["text"] = "Dwarf Weapon Position",
-		["tooltip"] =  "Dwarf Weapon Position\n" ..
+		["tooltip"] =  VT1 and "Dwarf Weapon Position\n" ..
 			"Choose the position of the dwarf weapons.\n\n" ..
 			"-- Backpack --\n" ..
 			"Weapons will be placed on the backpack.\n\n" ..
 			"-- Back --\n" ..
 			"Weapons will be placed on the back.",
-		["options"] = {
+		["options"] = VT1 and {
 			{text = "Backpack", value = 1},
 			{text = "Back", value = 2},
+		} or {
+			{text = "Back", value = 2},
 		},
-		["default_value"] = 1,
+		["default_value"] = VT1 and 1 or 2,
 	},
 	{
 		["setting_name"] = "dwarf_onehand_weapon_position",
@@ -161,7 +162,7 @@ end
 mod.delete_units = function(self, unit)
 	if self.current.equipment[unit] then
 		for _, i_unit in pairs(self.current.equipment[unit]) do
-			mod:delete_i_unit(i_unit)
+			self:delete_i_unit(i_unit)
 		end
 		self.current.equipment[unit] = nil
 	end
@@ -169,7 +170,7 @@ end
 --[[
 	Spawn equipment unit
 --]]
-mod.spawn = function(self, package_name, unit, item_setting)
+mod.spawn = function(self, package_name, unit, item_setting, item_data)
 	local s_unit = nil
 	local world = Managers.world:world("level_world")
 	local node = Unit.node(unit, item_setting.node)
@@ -180,41 +181,25 @@ mod.spawn = function(self, package_name, unit, item_setting)
 	
 	local i_pos = item_setting.position
 	local pos_offset = i_pos ~= nil and Vector3(i_pos[1], i_pos[2], i_pos[3]) or Vector3(0,0,0)
-	Unit.teleport_local_position(s_unit, 0, pos_offset)
+	Unit.set_local_position(s_unit, 0, pos_offset)
 	
 	local i_rot = item_setting.rotation
 	local rot_offset = i_rot ~= nil and Vector3(i_rot[1], i_rot[2], i_rot[3]) or Vector3(0,0,0)
 	local rotation = Quaternion.from_euler_angles_xyz(rot_offset[1], rot_offset[2], rot_offset[3])
-	Unit.teleport_local_rotation(s_unit, 0, rotation) 
+	Unit.set_local_rotation(s_unit, 0, rotation) 
 	
 	-- Hardcoded scaling
 	local grim = "units/weapons/player/wpn_grimoire_01/wpn_grimoire_01_3p"
 	local tome = "units/weapons/player/wpn_side_objective_tome/wpn_side_objective_tome_01_3p"
 	if package_name == grim or package_name == tome then
-		Unit.teleport_local_scale(s_unit, 0, Vector3(0.75, 0.75, 0.75))
+		Unit.set_local_scale(s_unit, 0, Vector3(0.75, 0.75, 0.75))
 	end
+	
 	-- Option scaling
 	local scaling = self:get("downscale_big_weapons") / 100
-	local staff = "units/weapons/player/wpn_brw_staff_06/wpn_brw_staff_06_3p"
-	local volley1 = "units/weapons/player/wpn_wh_repeater_crossbow_t1/wpn_wh_repeater_crossbow_t1_3p"
-	local volley2 = "units/weapons/player/wpn_wh_repeater_crossbow_t2/wpn_wh_repeater_crossbow_t2_3p"
-	local volley3 = "units/weapons/player/wpn_wh_repeater_crossbow_t3/wpn_wh_repeater_crossbow_t3_3p"
-	local xbow1 = "units/weapons/player/wpn_empire_crossbow_t1/wpn_empire_crossbow_tier1_3p"
-	local xbow2 = "units/weapons/player/wpn_empire_crossbow_t2/wpn_empire_crossbow_tier2_3p"
-	local xbow3 = "units/weapons/player/wpn_empire_crossbow_t3/wpn_empire_crossbow_tier3_3p"
-	local repeat1 = "units/weapons/player/wpn_empire_pistol_repeater/wpn_empire_pistol_repeater_t1_3p"
-	local repeat2 = "units/weapons/player/wpn_empire_pistol_repeater/wpn_empire_pistol_repeater_t2_3p"
-	local repeat3 = "units/weapons/player/wpn_empire_pistol_repeater/wpn_empire_pistol_repeater_t3_3p"
-	if package_name == volley1 or package_name == volley2 or package_name == volley3 or
-			package_name == xbow1 or package_name == xbow2 or package_name == xbow3 or 
-			package_name == repeat1 or package_name == repeat2 or package_name == repeat3 then
-		local z_scale = scaling >= 0.75 and scaling - 0.25 or scaling
-		local scale = Vector3(scaling, scaling, z_scale)
-		Unit.teleport_local_scale(s_unit, 0, scale)
-	end
-	if package_name == staff then
+	if table.contains(self.definitions.big_weapons, tostring(item_data.item_type)) then
 		local scale = Vector3(scaling, scaling, scaling)
-		Unit.teleport_local_scale(s_unit, 0, scale)
+		Unit.set_local_scale(s_unit, 0, scale)
 	end
 
 	return s_unit
@@ -223,11 +208,10 @@ end
 	Spawn single equipment unit
 --]]
 mod.get_item_setting = function(self, unit, slot_name, item_data, left)
-	local def = mod.definitions
+	local def = self.definitions
 	local item_setting = nil
 	
 	-- ####### Fixes and options #######
-	--mod:pcall(function()
 	if slot_name == "slot_melee" or slot_name == "slot_ranged" then
 		
 		-- Dwarf
@@ -331,46 +315,62 @@ mod.add_item = function(self, unit, slot_name, item_data)
 	local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 	local equipment = inventory_extension.equipment(inventory_extension)
 	
-	if mod.definitions[item_data.item_type] ~= nil then
+	local career_name = nil
+	if not VT1 then
+		local career_extension = ScriptUnit.extension(unit, "career_system")
+		career_name = career_extension._career_data.name
+	end
+
+	if self.definitions[item_data.item_type] ~= nil then
 		local right, left, right_pack, left_pack = nil
 		if item_data.right_hand_unit ~= nil then
 			local item_setting = self:get_item_setting(unit, slot_name, item_data)
+			
+			if not VT1 and career_name then
+				item_setting = item_setting[career_name] or item_setting
+			end
+			
 			if item_setting.node ~= nil then
-				--right_pack = WeaponSkins and WeaponSkins.skins[equipment.slots[slot_name].skin].right_hand_unit.."_3p"
+				
 				if VT1 then
 					right_pack = item_data.right_hand_unit.."_3p"
 				else
 					right_pack = WeaponSkins and equipment.slots[slot_name] and WeaponSkins.skins[equipment.slots[slot_name].skin] and
 						WeaponSkins.skins[equipment.slots[slot_name].skin].right_hand_unit.."_3p"
+					right_pack = right_pack or item_data.right_hand_unit.."_3p"
 				end
-				--right_pack = item_data.right_unit_3p
-				--mod:echo(right_pack)
-				--mod:dump(equipment, "equipment", 3)
+				
 				if right_pack then
-					right = self:spawn(right_pack, unit, item_setting)
+					right = self:spawn(right_pack, unit, item_setting, item_data)
+				else
+					self:echo("right_pack "..tostring(item_data.item_type).." missing")
 				end
 			else
-				mod:echo(slot_name)
+				self:echo(slot_name)
 			end
 		end
 		if item_data.left_hand_unit ~= nil then
 			local item_setting = self:get_item_setting(unit, slot_name, item_data, true)
+			if not VT1 and career_name then
+				item_setting = item_setting[career_name] or item_setting
+			end
 			if item_setting.node ~= nil then
-				--left_pack = WeaponSkins and WeaponSkins.skins[equipment.slots[slot_name].skin].left_hand_unit.."_3p"
+				
 				if VT1 then
 					left_pack = item_data.left_hand_unit.."_3p"
 				else
 					left_pack = WeaponSkins and equipment.slots[slot_name] and WeaponSkins.skins[equipment.slots[slot_name].skin] and
 						WeaponSkins.skins[equipment.slots[slot_name].skin].left_hand_unit.."_3p"
+					left_pack = left_pack or item_data.left_hand_unit.."_3p"
 				end
-				--left_pack = item_data.left_unit_3p
-				--mod:echo(left_pack)
-				--mod:dump(equipment, "equipment", 3)
+
 				if left_pack then
-					left = self:spawn(left_pack, unit, item_setting)
+					left = self:spawn(left_pack, unit, item_setting, item_data)
+				else
+					self:echo("left_pack "..tostring(item_data.item_type).." missing")
 				end
 			else
-				mod:echo(slot_name)
+				self:echo(slot_name)
 			end
 		end
 		
@@ -382,6 +382,8 @@ mod.add_item = function(self, unit, slot_name, item_data)
 			right_pack = right_pack,
 			left_pack = left_pack,
 		}
+	elseif item_data.item_type ~= nil and item_data.item_type ~= "inventory_item" then
+		self:echo(tostring(item_data.item_type).." is missing!")
 	end
 end
 --[[
@@ -395,7 +397,7 @@ mod.add_all_items = function(self, unit)
 			local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 			local equipment = inventory_extension.equipment(inventory_extension)
 			for name, slot in pairs(equipment.slots) do
-				mod:add_item(unit, name, slot.item_data)
+				self:add_item(unit, name, slot.item_data)
 			end
 			self.current.slot[unit] = self.current.slot[unit] or equipment.wielded_slot or "slot_melee"
 			self:set_equipment_visibility(unit)
@@ -465,6 +467,45 @@ mod.is_first_person_blocked = function(self, unit)
 	end
 	return blocked
 end
+--[[
+	Create items if needed
+--]]
+mod.create_items_if_needed = function(self)
+	if Managers and Managers.state and Managers.state.network then
+		local players = Managers.player:human_and_bot_players()
+		for k, player in pairs(players) do
+			if player then
+				local player_unit = player.player_unit
+				if player_unit ~= nil then
+				
+					local profile_synchronizer = Managers.state.network.profile_synchronizer
+					local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
+					if profile_index ~= nil then
+						self.current.profile[player_unit] = SPProfiles[profile_index].unit_name
+
+						if ScriptUnit.has_extension(player_unit, "health_system") and ScriptUnit.has_extension(player_unit, "status_system") then
+							local health_extension = ScriptUnit.extension(player_unit, "health_system")
+							local status_extension = ScriptUnit.extension(player_unit, "status_system")
+							local is_alive = health_extension.is_alive(health_extension) and not status_extension.is_disabled(status_extension)
+							if is_alive and self:is_not_loading() and self.current.profile[player_unit] and not self.current.equipment[player_unit] then
+								self:add_all_items(player_unit)
+							elseif not is_alive then
+								self:delete_units(player_unit)
+							end
+						end
+					end
+				end
+			end
+		end
+		-- First person
+		local player = Managers.player:local_player()
+		if player then
+			local third_person_mod = get_mod("ThirdPerson")
+			local third_person = third_person_mod and not third_person_mod.firstperson or self:is_first_person_blocked(player.player_unit) or false
+			self:set_equipment_visibility(player.player_unit, not third_person)
+		end
+	end
+end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
@@ -518,46 +559,6 @@ mod:hook("PackageManager.unload", function(func, self, package_name, ...)
 	return func(self, package_name, ...)
 end)
 --[[
-	Create items if needed
---]]
-mod:hook("MatchmakingManager.update", function(func, ...)
---mod:hook("WorldManager.update", function(func, ...)
-	func(...)
-	
-	local players = Managers.player:human_and_bot_players()
-	for k, player in pairs(players) do
-		if player then
-			local player_unit = player.player_unit
-			if player_unit ~= nil then
-			
-				local profile_synchronizer = Managers.state.network.profile_synchronizer
-				local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
-				if profile_index ~= nil then
-					mod.current.profile[player_unit] = SPProfiles[profile_index].unit_name
-
-					if ScriptUnit.has_extension(player_unit, "health_system") and ScriptUnit.has_extension(player_unit, "status_system") then
-						local health_extension = ScriptUnit.extension(player_unit, "health_system")
-						local status_extension = ScriptUnit.extension(player_unit, "status_system")
-						local is_alive = health_extension.is_alive(health_extension) and not status_extension.is_disabled(status_extension)
-						if is_alive and mod:is_not_loading() and mod.current.profile[player_unit] and not mod.current.equipment[player_unit] then
-							mod:add_all_items(player_unit)
-						elseif not is_alive then
-							mod:delete_units(player_unit)
-						end
-					end
-				end
-			end
-		end
-	end
-	-- First person
-	local player = Managers.player:local_player()
-	if player then
-		local third_person_mod = get_mod("ThirdPerson")
-		local third_person = third_person_mod and not third_person_mod.firstperson or mod:is_first_person_blocked(player.player_unit) or false
-		mod:set_equipment_visibility(player.player_unit, not third_person)
-	end
-end)
---[[
 	Inventory synchronizer hook
 --]]
 mod:hook("InventoryPackageSynchronizer.set_inventory_list", function(func, self, profile_index, ...)
@@ -598,7 +599,12 @@ mod.on_setting_changed = function(setting_name)
 	-- Waywatcher dual weapons
 	if setting_name == "waywatcher_dualweapon_position" then
 		for unit, name in pairs(mod.current.profile) do
-			if name == "wood_elf" then mod:delete_units(unit) end
+			--mod:echo(name)
+			if VT1 then
+				if name == "wood_elf" then mod:delete_units(unit) end
+			else
+				if name == "way_watcher" then mod:delete_units(unit) end
+			end
 		end
 	end
 	-- One-handed weapons
@@ -627,6 +633,7 @@ end
 	Mod update
 --]]
 mod.update = function(dt)
+	mod:create_items_if_needed()
 end
 
 -- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################

@@ -1,1 +1,1 @@
-vmb upload third_person_equipment_v2 -g 2
+vmb upload third_person_equipment -g 2

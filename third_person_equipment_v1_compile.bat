@@ -1,0 +1,1 @@
+vmb build third_person_equipment -g 1

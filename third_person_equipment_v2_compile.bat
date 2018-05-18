@@ -1,1 +1,1 @@
-vmb build third_person_equipment_v2 -g 2
+vmb build third_person_equipment -g 2
