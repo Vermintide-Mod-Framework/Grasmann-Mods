@@ -573,6 +573,20 @@ mod:hook("InventoryPackageSynchronizer.set_inventory_list", function(func, self,
 	
 	func(self, profile_index, ...)
 end)
+--[[
+	Reset view after character change
+--]]
+if VT1 then
+	-- mod:hook("ProfileView.on_exit", function(func, ...)
+		-- func(...)
+		-- mod.reset = true
+	-- end)
+else
+	mod:hook("CharacterSelectionView.on_exit", function(func, ...)
+		func(...)
+		mod:delete_all_units()
+	end)
+end
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
 -- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
