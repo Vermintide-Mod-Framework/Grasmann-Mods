@@ -15,6 +15,7 @@ Changelog:
 	- Added automatic mode
 	- Added camera sway
 	- Optimized code
+	- Support for vt2
 1.3.0 - Port to official bundle format
 1.2.4 - Fix null 'start_time' on reload
 1.2.3 - Changed options

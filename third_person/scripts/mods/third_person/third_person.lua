@@ -1632,7 +1632,6 @@ if VT1 then
 else
 	mod:hook("CharacterSelectionView.on_exit", function(func, ...)
 		func(...)
-		mod:echo("lol")
 		mod.reset = true
 	end)
 	mod:hook("StartMenuView.on_exit", function(func, ...)
