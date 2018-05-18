@@ -8,6 +8,7 @@ Changelog
 	- Reworked render process
 	- Added icon rendering
 	- Added better animations
+	- Works with vt1 and vt2
 1.2.0 - Port to official bundle format
 1.1.0 - Fix: DamageUtils.buff_on_attack missing parameter
 1.0.2 - Options moved to hud group

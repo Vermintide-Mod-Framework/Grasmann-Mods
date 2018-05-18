@@ -479,6 +479,16 @@ mod_data.options_widgets = {
 		["action"] = "toggle_suspension"
 	},
 }
+if not VT1 then
+	mod_data.options_widgets[#mod_data.options_widgets+1] = {
+		["setting_name"] = "disable_default_numbers",
+		["widget_type"] = "checkbox",
+		["text"] = "Disable Training Dummy Numbers",
+		["tooltip"] = "Disable Training Dummy Numbers\n" ..
+			"Disable the default damage numbers that appear when attacking training dummies.",
+		["default_value"] = false,
+	}
+end
 
 -- ##### ███████╗██╗  ██╗████████╗███████╗███╗   ██╗███████╗██╗ ██████╗ ███╗   ██╗ ####################################
 -- ##### ██╔════╝╚██╗██╔╝╚══██╔══╝██╔════╝████╗  ██║██╔════╝██║██╔═══██╗████╗  ██║ ####################################
@@ -622,6 +632,11 @@ mod.create_gui = function(self)
 	self.gui = World.create_screen_gui(top_world, "immediate", "material", "materials/fonts/gw_fonts", --"material", "materials/ui/ui_1080p_ingame_common", 
 		"material", "materials/show_damage/block", "material", "materials/show_damage/melee", "material", "materials/show_damage/ranged", 
 		"material", "materials/show_damage/health", "material", "materials/show_damage/poison", "material", "materials/show_damage/flame")
+end
+mod.destroy_gui = function(self)
+	local top_world = Managers.world:world("top_ingame_view")
+	World.destroy_gui(top_world, self.gui)
+	self.gui = nil
 end
 
 mod.strings = {
@@ -989,7 +1004,7 @@ mod.floating = {
 	handle = function(self, unit, biggest_hit, parameters)
 		
 		if mod:get("floating_numbers") and self:has_unit(unit) then
-			local breed_data = Unit.get_data(unit, "breed")
+			--local breed_data = Unit.get_data(unit, "breed")
 			local attacker_unit = biggest_hit[DamageDataIndex.ATTACKER]
 			local damage_amount = biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
 			local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
@@ -1035,7 +1050,10 @@ mod.floating = {
 				-- color = {255, 127, 127, 127}
 			-- end
 			
-			if breed_data and mod:get("floating_damage_numbers") then
+			--mod:echo(tostring(breed_data))
+			
+			--if breed_data and 
+			if mod:get("floating_damage_numbers") then
 				if mod:get("floating_numbers_source") == 1 then
 					self:local_player(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, poison, burn)
 				elseif mod:get("floating_numbers_source") == 2 then
@@ -1462,10 +1480,10 @@ end)
 --[[
 	Execute Effect - Post message and remove unit from system
 --]]
-mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, unit, effect_template, biggest_hit, parameters)
+mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, unit, effect_template, biggest_hit, parameters, ...)
 	
 	-- Original function
-	func(self, unit, effect_template, biggest_hit, parameters)
+	func(self, unit, effect_template, biggest_hit, parameters, ...)
 	
 	-- Chat output
 	if mod:is_enabled() then
@@ -1486,6 +1504,48 @@ mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, uni
 	end
 
 end)
+if not VT1 then
+	--[[
+		TrainingDummyHealthExtension - Compitibility for training dummies
+	--]]
+	mod:hook("TrainingDummyHealthExtension.add_damage", function(func, self, attacker_unit, damage_amount, hit_zone_name, damage_type, ...)
+		
+		-- Original function
+		func(self, attacker_unit, damage_amount, hit_zone_name, damage_type, ...)
+		
+		-- Data
+		local unit = self.unit
+		local biggest_hit = {
+			damage_amount,
+			damage_type,
+			attacker_unit,
+			hit_zone_name,
+		}
+		local parameters = {}
+		
+		-- Add unit
+		mod:add_unit(unit)
+		
+		-- Chat output
+		if mod:is_enabled() then
+			mod.chat:handle(unit, biggest_hit, parameters)
+		end
+		
+		-- Floating numbers
+		if mod:is_enabled() then
+			mod.floating:handle(unit, biggest_hit, parameters)
+		end
+		
+	end)
+	--[[
+		Disable default numbers
+	--]]
+	mod:hook("DamageNumbersUI.event_add_damage_number", function(func, ...)
+		if not mod:get("disable_default_numbers") then
+			func(...)
+		end
+	end)
+end
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
 -- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
@@ -1513,11 +1573,19 @@ mod.on_enabled = function(initial_call)
 	mod:enable_all_hooks()
 end
 --[[
-	Mod Update
+	Mod Update - create gui
 --]]
 mod.update = function(dt)
 	if not mod.gui and Managers.world:world("top_ingame_view") then
 		mod:create_gui()
+	end
+end
+--[[
+	Delete gui on unload
+--]]
+mod.on_unload = function(exit_game)
+	if mod.gui and Managers.world:world("top_ingame_view") then
+		mod:destroy_gui()
 	end
 end
 
