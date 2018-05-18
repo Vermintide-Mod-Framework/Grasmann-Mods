@@ -1632,6 +1632,11 @@ if VT1 then
 else
 	mod:hook("CharacterSelectionView.on_exit", function(func, ...)
 		func(...)
+		mod:echo("lol")
+		mod.reset = true
+	end)
+	mod:hook("StartMenuView.on_exit", function(func, ...)
+		func(...)
 		mod.reset = true
 	end)
 end
@@ -1663,7 +1668,8 @@ mod:hook("GenericAmmoUserExtension.start_reload_animation", function(func, self,
 	func(self, reload_time, ...)
 	if self.reload_event then
 		-- ##### Play 3rd person animation ############################################################################
-		Unit.animation_event(self.owner_unit, self.reload_event)
+		--Unit.animation_event(self.owner_unit, self.reload_event)
+		CharacterStateHelper.play_animation_event(self.owner_unit, self.reload_event)
 		-- ##### Set reloading ########################################################################################
 		mod.reload.reloading[self.owner_unit] = {
 			reload_time = reload_time,
@@ -1700,7 +1706,8 @@ mod:hook("GenericAmmoUserExtension.update", function(func, self, unit, input, dt
 				if self.available_ammo <= 0 then
 					wield_anim = item_template.wield_anim_no_ammo
 				end
-				CharacterStateHelper.play_animation_event(self.owner_unit, item_template.wield_anim)
+				mod:dump(item_template, "item_template", 1)
+				CharacterStateHelper.play_animation_event(self.owner_unit, wield_anim)
 			end
 			mod.reload.reloading[self.owner_unit] = nil
 			mod.reload.extended[self.owner_unit] = nil
