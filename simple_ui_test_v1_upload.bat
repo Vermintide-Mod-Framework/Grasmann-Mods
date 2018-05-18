@@ -1,1 +1,0 @@
-vmb upload simple_ui_test -g 1

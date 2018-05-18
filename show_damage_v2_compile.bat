@@ -1,1 +1,0 @@
-vmb build show_damage -g 2

@@ -66,7 +66,7 @@ mod:hook("CharacterStateHelper.update_weapon_actions", function(func, t, unit, i
 	local player_unit = Managers.player:local_player().player_unit
 
 	--Check if local player and not in inn
-	if(player_unit ~= unit or LevelHelper:current_level_settings().level_id == "inn_level") then
+	if player_unit ~= unit or LevelHelper:current_level_settings().level_id == "inn_level" then
 		func(t, unit, input_extension, inventory_extension, ...)
 		return
 	end
@@ -74,9 +74,18 @@ mod:hook("CharacterStateHelper.update_weapon_actions", function(func, t, unit, i
 	local status_extension = player_unit and ScriptUnit.has_extension(player_unit, "status_system") and ScriptUnit.extension(player_unit, "status_system")
 
 	--Get data about weapon
-	local item_data, right_hand_weapon_extension, left_hand_weapon_extension = CharacterStateHelper._get_item_data_and_weapon_extensions(inventory_extension)
+	local item_data, right_hand_weapon_extension, left_hand_weapon_extension = nil 
+	if VT1 then
+		item_data, right_hand_weapon_extension, left_hand_weapon_extension = CharacterStateHelper._get_item_data_and_weapon_extensions(inventory_extension)
+	else
+		item_data, right_hand_weapon_extension, left_hand_weapon_extension = CharacterStateHelper.get_item_data_and_weapon_extensions(inventory_extension)
+	end
 	local new_action, new_sub_action, current_action_settings, current_action_extension, current_action_hand = nil
-	current_action_settings, current_action_extension, current_action_hand = CharacterStateHelper._get_current_action_data(left_hand_weapon_extension, right_hand_weapon_extension)
+	if VT1 then
+		current_action_settings, current_action_extension, current_action_hand = CharacterStateHelper._get_current_action_data(left_hand_weapon_extension, right_hand_weapon_extension)
+	else
+		current_action_settings, current_action_extension, current_action_hand = CharacterStateHelper.get_current_action_data(left_hand_weapon_extension, right_hand_weapon_extension)
+	end
 	if not(item_data) or not(status_extension) then
 		func(t, unit, input_extension, inventory_extension, ...)
 		return
@@ -96,7 +105,7 @@ mod:hook("CharacterStateHelper.update_weapon_actions", function(func, t, unit, i
 		func(t, unit, input_extension, inventory_extension, ...)
 		return
 	end
-
+	
 	--Block
 	if (mod.block_state == block_state.SHOULD_BLOCK) then
 		mod.block_state = block_state.BLOCKING

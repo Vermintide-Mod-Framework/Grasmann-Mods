@@ -1,1 +1,0 @@
-vmb build loadout_manager -g 1

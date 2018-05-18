@@ -1,1 +1,0 @@
-vmb build -g 1

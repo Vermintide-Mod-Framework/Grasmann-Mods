@@ -1,1 +1,0 @@
-vmb build all_ready -g 1

@@ -1,1 +1,0 @@
-vmb build simple_ui -g 1

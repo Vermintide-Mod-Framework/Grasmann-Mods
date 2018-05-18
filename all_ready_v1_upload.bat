@@ -1,1 +1,0 @@
-vmb upload all_ready -g 1
