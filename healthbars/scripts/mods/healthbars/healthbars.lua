@@ -136,6 +136,99 @@ mod_data.options_widgets = {
 				["text"] = "Stormvermin Champion",
 				["default_value"] = false,
 			},
+			-- VT2
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "plague_monk",
+				["widget_type"] = "checkbox",
+				["text"] = "Plague Monk",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "warpfire_thrower",
+				["widget_type"] = "checkbox",
+				["text"] = "Warpfire Thrower",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "stormfiend",
+				["widget_type"] = "checkbox",
+				["text"] = "Stormfiend",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "stormfiend_warlord",
+				["widget_type"] = "checkbox",
+				["text"] = "Stormvermin Warlord",
+				["default_value"] = false,
+			},
+			-- Chaos
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "chaos_warrior",
+				["widget_type"] = "checkbox",
+				["text"] = "Chaos Warrior",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "chaos_exalted_champion",
+				["widget_type"] = "checkbox",
+				["text"] = "Chaos Exalted Champion",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "chaos_marauder",
+				["widget_type"] = "checkbox",
+				["text"] = "Chaos Marauder",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "chaos_berzerker",
+				["widget_type"] = "checkbox",
+				["text"] = "Chaos Berzerker",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "chaos_raider",
+				["widget_type"] = "checkbox",
+				["text"] = "Chaos Raider",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "chaos_zombie",
+				["widget_type"] = "checkbox",
+				["text"] = "Chaos Zombie",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "chaos_vortex_sorcerer",
+				["widget_type"] = "checkbox",
+				["text"] = "Chaos Vortex Sorcerer",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "chaos_plague_sorcerer",
+				["widget_type"] = "checkbox",
+				["text"] = "Chaos Plague Sorcerer",
+				["default_value"] = false,
+			},
+			{
+				["show_widget_condition"] = {4},
+				["setting_name"] = "chaos_fanatic",
+				["widget_type"] = "checkbox",
+				["text"] = "Chaos Fanatic",
+				["default_value"] = false,
+			},
 		},
 	},
 	{
@@ -219,6 +312,7 @@ mod.enemie_settings = {
 		offset = 5.5,
 		size = SIZE.Ogre,
 		special = true,
+		boss = true,
 		setting = "ogre",
 	},
 	skaven_loot_rat = {
@@ -243,13 +337,241 @@ mod.enemie_settings = {
 		offset = 3.5,
 		size = SIZE.Ogre,
 		special = true,
+		boss = true,
 		setting = "NONE",
 	},
 	skaven_storm_vermin_champion = {
 		offset = 5.5,
 		size = SIZE.Ogre,
 		special = true,
+		boss = true,
 		setting = "champion",
+	},
+	-- VT2
+	skaven_dummy_slave = {
+		offset = 3,
+		size = SIZE.Default,
+		special = false,
+		setting = "slave_rat",
+	},
+	skaven_dummy_clan_rat = {
+		offset = 3,
+		size = SIZE.Default,
+		special = false,
+		setting = "clan_rat",
+	},
+	skaven_clan_rat_tutorial = {
+		offset = 3,
+		size = SIZE.Default,
+		special = false,
+		setting = "clan_rat",
+	},
+	skaven_clan_rat_with_shield = {
+		offset = 3,
+		size = SIZE.Default,
+		special = false,
+		setting = "clan_rat",
+	},
+	skaven_storm_vermin_with_shield = {
+		offset = 4,
+		size = SIZE.Special,
+		special = true,
+		setting = "stormvermin",
+	},
+	skaven_plague_monk = {
+		offset = 4,
+		size = SIZE.Special,
+		special = true,
+		setting = "plague_monk",
+	},
+	skaven_warpfire_thrower = {
+		offset = 4,
+		size = SIZE.Special,
+		special = true,
+		setting = "warpfire_thrower",
+	},
+	skaven_stormfiend = {
+		offset = 5.5,
+		size = SIZE.Ogre,
+		special = true,
+		boss = true,
+		setting = "stormfiend",
+	},
+	skaven_stormfiend_boss = {
+		offset = 5.5,
+		size = SIZE.Ogre,
+		special = true,
+		boss = true,
+		setting = "stormfiend",
+	},
+	skaven_stormfiend_demo = {
+		offset = 5.5,
+		size = SIZE.Ogre,
+		special = true,
+		boss = true,
+		setting = "stormfiend",
+	},
+	skaven_storm_vermin_warlord = {
+		offset = 5.5,
+		size = SIZE.Ogre,
+		special = true,
+		boss = true,
+		setting = "stormfiend_warlord",
+	},
+	-- Chaos
+	chaos_warrior = {
+		offset = 4,
+		size = SIZE.Default,
+		special = true,
+		setting = "chaos_warrior",
+	},
+	chaos_exalted_champion = {
+		offset = 5,
+		size = SIZE.Ogre,
+		special = true,
+		setting = "chaos_exalted_champion",
+	},
+	chaos_exalted_champion_warcamp = {
+		offset = 5,
+		size = SIZE.Ogre,
+		special = true,
+		setting = "chaos_exalted_champion",
+	},
+	chaos_exalted_champion_norsca = {
+		offset = 5,
+		size = SIZE.Ogre,
+		special = true,
+		setting = "chaos_exalted_champion",
+	},
+	chaos_marauder = {
+		offset = 4,
+		size = SIZE.Default,
+		special = true,
+		setting = "chaos_marauder",
+	},
+	chaos_marauder_tutorial = {
+		offset = 4,
+		size = SIZE.Default,
+		special = true,
+		setting = "chaos_marauder",
+	},
+	chaos_marauder_with_shield = {
+		offset = 4,
+		size = SIZE.Default,
+		special = true,
+		setting = "chaos_marauder",
+	},
+	chaos_berzerker = {
+		offset = 4,
+		size = SIZE.Special,
+		special = true,
+		setting = "chaos_berzerker",
+	},
+	chaos_raider = {
+		offset = 4,
+		size = SIZE.Special,
+		special = true,
+		setting = "chaos_raider",
+	},
+	chaos_raider_tutorial = {
+		offset = 4,
+		size = SIZE.Special,
+		special = true,
+		setting = "chaos_raider",
+	},
+	chaos_dummy_sorcerer = {
+		offset = 5,
+		size = SIZE.Special,
+		special = true,
+		setting = "chaos_vortex_sorcerer",
+	},
+	chaos_vortex_sorcerer = {
+		offset = 5,
+		size = SIZE.Special,
+		special = true,
+		setting = "chaos_vortex_sorcerer",
+	},
+	chaos_plague_sorcerer = {
+		offset = 5,
+		size = SIZE.Special,
+		special = true,
+		setting = "chaos_plague_sorcerer",
+	},
+	chaos_spawn = {
+		offset = 5.5,
+		size = SIZE.Ogre,
+		special = true,
+		boss = true,
+		setting = "stormfiend_warlord",
+	},
+	chaos_spawn_exalted_champion_norsca = {
+		offset = 5.5,
+		size = SIZE.Ogre,
+		special = true,
+		boss = true,
+		setting = "stormfiend_warlord",
+	},
+	chaos_fanatic = {
+		offset = 4,
+		size = SIZE.Default,
+		special = true,
+		setting = "chaos_fanatic",
+	},
+	chaos_troll = {
+		offset = 5.5,
+		size = SIZE.Ogre,
+		special = true,
+		boss = true,
+		setting = "stormfiend_warlord",
+	},
+	chaos_dummy_troll = {
+		offset = 5.5,
+		size = SIZE.Ogre,
+		special = true,
+		boss = true,
+		setting = "stormfiend_warlord",
+	},
+	chaos_zombie = {
+		offset = 4,
+		size = SIZE.Default,
+		special = true,
+		setting = "chaos_zombie",
+	},
+	chaos_corruptor_sorcerer = {
+		offset = 5,
+		size = SIZE.Special,
+		special = true,
+		setting = "chaos_plague_sorcerer",
+	},
+	chaos_exalted_sorcerer = {
+		offset = 5,
+		size = SIZE.Special,
+		special = true,
+		setting = "chaos_vortex_sorcerer",
+	},
+	chaos_tentacle_sorcerer = {
+		offset = 5,
+		size = SIZE.Special,
+		special = true,
+		setting = "chaos_vortex_sorcerer",
+	},
+	chaos_tentacle = {
+		offset = 3,
+		size = SIZE.Default,
+		special = false,
+		setting = "chaos_tentacle",
+	},
+	chaos_vortex = {
+		offset = 3,
+		size = SIZE.Default,
+		special = false,
+		setting = "chaos_tentacle",
+	},
+	chaos_plague_wave_spawner = {
+		offset = 3,
+		size = SIZE.Default,
+		special = false,
+		setting = "chaos_tentacle",
 	},
 }
 mod_permanent_units = mod_permanent_units or {}
@@ -288,8 +610,9 @@ end
 	Add a health bar only to ogres
 --]]
 mod.add_health_bar_bosses = function(self, unit, enemie_setting)
-	if enemie_setting.name == "skaven_rat_ogre" 
-	or enemie_setting.name == "skaven_storm_vermin_champion" then
+	-- if enemie_setting.name == "skaven_rat_ogre" 
+	-- or enemie_setting.name == "skaven_storm_vermin_champion" then
+	if enemie_setting.boss then
 		self:add_health_bar_all(unit)
 	end
 end
@@ -329,10 +652,18 @@ mod.on_enemy_damage = function(self, health_extension)
 			local breed = Unit.get_data(unit, "breed")
 			
 			if breed and breed.name then
-				local enemie_setting = self.enemie_settings[breed.name]
-				enemie_setting.name = breed.name
+				local enemie_setting = self.enemie_settings[breed.name] or self.enemie_settings["default"]
+				if not enemie_setting then
+					mod:echo(tostring(breed.name).." missing!")
+					enemie_setting = self.enemie_settings["default"]
+				end
+				if enemie_setting then
+					enemie_setting.name = breed.name
 				
-				self:add_health_bar(unit, enemie_setting)
+					self:add_health_bar(unit, enemie_setting)
+				else
+					mod:echo(tostring(breed.name))
+				end
 			end
 		else			
 			self:remove_health_bar(health_extension.unit)
