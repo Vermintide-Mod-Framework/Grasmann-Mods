@@ -4,7 +4,7 @@ local mod = get_mod("Healthbars")
 		- Shows healthbars for all or specific enemies
 	
 	Author: grasmann
-	Version: 1.3.0
+	Version: 2.0.0
 --]]
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -253,7 +253,7 @@ local SIZE = {
 	Special = {17*1.4, 7*1.4},
 	Ogre = {17*1.8, 7*1.8},
 }
-mod.enemie_settings = {
+mod.enemy_settings = {
 	default = {
 		offset = 1.5,
 		size = SIZE.Default,
@@ -652,11 +652,7 @@ mod.on_enemy_damage = function(self, health_extension)
 			local breed = Unit.get_data(unit, "breed")
 			
 			if breed and breed.name then
-				local enemie_setting = self.enemie_settings[breed.name] or self.enemie_settings["default"]
-				if not enemie_setting then
-					mod:echo(tostring(breed.name).." missing!")
-					enemie_setting = self.enemie_settings["default"]
-				end
+				local enemie_setting = self.enemy_settings[breed.name] or self.enemy_settings.default
 				if enemie_setting then
 					enemie_setting.name = breed.name
 				
@@ -707,7 +703,7 @@ mod.set_sizes = function(self, tutorial_ui)
 		local breed = Unit.get_data(unit, "breed")
 		
 		if breed and breed.name then
-			local enemie_setting = self.enemie_settings[breed.name] or self.enemie_settings["default"]
+			local enemie_setting = self.enemy_settings[breed.name] or self.enemy_settings.default
 			
 			self:set_size(unit, tutorial_ui, enemie_setting)
 		end
@@ -738,7 +734,7 @@ mod.set_offsets = function(self, tutorial_ui)
 			local breed = Unit.get_data(unit, "breed")
 		
 			if breed and breed.name then
-				local enemie_setting = self.enemie_settings[breed.name] or self.enemie_settings["default"]
+				local enemie_setting = self.enemy_settings[breed.name] or self.enemy_settings.default
 			
 				self:set_offset(unit, tutorial_ui, enemie_setting)
 			end
