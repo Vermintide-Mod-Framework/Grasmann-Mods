@@ -31,11 +31,17 @@ end
 basic_gui.create_screen_ui = function()
 	local world = Managers.world:world(basic_gui.default_world)
 	basic_gui.gui = World.create_screen_gui(world, "immediate",
-		"material", "materials/fonts/gw_fonts",
+		"material", "materials/fonts/gw_fonts") --,
 		--"material", "materials/ui/ui_1080p_ingame",
-		"material", "materials/ui/ui_1080p_ingame_common")
+		--"material", "materials/ui/ui_1080p_ingame_common")
 		-- "material", "materials/ui/ui_1080p_popup"
 		-- "material", "materials/ui/ui_1080p_ingame_inn"
+end
+
+basic_gui.destroy_screen_ui = function()
+	local top_world = Managers.world:world(basic_gui.default_world)
+	World.destroy_gui(top_world, basic_gui.gui)
+	basic_gui.gui = nil
 end
 
 -- ####################################################################################################################
@@ -299,6 +305,12 @@ basic_gui.on_game_state_changed = function(status, state)
 		if not basic_gui.gui then
 			basic_gui.init()
 		end
+	end
+end
+
+basic_gui.on_unload = function(exit_game)
+	if basic_gui.gui and Managers.world:world("top_ingame_view") then
+		basic_gui.destroy_screen_ui()
 	end
 end
 

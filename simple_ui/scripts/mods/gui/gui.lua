@@ -788,9 +788,9 @@ gui.widgets = {
 		--[[
 			Create title bar
 		--]]
-		create_title = function(self, name, text, height)
+		create_title = function(self, name, text, height, params)
 			-- Base widget
-			local widget = self:create_widget(name, nil, nil, "title")
+			local widget = self:create_widget(name, nil, nil, "title", nil, params)
 			-- Set attributes
 			widget:set("text", text or "")
 			widget:set("height", height or gui.themes[gui.theme].title.height)
@@ -801,15 +801,11 @@ gui.widgets = {
 		--[[
 			Create button
 		--]]
-		create_button = function(self, name, position, size, text, anchor, params)
+		create_button = function(self, name, position, size, anchor, text, params)
 			-- Base widget
-			local widget = self:create_widget(name, position, size, "button", anchor)
+			local widget = self:create_widget(name, position, size, "button", anchor, params)
 			-- Set attributes
 			widget:set("text", text or "")
-			-- if on_click then
-				-- widget:set("on_click", on_click)
-			-- end
-			widget.params = params
 			-- Add widget
 			self:add_widget(widget)
 			return widget
@@ -829,8 +825,8 @@ gui.widgets = {
 		--[[
 			Create close button
 		--]]
-		create_close_button = function(self, name)
-			local widget = self:create_widget(name, {5, 0}, {25, 25}, "close_button", gui.anchor.styles.top_right)
+		create_close_button = function(self, name, params)
+			local widget = self:create_widget(name, {5, 0}, {25, 25}, "close_button", gui.anchor.styles.top_right, params)
 			widget:set("text", "X")
 			self:add_widget(widget)
 			return widget
@@ -838,34 +834,28 @@ gui.widgets = {
 		--[[
 			Create textbox
 		--]]
-		create_textbox = function(self, name, position, size, text, placeholder, on_text_changed)
-			local widget = self:create_widget(name, position, size, "textbox")
+		create_textbox = function(self, name, position, size, anchor, text, placeholder, params)
+			local widget = self:create_widget(name, position, size, "textbox", anchor, params)
 			widget:set("text", text or "")
 			widget:set("placeholder", placeholder or "")
-			if on_text_changed then
-				widget:set("on_text_changed", on_text_changed)
-			end
 			self:add_widget(widget)
 			return widget
 		end,
 		--[[
 			Create checkbox
 		--]]
-		create_checkbox = function(self, name, position, size, text, value, on_value_changed)
-			local widget = self:create_widget(name, position, size, "checkbox")
+		create_checkbox = function(self, name, position, size, anchor, text, value, params)
+			local widget = self:create_widget(name, position, size, "checkbox", anchor, params)
 			widget:set("text", text or "")
 			widget:set("value", value or false)
-			if on_value_changed then
-				widget:set("on_value_changed", on_value_changed)
-			end
 			self:add_widget(widget)
 			return widget
 		end,
 		--[[
 			Create label
 		--]]
-		create_label = function(self, name, position, size, text)
-			local widget = self:create_widget(name, position, size, "label")
+		create_label = function(self, name, position, size, anchor, text)
+			local widget = self:create_widget(name, position, size, "label", anchor)
 			widget:set("text", text or "")
 			self:add_widget(widget)
 			return widget
@@ -873,30 +863,21 @@ gui.widgets = {
 		--[[
 			Create widget
 		--]]
-		create_dropdown = function(self, name, position, size, options, selected_index, on_index_changed, show_items_num)
-			local widget = self:create_widget(name, position, size, "dropdown")
-			--local widget.widgets = {}
+		create_dropdown = function(self, name, position, size, anchor, options, params, selected_index, show_items_num)
+			local widget = self:create_widget(name, position, size, "dropdown", anchor, params)
 			widget:set("text", "")
 			widget:set("options", {})
-			widget:set("index", selected_index)
-			--table.sort(options)
-			gui:pcall(function()
+			widget:set("index", selected_index or 1)
 			for text, index in pairs(options) do
-				local sub_widget = self:create_dropdown_item(name, index, widget, text)
-				-- gui:echo("--")
-				-- gui:echo(tostring(index))
+				local sub_widget = self:create_dropdown_item(name, index, widget, text, params)
 				widget.options[#widget.options+1] = sub_widget
 			end
-			end)
 			widget:set("show_items_num", show_items_num or 2)
-			if on_index_changed then
-				widget:set("on_index_changed", on_index_changed)
-			end
 			self:add_widget(widget)
 			return widget
 		end,
-		create_dropdown_item = function(self, name, index, parent, text)
-			local widget = self:create_widget(name.."_option_"..text, {0, 0}, {0, 0}, "dropdown_item")
+		create_dropdown_item = function(self, name, index, parent, text, params)
+			local widget = self:create_widget(name.."_option_"..text, {0, 0}, {0, 0}, "dropdown_item", nil, params)
 			widget:set("text", text or "")
 			widget:set("index", index)
 			widget:set("parent", parent)
@@ -907,7 +888,7 @@ gui.widgets = {
 		--[[
 			Create widget
 		--]]
-		create_widget = function(self, name, position, size, _type, anchor)
+		create_widget = function(self, name, position, size, _type, anchor, params)
 			
 
 			position = gui.adjust_to_fit_scale(position)
@@ -921,6 +902,7 @@ gui.widgets = {
 			widget.size = size or {0, 0}
 			widget._type = _type or "button"
 			widget.window = self
+			widget.params = params
 			-- Anchor
 			widget.anchor = anchor or "bottom_left"
 			-- Setup functions and theme
@@ -1492,7 +1474,7 @@ gui.widgets = {
 			-- Mouse position
 			local cursor = gui.mouse.cursor()
 			-- Set widget position via anchor
-			if self.anchor then
+			if self.anchor and gui.anchor[self.anchor] then
 				self.position, self.size = gui.anchor[self.anchor].position(self.window, self)
 			end
 			-- Check hovered
