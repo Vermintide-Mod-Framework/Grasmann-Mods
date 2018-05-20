@@ -1513,7 +1513,7 @@ mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
 
 	if mod.reset then
 		mod.camera.sway.updated = 0
-		self.set_first_person_mode(self, not mod:is_third_person_active())
+		self:set_first_person_mode(not mod:is_third_person_active())
 		mod:start_view(nil)
 		mod:start_third_person()
 		mod.reset = false
@@ -1527,19 +1527,19 @@ mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
 		local first_person = mod.camera.model == "first_person"
 		if mod:get("mode") == "first_person" then
 			--if mod.firstperson then
-				self.set_first_person_mode(self, false)
+				self:set_first_person_mode(false)
 				mod.firstperson = false
 			--end
 		elseif mod.camera.model == "first_person" then
 			-- ##### Enable first person ##############################################################################
 				if not mod.firstperson then
-					self.set_first_person_mode(self, true)
+					self:set_first_person_mode(true)
 					mod.firstperson = true
 				end
 		elseif mod.camera.model == "third_person" then
 			-- ##### Disable first person #############################################################################
 			if mod.firstperson then
-				self.set_first_person_mode(self, false)
+				self:set_first_person_mode(false)
 				mod.firstperson = false
 			end
 			

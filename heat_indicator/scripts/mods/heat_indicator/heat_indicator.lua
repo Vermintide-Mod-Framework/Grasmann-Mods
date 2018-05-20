@@ -371,21 +371,12 @@ end
 --[[
 	Render widget
 --]]
-mod:hook("OverchargeBarUI.update", function(func, self, dt, ...)
-	-- -- We use drawn_test to tell whether the overcharge bar was actually drawn (this avoids
-	-- -- having to duplicate all the tests in OverchargeBarUI._update_overcharge).  If it was
-	-- -- drawn, drawn_test.angle will be set after calling func.
-	-- local drawn_test = self.charge_bar.style.white_divider_left
-	-- drawn_test.angle = nil
-	-- func(self, dt, ...)
-	-- if not drawn_test.angle then
-		-- return
-	-- end
-	
+mod:hook("OverchargeBarUI.update", function(func, self, dt, t, player, ...)
+
 	-- Original function
-	func(self, dt, ...)
+	func(self, dt, t, player, ...)
 	
-	if mod.current_charge_level.color then
+	if mod.current_charge_level.color and self:_update_overcharge(player, dt) then
 		local widget = self._hudmod_charge_level_indicator
 		if not widget then
 			-- First use of the charge level indicator, create it now.
