@@ -1,3 +1,4 @@
+local mod = get_mod("SimpleUI")
 --[[
 	Simple UI
 		
@@ -6,13 +7,14 @@
 	author: grasmann
 	version: 1.2
 --]]
-
-local gui = get_mod("SimpleUI")
 local basic_gui = get_mod("BasicUI")
 
--- ################################################################################################################
--- ##### UTF8 #####################################################################################################
--- ################################################################################################################
+-- ##### ██╗   ██╗████████╗███████╗ █████╗  ###########################################################################
+-- ##### ██║   ██║╚══██╔══╝██╔════╝██╔══██╗ ###########################################################################
+-- ##### ██║   ██║   ██║   █████╗  ╚█████╔╝ ###########################################################################
+-- ##### ██║   ██║   ██║   ██╔══╝  ██╔══██╗ ###########################################################################
+-- ##### ╚██████╔╝   ██║   ██║     ╚█████╔╝ ###########################################################################
+-- #####  ╚═════╝    ╚═╝   ╚═╝      ╚════╝  ###########################################################################
 local UTF8 = {
 	-- UTF-8 Reference:
 	-- 0xxxxxxx - 1 byte UTF-8 codepoint (ASCII character)
@@ -59,10 +61,12 @@ local UTF8 = {
 	end,
 }
 
-
--- ################################################################################################################
--- ##### Input keymap #############################################################################################
--- ################################################################################################################
+-- ##### ██╗███╗   ██╗██████╗ ██╗   ██╗████████╗ ######################################################################
+-- ##### ██║████╗  ██║██╔══██╗██║   ██║╚══██╔══╝ ######################################################################
+-- ##### ██║██╔██╗ ██║██████╔╝██║   ██║   ██║    ######################################################################
+-- ##### ██║██║╚██╗██║██╔═══╝ ██║   ██║   ██║    ######################################################################
+-- ##### ██║██║ ╚████║██║     ╚██████╔╝   ██║    ######################################################################
+-- ##### ╚═╝╚═╝  ╚═══╝╚═╝      ╚═════╝    ╚═╝    ######################################################################
 MOD_GUI_KEY_MAP = {
 	win32 = {
 		["backspace"] = {"keyboard", "backspace", "held"}, 
@@ -73,9 +77,7 @@ MOD_GUI_KEY_MAP = {
 MOD_GUI_KEY_MAP.xb1 = MOD_GUI_KEY_MAP.win32
 local ui_special_keys = {"space", "<", ">"}
 
--- ################################################################################################################
--- ##### Color helper #############################################################################################
--- ################################################################################################################
+-- ##### Color helper #################################################################################################
 local ColorHelper = {
 	--[[
 		Transform color values to table
@@ -91,16 +93,22 @@ local ColorHelper = {
 	end,
 }
 
--- ################################################################################################################
--- ##### Main Object ##############################################################################################
--- ################################################################################################################
-gui.theme = "default"
+-- ##### ██╗███╗   ██╗████████╗███████╗██████╗ ███████╗ █████╗  ██████╗███████╗ #######################################
+-- ##### ██║████╗  ██║╚══██╔══╝██╔════╝██╔══██╗██╔════╝██╔══██╗██╔════╝██╔════╝ #######################################
+-- ##### ██║██╔██╗ ██║   ██║   █████╗  ██████╔╝█████╗  ███████║██║     █████╗   #######################################
+-- ##### ██║██║╚██╗██║   ██║   ██╔══╝  ██╔══██╗██╔══╝  ██╔══██║██║     ██╔══╝   #######################################
+-- ##### ██║██║ ╚████║   ██║   ███████╗██║  ██║██║     ██║  ██║╚██████╗███████╗ #######################################
+-- ##### ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝ ╚═════╝╚══════╝ #######################################
+mod.theme = "default"
+mod.width = 1920
+mod.height = 1080
 
-gui.width = 1920
-gui.height = 1080
-
-gui.adjust_to_fit_position_and_scale = function(position)
-	position = gui.adjust_to_fit_scale(position)
+-- ##### Fit to screen ################################################################################################
+--[[
+	Adjust a position to fit scale and screen
+--]]
+mod.adjust_to_fit_position_and_scale = function(self, position)
+	position = self:adjust_to_fit_scale(position)
 
 	local screen_w, screen_h = UIResolution()
 	local scale = UIResolutionScale()
@@ -112,12 +120,14 @@ gui.adjust_to_fit_position_and_scale = function(position)
 		position[2] + (screen_h - ui_h)/2
 	}
 
-	--gui:echo(position[1], position[2])
+	--self:echo(position[1], position[2])
 
 	return position
 end
-
-gui.adjust_to_fit_scale = function(position)
+--[[
+	Adjust a position to fit scale
+--]]
+mod.adjust_to_fit_scale = function(self, position)
 	if not position then return {0, 0} end
 
 	local scale = UIResolutionScale()
@@ -127,90 +137,82 @@ gui.adjust_to_fit_scale = function(position)
 		position[2] * scale
 	}
 
-	--gui:echo(position[1], position[2])
+	--self:echo(position[1], position[2])
 
 	return position
 end
 
--- ################################################################################################################
--- ##### Create containers ########################################################################################
--- ################################################################################################################
+-- ##### Create containers ############################################################################################
 --[[
 	Create window
 ]]--
-gui.create_window = function(name, position, size)
+mod.create_window = function(self, name, position, size)
 
 	-- Create window
-	position = gui.adjust_to_fit_position_and_scale(position)
-	size = gui.adjust_to_fit_scale(size)
+	position = self:adjust_to_fit_position_and_scale(position)
+	size = self:adjust_to_fit_scale(size)
 
-	local window = table.clone(gui.widgets.window)
+	local window = table.clone(self.widgets.window)
 	window:set("name", name or "name")
 	window:set("position", position)
 	window:set("size", size or {0, 0})
 	window:set("original_size", size or {0, 0})
 
 	-- Add window to list
-	gui.windows:add_window(window)
+	self.windows:add_window(window)
 	
 	return window
 end
-	
--- ################################################################################################################
--- ##### Cycle ####################################################################################################
--- ################################################################################################################
+
+-- ##### Cycle ########################################################################################################
 --[[
 	Update
 ]]--
-gui._update = function(dt)
+mod.update_windows = function(self, dt)
 	-- Update timers
-	gui.timers:update(dt)
+	self.timers:update(dt)
 
-	gui.input:check()
+	self.input:check()
 	
 	-- Click
-	local position = gui.mouse:cursor()
+	local position = self.mouse:cursor()
 	if stingray.Mouse.pressed(stingray.Mouse.button_id("left")) then
-		gui.mouse:click(position, gui.windows.list)
+		self.mouse:click(position, self.windows.list)
 	elseif stingray.Mouse.released(stingray.Mouse.button_id("left")) then
-		gui.mouse:release(position, gui.windows.list)
+		self.mouse:release(position, self.windows.list)
 	end
 	
 	-- Hover
-	gui.mouse:hover(position, gui.windows.list)
+	self.mouse:hover(position, self.windows.list)
 	
 	-- Update windows
-	gui.windows:update()
+	self.windows:update()
 end
 
-gui:hook("MatchmakingManager.update", function(func, self, dt, t)
-	func(self, dt, t)
-	gui._update(dt)
-end)
-
--- ################################################################################################################
--- ##### Common functions #########################################################################################
--- ################################################################################################################
+-- ##### Common functions #############################################################################################
 --[[
 	Transform position and size to bounds
 ]]--
-gui.to_bounds = function(position, size)
+mod.to_bounds = function(self, position, size)
 	return {position[1], position[1] + size[1], position[2], position[2] + size[2]}
 end
 --[[
 	Check if position is in bounds
 ]]--
-gui.point_in_bounds = function(position, bounds)
+mod.point_in_bounds = function(self, position, bounds)
 	if position[1] >= bounds[1] and position[1] <= bounds[2] and position[2] >= bounds[3] and position[2] <= bounds[4] then
 		return true, {position[1] - bounds[1], position[2] - bounds[3]}
 	end
 	return false, {0, 0}
 end
 
--- ################################################################################################################
--- ##### Window system ############################################################################################
--- ################################################################################################################
-gui.windows = {
+-- ##### ██╗    ██╗██╗███╗   ██╗██████╗  ██████╗ ██╗    ██╗███████╗ ###################################################
+-- ##### ██║    ██║██║████╗  ██║██╔══██╗██╔═══██╗██║    ██║██╔════╝ ###################################################
+-- ##### ██║ █╗ ██║██║██╔██╗ ██║██║  ██║██║   ██║██║ █╗ ██║███████╗ ###################################################
+-- ##### ██║███╗██║██║██║╚██╗██║██║  ██║██║   ██║██║███╗██║╚════██║ ###################################################
+-- ##### ╚███╔███╔╝██║██║ ╚████║██████╔╝╚██████╔╝╚███╔███╔╝███████║ ###################################################
+-- #####  ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝  ╚══╝╚══╝ ╚══════╝ ###################################################
+mod.windows = {
 	list = {},
 	--[[
 		Add window to list
@@ -274,10 +276,13 @@ gui.windows = {
 	end,
 }
 
--- ################################################################################################################
--- ##### Mouse system #############################################################################################
--- ################################################################################################################
-gui.mouse = {
+-- ##### ███╗   ███╗ ██████╗ ██╗   ██╗███████╗███████╗ ################################################################
+-- ##### ████╗ ████║██╔═══██╗██║   ██║██╔════╝██╔════╝ ################################################################
+-- ##### ██╔████╔██║██║   ██║██║   ██║███████╗█████╗   ################################################################
+-- ##### ██║╚██╔╝██║██║   ██║██║   ██║╚════██║██╔══╝   ################################################################
+-- ##### ██║ ╚═╝ ██║╚██████╔╝╚██████╔╝███████║███████╗ ################################################################
+-- ##### ╚═╝     ╚═╝ ╚═════╝  ╚═════╝ ╚══════╝╚══════╝ ################################################################
+mod.mouse = {
 	--[[
 		Process click
 	]]--
@@ -285,7 +290,7 @@ gui.mouse = {
 		for z=1, #windows do
 			for _, window in pairs(windows) do
 				if window.z_order == z then
-					if gui.point_in_bounds(position, window:extended_bounds()) then
+					if mod:point_in_bounds(position, window:extended_bounds()) then
 						window:click(position)
 					else
 						window:unfocus()
@@ -301,7 +306,7 @@ gui.mouse = {
 		for z=1, #windows do
 			for _, window in pairs(windows) do
 				if window.z_order == z then
-					if gui.point_in_bounds(position, window:extended_bounds()) then
+					if mod:point_in_bounds(position, window:extended_bounds()) then
 						window:release(position)
 					else
 						window:unfocus()
@@ -318,7 +323,7 @@ gui.mouse = {
 		for z=1, #windows do
 			for _, window in pairs(windows) do
 				if window.z_order == z then
-					local hovered, cursor = gui.point_in_bounds(position, window:extended_bounds())
+					local hovered, cursor = mod:point_in_bounds(position, window:extended_bounds())
 					if hovered then
 						window:hover(cursor)
 						return
@@ -347,10 +352,13 @@ gui.mouse = {
 	end,
 }
 
--- ################################################################################################################
--- ##### Timer system #############################################################################################
--- ################################################################################################################
-gui.timers = {
+-- ##### ████████╗██╗███╗   ███╗███████╗██████╗  ######################################################################
+-- ##### ╚══██╔══╝██║████╗ ████║██╔════╝██╔══██╗ ######################################################################
+-- #####    ██║   ██║██╔████╔██║█████╗  ██████╔╝ ######################################################################
+-- #####    ██║   ██║██║╚██╔╝██║██╔══╝  ██╔══██╗ ######################################################################
+-- #####    ██║   ██║██║ ╚═╝ ██║███████╗██║  ██║ ######################################################################
+-- #####    ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝ ######################################################################
+mod.timers = {
 	-- Timer list
 	items = {},
 	-- Timer template
@@ -433,10 +441,13 @@ gui.timers = {
 	end,
 }
 
--- ################################################################################################################
--- ##### Input system #############################################################################################
--- ################################################################################################################
-gui.input = {
+-- ##### ██╗███╗   ██╗██████╗ ██╗   ██╗████████╗ ######################################################################
+-- ##### ██║████╗  ██║██╔══██╗██║   ██║╚══██╔══╝ ######################################################################
+-- ##### ██║██╔██╗ ██║██████╔╝██║   ██║   ██║    ######################################################################
+-- ##### ██║██║╚██╗██║██╔═══╝ ██║   ██║   ██║    ######################################################################
+-- ##### ██║██║ ╚████║██║     ╚██████╔╝   ██║    ######################################################################
+-- ##### ╚═╝╚═╝  ╚═══╝╚═╝      ╚═════╝    ╚═╝    ######################################################################
+mod.input = {
 	blocked_services = nil,
 	--[[
 		Check and create input system
@@ -478,10 +489,13 @@ gui.input = {
 	end,
 }
 
--- ################################################################################################################
--- ##### Font system ##############################################################################################
--- ################################################################################################################
-gui.fonts = {
+-- ##### ███████╗ ██████╗ ███╗   ██╗████████╗███████╗ #################################################################
+-- ##### ██╔════╝██╔═══██╗████╗  ██║╚══██╔══╝██╔════╝ #################################################################
+-- ##### █████╗  ██║   ██║██╔██╗ ██║   ██║   ███████╗ #################################################################
+-- ##### ██╔══╝  ██║   ██║██║╚██╗██║   ██║   ╚════██║ #################################################################
+-- ##### ██║     ╚██████╔╝██║ ╚████║   ██║   ███████║ #################################################################
+-- ##### ╚═╝      ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #################################################################
+mod.fonts = {
 	fonts = {},
 	--[[
 		Font template
@@ -523,14 +537,17 @@ gui.fonts = {
 				return font
 			end
 		end
-		return gui.fonts.default or nil
+		return mod.fonts.default or nil
 	end,
 }
 
--- ################################################################################################################
--- ##### Anchor system ############################################################################################
--- ################################################################################################################
-gui.anchor = {
+-- #####  █████╗ ███╗   ██╗ ██████╗██╗  ██╗ ██████╗ ██████╗  ##########################################################
+-- ##### ██╔══██╗████╗  ██║██╔════╝██║  ██║██╔═══██╗██╔══██╗ ##########################################################
+-- ##### ███████║██╔██╗ ██║██║     ███████║██║   ██║██████╔╝ ##########################################################
+-- ##### ██╔══██║██║╚██╗██║██║     ██╔══██║██║   ██║██╔══██╗ ##########################################################
+-- ##### ██║  ██║██║ ╚████║╚██████╗██║  ██║╚██████╔╝██║  ██║ ##########################################################
+-- ##### ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ##########################################################
+mod.anchor = {
 	styles = {
 		"bottom_left",
 		"center_left",
@@ -605,15 +622,18 @@ gui.anchor = {
 	},
 }
 
--- ################################################################################################################
--- ##### Textalignment system #####################################################################################
--- ################################################################################################################
-gui.text_alignment = {
+-- ##### ████████╗███████╗██╗  ██╗████████╗ █████╗ ██╗     ██╗ ██████╗ ███╗   ██╗ #####################################
+-- ##### ╚══██╔══╝██╔════╝╚██╗██╔╝╚══██╔══╝██╔══██╗██║     ██║██╔════╝ ████╗  ██║ #####################################
+-- #####    ██║   █████╗   ╚███╔╝    ██║   ███████║██║     ██║██║  ███╗██╔██╗ ██║ #####################################
+-- #####    ██║   ██╔══╝   ██╔██╗    ██║   ██╔══██║██║     ██║██║   ██║██║╚██╗██║ #####################################
+-- #####    ██║   ███████╗██╔╝ ██╗   ██║   ██║  ██║███████╗██║╚██████╔╝██║ ╚████║ #####################################
+-- #####    ╚═╝   ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝ #####################################
+mod.text_alignment = {
 	bottom_left = {
 		position = function(text, font, bounds)
 			local scale = UIResolutionScale()
-			local text_width = basic_gui.text_width(text, font.material, font:font_size())
-			local text_height = font:font_size() --basic_gui.text_height(text, font.material, font:font_size())
+			local text_width = basic_gui:text_width(text, font.material, font:font_size())
+			local text_height = font:font_size() --basic_gui:text_height(text, font.material, font:font_size())
 			local frame_width = bounds[2] - bounds[1]
 			local frame_height = bounds[3] - bounds[4]
 			local left = bounds[1]
@@ -625,8 +645,8 @@ gui.text_alignment = {
 	bottom_center = {
 		position = function(text, font, bounds)
 			local scale = UIResolutionScale()
-			local text_width = basic_gui.text_width(text, font.material, font:font_size())
-			local text_height = font:font_size() --basic_gui.text_height(text, font.material, font:font_size())
+			local text_width = basic_gui:text_width(text, font.material, font:font_size())
+			local text_height = font:font_size() --basic_gui:text_height(text, font.material, font:font_size())
 			local frame_width = bounds[2] - bounds[1]
 			local frame_height = bounds[3] - bounds[4]
 			local left = bounds[1]
@@ -638,8 +658,8 @@ gui.text_alignment = {
 	bottom_right = {
 		position = function(text, font, bounds)
 			local scale = UIResolutionScale()
-			local text_width = basic_gui.text_width(text, font.material, font:font_size())
-			local text_height = font:font_size() --basic_gui.text_height(text, font.material, font:font_size())
+			local text_width = basic_gui:text_width(text, font.material, font:font_size())
+			local text_height = font:font_size() --basic_gui:text_height(text, font.material, font:font_size())
 			local frame_width = bounds[2] - bounds[1]
 			local frame_height = bounds[3] - bounds[4]
 			local right = bounds[2]
@@ -663,8 +683,8 @@ gui.text_alignment = {
 	middle_center = {
 		position = function(text, font, bounds)
 			local scale = UIResolutionScale()
-			local text_width = basic_gui.text_width(text, font.material, font:font_size())
-			local text_height = font:font_size() --basic_gui.text_height(text, font.material, font:font_size())
+			local text_width = basic_gui:text_width(text, font.material, font:font_size())
+			local text_height = font:font_size() --basic_gui:text_height(text, font.material, font:font_size())
 			local frame_width = bounds[2] - bounds[1]
 			local frame_height = bounds[4] - bounds[3]
 			local left = bounds[1]
@@ -676,8 +696,8 @@ gui.text_alignment = {
 	middle_right = {
 		position = function(text, font, bounds)
 			local scale = UIResolutionScale()
-			local text_width = basic_gui.text_width(text, font.material, font:font_size())
-			local text_height = font:font_size() --basic_gui.text_height(text, font.material, font:font_size())
+			local text_width = basic_gui:text_width(text, font.material, font:font_size())
+			local text_height = font:font_size() --basic_gui:text_height(text, font.material, font:font_size())
 			local frame_width = bounds[2] - bounds[1]
 			local frame_height = bounds[4] - bounds[3]
 			local right = bounds[2]
@@ -689,8 +709,8 @@ gui.text_alignment = {
 	top_left = {
 		position = function(text, font, bounds)
 			local scale = UIResolutionScale()
-			local text_width = basic_gui.text_width(text, font.material, font:font_size())
-			local text_height = font:font_size() --basic_gui.text_height(text, font.material, font:font_size())
+			local text_width = basic_gui:text_width(text, font.material, font:font_size())
+			local text_height = font:font_size() --basic_gui:text_height(text, font.material, font:font_size())
 			local frame_width = bounds[2] - bounds[1]
 			local frame_height = bounds[4] - bounds[3]
 			local left = bounds[1]
@@ -702,8 +722,8 @@ gui.text_alignment = {
 	top_center = {
 		position = function(text, font, bounds)
 			local scale = UIResolutionScale()
-			local text_width = basic_gui.text_width(text, font.material, font:font_size())
-			local text_height = font:font_size() --basic_gui.text_height(text, font.material, font:font_size())
+			local text_width = basic_gui:text_width(text, font.material, font:font_size())
+			local text_height = font:font_size() --basic_gui:text_height(text, font.material, font:font_size())
 			local frame_width = bounds[2] - bounds[1]
 			local frame_height = bounds[4] - bounds[3]
 			local left = bounds[1]
@@ -715,8 +735,8 @@ gui.text_alignment = {
 	top_right = {
 		position = function(text, font, bounds)
 			local scale = UIResolutionScale()
-			local text_width = basic_gui.text_width(text, font.material, font:font_size())
-			local text_height = font:font_size() --basic_gui.text_height(text, font.material, font:font_size())
+			local text_width = basic_gui:text_width(text, font.material, font:font_size())
+			local text_height = font:font_size() --basic_gui:text_height(text, font.material, font:font_size())
 			local frame_width = bounds[2] - bounds[1]
 			local frame_height = bounds[4] - bounds[3]
 			local right = bounds[2]
@@ -727,10 +747,13 @@ gui.text_alignment = {
 	},
 }
 
--- ################################################################################################################
--- ##### widgets #################################################################################################
--- ################################################################################################################
-gui.widgets = {
+-- ##### ██╗    ██╗██╗██████╗  ██████╗ ███████╗████████╗███████╗ ######################################################
+-- ##### ██║    ██║██║██╔══██╗██╔════╝ ██╔════╝╚══██╔══╝██╔════╝ ######################################################
+-- ##### ██║ █╗ ██║██║██║  ██║██║  ███╗█████╗     ██║   ███████╗ ######################################################
+-- ##### ██║███╗██║██║██║  ██║██║   ██║██╔══╝     ██║   ╚════██║ ######################################################
+-- ##### ╚███╔███╔╝██║██████╔╝╚██████╔╝███████╗   ██║   ███████║ ######################################################
+-- #####  ╚══╝╚══╝ ╚═╝╚═════╝  ╚═════╝ ╚══════╝   ╚═╝   ╚══════╝ ######################################################
+mod.widgets = {
 
 	window = {
 		name = "",
@@ -765,10 +788,10 @@ gui.widgets = {
 		refresh_theme = function(self)
 			self.theme = {}
 			-- Default
-			local theme_element = gui.themes[gui.theme].default
+			local theme_element = mod.themes[mod.theme].default
 			if theme_element then self:copy_theme_element(theme_element) end
 			-- Specific
-			local theme_element = gui.themes[gui.theme]["window"]
+			local theme_element = mod.themes[mod.theme]["window"]
 			if theme_element then self:copy_theme_element(theme_element) end
 		end,
 		--[[
@@ -793,7 +816,7 @@ gui.widgets = {
 			local widget = self:create_widget(name, nil, nil, "title", nil, params)
 			-- Set attributes
 			widget:set("text", text or "")
-			widget:set("height", height or gui.themes[gui.theme].title.height)
+			widget:set("height", height or mod.themes[mod.theme].title.height)
 			-- Add widget
 			self:add_widget(widget)
 			return widget
@@ -817,7 +840,7 @@ gui.widgets = {
 			-- Base widget
 			local widget = self:create_widget(name, nil, size, "resizer")
 			-- Set attributes
-			widget:set("size", size or gui.themes[gui.theme].resizer.size)
+			widget:set("size", size or mod.themes[mod.theme].resizer.size)
 			-- Add widget
 			self:add_widget(widget)
 			return widget
@@ -826,7 +849,7 @@ gui.widgets = {
 			Create close button
 		--]]
 		create_close_button = function(self, name, params)
-			local widget = self:create_widget(name, {5, 0}, {25, 25}, "close_button", gui.anchor.styles.top_right, params)
+			local widget = self:create_widget(name, {5, 0}, {25, 25}, "close_button", mod.anchor.styles.top_right, params)
 			widget:set("text", "X")
 			self:add_widget(widget)
 			return widget
@@ -891,11 +914,11 @@ gui.widgets = {
 		create_widget = function(self, name, position, size, _type, anchor, params)
 			
 
-			position = gui.adjust_to_fit_scale(position)
-			size = gui.adjust_to_fit_scale(size)
+			position = mod:adjust_to_fit_scale(position)
+			size = mod:adjust_to_fit_scale(size)
 			
 			-- Create widget
-			local widget = table.clone(gui.widgets.widget)
+			local widget = table.clone(mod.widgets.widget)
 			widget.name = name or "name"
 			widget.position = position or {0, 0}
 			widget.offset = widget.position
@@ -948,8 +971,8 @@ gui.widgets = {
 		--]]
 		bring_to_front = function(self)
 			if not self:has_focus() then
-				gui.windows:unfocus()
-				gui.windows:inc_z_orders(self.z_order)
+				mod.windows:unfocus()
+				mod.windows:inc_z_orders(self.z_order)
 				self.z_order = 1
 			end
 		end,
@@ -958,8 +981,8 @@ gui.widgets = {
 		--]]
 		destroy = function(self)
 			self:before_destroy()
-			gui.windows:dec_z_orders(self.z_order)
-			table.remove(gui.windows.list, self:window_index())
+			mod.windows:dec_z_orders(self.z_order)
+			table.remove(mod.windows.list, self:window_index())
 		end,
 		--[[
 			Increase z orders
@@ -1014,7 +1037,7 @@ gui.widgets = {
 			Start hover window
 		--]]
 		hover_enter = function(self)
-			--gui.mouse:un_hover_all(gui.windows.list)
+			--mod.mouse:un_hover_all(mod.windows.list)
 			self.hovered = true
 			self:on_hover_enter()
 		end,
@@ -1034,10 +1057,10 @@ gui.widgets = {
 			for z=1, #self.widgets do
 				for _, widget in pairs(self.widgets) do
 					if widget.z_order == z then
-						if not gui.point_in_bounds(position, widget:extended_bounds()) then
+						if not mod:point_in_bounds(position, widget:extended_bounds()) then
 							widget:unfocus()
 						end
-						if not clicked and gui.point_in_bounds(position, widget:extended_bounds()) then
+						if not clicked and mod:point_in_bounds(position, widget:extended_bounds()) then
 							widget:click()
 							clicked = true
 						end
@@ -1055,10 +1078,10 @@ gui.widgets = {
 			for z=1, #self.widgets do
 				for _, widget in pairs(self.widgets) do
 					if widget.z_order == z then
-						if not gui.point_in_bounds(position, widget:extended_bounds()) then
+						if not mod:point_in_bounds(position, widget:extended_bounds()) then
 							widget:unfocus()
 						end
-						if not released and gui.point_in_bounds(position, widget:extended_bounds()) then
+						if not released and mod:point_in_bounds(position, widget:extended_bounds()) then
 							widget:release()
 							released = true
 						end
@@ -1150,8 +1173,8 @@ gui.widgets = {
 			Get window index
 		--]]
 		window_index = function(self)
-			for i=1, #gui.windows.list do
-				if gui.windows.list[i] == self then return i end
+			for i=1, #mod.windows.list do
+				if mod.windows.list[i] == self then return i end
 			end
 			return 0
 		end,
@@ -1159,7 +1182,7 @@ gui.widgets = {
 			Window bounds
 		--]]
 		bounds = function(self)
-			return gui.to_bounds(self.position, self.size)
+			return mod:to_bounds(self.position, self.size)
 		end,
 		extended_bounds = function(self)
 			local bounds = self:bounds()
@@ -1192,7 +1215,7 @@ gui.widgets = {
 			Z position
 		--]]
 		position_z = function(self)
-			return 800 + (#gui.windows.list - self.z_order)
+			return 800 + (#mod.windows.list - self.z_order)
 		end,
 		--[[
 			Get widget by name
@@ -1217,7 +1240,7 @@ gui.widgets = {
 				self:before_update()
 				if self:has_focus() then
 					-- Get cursor position
-					local cursor = gui.mouse.cursor()
+					local cursor = mod.mouse.cursor()
 					-- Drag
 					self:drag(cursor)
 					-- Resize
@@ -1294,7 +1317,7 @@ gui.widgets = {
 			if self.hovered then
 				color = ColorHelper.unbox(self.theme.color_hover)
 			end
-			basic_gui.rect(self.position[1], self.position[2], self:position_z(), self.size[1], self.size[2], color)
+			basic_gui:rect(self.position[1], self.position[2], self:position_z(), self.size[1], self.size[2], color)
 		end,
 		--[[
 			Render shadow
@@ -1309,13 +1332,13 @@ gui.widgets = {
 			for i=1, layers do
 				local color = Color((cv[1]/layers)*i, cv[2], cv[3], cv[4])
 				local layer = layers-i
-				basic_gui.rect(self.position[1]+layer-border, self.position[2]-layer-border, self:position_z(),
+				basic_gui:rect(self.position[1]+layer-border, self.position[2]-layer-border, self:position_z(),
 					self.size[1]-layer*2+border*2, self.size[2]+layer*2+border*2, color)
 			end
 			for i=1, layers do
 				local color = Color((cv[1]/layers)*i, cv[2], cv[3], cv[4])
 				local layer = layers-i
-				basic_gui.rect(self.position[1]-layer-border, self.position[2]+layer-border, self:position_z(),
+				basic_gui:rect(self.position[1]-layer-border, self.position[2]+layer-border, self:position_z(),
 					self.size[1]+layer*2+border*2, self.size[2]-layer*2+border*2, color)
 			end
 		end,
@@ -1418,10 +1441,10 @@ gui.widgets = {
 		refresh_theme = function(self)
 			self.theme = {}
 			-- Default
-			local theme_element = gui.themes[gui.theme].default
+			local theme_element = mod.themes[mod.theme].default
 			if theme_element then self:copy_theme_element(theme_element) end
 			-- Specific
-			local theme_element = gui.themes[gui.theme][self._type]
+			local theme_element = mod.themes[mod.theme][self._type]
 			if theme_element then self:copy_theme_element(theme_element) end
 		end,
 		--[[
@@ -1439,7 +1462,7 @@ gui.widgets = {
 		--]]
 		setup = function(self)
 			-- Copy widget specific functions
-			local widget_element = gui.widgets[self._type]
+			local widget_element = mod.widgets[self._type]
 			if widget_element then self:copy_widget_element(widget_element) end
 			-- Refresh theme
 			self:refresh_theme()
@@ -1472,15 +1495,15 @@ gui.widgets = {
 			-- Disabled
 			if self.disabled or not self.visible then return end
 			-- Mouse position
-			local cursor = gui.mouse.cursor()
+			local cursor = mod.mouse.cursor()
 			-- Set widget position via anchor
-			if self.anchor and gui.anchor[self.anchor] then
-				self.position, self.size = gui.anchor[self.anchor].position(self.window, self)
+			if self.anchor and mod.anchor[self.anchor] then
+				self.position, self.size = mod.anchor[self.anchor].position(self.window, self)
 			end
 			-- Check hovered
-			self.hovered, self.cursor = gui.point_in_bounds(cursor, self:extended_bounds())
+			self.hovered, self.cursor = mod:point_in_bounds(cursor, self:extended_bounds())
 			if self.hovered then
-				if self.tooltip then basic_gui.tooltip(self.tooltip) end
+				if self.tooltip then basic_gui:tooltip(self.tooltip) end
 				self:on_hover()
 			end
 			-- Clicked
@@ -1524,13 +1547,13 @@ gui.widgets = {
 				for i=1, layers do
 					local layer = layers-i
 					local color = Color((cv[1]/layers)*i, cv[2], cv[3], cv[4])
-					basic_gui.rect(self.position[1]+layer-border, self.position[2]-layer-border, self:position_z(),
+					basic_gui:rect(self.position[1]+layer-border, self.position[2]-layer-border, self:position_z(),
 						self.size[1]-layer*2+border*2, self.size[2]+layer*2+border*2, color)
 				end
 				for i=1, layers do
 					local layer = layers-i
 					local color = Color((cv[1]/layers)*i, cv[2], cv[3], cv[4])
-					basic_gui.rect(self.position[1]-layer-border, self.position[2]+layer-border, self:position_z(),
+					basic_gui:rect(self.position[1]-layer-border, self.position[2]+layer-border, self:position_z(),
 						self.size[1]+layer*2+border*2, self.size[2]-layer*2+border*2, color)
 				end
 			end
@@ -1551,7 +1574,7 @@ gui.widgets = {
 			-- Get bounds
 			local bounds = self:extended_bounds()
 			-- Render background rectangle
-			basic_gui.rect(bounds[1], bounds[4], self:position_z(), bounds[2]-bounds[1], bounds[3]-bounds[4], color)
+			basic_gui:rect(bounds[1], bounds[4], self:position_z(), bounds[2]-bounds[1], bounds[3]-bounds[4], color)
 		end,
 		--[[
 			Render text
@@ -1569,16 +1592,16 @@ gui.widgets = {
 			-- Get text info
 			local text = self.text or ""
 			--local font = self.theme.font
-			local font = gui.fonts:get(self.theme.font)
+			local font = mod.fonts:get(self.theme.font)
 			-- Get text alignment
 			local position = {self.position[1] + self.size[2]*0.2, self.position[2] + self.size[2]*0.2}
 			--local align = self.theme.text_alignment
-			local align = gui.text_alignment[self.theme.text_alignment]
+			local align = mod.text_alignment[self.theme.text_alignment]
 			if align then
 				position = align.position(text, font, self:bounds())
 			end
 			-- Render text
-			basic_gui.text(text, position[1], position[2], self:position_z()+1, font:font_size(), color, font.font)
+			basic_gui:text(text, position[1], position[2], self:position_z()+1, font:font_size(), color, font.font)
 		end,
 		-- ################################################################################################################
 		-- ##### Attributes ###############################################################################################
@@ -1587,7 +1610,7 @@ gui.widgets = {
 			Bounds
 		--]]
 		bounds = function(self)
-			return gui.to_bounds(self.position, self.size)
+			return mod:to_bounds(self.position, self.size)
 		end,
 		extended_bounds = function(self)
 			return self:bounds()
@@ -1639,7 +1662,7 @@ gui.widgets = {
 			-- Original function
 			self:init_base()
 			-- Change
-			self.height = self.height or gui.themes[gui.theme].title.height
+			self.height = self.height or mod.themes[mod.theme].title.height
 		end,
 		--[[
 			Click override
@@ -1660,13 +1683,13 @@ gui.widgets = {
 		--]]
 		update = function(self)
 			-- Set bounds
-			self.size = {self.window.size[1], self.height or gui.themes[gui.theme].title.height}
+			self.size = {self.window.size[1], self.height or mod.themes[mod.theme].title.height}
 			self.position = {self.window.position[1], self.window.position[2] + self.window.size[2] - self.size[2]}
 			-- Disabled
 			if self.disabled then return end
 			-- Hover
-			local cursor = gui.mouse.cursor()
-			self.hovered, self.cursor = gui.point_in_bounds(cursor, self:bounds())
+			local cursor = mod.mouse.cursor()
+			self.hovered, self.cursor = mod:point_in_bounds(cursor, self:bounds())
 			-- Drag
 			if self.window.dragging then self:drag() end
 			-- Return
@@ -1684,7 +1707,7 @@ gui.widgets = {
 			-- Dragging
 			self.window.dragging = true
 			-- Block input
-			gui.input:block()
+			mod.input:block()
 			-- Trigger event
 			self:before_drag()
 		end,
@@ -1706,7 +1729,7 @@ gui.widgets = {
 		--]]
 		drag_end = function(self)
 			-- Unblock input
-			gui.input:unblock()
+			mod.input:unblock()
 			-- Trigger event
 			self:after_drag()
 		end,
@@ -1768,7 +1791,7 @@ gui.widgets = {
 			self.window.resize_origin = {self.window.position[1], self.window.position[2] + self.window.size[2]}
 			-- Set resizing
 			self.window.resizing = true
-			gui.input:block()
+			mod.input:block()
 			-- Trigger event
 			self:before_resize()
 		end,
@@ -1790,7 +1813,7 @@ gui.widgets = {
 		--]]
 		resize_end = function(self)
 			-- Block input
-			gui.input:unblock()
+			mod.input:unblock()
 			-- Trigger event
 			self:after_resize()
 		end,
@@ -1806,9 +1829,9 @@ gui.widgets = {
 			-- Disabled
 			if self.disabled then return end
 			-- Hover
-			local cursor = gui.mouse.cursor()
-			--local bounds = gui.to_bounds({self.position[1], self.position[2]}, self.size)
-			self.hovered, self.cursor = gui.point_in_bounds(cursor, self:bounds())
+			local cursor = mod.mouse.cursor()
+			--local bounds = mod:to_bounds({self.position[1], self.position[2]}, self.size)
+			self.hovered, self.cursor = mod:point_in_bounds(cursor, self:bounds())
 			-- Resize
 			if self.window.resizing then self:resize() end
 			-- Return
@@ -1824,7 +1847,7 @@ gui.widgets = {
 			-- if self.window.resizing then
 				-- local color = ColorHelper.unbox(self.theme.color_clicked)
 				-- local bounds = self:bounds()
-				-- basic_gui.rect(bounds[1], bounds[4], self:position_z(), bounds[2]-bounds[1], bounds[3]-bounds[4], color)
+				-- basic_gui:rect(bounds[1], bounds[4], self:position_z(), bounds[2]-bounds[1], bounds[3]-bounds[4], color)
 			-- else
 				-- self:render_background_base()
 			-- end
@@ -1886,13 +1909,13 @@ gui.widgets = {
 			self:init_base()
 			-- Input cursor timer
 			self.input_cursor = {
-				timer = gui.timers:create_timer(self.name .. "_input_cursor_timer", 500, true, self.on_input_cursor_timer, self),
+				timer = mod.timers:create_timer(self.name .. "_input_cursor_timer", 500, true, self.on_input_cursor_timer, self),
 				state = true,
 				position = 0,
 			}
 			-- Input timer
 			self.input = {
-				--[[timer = gui.timers:create_timer(self.name .. "_input_timer", 100, true, self.on_input_timer, self),--]]
+				--[[timer = mod.timers:create_timer(self.name .. "_input_timer", 100, true, self.on_input_timer, self),--]]
 				ready = true,
 			}
 		end,
@@ -1926,7 +1949,7 @@ gui.widgets = {
 			if self.disabled then return end
 			-- Block input
 			if not self.has_focus then
-				gui.input:block()
+				mod.input:block()
 			end
 			-- Original function
 			self:focus_base()
@@ -1939,7 +1962,7 @@ gui.widgets = {
 			if self.disabled then return end
 			-- Unblock input
 			if self.has_focus then
-				gui.input:unblock()
+				mod.input:unblock()
 			end
 			-- Original function
 			self:unfocus_base()
@@ -2056,16 +2079,16 @@ gui.widgets = {
 			end
 			-- Get font
 			--local font = self.theme.font
-			local font = gui.fonts:get(self.theme.font)
+			local font = mod.fonts:get(self.theme.font)
 			-- Get text alignment
 			local position = {self.position[1] + self.size[2]*0.2, self.position[2] + self.size[2]*0.2}
 			--local align = self.theme.text_alignment
-			local align = gui.text_alignment[self.theme.text_alignment]
+			local align = mod.text_alignment[self.theme.text_alignment]
 			if align then
 				position = align.position(text, font, self:bounds())
 			end
 			-- Render text
-			basic_gui.text(text, position[1], position[2], self:position_z()+1, font:font_size(), color, font.font)
+			basic_gui:text(text, position[1], position[2], self:position_z()+1, font:font_size(), color, font.font)
 		end,
 		--[[
 			Render cursor
@@ -2080,12 +2103,12 @@ gui.widgets = {
 				-- Get data
 				local width = 0
 				--local font = self.theme.font
-				local font = gui.fonts:get(self.theme.font)
+				local font = mod.fonts:get(self.theme.font)
 				if self.text and #self.text > 0 then
-					width = basic_gui.text_width(self.text, font.material, font:font_size())
+					width = basic_gui:text_width(self.text, font.material, font:font_size())
 				end
 				-- Render cursor
-				basic_gui.rect(self.position[1]+2+width, self.position[2]+2, self:position_z(), 2, self.size[2]-4, color)
+				basic_gui:rect(self.position[1]+2+width, self.position[2]+2, self:position_z(), 2, self.size[2]-4, color)
 			end
 		end,
 		-- ################################################################################################################
@@ -2154,7 +2177,7 @@ gui.widgets = {
 			end
 			-- Get font
 			--local font = self.theme.font
-			local font = gui.fonts:get(self.theme.font)
+			local font = mod.fonts:get(self.theme.font)
 			-- Get text alignment
 			local position = {self.position[1] + self.size[2] + 5, self.position[2] + self.size[2]*0.2}
 			-- local align = self.theme.text_alignment
@@ -2162,7 +2185,7 @@ gui.widgets = {
 				-- position = align.position(self.text, font, self:bounds())
 			-- end
 			-- Render text
-			basic_gui.text(self.text, position[1], position[2], self:position_z()+1, font:font_size(), color, font.font)
+			basic_gui:text(self.text, position[1], position[2], self:position_z()+1, font:font_size(), color, font.font)
 		end,
 		--[[
 			Render box
@@ -2182,16 +2205,16 @@ gui.widgets = {
 				local text = "X"
 				-- Get font
 				--local font = self.theme.font
-				local font = gui.fonts:get(self.theme.font)
+				local font = mod.fonts:get(self.theme.font)
 				-- Get text alignment
 				local position = {self.position[1] + 5, self.position[2] + self.size[2]*0.2}
 				--local align = self.theme.text_alignment
-				local align = gui.text_alignment[self.theme.text_alignment]
+				local align = mod.text_alignment[self.theme.text_alignment]
 				if align then
 					position = align.position(text, font, self:bounds())
 				end
 				-- Render text
-				basic_gui.text(text, position[1], position[2], self:position_z()+1, font:font_size(), color, font.font)
+				basic_gui:text(text, position[1], position[2], self:position_z()+1, font:font_size(), color, font.font)
 			end
 		end,
 		-- ################################################################################################################
@@ -2274,7 +2297,7 @@ gui.widgets = {
 			-- Go through options
 			for key, option in pairs(self.options) do
 				-- If option hovered
-				if gui.point_in_bounds(gui.mouse.cursor(), option:extended_bounds()) then
+				if mod:point_in_bounds(mod.mouse.cursor(), option:extended_bounds()) then
 					-- Click option
 					option:click()
 				end
@@ -2293,7 +2316,7 @@ gui.widgets = {
 			-- Go through options
 			for key, option in pairs(self.options) do
 				-- If option hovered
-				if gui.point_in_bounds(gui.mouse.cursor(), option:extended_bounds()) then
+				if mod:point_in_bounds(mod.mouse.cursor(), option:extended_bounds()) then
 					-- Release
 					option:release()
 				end
@@ -2426,10 +2449,13 @@ gui.widgets = {
 	
 }
 
--- ################################################################################################################
--- ##### Themes ###################################################################################################
--- ################################################################################################################
-gui.themes = {
+-- ##### ████████╗██╗  ██╗███████╗███╗   ███╗███████╗███████╗ #########################################################
+-- ##### ╚══██╔══╝██║  ██║██╔════╝████╗ ████║██╔════╝██╔════╝ #########################################################
+-- #####    ██║   ███████║█████╗  ██╔████╔██║█████╗  ███████╗ #########################################################
+-- #####    ██║   ██╔══██║██╔══╝  ██║╚██╔╝██║██╔══╝  ╚════██║ #########################################################
+-- #####    ██║   ██║  ██║███████╗██║ ╚═╝ ██║███████╗███████║ #########################################################
+-- #####    ╚═╝   ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝╚══════╝╚══════╝ #########################################################
+mod.themes = {
 	-- Define a "default" theme element with common values for every widget
 	-- Define specific elements with a widget name to overwrite default settings
 	-- Default theme
@@ -2510,9 +2536,18 @@ gui.themes = {
 	},	
 }
 
--- ################################################################################################################
--- ##### Default stuff ############################################################################################
--- ################################################################################################################
-gui.fonts:create("default", "hell_shark", 22)
-gui.fonts:create("hell_shark", "hell_shark", 22, nil, true)
+-- ##### Default stuff ################################################################################################
+mod.fonts:create("default", "hell_shark", 22)
+mod.fonts:create("hell_shark", "hell_shark", 22, nil, true)
 
+-- ##### Update #######################################################################################################
+--[[
+	Update windows
+--]]
+mod:hook("MatchmakingManager.update", function(func, self, dt, ...)
+	mod:update_windows(dt)
+	func(self, dt, ...)
+end)
+
+mod.on_enabled = function(initial_call)
+end
