@@ -1705,12 +1705,10 @@ mod:hook("GenericAmmoUserExtension.update", function(func, self, unit, input, dt
 				if self.available_ammo <= 0 then
 					wield_anim = item_template.wield_anim_no_ammo
 				end
-				--mod:dump(item_template, "item_template", 1)
-				--Unit.animation_event(self.owner_unit, wield_anim)
-				if table.contains(NetworkLookup.anims, wield_anim) then
+				if table.contains(NetworkLookup.anims, wield_anim) then -- Shade volley crossbow fix - wield anim is not in network lookup
 					CharacterStateHelper.play_animation_event(self.owner_unit, wield_anim)
 				else
-					--mod:echo("anim: "..tostring(wield_anim).. " missing in NetworkLookup")
+					Unit.animation_event(self.owner_unit, wield_anim)
 				end
 			end
 			mod.reload.reloading[self.owner_unit] = nil
@@ -1723,7 +1721,6 @@ mod:hook("GenericAmmoUserExtension.update", function(func, self, unit, input, dt
 			local t, length = Unit.animation_layer_info(self.owner_unit, 2)
 			if length > mod.reload.reloading[self.owner_unit].reload_time then
 				-- ##### Reload animation is too short ################################################################
-				--Unit.animation_event(self.owner_unit, mod.reload.reloading[self.owner_unit].event)
 				CharacterStateHelper.play_animation_event(self.owner_unit, mod.reload.reloading[self.owner_unit].event)
 				mod.reload.extended[self.owner_unit] = true
 			end
