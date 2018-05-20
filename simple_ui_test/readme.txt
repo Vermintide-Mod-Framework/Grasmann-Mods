@@ -1,4 +1,6 @@
-gui_test V1.0.0
+Author: UnShame
+Updates: grasmann
 
-Author: 
-
+	Test mod and example for simple ui.
+	
+Version: 2.0.0
