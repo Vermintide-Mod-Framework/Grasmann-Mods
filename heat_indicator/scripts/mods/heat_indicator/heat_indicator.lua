@@ -13,7 +13,7 @@ local mod = get_mod("HeatIndicator")
 	
 	Author: walterr
 	Ported: grasmann
-	Version: 1.4.0
+	Version: 2.0.0
 --]]
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -178,6 +178,32 @@ mod.display_info = {
 			return nil
 		end,
 	},
+	
+	ActionAim = {
+		compute_level_value = function(action)
+			return (action.overcharge_extension and action.charge_value) or nil
+		end,
+		compute_level_color = function(self, charge_value)
+			for _, level in ipairs(self.levels) do
+				if charge_value >= level.min_value then return level.color end
+			end
+			return nil
+		end,
+		levels = {
+			{
+				min_value = 1,
+				color = Colors.get_table("red"),
+			},
+			{
+				min_value = (2/3),
+				color = Colors.get_table("orange"),
+			},
+			{
+				min_value = 0,
+				color = Colors.get_table("green_yellow"),
+			},
+		},
+	},
 }
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -289,18 +315,71 @@ mod:hook("ActionGeiserTargeting.finish", function(func, self, reason, ...)
 	return result
 end)
 --[[
+	Fix for vt2 bolt staff
+--]]
+if not VT1 then
+	local aim_start = nil
+	--[[
+		Bolt staff update widget
+	--]]
+	mod:hook("ActionAim.client_owner_post_update", function(func, self, dt, t, ...)
+		func(self, dt, t, ...)
+		
+		if not aim_start then aim_start = t end
+		local aim_time = t - aim_start
+		if aim_time < 0 then aim_time = 0 end
+		if aim_time > 2.25 then aim_time = 2.25 end
+		
+		local display_info = mod.display_info["ActionAim"]
+		-- local charge_value = display_info.compute_level_value(self)
+		local charge_value = aim_time / 2.25
+		if charge_value then
+			self.charge_value = charge_value
+			mod.current_charge_level.color = display_info:compute_level_color(charge_value)
+			mod.current_charge_level.level = charge_value
+			mod.current_charge_level.fade_out = nil
+		end
+	end)
+	--[[
+		Bolt staff start fade out
+	--]]
+	mod:hook("ActionAim.finish", function(func, self, reason, ...)
+		local result = func(self, reason, ...)
+
+		if aim_start then aim_start = nil end
+		
+		local display_info = mod.display_info["ActionAim"]
+		if reason == "new_interupting_action" then
+			local charge_value = self.charge_value
+			if charge_value then
+				mod.current_charge_level.color = display_info:compute_level_color(charge_value)
+				mod.current_charge_level.level = charge_value
+				mod.current_charge_level.fade_out = mod.anim_state.STARTING
+			end
+		else
+			mod.current_charge_level.color = nil
+		end
+
+		return result
+	end)
+
+end
+--[[
 	Render widget
 --]]
 mod:hook("OverchargeBarUI.update", function(func, self, dt, ...)
-	-- We use drawn_test to tell whether the overcharge bar was actually drawn (this avoids
-	-- having to duplicate all the tests in OverchargeBarUI._update_overcharge).  If it was
-	-- drawn, drawn_test.angle will be set after calling func.
-	local drawn_test = self.charge_bar.style.white_divider_left
-	drawn_test.angle = nil
+	-- -- We use drawn_test to tell whether the overcharge bar was actually drawn (this avoids
+	-- -- having to duplicate all the tests in OverchargeBarUI._update_overcharge).  If it was
+	-- -- drawn, drawn_test.angle will be set after calling func.
+	-- local drawn_test = self.charge_bar.style.white_divider_left
+	-- drawn_test.angle = nil
+	-- func(self, dt, ...)
+	-- if not drawn_test.angle then
+		-- return
+	-- end
+	
+	-- Original function
 	func(self, dt, ...)
-	if not drawn_test.angle then
-		return
-	end
 	
 	if mod.current_charge_level.color then
 		local widget = self._hudmod_charge_level_indicator
@@ -373,8 +452,15 @@ mod:hook("OverchargeBarUI.update", function(func, self, dt, ...)
 				local height = 4 * scale
 				widget.style.indicator.size[1] = length
 				widget.style.indicator.size[2] = height
-				widget.style.indicator.offset[1] = 255 - (length / 2)
-				widget.style.indicator.offset[2] = 0 - (height / 2)
+				if VT1 then
+					widget.style.indicator.offset[1] = 255 - (length / 2)
+					widget.style.indicator.offset[2] = 0 - (height / 2)
+				else
+					widget.style.indicator.offset[1] = 130 - (length / 2)
+					widget.style.indicator.offset[2] = -50 - (height / 2)
+				end
+				-- widget.style.indicator.offset[1] = 255 - (length / 2)
+				-- widget.style.indicator.offset[2] = 0 - (height / 2)
 				widget.style.indicator.corner_radius = 2
 				-- Background
 				if widget_bg then
@@ -382,8 +468,13 @@ mod:hook("OverchargeBarUI.update", function(func, self, dt, ...)
 					height = 8 * scale
 					widget_bg.style.indicator.size[1] = length
 					widget_bg.style.indicator.size[2] = height
-					widget_bg.style.indicator.offset[1] = 255 - (length / 2)
-					widget_bg.style.indicator.offset[2] = 0 - (height / 2)
+					if VT1 then
+						widget_bg.style.indicator.offset[1] = 255 - (length / 2)
+						widget_bg.style.indicator.offset[2] = 0 - (height / 2)
+					else
+						widget_bg.style.indicator.offset[1] = 130 - (length / 2)
+						widget_bg.style.indicator.offset[2] = -50 - (height / 2)
+					end
 					widget_bg.style.indicator.corner_radius = 2
 				end
 			end
@@ -412,6 +503,8 @@ end)
 	Mod Setting changed
 --]]
 mod.on_setting_changed = function(setting_name)
+	mod._hudmod_charge_level_indicator = nil
+	mod._hudmod_charge_level_indicator_bg = nil
 end
 --[[
 	Mod Suspended
@@ -425,6 +518,11 @@ end
 mod.on_enabled = function(initial_call)
 	mod:enable_all_hooks()
 end
+
+--mod.on_unload = function(exit_game)
+mod._hudmod_charge_level_indicator = nil
+mod._hudmod_charge_level_indicator_bg = nil
+--end
 
 -- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
 -- ##### ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝ ###################################################################
