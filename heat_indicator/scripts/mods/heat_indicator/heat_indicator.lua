@@ -325,19 +325,21 @@ if not VT1 then
 	mod:hook("ActionAim.client_owner_post_update", function(func, self, dt, t, ...)
 		func(self, dt, t, ...)
 		
-		if not aim_start then aim_start = t end
-		local aim_time = t - aim_start
-		if aim_time < 0 then aim_time = 0 end
-		if aim_time > 2.25 then aim_time = 2.25 end
-		
-		local display_info = mod.display_info["ActionAim"]
-		-- local charge_value = display_info.compute_level_value(self)
-		local charge_value = aim_time / 2.25
-		if charge_value then
-			self.charge_value = charge_value
-			mod.current_charge_level.color = display_info:compute_level_color(charge_value)
-			mod.current_charge_level.level = charge_value
-			mod.current_charge_level.fade_out = nil
+		if self.item_name == "bw_skullstaff_spear" then
+			if not aim_start then aim_start = t end
+			local aim_time = t - aim_start
+			if aim_time < 0 then aim_time = 0 end
+			if aim_time > 2.25 then aim_time = 2.25 end
+			
+			local display_info = mod.display_info["ActionAim"]
+			-- local charge_value = display_info.compute_level_value(self)
+			local charge_value = aim_time / 2.25
+			if charge_value then
+				self.charge_value = charge_value
+				mod.current_charge_level.color = display_info:compute_level_color(charge_value)
+				mod.current_charge_level.level = charge_value
+				mod.current_charge_level.fade_out = nil
+			end
 		end
 	end)
 	--[[
@@ -345,21 +347,23 @@ if not VT1 then
 	--]]
 	mod:hook("ActionAim.finish", function(func, self, reason, ...)
 		local result = func(self, reason, ...)
-
-		if aim_start then aim_start = nil end
 		
-		local display_info = mod.display_info["ActionAim"]
-		if reason == "new_interupting_action" then
-			local charge_value = self.charge_value
-			if charge_value then
-				mod.current_charge_level.color = display_info:compute_level_color(charge_value)
-				mod.current_charge_level.level = charge_value
-				mod.current_charge_level.fade_out = mod.anim_state.STARTING
+		if self.item_name == "bw_skullstaff_spear" then
+			if aim_start then aim_start = nil end
+			
+			local display_info = mod.display_info["ActionAim"]
+			if reason == "new_interupting_action" then
+				local charge_value = self.charge_value
+				if charge_value then
+					mod.current_charge_level.color = display_info:compute_level_color(charge_value)
+					mod.current_charge_level.level = charge_value
+					mod.current_charge_level.fade_out = mod.anim_state.STARTING
+				end
+			else
+				mod.current_charge_level.color = nil
 			end
-		else
-			mod.current_charge_level.color = nil
 		end
-
+		
 		return result
 	end)
 
