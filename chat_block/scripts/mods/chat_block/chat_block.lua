@@ -6,7 +6,7 @@ local mod = get_mod("ChatBlock")
 	Author: IamLupo
 	Ported: Grasmann
 	Improvements: bi
-	Version: 1.2.0
+	Version: 2.0.0
 --]]
 
 -- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
@@ -63,10 +63,16 @@ mod.block_state = block_state.NOT_BLOCKING
 	Execute weapon action
 --]]
 mod:hook("CharacterStateHelper.update_weapon_actions", function(func, t, unit, input_extension, inventory_extension, ...)
-	local player_unit = Managers.player:local_player().player_unit
-
-	--Check if local player and not in inn
-	if player_unit ~= unit or LevelHelper:current_level_settings().level_id == "inn_level" then
+	local player_unit = Managers.player and Managers.player:local_player().player_unit
+	
+	-- Check if local player
+	if player_unit ~= unit then
+		func(t, unit, input_extension, inventory_extension, ...)
+		return
+	end
+	
+	-- Check not in inn
+	if LevelHelper:current_level_settings().level_id == "inn_level" then
 		func(t, unit, input_extension, inventory_extension, ...)
 		return
 	end
@@ -174,9 +180,9 @@ mod.update = function(dt)
   if input_service then
 
     local should_block = input_service:is_blocked()
-    
+	
     if should_block and mod.block_state == block_state.NOT_BLOCKING then	
-    
+		
       mod.block_state = block_state.SHOULD_BLOCK
       
     elseif not should_block and mod.block_state == block_state.BLOCKING then
