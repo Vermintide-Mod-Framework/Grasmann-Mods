@@ -1,4 +1,5 @@
-Author : Grasmann
+Author: Grasmann
+Improvements: IamLupo
 
 Description :
 Displays healthbars for enemies.
