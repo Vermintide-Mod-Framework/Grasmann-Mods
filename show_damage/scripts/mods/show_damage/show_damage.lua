@@ -476,7 +476,7 @@ mod_data.options_widgets = {
 		["text"] = "Toggle",
 		["tooltip"] = "Toggle show damage on / off.",
 		["default_value"] = {},
-		["action"] = "toggle_suspension"
+		["action"] = "toggle_mod_state"
 	},
 }
 if not VT1 then
