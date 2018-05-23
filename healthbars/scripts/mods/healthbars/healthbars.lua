@@ -300,7 +300,7 @@ mod_data.options_widgets = {
 		["text"] = "Toggle",
 		["tooltip"] = "Toggle healthbars on / off.",
 		["default_value"] = {},
-		["action"] = "toggle_mod"
+		["action"] = "toggle_mod_state"
 	},
 }
 
