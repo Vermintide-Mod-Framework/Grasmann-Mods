@@ -156,7 +156,7 @@ mod_data.options_widgets = {
 								["default_value"] = 100,
 							},
 							{
-								["show_widget_condition"] = {2},
+								["show_widget_condition"] = {1, 2},
 								["setting_name"] = "automatic_aim_zoom",
 								["widget_type"] = "dropdown",
 								["text"] = "Zoom",
@@ -1099,7 +1099,7 @@ mod_data.options_widgets = {
 	  ["text"] = "Toggle",
 	  ["tooltip"] = "Toggle third person on / off.",
 	  ["default_value"] = {},
-	  ["action"] = "toggle_mod"
+	  ["action"] = "toggle_mod_state"
 	},
 }
 
@@ -1112,18 +1112,8 @@ mod_data.options_widgets = {
 mod.reset = true
 mod.firstperson = false
 mod.zoom = {
-	zoom_in = {
-		["1"] = 30,
-		["2"] = 40,
-		["3"] = 50,
-		["4"] = 65,
-	},
-	increased_zoom_in = {
-		["1"] = 16,
-		["2"] = 30,
-		["3"] = 45,
-		["4"] = 65,
-	},
+	zoom_in = {30, 40, 50, 65},
+	increased_zoom_in = {16, 30, 45, 65},
 }
 mod.reload = {
 	reloading = {},
@@ -1188,11 +1178,11 @@ end
 --]]
 mod.set_zoom_values = function(self, current_node)
 	
-	local zoom_setting = self:get("zoom") or 1
+	local zoom_setting = self.camera.current_view.zoom
 	if not self:is_enabled() then zoom_setting = 1 end
 	
 	local zoom_entry = self.zoom[current_node._name]
-	if zoom_entry then
+	if zoom_entry and zoom_setting then
 		local zoom_fov = zoom_entry[zoom_setting] or 65
 		local degrees_to_radians = math.pi/180
 		current_node._vertical_fov = zoom_fov * degrees_to_radians
@@ -1389,13 +1379,13 @@ end
 --]]
 mod.start_third_person = function(self)
 	
-	if mod:is_enabled() and self:get("mode") == "third_person" then
+	if self:is_enabled() and self:get("mode") == "third_person" then
 		local view = table.clone(self.camera.views.third_person_left)
 		if self:get("side") == "right" then
 			view = table.clone(self.camera.views.third_person_right)
 		end
 		view.modifier = (self:get("offset") or 100) / 100
-		view.zoom = self:get("zoom") or 1
+		view.zoom = self:get("zoom")
 		self.camera:transition_to(view, 0.2, 1.0)
 	end
 	
@@ -1405,7 +1395,7 @@ end
 --]]
 mod.start_view = function(self, name)
 
-	if mod:is_enabled() and self:get("mode") == "automatic" then
+	if self:is_enabled() and self:get("mode") == "automatic" then
 		if name then
 			if self:get(name) then
 				local view = table.clone(self.camera.views.first_person)
@@ -1418,8 +1408,8 @@ mod.start_view = function(self, name)
 						view = table.clone(self.camera.views.third_person_left)
 					end
 					view.modifier = (self:get(name.."_offset") or 100) / 100
-					view.zoom = self:get(name.."_zoom") or 1
 				end
+				view.zoom = self:get(name.."_zoom")
 				self.camera:transition_to(view, delay, length)
 			end
 		else
@@ -1472,7 +1462,7 @@ mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name,
 	local camera_nodes = self._camera_nodes[viewport_name]
 	local current_node = self._current_node(self, camera_nodes)
 	local camera_data = self._update_transition(self, viewport_name, camera_nodes, dt)	
-		
+	
 	-- ##### Counter offset #######################################################################################
 	local offset = Vector3(mod.camera.offset.x, mod.camera.offset.y, mod.camera.offset.z)
 	camera_data.position = self._calculate_sequence_event_position(self, camera_data, offset)
@@ -1886,6 +1876,7 @@ end
 mod.on_disabled = function(initial_call)
 	mod:start_first_person(function()
 		mod:disable_all_hooks()
+		mod:hook_enable("CameraManager.post_update")
 	end)
 end
 --[[
