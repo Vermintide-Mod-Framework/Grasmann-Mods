@@ -639,7 +639,7 @@ mod.enemy_settings = {
 	
 	
 }
-mod_permanent_units = mod_permanent_units or {}
+mod.permanent_units = mod:persistent_table("permanent_units")
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
 -- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
@@ -651,11 +651,11 @@ mod_permanent_units = mod_permanent_units or {}
 	Add a health bar to all units
 --]]
 mod.add_health_bar_all = function(self, unit)
-	if not table.contains(mod_permanent_units, unit) then
+	if not table.contains(mod.permanent_units, unit) then
 		local tutorial_system = Managers.state.entity:system("tutorial_system")
 		if tutorial_system and tutorial_system.tutorial_ui then
 			tutorial_system.tutorial_ui:add_health_bar(unit)
-			mod_permanent_units[unit] = unit
+			mod.permanent_units[unit] = unit
 		end
 	end
 end
@@ -699,11 +699,11 @@ end
 	Remove a health bar from a unit
 --]]
 mod.remove_health_bar = function(self, unit)
-	if table.contains(mod_permanent_units, unit) then
+	if table.contains(mod.permanent_units, unit) then
 		local tutorial_system = Managers.state.entity:system("tutorial_system")
 		if tutorial_system and tutorial_system.tutorial_ui then
 			tutorial_system.tutorial_ui:remove_health_bar(unit)
-			mod_permanent_units[unit] = nil
+			mod.permanent_units[unit] = nil
 		end
 	end
 end
@@ -737,7 +737,7 @@ end
 	Clean units in the health bar system
 --]]
 mod.clean_units = function(self, clean_all)
-	for _, unit in pairs(mod_permanent_units) do
+	for _, unit in pairs(mod.permanent_units) do
 		if not Unit.alive(unit) or clean_all then
 			self:remove_health_bar(unit)
 		else
@@ -764,7 +764,7 @@ end
 	Set sizes for all health bars
 --]]
 mod.set_sizes = function(self, tutorial_ui)
-	for _, unit in pairs(mod_permanent_units) do
+	for _, unit in pairs(mod.permanent_units) do
 		local breed = Unit.get_data(unit, "breed")
 		
 		if breed and breed.name then
@@ -795,7 +795,7 @@ end
 mod.set_offsets = function(self, tutorial_ui)
 	if self:get("position") ~= nil
 	and self:get("position") == 2 then
-		for _, unit in pairs(mod_permanent_units) do
+		for _, unit in pairs(mod.permanent_units) do
 			local breed = Unit.get_data(unit, "breed")
 		
 			if breed and breed.name then
