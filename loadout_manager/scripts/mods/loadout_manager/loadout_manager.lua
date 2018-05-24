@@ -291,12 +291,12 @@ mod.loadout_tooltip = function(self, loadout_info, font_size, line_padding, offs
 		-- Render background
 		local tooltip_position = Vector3(mouse[1] + offset[1], mouse[2] + offset[2], 999)
 		local size = Vector2(250*scale, 190*scale)
-		basic_gui.rect(tooltip_position, size, Color(200, 0, 0, 0))
+		basic_gui:rect(tooltip_position, size, Color(200, 0, 0, 0))
 		
 		-- Render Text
 		local text_position = Vector3(tooltip_position[1] + padding[1], tooltip_position[2] + size[2] - font_size - padding[2], 999)
 		local color = Colors.get_color_with_alpha("cheeseburger", 255)
-		basic_gui.text("Loadout "..tostring(loadout_info[2]), text_position, font_size+2, color)
+		basic_gui:text("Loadout "..tostring(loadout_info[2]), text_position, font_size+2, color)
 		
 		-- Render Icons
 		local index = 1
@@ -309,8 +309,8 @@ mod.loadout_tooltip = function(self, loadout_info, font_size, line_padding, offs
 			local icon_position = Vector3(icon_x, lines_y[1], 999)
 			if index > 3 then icon_position = Vector3(icon_x, lines_y[2], 999) end
 			
-			basic_gui.draw_icon(item.icon, icon_position, nil, icon_size, "gui_item_icons_atlas")
-			basic_gui.draw_icon("frame_01", icon_position, color, icon_size, "gui_item_icons_atlas")
+			basic_gui:draw_icon(item.icon, icon_position, nil, icon_size, "gui_item_icons_atlas")
+			basic_gui:draw_icon("frame_01", icon_position, color, icon_size, "gui_item_icons_atlas")
 			
 			-- Render traits
 			if item.traits then
@@ -323,7 +323,7 @@ mod.loadout_tooltip = function(self, loadout_info, font_size, line_padding, offs
 					if buff then
 						local c_x = trait_x
 						if i == 1 or i == 3 then c_x = trait_x - trait_size[1]/3 end
-						basic_gui.draw_icon(buff.icon, Vector3(c_x, trait_y, 999), nil, trait_size, "gui_item_icons_atlas")
+						basic_gui:draw_icon(buff.icon, Vector3(c_x, trait_y, 999), nil, trait_size, "gui_item_icons_atlas")
 						trait_y = trait_y - trait_size[2]*0.75
 					end
 				end
@@ -400,13 +400,13 @@ mod.create_window = function(self)
 		local label_x = 15
 		local line_y = {5, button_size[2] + 10}
 		local window_position = {80, 185}
-		self.window = ui.create_window("loadout_saver_window", window_position, window_size)
+		self.window = ui:create_window("loadout_saver_window", window_position, window_size)
 		--self.window:set("transparent", true)
 		
 		-- ##### Load / Save labels ###################################################################################
-		local label = self.window:create_label("loadout_saver_load_text", {label_x, line_y[2]}, label_size, "Load")
+		local label = self.window:create_label("loadout_saver_load_text", {label_x, line_y[2]}, label_size, nil, "Load")
 		label:set("text_alignment", middle_center)
-		local label = self.window:create_label("loadout_saver_save_text", {label_x, line_y[1]}, label_size, "Save")
+		local label = self.window:create_label("loadout_saver_save_text", {label_x, line_y[1]}, label_size, nil, "Save")
 		label:set("text_alignment", middle_center)
 		
 		-- ##### Loadout buttons ######################################################################################
@@ -415,7 +415,7 @@ mod.create_window = function(self)
 				local position = {30+(button_size[1]+border)*(i), line_y[2]}
 				
 				-- ##### Load button ##################################################################################
-				local button = self.window:create_button("loadout_saver_load" .. tostring(i), position, button_size, tostring(i), nil, {profile_name, i})
+				local button = self.window:create_button("loadout_saver_load"..tostring(i), position, button_size, nil, tostring(i), {profile_name, i})
 				button:set("on_click", function(self)
 					local lm = get_mod("LoadoutManager")
 					lm:restore_loadout(self.params[2], self.params[1])
@@ -428,7 +428,7 @@ mod.create_window = function(self)
 			local position = {30+(button_size[1]+border)*(i), line_y[1]}
 			
 			-- ##### Save button ######################################################################################
-			local button = self.window:create_button("loadout_saver_save" .. tostring(i), position, button_size, tostring(i), nil, {profile_name, i})
+			local button = self.window:create_button("loadout_saver_save"..tostring(i), position, button_size, nil, tostring(i), {profile_name, i})
 			button:set("on_click", function(self)
 				local lm = get_mod("LoadoutManager")
 				lm:save_loadout(self.params[2], self.params[1])
@@ -443,11 +443,11 @@ mod.create_window = function(self)
 		local window_position = {0, 0}
 		
 		-- ##### Window ###############################################################################################
-		self.window = ui.create_window("loadout_saver_window", window_position, window_size)
+		self.window = ui:create_window("loadout_saver_window", window_position, window_size)
 		self.window:set("transparent", true)
 		
 		-- ##### Load / Save labels ###################################################################################
-		local label = self.window:create_label("loadout_saver_load_text", {0, screen_h*0.42}, {screen_w, 24}, "Change Loadouts")
+		local label = self.window:create_label("loadout_saver_load_text", {0, screen_h*0.42}, {screen_w, 24}, nil, "Change Loadouts")
 		label:set("text_alignment", middle_center)
 
 		-- ##### Loadout buttons ######################################################################################
@@ -476,15 +476,14 @@ mod.create_window = function(self)
 							end
 							
 							-- ##### Load button ######################################################################
-							local button = self.window:create_button("loadout_saver_load" .. tostring(j), position,
-								button_size, tostring(j), nil, nil, {hero_name, j})
+							local button = self.window:create_button("loadout_saver_load"..tostring(j), position, button_size, nil, tostring(j), {hero_name, j})
 							button:set("on_click", function(self)
 								local lm = get_mod("LoadoutManager")
 								lm:restore_background_loadout(self.params[1], self.params[2])
 							end)
 							button:set("on_hover", function(self)
 								local lm = get_mod("LoadoutManager")
-								lm.loadout_tooltip(self.params)
+								lm:loadout_tooltip(self.params)
 							end)
 						end
 					end
