@@ -38,7 +38,12 @@ end
 --]]
 mod.create_screen_ui = function(self)
 	local world = Managers.world:world(self.default_world)
-	self.gui = World.create_screen_gui(world, "immediate", "material", "materials/fonts/gw_fonts")
+	if VT1 then
+		self.gui = World.create_screen_gui(world, "immediate", "material", "materials/fonts/gw_fonts", 
+			"material", "materials/ui/ui_1080p_ingame_common")
+	else
+		self.gui = World.create_screen_gui(world, "immediate", "material", "materials/fonts/gw_fonts")
+	end
 end
 --[[
 	Destroy screen gui
