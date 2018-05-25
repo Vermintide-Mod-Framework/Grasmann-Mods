@@ -121,28 +121,22 @@ end
 	Hooks
 --]]
 
--- mod:hook("SimpleInventoryExtension._spawn_resynced_loadout", function(func, self, equipment_to_spawn)
-	-- local player = Managers.player:local_player()
-	-- if mod.profile_index and mod.profile_index ~= player:profile_index() then
-		-- return
-	-- end
-	-- if mod.career_index and mod.career_index ~= player:career_index() then
-		-- return
-	-- end
-	-- func(self, equipment_to_spawn)
--- end)
-
--- mod:hook("SimpleInventoryExtension._update_resync_loadout", function(func, self)
-	-- local player = Managers.player:local_player()
-	-- if mod.profile_index and mod.profile_index ~= player:profile_index() then
-		-- return
-	-- end
-	-- if mod.career_index and mod.career_index ~= player:career_index() then
-		-- return
-	-- end
-	-- func(self)
--- end)
-
+--[[
+	Prevent equipment to be destroyed and spawned when not active character
+--]]
+mod:hook("SimpleInventoryExtension.create_equipment_in_slot", function(func, self, slot_id, backend_id)
+	local player = Managers.player:local_player()
+	if mod.profile_index and mod.profile_index ~= player:profile_index() then
+		return
+	end
+	if mod.career_index and mod.career_index ~= player:career_index() then
+		return
+	end
+	func(self, slot_id, backend_id)
+end)
+--[[
+	Get items for selected character
+--]]
 mod:hook("ItemGridUI._get_items_by_filter", function(func, self, item_filter)
 	local player = Managers.player:local_player()
 	
@@ -176,42 +170,27 @@ mod:hook("ItemGridUI._get_items_by_filter", function(func, self, item_filter)
 	
 	return items
 end)
-
--- mod:hook("Items.get_filtered_items", function(func, self, filter, params)
-	-- local items = func(self, filter, params)
-	-- mod:dump(params, "params", 1)
-	-- return items
--- end)
-
-mod:hook("HeroWindowInventory.on_enter", function(func, self, params, offset)
-	-- Orig function
-	func(self, params, offset)
-	
-	mod:echo("lol")
-end)
-
-mod:hook("HeroWindowLoadoutInventory.on_enter", function(func, self, params, offset)
-	-- Orig function
-	func(self, params, offset)
-	
-	--mod:echo(tostring(params.profile_index))
-	--mod:dump(params, "params", 1)
-end)
-
+--[[
+	Create window when opening hero view
+--]]
 mod:hook("HeroView.on_enter", function(func, self, menu_state_name, menu_sub_state_name)
 	-- Orig function
 	func(self, menu_state_name, menu_sub_state_name)
 	-- Reload window
 	mod:reload_window()
 end)
-
+--[[
+	Create window when unsuspending hero view
+--]]
 mod:hook("HeroView.unsuspend", function(func, self)
 	-- Orig function
 	func(self)
 	-- Reload window
 	mod:reload_window()
 end)
-
+--[[
+	Destroy window when closing hero view
+--]]
 mod:hook("HeroView.on_exit", function(func, self)
 	-- Reset profile function
 	if mod.orig_profile_by_peer then
