@@ -1,0 +1,12 @@
+mod =  [
+	"ui_improvements"
+]
+
+package = [
+	"resource_packages/ui_improvements/ui_improvements"
+]
+
+lua = [
+	"localization/*"
+	"scripts/mods/ui_improvements/*"
+]
