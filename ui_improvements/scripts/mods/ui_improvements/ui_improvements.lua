@@ -23,6 +23,10 @@ local mod_data = {
 
 mod:initialize_data(mod_data)
 
+-- Custom theme for highlighting
+local simple_ui = get_mod("SimpleUI")
+mod.custom_theme = table.clone(simple_ui.themes.default.default)
+mod.custom_theme.color_text = mod.custom_theme.color_text_clicked
 
 mod.character_window = nil
 mod.career_window = nil
@@ -101,6 +105,15 @@ mod.create_character_window = function(self)
 					mod.career_window:destroy()
 					mod.career_window = nil
 					mod:create_career_window(index)
+					-- mod:reload_windows()
+					
+					for _, button in pairs(mod.character_window.widgets) do
+						if button.params == index then
+							button.theme = mod.custom_theme
+						else
+							button:refresh_theme()
+						end
+					end
 					
 				end)
 				
@@ -110,28 +123,45 @@ mod.create_character_window = function(self)
 		local screen_width = RESOLUTION_LOOKUP.res_w
 		local screen_height = RESOLUTION_LOOKUP.res_h
 		local window_size = {705, 40}
+		local player = Managers.player:local_player()
+		local profile_index = player:profile_index()
 		
 		self.character_window = simple_ui:create_window("ui_improvements_character", {120, screen_height - window_size[2] - 5}, window_size)
 		
 		local pos_x = 5
 		local button = self.character_window:create_button("ui_improvements_character_soldier", {pos_x, 5}, {130, 30}, nil, "Markus Kruber", 5)
 		button.on_click = feedback
+		if 5 == profile_index then
+			button.theme = mod.custom_theme
+		end
 		pos_x = pos_x + 130 + 5
 		
 		local button = self.character_window:create_button("ui_improvements_character_dwarf", {pos_x, 5}, {155, 30}, nil, "Bardin Goreksson", 3)
 		button.on_click = feedback
+		if 3 == profile_index then
+			button.theme = mod.custom_theme
+		end
 		pos_x = pos_x + 155 + 5
 		
 		local button = self.character_window:create_button("ui_improvements_character_waywatcher", {pos_x, 5}, {80, 30}, nil, "Kerillian", 4)
 		button.on_click = feedback
+		if 4 == profile_index then
+			button.theme = mod.custom_theme
+		end
 		pos_x = pos_x + 80 + 5
 		
 		local button = self.character_window:create_button("ui_improvements_character_witchhunter", {pos_x, 5}, {145, 30}, nil, "Victor Saltzpyre", 1)
 		button.on_click = feedback
+		if 1 == profile_index then
+			button.theme = mod.custom_theme
+		end
 		pos_x = pos_x + 145 + 5
 		
 		local button = self.character_window:create_button("ui_improvements_character_wizard", {pos_x, 5}, {165, 30}, nil, "Sienna Fuegonasus", 2)
 		button.on_click = feedback
+		if 2 == profile_index then
+			button.theme = mod.custom_theme
+		end
 		pos_x = pos_x + 165 + 5
 		
 		self.character_window:init()
@@ -269,8 +299,8 @@ mod.create_career_window = function(self, profile_index)
 						mod.orig_profile_by_peer = ingame_ui_context.profile_synchronizer.profile_by_peer
 					end
 					
-					local profile_settings = SPProfiles[index]
-					local display_name = profile_settings.display_name
+					-- local profile_settings = SPProfiles[index]
+					-- local display_name = profile_settings.display_name
 					-- local hero_attributes = Managers.backend:get_interface("hero_attributes")
 					local career_index = self.params[2] --hero_attributes:get(display_name, "career")
 					mod.career_index = career_index
@@ -306,6 +336,7 @@ mod.create_career_window = function(self, profile_index)
 					mod.career_window:destroy()
 					mod.career_window = nil
 					mod:create_career_window(index)
+					-- mod:reload_windows()
 					
 				end)
 				
@@ -316,6 +347,13 @@ mod.create_career_window = function(self, profile_index)
 		local screen_height = RESOLUTION_LOOKUP.res_h
 		local window_size = {500, 40}
 		
+		-- local profile_settings = SPProfiles[index]
+		-- local display_name = profile_settings.display_name
+		-- local hero_attributes = Managers.backend:get_interface("hero_attributes")
+		-- local career_index = hero_attributes:get(display_name, "career")
+		local player = Managers.player:local_player()
+		local career_index = player:career_index()
+		
 		self.career_window = simple_ui:create_window("ui_improvements_career", {120, screen_height - window_size[2] - 45}, window_size)
 		
 		local careers = self.careers[profile_index]
@@ -324,14 +362,19 @@ mod.create_career_window = function(self, profile_index)
 			
 			local pos_x = 5
 			local window_width = 5
-			
+			local index = 1
 			for _, career in pairs(careers) do
 				
 				--self:echo(career.name)
 				local button = self.career_window:create_button("ui_improvements_career_"..career.name, {pos_x, 5}, {career.button_width, 30}, nil, career.name, {career.character_index, career.career_index})
 				button.on_click = feedback
+				if index == career_index then
+					button.theme = mod.custom_theme
+				end
+				
 				pos_x = pos_x + career.button_width + 5
 				window_width = window_width + career.button_width + 5
+				index = index + 1
 				
 			end
 			
