@@ -1229,17 +1229,17 @@ mod.definitions = {
 				bw_adept = {
 					node = default_node,
 					position = {-0.05, -0.16, -0.05},
-					rotation = {0, 0, 170},
+					rotation = {0, 90, 170},
 				},
 				bw_scholar = {
 					node = default_node,
 					position = {-0.05, -0.16, -0.05},
-					rotation = {0, 0, 170},
+					rotation = {0, 90, 170},
 				},
 				bw_unchained = {
 					node = default_node,
 					position = {-0.05, -0.16, -0.05},
-					rotation = {0, 0, 170},
+					rotation = {0, 90, 170},
 				},
 			},
 		},
@@ -1273,17 +1273,17 @@ mod.definitions = {
 				wh_captain = {
 					node = default_node,
 					position = {-0.05, -0.16, -0.05},
-					rotation = {0, 0, 170},
+					rotation = {0, 90, 170},
 				},
 				wh_bountyhunter = {
 					node = default_node,
 					position = {-0.05, -0.16, -0.05},
-					rotation = {0, 0, 170},
+					rotation = {0, 90, 170},
 				},
 				wh_zealot = {
 					node = default_node,
 					position = {0.05, -0.17, -0.05},
-					rotation = {0, 0, 170},
+					rotation = {0, 90, 170},
 				},
 			},
 		},
