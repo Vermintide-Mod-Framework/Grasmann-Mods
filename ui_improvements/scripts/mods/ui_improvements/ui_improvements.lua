@@ -40,6 +40,8 @@ mod.actual_career_index = nil
 mod.career_index = nil
 mod.orig_profile_by_peer = nil
 mod.orig_get_career = nil
+mod.sub_screen = "equipment"
+mod.reload_loot = false
 mod.characters = {
 	{
 		name = "Victor Saltzpyre",
@@ -169,6 +171,12 @@ mod.careers = {
 		},
 	},
 }
+mod.window_settings = {
+	loadout = "equipment",
+	talents = "talents",
+	crafting = "forge",
+	cosmetics_loadout = "cosmetics",
+}
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
 -- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
@@ -236,7 +244,8 @@ mod.create_character_window = function(self)
 				end
 				
 				-- Reopen view
-				hero_view:_change_screen_by_index(1)
+				--hero_view:_change_screen_by_index(mod.window_index)
+				hero_view:_change_screen_by_name("overview", mod.sub_screen)
 				
 				-- Reload career window
 				mod.career_window:destroy()
@@ -332,7 +341,8 @@ mod.create_career_window = function(self, profile_index)
 				end
 
 				-- Reopen view
-				hero_view:_change_screen_by_index(1)
+				--hero_view:_change_screen_by_index(mod.window_index)
+				hero_view:_change_screen_by_name("overview", mod.sub_screen)
 				
 				-- Reload career window
 				mod.career_window:destroy()
@@ -418,6 +428,18 @@ end
 -- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
+
+
+mod:hook("HeroViewStateLoot.on_enter", function(func, self, params, optional_ignore_item_population)
+	func(self, params, optional_ignore_item_population)
+	mod:destroy_windows()
+end)
+
+mod:hook("HeroViewStateOverview._change_window", function(func, self, window_index, window_name)
+	func(self, window_index, window_name)
+	mod.sub_screen = mod.window_settings[window_name] or mod.sub_screen
+end)
+
 --[[
 	Render correct item tooltips
 --]]
