@@ -1483,6 +1483,7 @@ mod:hook("PlayerUnitFirstPerson.current_position", function(func, self, ...)
 
 	-- ##### Get data #############################################################################################
 	local position = Unit.local_position(self.first_person_unit, 0)
+	--local position = func(self, ...)
 	local current_rot = Unit.local_rotation(self.first_person_unit, 0)
 
 	-- ##### Counter offset #######################################################################################
