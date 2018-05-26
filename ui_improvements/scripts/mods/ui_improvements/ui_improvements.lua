@@ -418,6 +418,7 @@ end
 	Hooks
 --]]
 
+
 --[[
 	Prevent equipment to be destroyed and spawned when not active character
 --]]
@@ -437,7 +438,7 @@ end)
 mod:hook("ItemGridUI._get_items_by_filter", function(func, self, item_filter)
 	local player = Managers.player:local_player()
 	
-	local orig_profile_index, orig_career_index = nil
+	local orig_profile_index, orig_career_index, orig_can_wield = nil
 	
 	if mod.profile_index then
 		orig_profile_index = player.profile_index
