@@ -27,7 +27,9 @@ mod:initialize_data(mod_data)
 mod.character_window = nil
 mod.career_window = nil
 
+mod.actual_profile_index = nil
 mod.profile_index = nil
+mod.actual_career_index = nil
 mod.career_index = nil
 mod.orig_profile_by_peer = nil
 mod.orig_get_career = nil
@@ -72,12 +74,24 @@ mod.create_character_window = function(self)
 					local profile_settings = SPProfiles[index]
 					local display_name = profile_settings.display_name
 					local hero_attributes = Managers.backend:get_interface("hero_attributes")
-					local career_index = hero_attributes:get(display_name, "career")
+					local career_index = not mod.orig_get_career and hero_attributes:get(display_name, "career") or mod.orig_get_career(hero_attributes, display_name, "career")
 					mod.career_index = career_index
 					
 					-- Overwrite profile function
 					ingame_ui_context.profile_synchronizer.profile_by_peer = function(self, peer_id, local_player_id)
 						return index
+					end
+					
+					if not mod.orig_get_career then
+						mod.orig_get_career = Managers.backend._interfaces["hero_attributes"].get
+					end
+					
+					-- Overwrite career function
+					Managers.backend._interfaces["hero_attributes"].get = function(self, hero_name, attribute_name)
+						if attribute_name == "career" then
+							return career_index
+						end
+						return mod.orig_get_career(self, hero_name, attribute_name)
 					end
 					
 					-- Reopen view
@@ -255,8 +269,8 @@ mod.create_career_window = function(self, profile_index)
 						mod.orig_profile_by_peer = ingame_ui_context.profile_synchronizer.profile_by_peer
 					end
 					
-					-- local profile_settings = SPProfiles[index]
-					-- local display_name = profile_settings.display_name
+					local profile_settings = SPProfiles[index]
+					local display_name = profile_settings.display_name
 					-- local hero_attributes = Managers.backend:get_interface("hero_attributes")
 					local career_index = self.params[2] --hero_attributes:get(display_name, "career")
 					mod.career_index = career_index
@@ -366,10 +380,10 @@ end
 --]]
 mod:hook("SimpleInventoryExtension.create_equipment_in_slot", function(func, self, slot_id, backend_id)
 	local player = Managers.player:local_player()
-	if mod.profile_index and mod.profile_index ~= player:profile_index() then
+	if mod.profile_index and mod.profile_index ~= mod.actual_profile_index then
 		return
 	end
-	if mod.career_index and mod.career_index ~= player:career_index() then
+	if mod.career_index and mod.career_index ~= mod.actual_career_index then
 		return
 	end
 	func(self, slot_id, backend_id)
@@ -416,6 +430,10 @@ end)
 mod:hook("HeroView.on_enter", function(func, self, menu_state_name, menu_sub_state_name)
 	-- Orig function
 	func(self, menu_state_name, menu_sub_state_name)
+	-- Set values
+	local player = Managers.player:local_player()
+	mod.actual_profile_index = player:profile_index()
+	mod.actual_career_index = player:career_index()
 	-- Reload window
 	mod:reload_windows()
 end)
@@ -438,7 +456,7 @@ mod:hook("HeroView.on_exit", function(func, self)
 		mod.orig_profile_by_peer = nil
 	end
 	-- Reset career function
-	if not mod.orig_get_career then
+	if mod.orig_get_career then
 		Managers.backend._interfaces["hero_attributes"].get = mod.orig_get_career
 		mod.orig_get_career = nil
 	end
