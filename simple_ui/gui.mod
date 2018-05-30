@@ -1,16 +1,15 @@
-local directory_name = "gui"
-local file_name = "gui"
-
-print("'" ..file_name.. "' Mod loading...")
-
 return {
 	run = function()
-		local mod = new_mod("BasicUI")
-		mod:initialize("scripts/mods/basic_gui/basic_gui")
-		local mod = new_mod("SimpleUI")
-		mod:initialize("scripts/mods/gui/gui")
+		local mod_resources = {
+			mod_script       = "scripts/mods/basic_gui/basic_gui",
+		}
+		new_mod("BasicUI", mod_resources)
+		local mod_resources = {
+			mod_script       = "scripts/mods/gui/gui",
+		}
+		new_mod("SimpleUI", mod_resources)
 	end,
 	packages = {
-		"resource_packages/" .. directory_name .. "/" .. file_name
+		"resource_packages/gui/gui"
 	},
 }
