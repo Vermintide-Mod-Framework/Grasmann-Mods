@@ -7,7 +7,7 @@ package = [
 ]
 
 lua = [
-	"scripts/mods/show_damage/show_damage"
+	"scripts/mods/show_damage/*"
 ]
 
 material = [
