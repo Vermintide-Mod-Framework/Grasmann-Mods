@@ -7,5 +7,5 @@ package = [
 ]
 
 lua = [
-	"scripts/mods/chat_block/chat_block"
+	"scripts/mods/chat_block/*"
 ]
