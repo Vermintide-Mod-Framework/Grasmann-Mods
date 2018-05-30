@@ -7,5 +7,5 @@ package = [
 ]
 
 lua = [
-	"scripts/mods/all_ready/all_ready"
+	"scripts/mods/all_ready/*"
 ]
