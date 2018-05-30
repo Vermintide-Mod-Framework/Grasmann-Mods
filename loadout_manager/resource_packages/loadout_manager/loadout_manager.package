@@ -7,5 +7,5 @@ package = [
 ]
 
 lua = [
-	"scripts/mods/loadout_manager/loadout_manager"
+	"scripts/mods/loadout_manager/*"
 ]
