@@ -7,5 +7,5 @@ package = [
 ]
 
 lua = [
-	"scripts/mods/heat_indicator/heat_indicator"
+	"scripts/mods/heat_indicator/*"
 ]
