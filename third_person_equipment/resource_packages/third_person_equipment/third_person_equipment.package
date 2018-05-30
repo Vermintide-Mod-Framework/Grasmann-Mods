@@ -7,6 +7,5 @@ package = [
 ]
 
 lua = [
-	"scripts/mods/third_person_equipment/third_person_equipment_def"
-	"scripts/mods/third_person_equipment/third_person_equipment"
+	"scripts/mods/third_person_equipment/*"
 ]

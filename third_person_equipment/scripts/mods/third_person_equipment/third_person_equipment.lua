@@ -1,9 +1,9 @@
 local mod = get_mod("ThirdPersonEquipment")
---[[ 
+--[[
 	Third person equipment
 		- Shows equipped items on characters
 		- Works with player and bots
-	
+
 	Author: grasmann
 	Version: 2.0.0
 --]]
@@ -11,98 +11,6 @@ local mod = get_mod("ThirdPersonEquipment")
 -- Global to keep track of spawned units
 third_person_equipment_spawned_items = third_person_equipment_spawned_items or {}
 mod:dofile("scripts/mods/third_person_equipment/third_person_equipment_def")
-
--- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
--- ##### ██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██║████╗  ██║██╔════╝ ██╔════╝ #############################################
--- ##### ███████╗█████╗     ██║      ██║   ██║██╔██╗ ██║██║  ███╗███████╗ #############################################
--- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
--- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
--- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
-local mod_data = {}
-mod_data.name = "Third Person Equipment" -- Readable mod name
-mod_data.description = "Shows equipped items on characters." -- Readable mod description
-mod_data.is_togglable = true -- If the mod can be enabled/disabled
-mod_data.is_mutator = false -- If the mod is mutator
-mod_data.options_widgets = {
-	{
-		["setting_name"] = "dwarf_weapon_position",
-		["widget_type"] = "dropdown",
-		["text"] = "Dwarf Weapon Position",
-		["tooltip"] =  VT1 and "Dwarf Weapon Position\n" ..
-			"Choose the position of the dwarf weapons.\n\n" ..
-			"-- Backpack --\n" ..
-			"Weapons will be placed on the backpack.\n\n" ..
-			"-- Back --\n" ..
-			"Weapons will be placed on the back.",
-		["options"] = VT1 and {
-			{text = "Backpack", value = 1},
-			{text = "Back", value = 2},
-		} or {
-			{text = "Back", value = 2},
-		},
-		["default_value"] = VT1 and 1 or 2,
-	},
-	{
-		["setting_name"] = "dwarf_onehand_weapon_position",
-		["widget_type"] = "dropdown",
-		["text"] = "Dwarf One-Handed Weapon Position",
-		["tooltip"] =  "Dwarf One-Handed Weapon Position\n" ..
-			"Choose the position of the one-handed dwarf weapons.\n\n" ..
-			"-- Default --\n" ..
-			"Uses dwarf weapon position.\n\n" ..
-			"-- Belt --\n" ..
-			"Weapons will be placed on the belt.",
-		["options"] = {
-			{text = "Dwarf Weapon Position", value = 1},
-			{text = "Belt", value = 2},
-			{text = "Back", value = 3},
-		},
-		["default_value"] = 1,
-	},
-	{
-		["setting_name"] = "waywatcher_dualweapon_position",
-		["widget_type"] = "dropdown",
-		["text"] = "Waywatcher Dual Weapon Position",
-		["tooltip"] =  "Waywatcher Dual Weapon Position\n" ..
-			"Choose the position of the waywatcher dual weapons.\n\n" ..
-			"-- Belt --\n" ..
-			"Weapons will be placed on the belt.\n\n" ..
-			"-- Back --\n" ..
-			"Weapons will be placed on the back.",
-		["options"] = {
-			{text = "Belt", value = 1},
-			{text = "Back", value = 2},
-		},
-		["default_value"] = 1,
-	},
-	{
-		["setting_name"] = "onehand_weapon_position",
-		["widget_type"] = "dropdown",
-		["text"] = "One-Handed Weapon Position",
-		["tooltip"] =  "One-Handed Weapon Position\n" ..
-			"Choose the position of the one-handed weapons.\n\n" ..
-			"-- Belt --\n" ..
-			"Weapons will be placed on the belt.\n\n" ..
-			"-- Back --\n" ..
-			"Weapons will be placed on the back.",
-		["options"] = {
-			{text = "Belt", value = 1},
-			{text = "Back", value = 2},
-		},
-		["default_value"] = 1,
-	},
-	{
-		["setting_name"] = "downscale_big_weapons",
-		["widget_type"] = "numeric",
-		["text"] = "Downscale Big Weapons",
-		["unit_text"] = "%",
-		["tooltip"] =  "Downscale Big Weapons\n" ..
-			"Downscale the biggest weapons in the game.\n\n" ..
-			"Affects: Red staffs, volley crossbow, wh crossbow",
-		["range"] = {50, 100},
-		["default_value"] = 75,
-	},
-}
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
 -- ##### ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗ ############################################################################
@@ -174,27 +82,27 @@ mod.spawn = function(self, package_name, unit, item_setting, item_data)
 	local s_unit = nil
 	local world = Managers.world:world("level_world")
 	local node = Unit.node(unit, item_setting.node)
-	
+
 	s_unit = World.spawn_unit(world, package_name)
 	World.link_unit(world, s_unit, unit, node)
 	third_person_equipment_spawned_items[s_unit] = s_unit
-	
+
 	local i_pos = item_setting.position
 	local pos_offset = i_pos ~= nil and Vector3(i_pos[1], i_pos[2], i_pos[3]) or Vector3(0,0,0)
 	Unit.set_local_position(s_unit, 0, pos_offset)
-	
+
 	local i_rot = item_setting.rotation
 	local rot_offset = i_rot ~= nil and Vector3(i_rot[1], i_rot[2], i_rot[3]) or Vector3(0,0,0)
 	local rotation = Quaternion.from_euler_angles_xyz(rot_offset[1], rot_offset[2], rot_offset[3])
-	Unit.set_local_rotation(s_unit, 0, rotation) 
-	
+	Unit.set_local_rotation(s_unit, 0, rotation)
+
 	-- Hardcoded scaling
 	local grim = "units/weapons/player/wpn_grimoire_01/wpn_grimoire_01_3p"
 	local tome = "units/weapons/player/wpn_side_objective_tome/wpn_side_objective_tome_01_3p"
 	if package_name == grim or package_name == tome then
 		Unit.set_local_scale(s_unit, 0, Vector3(0.75, 0.75, 0.75))
 	end
-	
+
 	-- Option scaling
 	local scaling = self:get("downscale_big_weapons") / 100
 	if table.contains(self.definitions.big_weapons, tostring(item_data.item_type)) then
@@ -210,10 +118,10 @@ end
 mod.get_item_setting = function(self, unit, slot_name, item_data, left)
 	local def = self.definitions
 	local item_setting = nil
-	
+
 	-- ####### Fixes and options #######
 	if slot_name == "slot_melee" or slot_name == "slot_ranged" then
-		
+
 		-- Dwarf
 		if table.contains(def.dwarf_weapons, item_data.item_type) then
 			local dwarf_weapon_position = self:get("dwarf_weapon_position")
@@ -233,7 +141,7 @@ mod.get_item_setting = function(self, unit, slot_name, item_data, left)
 				end
 			end
 		end
-		
+
 		-- One-Handed
 		if table.contains(def.one_handed, item_data.item_type) then
 			local dwarf_one_handed_weapon_position = self:get("dwarf_onehand_weapon_position")
@@ -257,7 +165,7 @@ mod.get_item_setting = function(self, unit, slot_name, item_data, left)
 				end
 			end
 		end
-		
+
 		-- Waywatcher
 		if table.contains(def.waywatcher_dual, item_data.item_type) then
 			local dwarf_weapon_position = self:get("waywatcher_dualweapon_position")
@@ -277,14 +185,14 @@ mod.get_item_setting = function(self, unit, slot_name, item_data, left)
 				end
 			end
 		end
-		
+
 		-- Default
 		if not left then
 			item_setting = item_setting or def[item_data.item_type].right
 		else
 			item_setting = item_setting or def[item_data.item_type].left
 		end
-		
+
 	else
 		local profile_name = self.current.profile[unit] or nil
 		if profile_name then
@@ -298,14 +206,14 @@ mod.get_item_setting = function(self, unit, slot_name, item_data, left)
 		end
 	end
 	--end)
-	
+
 	-- Default values
 	if not left then
 		item_setting = item_setting or def.default.right
 	else
 		item_setting = item_setting or def.default.left
 	end
-	
+
 	return item_setting
 end
 --[[
@@ -314,24 +222,24 @@ end
 mod.add_item = function(self, unit, slot_name, item_data)
 	local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 	local equipment = inventory_extension.equipment(inventory_extension)
-	
+
 	local career_name = nil
 	if not VT1 then
 		local career_extension = ScriptUnit.extension(unit, "career_system")
 		career_name = career_extension._career_data.name
 	end
-	
+
 	if self.definitions[item_data.item_type] ~= nil then
 		local right, left, right_pack, left_pack = nil
 		if item_data.right_hand_unit ~= nil then
 			local item_setting = self:get_item_setting(unit, slot_name, item_data)
-			
+
 			if not VT1 and career_name then
 				item_setting = item_setting[career_name] or item_setting
 			end
-			
+
 			if item_setting.node ~= nil then
-				
+
 				if VT1 then
 					right_pack = item_data.right_hand_unit.."_3p"
 				else
@@ -339,7 +247,7 @@ mod.add_item = function(self, unit, slot_name, item_data)
 						WeaponSkins.skins[equipment.slots[slot_name].skin].right_hand_unit.."_3p"
 					right_pack = right_pack or item_data.right_hand_unit.."_3p"
 				end
-				
+
 				if right_pack then
 					right = self:spawn(right_pack, unit, item_setting, item_data)
 				else
@@ -355,7 +263,7 @@ mod.add_item = function(self, unit, slot_name, item_data)
 				item_setting = item_setting[career_name] or item_setting
 			end
 			if item_setting.node ~= nil then
-				
+
 				if VT1 then
 					left_pack = item_data.left_hand_unit.."_3p"
 				else
@@ -373,7 +281,7 @@ mod.add_item = function(self, unit, slot_name, item_data)
 				--self:echo(slot_name)
 			end
 		end
-		
+
 		self.current.equipment[unit] = self.current.equipment[unit] or {}
 		self.current.equipment[unit][#self.current.equipment[unit]+1] = {
 			right = right,
@@ -477,7 +385,7 @@ mod.create_items_if_needed = function(self)
 			if player then
 				local player_unit = player.player_unit
 				if player_unit ~= nil then
-				
+
 					local profile_synchronizer = Managers.state.network.profile_synchronizer
 					local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
 					if profile_index ~= nil then
@@ -555,7 +463,7 @@ mod:hook("PackageManager.unload", function(func, self, package_name, ...)
 			if i_unit.left_pack and i_unit.left_pack == package_name then mod:delete_units(unit) end
 		end
 	end
-	
+
 	return func(self, package_name, ...)
 end)
 --[[
