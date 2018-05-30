@@ -7,5 +7,5 @@ package = [
 ]
 
 lua = [
-	"scripts/mods/healthbars/healthbars"
+	"scripts/mods/healthbars/*"
 ]
