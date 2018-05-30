@@ -1,1107 +1,15 @@
 local mod = get_mod("ThirdPerson")
---[[ 
+--[[
 	Third person
 		- Lets you play the game in third person
 		- Does the necessary positioning of the camera
 		- Applies different fixes to certain situations
 	Issues:
 		- When camera collides backwards with map aiming inaccurate
-	
+
 	Author: grasmann
 	Version: 2.0.0
 --]]
-
--- ##### ███████╗███████╗████████╗████████╗██╗███╗   ██╗ ██████╗ ███████╗ #############################################
--- ##### ██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝██║████╗  ██║██╔════╝ ██╔════╝ #############################################
--- ##### ███████╗█████╗     ██║      ██║   ██║██╔██╗ ██║██║  ███╗███████╗ #############################################
--- ##### ╚════██║██╔══╝     ██║      ██║   ██║██║╚██╗██║██║   ██║╚════██║ #############################################
--- ##### ███████║███████╗   ██║      ██║   ██║██║ ╚████║╚██████╔╝███████║ #############################################
--- ##### ╚══════╝╚══════╝   ╚═╝      ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ #############################################
-local mod_data = {}
-mod_data.name = "Third Person" -- Readable mod name
-mod_data.description = "Lets you play the game in third person." -- Readable mod description
-mod_data.is_togglable = true -- If the mod can be enabled/disabled
-mod_data.is_mutator = false -- If the mod is mutator
-mod_data.options_widgets = {
-	{
-		["setting_name"] = "mode",
-		["widget_type"] = "dropdown",
-		["text"] = "Mode",
-		["tooltip"] = "Mode\n\n" ..
-			"-- THIRD PERSON --\nCamera is always in third person.\n\n" ..
-			"-- AUTOMATIC --\nSetup camera settings for specific situations.",
-		["options"] = {
-			{text = "Third Person", value = "third_person"}, --1
-			{text = "Automatic", value = "automatic"}, --2
-		},
-		["default_value"] = "third_person",
-		["sub_widgets"] = {
-			-- Automatic
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_ranged",
-				["widget_type"] = "checkbox",
-				["text"] = "Ranged Weapon",
-				["tooltip"] = "Ranged Weapon\n" ..
-					"Camera settings when holding a ranged weapon.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_ranged_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_ranged_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_ranged_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_ranged_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_ranged_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_aim",
-				["widget_type"] = "checkbox",
-				["text"] = "Aiming",
-				["tooltip"] = "Aiming\n" ..
-					"Camera settings for aiming with a ranged weapon.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_aim_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_aim_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_aim_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_aim_zoom",
-								["widget_type"] = "dropdown",
-								["text"] = "Zoom",
-								["tooltip"] = "Zoom\n" ..
-									"Change the zoom strength.",
-								["options"] = {
-									{text = "Default", value = 1},
-									{text = "Medium", value = 2},
-									{text = "Low", value = 3},
-									{text = "Off", value = 4},
-								},
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_aim_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_aim_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_reload",
-				["widget_type"] = "checkbox",
-				["text"] = "Reloading",
-				["tooltip"] = "Reloading\n" ..
-					"Camera settings for reloading a ranged weapon.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_reload_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_reload_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_reload_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_reload_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_reload_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_vent",
-				["widget_type"] = "checkbox",
-				["text"] = "Venting Overcharge",
-				["tooltip"] = "Venting Overcharge\n" ..
-					"Camera settings when venting overcharge.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_vent_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_vent_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_vent_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_vent_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_vent_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_melee",
-				["widget_type"] = "checkbox",
-				["text"] = "Melee Weapon",
-				["tooltip"] = "Melee Weapon\n" ..
-					"Camera settings with a melee weapon.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_melee_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_melee_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_melee_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_melee_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_melee_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_block",
-				["widget_type"] = "checkbox",
-				["text"] = "Blocking",
-				["tooltip"] = "Blocking\n" ..
-					"Camera settings for blocking with a melee weapon.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_block_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_block_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_block_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_block_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_block_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.5,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_push",
-				["widget_type"] = "checkbox",
-				["text"] = "Pushing",
-				["tooltip"] = "Pushing\n" ..
-					"Camera settings for pushing with a melee weapon.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_push_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_push_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_push_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_push_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_push_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_stunned",
-				["widget_type"] = "checkbox",
-				["text"] = "Stunned",
-				["tooltip"] = "Stunned\n" ..
-					"Camera settings when stunned after was broken.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_stunned_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_stunned_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_stunned_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_stunned_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_stunned_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_potion",
-				["widget_type"] = "checkbox",
-				["text"] = "Holding Potion",
-				["tooltip"] = "Holding Potion\n" ..
-					"Camera settings when holding a potion.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_potion_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_potion_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_potion_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_potion_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_potion_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_healthkit",
-				["widget_type"] = "checkbox",
-				["text"] = "Holding Healing Item",
-				["tooltip"] = "Holding Healing Item\n" ..
-					"Camera settings when holding a healing item.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_healthkit_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_healthkit_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_healthkit_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_healthkit_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_healthkit_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_grenade",
-				["widget_type"] = "checkbox",
-				["text"] = "Holding Grenades",
-				["tooltip"] = "Holding Grenades\n" ..
-					"Camera settings when holding a grenade.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_grenade_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_grenade_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_grenade_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_grenade_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_grenade_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {2},
-				["setting_name"] = "automatic_level_event",
-				["widget_type"] = "checkbox",
-				["text"] = "Carrying Event Item",
-				["tooltip"] = "Carrying Event Item\n" ..
-					"Camera settings when carrying objective items.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "automatic_level_event_mode",
-						["widget_type"] = "dropdown",
-						["text"] = "Mode",
-						["tooltip"] = "Mode\n" ..
-							"Camera mode to be used by this event.",
-						["options"] = {
-							{text = "First Peson", value = "first_person"}, --1
-							{text = "Third Person", value = "third_person"}, --2
-						},
-						["default_value"] = "first_person",
-						["sub_widgets"] = {
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_level_event_side",
-								["widget_type"] = "dropdown",
-								["text"] = "Side",
-								["tooltip"] = "Side\n" ..
-									"Choose if the camera is to left or right of your character.",
-								["options"] = {
-									{text = "Right", value = "right"},
-									{text = "Left", value = "left"},
-								},
-								["default_value"] = "right",
-							},
-							{
-								["show_widget_condition"] = {2},
-								["setting_name"] = "automatic_level_event_offset",
-								["widget_type"] = "numeric",
-								["text"] = "Offset",
-								["unit_text"] = "",
-								["tooltip"] = "Offset\n" ..
-									"Change the distance between the camera and the character.",
-								["range"] = {50, 400},
-								["default_value"] = 100,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_level_event_length",
-								["widget_type"] = "numeric",
-								["text"] = "Length",
-								["unit_text"] = "",
-								["tooltip"] = "Length\n" ..
-									"Change the length of the transition.",
-								["range"] = {0.1, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 1,
-							},
-							{
-								["show_widget_condition"] = {1, 2},
-								["setting_name"] = "automatic_level_event_delay",
-								["widget_type"] = "numeric",
-								["text"] = "Delay",
-								["unit_text"] = " sec",
-								["tooltip"] = "Delay\n" ..
-									"Change the delay of the transition.",
-								["range"] = {0, 2},
-								["decimals_number"] = 1,
-								["default_value"] = 0.1,
-							},
-						},
-					},
-				},
-			},
-			-- Normal
-			{
-				["show_widget_condition"] = {1},
-				["setting_name"] = "side",
-				["widget_type"] = "dropdown",
-				["text"] = "Side",
-				["tooltip"] = "Side\n" ..
-					"Choose if the camera is to left or right of your character.",
-				["options"] = {
-					{text = "Right", value = "right"},
-					{text = "Left", value = "left"}
-				},
-				["default_value"] = "left",
-			},
-			{
-				["show_widget_condition"] = {1},
-				["setting_name"] = "offset",
-				["widget_type"] = "numeric",
-				["text"] = "Offset",
-				["unit_text"] = "",
-				["tooltip"] = "Offset\n" ..
-					"Change the distance between the camera and the character.",
-				["range"] = {50, 400},
-				["default_value"] = 100,
-			},
-			{
-				["show_widget_condition"] = {1},
-				["setting_name"] = "zoom",
-				["widget_type"] = "dropdown",
-				["text"] = "Zoom",
-				["tooltip"] = "Zoom\n" ..
-					"Change the zoom strength.",
-				["options"] = {
-					{text = "Default", value = 1},
-					{text = "Medium", value = 2},
-					{text = "Low", value = 3},
-					{text = "Off", value = 4},
-				},
-				["default_value"] = 1,
-			},
-			{
-				["show_widget_condition"] = {1, 2},
-				["setting_name"] = "sway",
-				["widget_type"] = "checkbox",
-				["text"] = "Dynamic Swaying",
-				["tooltip"] = "Dynamic Swaying\n" ..
-					"In third person the camera smoothly sways from left to right when strafing.",
-				["default_value"] = false,
-				["sub_widgets"] = {
-					{
-						["setting_name"] = "sway_speed",
-						["widget_type"] = "numeric",
-						["text"] = "Speed",
-						["unit_text"] = "",
-						["tooltip"] = "Speed\n" ..
-							"Camera sway speed.",
-						["range"] = {0.1, 1},
-						["decimals_number"] = 1,
-						["default_value"] = 0.5,
-					},
-					{
-						["setting_name"] = "sway_normalize",
-						["widget_type"] = "checkbox",
-						["text"] = "Normalize",
-						["tooltip"] = "Normalize\n" ..
-							"Smoothly resets sway amount when not strafing.",
-						["default_value"] = false,
-					},
-					{
-						["setting_name"] = "sway_input",
-						["widget_type"] = "dropdown",
-						["text"] = "Input Type",
-						["tooltip"] = "Input Type\n" ..
-							"The type of input used for camera sway.",
-						["options"] = {
-							{text = "Keyboard", value = "keyboard"},
-							{text = "Mouse", value = "mouse"},
-						},
-						["default_value"] = "mouse",
-					},
-					{
-						["setting_name"] = "sway_avoid_character",
-						["widget_type"] = "checkbox",
-						["text"] = "Avoid Character",
-						["tooltip"] = "Avoid Character\n" ..
-							"Avoids the character being in front of the camera.",
-						["default_value"] = false,
-						["sub_widgets"] = {
-							{
-								["setting_name"] = "sway_avoid_vertical",
-								["widget_type"] = "numeric",
-								["text"] = "Vertical",
-								["unit_text"] = "",
-								["tooltip"] = "Vertical\n" ..
-									"The strength of sway applied vertically to avoid the character.",
-								["range"] = {0, 1},
-								["decimals_number"] = 1,
-								["default_value"] = 0.75,
-							},
-							{
-								["setting_name"] = "sway_avoid_backwards",
-								["widget_type"] = "numeric",
-								["text"] = "Backwards",
-								["unit_text"] = "",
-								["tooltip"] = "Backwards\n" ..
-									"The strength of sway applied backwards to avoid the character.",
-								["range"] = {0, 1},
-								["decimals_number"] = 1,
-								["default_value"] = 0.75,
-							},
-						}
-					},
-				},
-			},
-			{
-				["show_widget_condition"] = {1},
-				["setting_name"] = "toggle_side",
-				["widget_type"] = "keybind",
-				["text"] = "Toggle Side",
-				["tooltip"] = "Toggle side left / right.",
-				["default_value"] = {},
-				["action"] = "toggle_side"
-			},
-			{
-				["show_widget_condition"] = {1},
-				["setting_name"] = "switch_offset",
-				["widget_type"] = "keybind",
-				["text"] = "Switch Offset",
-				["tooltip"] = "Switch camera offset.",
-				["default_value"] = {},
-				["action"] = "switch_offset"
-			},
-			{
-				["show_widget_condition"] = {1},
-				["setting_name"] = "switch_zoom",
-				["widget_type"] = "keybind",
-				["text"] = "Switch Zoom",
-				["tooltip"] = "Switch camera zoom.",
-				["default_value"] = {},
-				["action"] = "switch_zoom"
-			},
-		},
-	},
-	{
-		["setting_name"] = "reload_stop_when_finished",
-		["widget_type"] = "checkbox",
-		["text"] = "Stop Reload When Finished",
-		["tooltip"] = "Stop Reload When Finished\n" ..
-			"Toggle stop reload when finished off or on.\n\n" ..
-			"The first- and third person animations can differ a lot.\n" ..
-			"Especially the reload animation for ranged weapons.\n" ..
-			"Stops third person reload animation after the correct time.",
-		["default_value"] = true,
-	},
-	{
-		["setting_name"] = "reload_extend_too_short",
-		["widget_type"] = "checkbox",
-		["text"] = "Extend Short Reload Animations",
-		["tooltip"] = "Extend short Animations\n" ..
-			"Toggle extend short animations off or on.\n\n" ..
-			"The first- and third person animations can differ a lot.\n" ..
-			"Especially the reload animation for ranged weapons.\n" ..
-			"Repeats third person reload animation if too short.",
-		["default_value"] = true,
-	},
-	{
-	  ["setting_name"] = "toggle_mod",
-	  ["widget_type"] = "keybind",
-	  ["text"] = "Toggle",
-	  ["tooltip"] = "Toggle third person on / off.",
-	  ["default_value"] = {},
-	  ["action"] = "toggle_mod_state"
-	},
-}
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
 -- ##### ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗ ############################################################################
@@ -1177,10 +85,10 @@ end
 	Set zoom values
 --]]
 mod.set_zoom_values = function(self, current_node)
-	
+
 	local zoom_setting = self.camera.current_view.zoom
 	if not self:is_enabled() then zoom_setting = 1 end
-	
+
 	local zoom_entry = self.zoom[current_node._name]
 	if zoom_entry and zoom_setting then
 		local zoom_fov = zoom_entry[zoom_setting] or 65
@@ -1232,13 +140,13 @@ mod.calculate_offset = function(self)
 	if #self.camera.transitions > 0 then --and Managers.player:local_player().player_unit then
 		-- Get transition
 		local tr = self.camera.transitions[#self.camera.transitions]
-		
+
 		if tr.delay then
 			if not tr.start then
 				-- Setup delay
 				tr.start = t
 				tr.wait = tr.delay
-				
+
 			elseif t > tr.start + tr.wait then
 				-- End delay
 				tr.delay = nil
@@ -1251,7 +159,7 @@ mod.calculate_offset = function(self)
 				tr.start = t
 				tr.wait = 0.2 * tr.length
 				tr.value = 0
-				
+
 			elseif t < tr.start + tr.wait then
 				-- Running transition
 				tr.value = (t - tr.start) / tr.wait
@@ -1262,7 +170,7 @@ mod.calculate_offset = function(self)
 				if tr.value > tr.view.models.value then
 					self.camera.model = tr.view.models.name
 				end
-				
+
 			elseif t > tr.start + tr.wait then
 				-- End transition
 				self.camera.current_view = tr.view
@@ -1277,27 +185,27 @@ mod.calculate_offset = function(self)
 			end
 		end
 	end
-	
+
 	local third_person = self.camera.model == "third_person"
 	if self:get("sway") and third_person then
 		if t > self.camera.sway.updated + self.camera.sway.frequency then
 			local input_manager = Managers.input
 			local input_service = input_manager:get_service("Player")
-			
+
 			-- ##### Keyboard Input ###################################################################################
 			local move_left = input_service:get("move_left")
 			local move_right = input_service:get("move_right")
-			
+
 			-- ##### Mouse Input ######################################################################################
 			local look_left = self.camera.sway.mouse.x < 0
 			local look_right = self.camera.sway.mouse.x > 0
-			
+
 			-- ##### Values ###########################################################################################
 			local view = self.camera.current_view
 			local diff = self.camera.views.third_person_left.offset[1] - self.camera.views.third_person_right.offset[1]
 			local sway_offset = self.camera.sway.offset
 			local increment = self.camera.sway.increment * self:get("sway_speed") or 0.5
-			
+
 			-- ##### Move left / right ################################################################################
 			if (self:get("sway_input") == "keyboard" and move_left > 0) or (self:get("sway_input") == "mouse" and look_left) then
 				sway_offset.x = sway_offset.x - increment
@@ -1314,24 +222,24 @@ mod.calculate_offset = function(self)
 					end
 				end
 			end
-			
+
 			-- ##### Avoid Character ##################################################################################
 			if self:get("sway_avoid_character") then
-				
+
 				-- ##### Vertical #####################################################################################
 				local max_val = 0.5 * self:get("sway_avoid_vertical") or 0.5
 				if self.camera.offset.x <= max_val or self.camera.offset.x >= -max_val then
 					sway_offset.z = math.clamp(max_val - math.abs(self.camera.offset.x), 0, max_val)
 				end
-				
+
 				-- ##### Backwards ####################################################################################
 				local max_val = 0.5 * self:get("sway_avoid_backwards") or 0.5
 				if self.camera.offset.x <= max_val or self.camera.offset.x >= -max_val then
 					sway_offset.y = math.clamp(math.abs(self.camera.offset.x) - max_val, -max_val, 0)
 				end
-				
+
 			end
-			
+
 			-- ##### Change side ######################################################################################
 			if view.offset[1] > 0 then
 				self.camera.sway.offset = {x = math.clamp(sway_offset.x, -diff, 0), y = sway_offset.y, z = sway_offset.z}
@@ -1348,13 +256,13 @@ mod.calculate_offset = function(self)
 					self.camera.sway.offset = {x = 0, y = 0, z = 0}
 				end
 			end
-			
+
 			self.camera.sway.updated = t
 		end
 	else
 		self.camera.sway.offset = {x = 0, y = 0, z = 0}
 	end
-	
+
 	-- Set camera offset
 	self.camera.offset = {x = offset[1] + self.camera.sway.offset.x, y = offset[2] + self.camera.sway.offset.y, z = offset[3] + self.camera.sway.offset.z}
 
@@ -1378,7 +286,7 @@ end
 	Transition to third person
 --]]
 mod.start_third_person = function(self)
-	
+
 	if self:is_enabled() and self:get("mode") == "third_person" then
 		local view = table.clone(self.camera.views.third_person_left)
 		if self:get("side") == "right" then
@@ -1388,7 +296,7 @@ mod.start_third_person = function(self)
 		view.zoom = self:get("zoom")
 		self.camera:transition_to(view, 0.2, 1.0)
 	end
-	
+
 end
 --[[
 	Transition to automatic
@@ -1426,7 +334,7 @@ mod.start_view = function(self, name)
 			end
 		end
 	end
-	
+
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -1451,29 +359,29 @@ end)
 	MAIN FUNCTION - Camera positioning
 --]]
 mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name, ...)
-	
+
 	-- ##### Original function ########################################################################################
-	func(self, dt, t, viewport_name, ...)			
-	
+	func(self, dt, t, viewport_name, ...)
+
 	-- ##### Get data #################################################################################################
 	local viewport = ScriptWorld.viewport(self._world, viewport_name)
 	local camera = ScriptViewport.camera(viewport)
 	local shadow_cull_camera = ScriptViewport.shadow_cull_camera(viewport)
 	local camera_nodes = self._camera_nodes[viewport_name]
 	local current_node = self._current_node(self, camera_nodes)
-	local camera_data = self._update_transition(self, viewport_name, camera_nodes, dt)	
-	
+	local camera_data = self._update_transition(self, viewport_name, camera_nodes, dt)
+
 	-- ##### Counter offset #######################################################################################
 	local offset = Vector3(mod.camera.offset.x, mod.camera.offset.y, mod.camera.offset.z)
 	camera_data.position = self._calculate_sequence_event_position(self, camera_data, offset)
-	
+
 	-- ##### Change zoom ##############################################################################################
 	mod:set_zoom_values(current_node)
-	
+
 	-- ##### Update camera ############################################################################################
 	self._update_camera_properties(self, camera, shadow_cull_camera, current_node, camera_data, viewport_name)
-	self._update_sound_listener(self, viewport_name)		
-	ScriptCamera.force_update(self._world, camera)		
+	self._update_sound_listener(self, viewport_name)
+	ScriptCamera.force_update(self._world, camera)
 
 end)
 --[[
@@ -1493,9 +401,9 @@ mod:hook("PlayerUnitFirstPerson.current_position", function(func, self, ...)
 	local x = offset.x * Quaternion.right(current_rot)
 	local y = offset.y * Quaternion.forward(current_rot)
 	local z = Vector3(0, 0, offset.z)
-	position = position + x + y + z	
+	position = position + x + y + z
 	return position
-		
+
 end)
 --[[
 	MAIN FUNCTION - Set first / third person mode - Hide first person ammo
@@ -1512,7 +420,7 @@ mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
 
 	-- ##### Original function ########################################################################################
 	func(self, unit, ...)
-	
+
 	-- ##### Update visibility of weapons #############################################################################
 	if not mod:is_first_person_blocked(self.unit) then
 		local first_person = mod.camera.model == "first_person"
@@ -1533,17 +441,17 @@ mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
 				self:set_first_person_mode(false)
 				mod.firstperson = false
 			end
-			
+
 			-- ##### Hide first person ammo ###########################################################################
 			local inventory_extension = ScriptUnit.extension(self.unit, "inventory_system")
 			local slot_data = inventory_extension.get_slot_data(inventory_extension, "slot_ranged")
 			if slot_data then
 				if slot_data.right_ammo_unit_1p then Unit.set_unit_visibility(slot_data.right_ammo_unit_1p, false) end
-				if slot_data.left_ammo_unit_1p then Unit.set_unit_visibility(slot_data.left_ammo_unit_1p, false) end	
+				if slot_data.left_ammo_unit_1p then Unit.set_unit_visibility(slot_data.left_ammo_unit_1p, false) end
 			end
 		end
 	end
-	
+
 end)
 --[[
 	Fix to apply camera offset to projectiles
@@ -1552,19 +460,19 @@ mod:hook("ActionUtils.spawn_player_projectile", function(func, owner_unit, posit
 
 	-- ##### Get data #############################################################################################
 	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	local first_person_unit = first_person_extension.get_first_person_unit(first_person_extension)	
+	local first_person_unit = first_person_extension.get_first_person_unit(first_person_extension)
 	position = Unit.local_position(first_person_unit, 0)
 	local current_rot = Unit.local_rotation(first_person_unit, 0)
 
 	-- ##### Counter offset #######################################################################################
 	local offset = Vector3(mod.camera.offset.x, mod.camera.offset.y, mod.camera.offset.z)
-	
+
 	-- ##### Change position ######################################################################################
 	local x = offset.x * Quaternion.right(current_rot)
 	local y = offset.y * Quaternion.forward(current_rot)
 	local z = Vector3(0, 0, offset.z)
-	position = position + x + y + z	
-	
+	position = position + x + y + z
+
 	-- ##### Original function ########################################################################################
 	func(owner_unit, position, ...)
 end)
@@ -1575,19 +483,19 @@ mod:hook("ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, 
 
 	-- ##### Get data #############################################################################################
 	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	local first_person_unit = first_person_extension.get_first_person_unit(first_person_extension)	
+	local first_person_unit = first_person_extension.get_first_person_unit(first_person_extension)
 	position = Unit.local_position(first_person_unit, 0)
 	local current_rot = Unit.local_rotation(first_person_unit, 0)
-	
+
 	-- ##### Create offset ########################################################################################
 	local offset = Vector3(mod.camera.offset.x, mod.camera.offset.y, mod.camera.offset.z)
-	
+
 	-- ##### Change position ######################################################################################
 	local x = offset.x * Quaternion.right(current_rot)
 	local y = offset.y * Quaternion.forward(current_rot)
 	local z = Vector3(0, 0, offset.z)
-	position = position + x + y + z	
-	
+	position = position + x + y + z
+
 	func(owner_unit, target_unit, true_flight_template_id, position, ...)
 end)
 
@@ -1683,7 +591,7 @@ end)
 mod:hook("GenericAmmoUserExtension.update", function(func, self, unit, input, dt, context, t, ...)
 	func(self, unit, input, dt, context, t, ...)
 	mod.reload.t = t
-	
+
 	-- ##### Check if reload process is issued ########################################################################
 	if mod.reload.reloading[self.owner_unit] then
 		if not mod.reload:is_reloading(self.owner_unit) then
@@ -1704,7 +612,7 @@ mod:hook("GenericAmmoUserExtension.update", function(func, self, unit, input, dt
 			end
 			mod.reload.reloading[self.owner_unit] = nil
 			mod.reload.extended[self.owner_unit] = nil
-			
+
 			if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 				mod:start_view("automatic_ranged")
 			end
@@ -1908,7 +816,7 @@ mod.toggle_side = function()
 	local side = mod:get("side")
 	if side == "left" then mod:set("side", "right", true)
 	else mod:set("side", "left", true) end
-	
+
 	mod:start_third_person()
 end
 --[[
@@ -1919,7 +827,7 @@ mod.switch_offset = function()
 	offset = offset + 100
 	if offset > 400 then offset = 100 end
 	mod:set("offset", offset, true)
-	
+
 	mod:start_third_person()
 end
 --[[
@@ -1930,7 +838,7 @@ mod.switch_zoom = function()
 	zoom = zoom + 1
 	if zoom > 4 then zoom = 1 end
 	mod:set("zoom", zoom, true)
-	
+
 	mod:start_third_person()
 end
 
