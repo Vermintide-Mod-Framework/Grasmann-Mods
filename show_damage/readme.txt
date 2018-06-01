@@ -4,6 +4,7 @@ Description :
 Adds the ability to display damage dealt by players in chat and in game world.
 
 Changelog
+2.0.2 - Fix to prevent crash on death reactions
 2.0.1 - Fix to prevent crash with incorrect load order
 2.0.0
 	- Reworked render process

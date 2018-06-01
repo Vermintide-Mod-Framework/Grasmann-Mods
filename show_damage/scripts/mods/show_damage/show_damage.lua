@@ -1029,51 +1029,101 @@ end)
 --[[
 	Hook buff on kill
 --]]
-local function DeathReactions_start_hook(func, unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
-	
-	-- Health buff
-	local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
-	BuffExtension.apply_buffs_to_value = function (self, value, stat_buff)
-		local amount, procced, parent_id = func_apply_buffs_to_value(self, value, stat_buff)
+local DeathReactions_start_hook = nil
+if VT1 then
+	DeathReactions_start_hook = function(func, unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
 		
-		if procced and stat_buff == StatBuffIndex.HEAL_ON_KILL then
-			local biggest_hit = {}
-			biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
-			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
-			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
-			mod.floating:handle(unit, biggest_hit, {healed = {amount = amount}})
-			mod.chat:handle(unit, biggest_hit, {healed = {amount = amount}})
+		-- Health buff
+		local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
+		BuffExtension.apply_buffs_to_value = function (self, value, stat_buff)
+			local amount, procced, parent_id = func_apply_buffs_to_value(self, value, stat_buff)
+			
+			if procced and stat_buff == StatBuffIndex.HEAL_ON_KILL then
+				local biggest_hit = {}
+				biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
+				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
+				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
+				mod.floating:handle(unit, biggest_hit, {healed = {amount = amount}})
+				mod.chat:handle(unit, biggest_hit, {healed = {amount = amount}})
+			end
+			
+			return amount, procced, parent_id
 		end
 		
-		return amount, procced, parent_id
-	end
-	
-	-- Ammo buff
-	local func_add_ammo_to_reserve = GenericAmmoUserExtension.add_ammo_to_reserve
-	GenericAmmoUserExtension.add_ammo_to_reserve = function (self, amount)
-		if amount then
-			local biggest_hit = {}
-			biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
-			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
-			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
-			mod.floating:handle(unit, biggest_hit, {ammo = {amount = amount}})
-			mod.chat:handle(unit, biggest_hit, {ammo = {amount = amount}})
+		-- Ammo buff
+		local func_add_ammo_to_reserve = GenericAmmoUserExtension.add_ammo_to_reserve
+		GenericAmmoUserExtension.add_ammo_to_reserve = function (self, amount)
+			if amount then
+				local biggest_hit = {}
+				biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
+				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
+				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
+				mod.floating:handle(unit, biggest_hit, {ammo = {amount = amount}})
+				mod.chat:handle(unit, biggest_hit, {ammo = {amount = amount}})
+			end
+			
+			return func_add_ammo_to_reserve(self, amount)
 		end
 		
-		return func_add_ammo_to_reserve(self, amount)
+		-- Execute orginal function
+		local return_val_1, return_val_2 = func(unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
+
+		-- Restore functions
+		BuffExtension.apply_buffs_to_value = func_apply_buffs_to_value
+		GenericAmmoUserExtension.add_ammo_to_reserve = func_add_ammo_to_reserve
+		
+		mod.floating.corpses[unit] = true
+		mod.chat.units[unit] = nil
+
+		return return_val_1, return_val_2
 	end
-	
-	-- Execute orginal function
-	local return_val_1, return_val_2 = func(unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
+else
+	DeathReactions_start_hook = function(func, unit, context, t, killing_blow, is_server)
+		
+		-- Health buff
+		local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
+		BuffExtension.apply_buffs_to_value = function (self, value, stat_buff)
+			local amount, procced, parent_id = func_apply_buffs_to_value(self, value, stat_buff)
+			
+			if procced and stat_buff == StatBuffIndex.HEAL_ON_KILL then
+				local biggest_hit = {}
+				biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
+				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
+				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
+				mod.floating:handle(unit, biggest_hit, {healed = {amount = amount}})
+				mod.chat:handle(unit, biggest_hit, {healed = {amount = amount}})
+			end
+			
+			return amount, procced, parent_id
+		end
+		
+		-- Ammo buff
+		local func_add_ammo_to_reserve = GenericAmmoUserExtension.add_ammo_to_reserve
+		GenericAmmoUserExtension.add_ammo_to_reserve = function (self, amount)
+			if amount then
+				local biggest_hit = {}
+				biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
+				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
+				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
+				mod.floating:handle(unit, biggest_hit, {ammo = {amount = amount}})
+				mod.chat:handle(unit, biggest_hit, {ammo = {amount = amount}})
+			end
+			
+			return func_add_ammo_to_reserve(self, amount)
+		end
+		
+		-- Execute orginal function
+		local return_val_1, return_val_2 = func(unit, context, t, killing_blow, is_server)
 
-	-- Restore functions
-	BuffExtension.apply_buffs_to_value = func_apply_buffs_to_value
-	GenericAmmoUserExtension.add_ammo_to_reserve = func_add_ammo_to_reserve
-	
-	mod.floating.corpses[unit] = true
-	mod.chat.units[unit] = nil
+		-- Restore functions
+		BuffExtension.apply_buffs_to_value = func_apply_buffs_to_value
+		GenericAmmoUserExtension.add_ammo_to_reserve = func_add_ammo_to_reserve
+		
+		mod.floating.corpses[unit] = true
+		mod.chat.units[unit] = nil
 
-	return return_val_1, return_val_2
+		return return_val_1, return_val_2
+	end
 end
 --[[
 	Hook all breed templates
