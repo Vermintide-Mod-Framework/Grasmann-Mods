@@ -387,24 +387,24 @@ end)
 --[[
 	Fix to apply camera offset to ranged weapons
 --]]
-mod:hook("PlayerUnitFirstPerson.current_position", function(func, self, ...)
+-- mod:hook("PlayerUnitFirstPerson.current_position", function(func, self, ...)
 
-	-- ##### Get data #############################################################################################
-	local position = Unit.local_position(self.first_person_unit, 0)
-	--local position = func(self, ...)
-	local current_rot = Unit.local_rotation(self.first_person_unit, 0)
+	-- -- ##### Get data #############################################################################################
+	-- --local position = Unit.local_position(self.first_person_unit, 0)
+	-- local position = func(self, ...)
+	-- local current_rot = Unit.local_rotation(self.first_person_unit, 0)
 
-	-- ##### Counter offset #######################################################################################
-	local offset = Vector3(mod.camera.offset.x, mod.camera.offset.y, mod.camera.offset.z)
+	-- -- ##### Counter offset #######################################################################################
+	-- local offset = Vector3(mod.camera.offset.x, mod.camera.offset.y, mod.camera.offset.z)
 
-	-- ##### Change position ######################################################################################
-	local x = offset.x * Quaternion.right(current_rot)
-	local y = offset.y * Quaternion.forward(current_rot)
-	local z = Vector3(0, 0, offset.z)
-	position = position + x + y + z
-	return position
+	-- -- ##### Change position ######################################################################################
+	-- local x = offset.x * Quaternion.right(current_rot)
+	-- local y = offset.y * Quaternion.forward(current_rot)
+	-- local z = Vector3(0, 0, offset.z)
+	-- --position = position + x + y + z
+	-- return position
 
-end)
+-- end)
 --[[
 	MAIN FUNCTION - Set first / third person mode - Hide first person ammo
 --]]
