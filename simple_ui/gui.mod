@@ -1,5 +1,7 @@
 return {
 	run = function()
+		fassert(rawget(_G, "new_mod"), "Simple UI mod must be lower than Vermintide Mod Framework in your launcher's load order.")
+		
 		local mod_resources = {
 			mod_script       = "scripts/mods/basic_gui/basic_gui",
 		}
