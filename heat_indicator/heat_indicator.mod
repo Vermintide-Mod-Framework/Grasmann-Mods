@@ -1,5 +1,7 @@
 local ret = {
 	run = function()
+		fassert(rawget(_G, "new_mod"), "Heat Indicator mod must be lower than Vermintide Mod Framework in your launcher's load order.")
+		
 		local mod_resources = {
 			mod_script       = "scripts/mods/heat_indicator/heat_indicator",
 			mod_data         = "scripts/mods/heat_indicator/heat_indicator_data",
