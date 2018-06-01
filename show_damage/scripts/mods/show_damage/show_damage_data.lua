@@ -476,5 +476,19 @@ if not VT1 then
 			"Disable the default damage numbers that appear when attacking training dummies.",
 		["default_value"] = false,
 	}
+	-- Overwrite chat text
+	mod_data.options_widgets[1].sub_widgets[2].text = "Heal on Kill"
+	mod_data.options_widgets[1].sub_widgets[2].tooltip = "Heal on Kill\n" ..
+		"Shows heal numbers when receiving health on kill in chat."
+	mod_data.options_widgets[1].sub_widgets[3].text = "Ammo on Kill"
+	mod_data.options_widgets[1].sub_widgets[3].tooltip = "Ammo on Kill\n" ..
+		"Shows heal numbers when receiving ammo on kill in chat."
+	-- Overwrite floating text
+	mod_data.options_widgets[2].sub_widgets[3].text = "Heal on Kill"
+	mod_data.options_widgets[2].sub_widgets[3].tooltip = "Heal on Kill\n" ..
+		"Shows floating heal numbers when receiving health on kill in chat."
+	mod_data.options_widgets[2].sub_widgets[4].text = "Ammo on Kill"
+	mod_data.options_widgets[2].sub_widgets[4].tooltip = "Ammo on Kill\n" ..
+		"Shows floating ammo numbers when receiving ammo on kill in chat."
 end
 return mod_data

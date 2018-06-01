@@ -1084,14 +1084,18 @@ else
 		local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
 		BuffExtension.apply_buffs_to_value = function (self, value, stat_buff)
 			local amount, procced, parent_id = func_apply_buffs_to_value(self, value, stat_buff)
+			local always_proc = StatBuffApplicationMethods[stat_buff] ~= "proc"
 			
-			if procced and stat_buff == StatBuffIndex.HEAL_ON_KILL then
+			if procced or always_proc and stat_buff == StatBuffIndex.HEALING_RECEIVED then
 				local biggest_hit = {}
 				biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
 				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
 				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
 				mod.floating:handle(unit, biggest_hit, {healed = {amount = amount}})
 				mod.chat:handle(unit, biggest_hit, {healed = {amount = amount}})
+			else
+				mod:echo(tostring(stat_buff).." - "..tostring(StatBuffIndex.HEALING_RECEIVED))
+				mod:echo("procced: "..tostring(procced))
 			end
 			
 			return amount, procced, parent_id
