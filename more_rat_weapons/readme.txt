@@ -6,6 +6,7 @@ This mod will unlock previously locked shields and halberds.
 The differences are only visual if you dont setup anything.
 
 Changelog:
+2.2.1 - Fix to prevent crash with incorrect load order
 2.2.0 - Updated for latest vmf
 2.1.0 - Port to official bundle format
 2.0.3
