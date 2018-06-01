@@ -1088,14 +1088,11 @@ else
 			
 			if procced or always_proc and stat_buff == StatBuffIndex.HEALING_RECEIVED then
 				local biggest_hit = {}
-				biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
+				biggest_hit[DamageDataIndex.ATTACKER] = self._unit --killing_blow[DamageDataIndex.ATTACKER]
 				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
 				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
 				mod.floating:handle(unit, biggest_hit, {healed = {amount = amount}})
 				mod.chat:handle(unit, biggest_hit, {healed = {amount = amount}})
-			else
-				mod:echo(tostring(stat_buff).." - "..tostring(StatBuffIndex.HEALING_RECEIVED))
-				mod:echo("procced: "..tostring(procced))
 			end
 			
 			return amount, procced, parent_id
@@ -1106,7 +1103,7 @@ else
 		GenericAmmoUserExtension.add_ammo_to_reserve = function (self, amount)
 			if amount then
 				local biggest_hit = {}
-				biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
+				biggest_hit[DamageDataIndex.ATTACKER] = self.owner_unit --killing_blow[DamageDataIndex.ATTACKER]
 				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
 				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
 				mod.floating:handle(unit, biggest_hit, {ammo = {amount = amount}})
