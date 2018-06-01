@@ -7,6 +7,7 @@ Can be modified to show healthbars above and below enemies, show healthbars for 
 show healthbars for damaged enemies.
 
 Changelog
+2.0.1 - Fix to prevent crash with incorrect load order
 2.0.0 - Updated for use with vt2
 1.3.0 - Updated for latest vmf
 1.2.0 - Port to official bundle format
