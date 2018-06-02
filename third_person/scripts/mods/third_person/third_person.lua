@@ -268,14 +268,6 @@ mod.calculate_offset = function(self)
 
 end
 --[[
-	Get look input
---]]
-mod:hook("PlayerUnitFirstPerson.calculate_look_rotation", function(func, self, current_rotation, look_delta)
-	mod.camera.sway.mouse.x = look_delta.x
-	mod.camera.sway.mouse.y = look_delta.y
-	return func(self, current_rotation, look_delta)
-end)
---[[
 	Transition to first person
 --]]
 mod.start_first_person = function(self, callback)
@@ -344,6 +336,14 @@ end
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
 --[[
+	Get look input
+--]]
+mod:hook("PlayerUnitFirstPerson.calculate_look_rotation", function(func, self, current_rotation, look_delta)
+	mod.camera.sway.mouse.x = look_delta.x
+	mod.camera.sway.mouse.y = look_delta.y
+	return func(self, current_rotation, look_delta)
+end)
+--[[
 	Fix to make mission objectives visible in third person
 --]]
 mod:hook("TutorialUI.update", function(func, self, ...)
@@ -387,24 +387,24 @@ end)
 --[[
 	Fix to apply camera offset to ranged weapons
 --]]
--- mod:hook("PlayerUnitFirstPerson.current_position", function(func, self, ...)
+mod:hook("PlayerUnitFirstPerson.current_position", function(func, self, ...)
 
-	-- -- ##### Get data #############################################################################################
-	-- --local position = Unit.local_position(self.first_person_unit, 0)
-	-- local position = func(self, ...)
-	-- local current_rot = Unit.local_rotation(self.first_person_unit, 0)
+	-- ##### Get data #############################################################################################
+	--local position = Unit.local_position(self.first_person_unit, 0)
+	local position = func(self, ...)
+	local current_rot = Unit.local_rotation(self.first_person_unit, 0)
 
-	-- -- ##### Counter offset #######################################################################################
-	-- local offset = Vector3(mod.camera.offset.x, mod.camera.offset.y, mod.camera.offset.z)
+	-- ##### Counter offset #######################################################################################
+	local offset = Vector3(mod.camera.offset.x, mod.camera.offset.y, mod.camera.offset.z)
 
-	-- -- ##### Change position ######################################################################################
-	-- local x = offset.x * Quaternion.right(current_rot)
-	-- local y = offset.y * Quaternion.forward(current_rot)
-	-- local z = Vector3(0, 0, offset.z)
-	-- --position = position + x + y + z
-	-- return position
+	-- ##### Change position ######################################################################################
+	local x = offset.x * Quaternion.right(current_rot)
+	local y = offset.y * Quaternion.forward(current_rot)
+	local z = Vector3(0, 0, offset.z)
+	position = position + x + y + z
+	return position
 
--- end)
+end)
 --[[
 	MAIN FUNCTION - Set first / third person mode - Hide first person ammo
 --]]
@@ -475,6 +475,7 @@ mod:hook("ActionUtils.spawn_player_projectile", function(func, owner_unit, posit
 
 	-- ##### Original function ########################################################################################
 	func(owner_unit, position, ...)
+
 end)
 --[[
 	Fix to apply camera offset to trueflight projectiles
@@ -497,7 +498,25 @@ mod:hook("ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, 
 	position = position + x + y + z
 
 	func(owner_unit, target_unit, true_flight_template_id, position, ...)
+	
 end)
+--[[
+	Fix to apply camera offset to raycast projectiles
+--]]
+mod.raycast_hook = function(func, ...)
+	mod:hook_enable("PlayerUnitFirstPerson.current_position")
+	func(...)
+	mod:hook_disable("PlayerUnitFirstPerson.current_position")
+end
+mod:hook("ActionHandgun.client_owner_post_update", mod.raycast_hook)
+mod:hook("ActionHandgunLock.client_owner_post_update", mod.raycast_hook)
+mod:hook("ActionHandgunLockTargeting.client_owner_post_update", mod.raycast_hook)
+mod:hook("ActionShotgun.client_owner_post_update", mod.raycast_hook)
+mod:hook("ActionBeam.client_owner_post_update", mod.raycast_hook)
+mod:hook("ActionGeiser.client_owner_post_update", mod.raycast_hook)
+mod:hook("ActionGeiserTargeting.client_owner_post_update", mod.raycast_hook)
+mod:hook("ActionBulletSpray.client_owner_post_update", mod.raycast_hook)
+mod:hook("ActionBulletSprayTargeting.client_owner_post_update", mod.raycast_hook)
 
 -- ##### ██████╗ ███████╗███████╗███████╗████████╗ ####################################################################
 -- ##### ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝ ####################################################################
@@ -793,6 +812,7 @@ end
 --]]
 mod.on_enabled = function(initial_call)
 	mod:enable_all_hooks()
+	mod:hook_disable("PlayerUnitFirstPerson.current_position")
 	mod:start_view(nil)
 	mod:start_third_person()
 end
