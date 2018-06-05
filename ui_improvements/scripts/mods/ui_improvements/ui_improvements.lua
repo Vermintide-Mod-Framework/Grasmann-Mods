@@ -250,15 +250,18 @@ mod.create_character_window = function(self)
 		end
 		
 		-- Get some shit
-		local screen_width = RESOLUTION_LOOKUP.res_w
-		local screen_height = RESOLUTION_LOOKUP.res_h
+		local scale = UIResolutionScale()
+		local screen_width, screen_height = UIResolution()
 		local window_size = {705, 40}
+		local window_position = {120, screen_height - window_size[2] - 5}
 		local player = Managers.player:local_player()
 		local profile_index = player:profile_index()
 		
 		-- Create window
-		self.character_window = simple_ui:create_window("ui_improvements_character", {120, screen_height - window_size[2] - 5}, window_size)
-	
+		self.character_window = simple_ui:create_window("ui_improvements_character", window_position, window_size)
+		
+		self.character_window.position = {120*scale, screen_height - window_size[2]*scale - 5}
+		
 		-- Create buttons
 		local pos_x = 5
 		for _, character in pairs(self.characters) do
@@ -271,6 +274,10 @@ mod.create_character_window = function(self)
 			
 			pos_x = pos_x + character.button_width + 5
 			
+		end
+		
+		self.character_window.on_hover_enter = function(window)
+			window:focus()
 		end
 		
 		-- Initialize window
@@ -337,24 +344,37 @@ mod.create_career_window = function(self, profile_index)
 			end
 		end
 		
-		-- Get some shit
-		local screen_width = RESOLUTION_LOOKUP.res_w
-		local screen_height = RESOLUTION_LOOKUP.res_h
-		local window_size = {500, 40}
 		
 		-- Get real career index
 		local player = Managers.player:local_player()
 		local career_index = player:career_index()
+		local careers = self.careers[profile_index]
 		
+		-- Get some shit
+		local scale = UIResolutionScale()
+		local screen_width, screen_height = UIResolution()
+		-- local screen_width = RESOLUTION_LOOKUP.res_w
+		-- local screen_height = RESOLUTION_LOOKUP.res_h
+		local window_width = 5
+		-- Get size
+		if careers then
+			for _, career in pairs(careers) do
+				window_width = window_width + career.button_width + 5
+			end
+		end
+		local window_size = {window_width, 40}
+		local window_position = {120, screen_height - window_size[2]*2 - 5}
+
 		-- Create window
-		self.career_window = simple_ui:create_window("ui_improvements_career", {120, screen_height - window_size[2] - 45}, window_size)
+		self.career_window = simple_ui:create_window("ui_improvements_career", window_position, window_size)
+		
+		self.career_window.position = {120*scale, screen_height - (window_size[2]*2)*scale - 5}
 		
 		-- Create buttons
-		local careers = self.careers[profile_index]
+		
 		if careers then
 			
 			local pos_x = 5
-			local window_width = 5
 			local index = 1
 			for _, career in pairs(careers) do
 				
@@ -365,14 +385,14 @@ mod.create_career_window = function(self, profile_index)
 				end
 				
 				pos_x = pos_x + career.button_width + 5
-				window_width = window_width + career.button_width + 5
 				index = index + 1
 				
 			end
 			
-			-- Update window width
-			self.career_window.size[1] = window_width
-			
+		end
+		
+		self.career_window.on_hover_enter = function(window)
+			window:focus()
 		end
 		
 		-- Initialize window
