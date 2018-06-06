@@ -508,6 +508,11 @@ mod.definitions = {
 				position = {0.3, -0.23, 0.1},
 				rotation = {0, -60, -90},
 			},
+			empire_soldier_tutorial = {
+				node = default_node,
+				position = {0.3, -0.23, 0.1},
+				rotation = {0, -60, -90},
+			},
 		},
 	},
 	ww_shortbow = {
@@ -1215,6 +1220,11 @@ mod.definitions = {
 					rotation = {10, 100, 150},
 				},
 				es_knight = {
+					node = default_node,
+					position = {0, -0.15, 0.03},
+					rotation = {10, 100, 150},
+				},
+				empire_soldier_tutorial = {
 					node = default_node,
 					position = {0, -0.15, 0.03},
 					rotation = {10, 100, 150},

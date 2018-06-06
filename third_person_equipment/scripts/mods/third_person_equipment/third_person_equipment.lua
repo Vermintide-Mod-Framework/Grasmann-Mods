@@ -80,34 +80,36 @@ end
 --]]
 mod.spawn = function(self, package_name, unit, item_setting, item_data)
 	local s_unit = nil
-	local world = Managers.world:world("level_world")
-	local node = Unit.node(unit, item_setting.node)
+	if Unit.has_node(unit, item_setting.node) then
+		local world = Managers.world:world("level_world")
+		local node = Unit.node(unit, item_setting.node)
 
-	s_unit = World.spawn_unit(world, package_name)
-	World.link_unit(world, s_unit, unit, node)
-	third_person_equipment_spawned_items[s_unit] = s_unit
+		s_unit = World.spawn_unit(world, package_name)
+		World.link_unit(world, s_unit, unit, node)
+		third_person_equipment_spawned_items[s_unit] = s_unit
 
-	local i_pos = item_setting.position
-	local pos_offset = i_pos ~= nil and Vector3(i_pos[1], i_pos[2], i_pos[3]) or Vector3(0,0,0)
-	Unit.set_local_position(s_unit, 0, pos_offset)
+		local i_pos = item_setting.position
+		local pos_offset = i_pos ~= nil and Vector3(i_pos[1], i_pos[2], i_pos[3]) or Vector3(0,0,0)
+		Unit.set_local_position(s_unit, 0, pos_offset)
 
-	local i_rot = item_setting.rotation
-	local rot_offset = i_rot ~= nil and Vector3(i_rot[1], i_rot[2], i_rot[3]) or Vector3(0,0,0)
-	local rotation = Quaternion.from_euler_angles_xyz(rot_offset[1], rot_offset[2], rot_offset[3])
-	Unit.set_local_rotation(s_unit, 0, rotation)
+		local i_rot = item_setting.rotation
+		local rot_offset = i_rot ~= nil and Vector3(i_rot[1], i_rot[2], i_rot[3]) or Vector3(0,0,0)
+		local rotation = Quaternion.from_euler_angles_xyz(rot_offset[1], rot_offset[2], rot_offset[3])
+		Unit.set_local_rotation(s_unit, 0, rotation)
 
-	-- Hardcoded scaling
-	local grim = "units/weapons/player/wpn_grimoire_01/wpn_grimoire_01_3p"
-	local tome = "units/weapons/player/wpn_side_objective_tome/wpn_side_objective_tome_01_3p"
-	if package_name == grim or package_name == tome then
-		Unit.set_local_scale(s_unit, 0, Vector3(0.75, 0.75, 0.75))
-	end
+		-- Hardcoded scaling
+		local grim = "units/weapons/player/wpn_grimoire_01/wpn_grimoire_01_3p"
+		local tome = "units/weapons/player/wpn_side_objective_tome/wpn_side_objective_tome_01_3p"
+		if package_name == grim or package_name == tome then
+			Unit.set_local_scale(s_unit, 0, Vector3(0.75, 0.75, 0.75))
+		end
 
-	-- Option scaling
-	local scaling = self:get("downscale_big_weapons") / 100
-	if table.contains(self.definitions.big_weapons, tostring(item_data.item_type)) then
-		local scale = Vector3(scaling, scaling, scaling)
-		Unit.set_local_scale(s_unit, 0, scale)
+		-- Option scaling
+		local scaling = self:get("downscale_big_weapons") / 100
+		if table.contains(self.definitions.big_weapons, tostring(item_data.item_type)) then
+			local scale = Vector3(scaling, scaling, scaling)
+			Unit.set_local_scale(s_unit, 0, scale)
+		end
 	end
 
 	return s_unit
@@ -222,13 +224,15 @@ end
 mod.add_item = function(self, unit, slot_name, item_data)
 	local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 	local equipment = inventory_extension.equipment(inventory_extension)
-
+	
 	local career_name = nil
 	if not VT1 then
 		local career_extension = ScriptUnit.extension(unit, "career_system")
 		career_name = career_extension._career_data.name
 	end
-
+	
+	mod:echo(tostring(career_name))
+	
 	if self.definitions[item_data.item_type] ~= nil then
 		local right, left, right_pack, left_pack = nil
 		if item_data.right_hand_unit ~= nil then
@@ -480,6 +484,15 @@ mod:hook("InventoryPackageSynchronizer.set_inventory_list", function(func, self,
 	end
 	func(self, profile_index, ...)
 end)
+--[[
+	Delete equipment on host character change in vt2
+--]]
+if not VT1 then
+	mod:hook("PlayerManager.rpc_to_client_spawn_player", function(func, ...)
+		mod:delete_all_units()
+		func(...)
+	end)
+end
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
 -- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
@@ -535,7 +548,9 @@ end
 	Mod update
 --]]
 mod.update = function(dt)
-	mod:create_items_if_needed()
+	if mod:is_enabled() then
+		mod:create_items_if_needed()
+	end
 end
 
 -- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
