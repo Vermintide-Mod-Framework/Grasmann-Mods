@@ -231,8 +231,6 @@ mod.add_item = function(self, unit, slot_name, item_data)
 		career_name = career_extension._career_data.name
 	end
 	
-	mod:echo(tostring(career_name))
-	
 	if self.definitions[item_data.item_type] ~= nil then
 		local right, left, right_pack, left_pack = nil
 		if item_data.right_hand_unit ~= nil then
