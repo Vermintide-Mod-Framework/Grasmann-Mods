@@ -1131,8 +1131,8 @@ end
 --]]
 for breed_name, template in pairs(DeathReactions.templates) do
 	if template.unit and template.husk and template.unit.start and template.husk.start then
-		mod:hook("DeathReactions.templates."..breed_name..".unit.start", DeathReactions_start_hook)
-		mod:hook("DeathReactions.templates."..breed_name..".husk.start", DeathReactions_start_hook)
+		mod:hook(template.unit, "start", DeathReactions_start_hook)
+		mod:hook(template.husk, "start", DeathReactions_start_hook)
 	end
 end
 
