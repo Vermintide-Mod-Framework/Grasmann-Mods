@@ -1001,131 +1001,92 @@ mod.chat = {
 -- ##### ██████╔╝╚██████╔╝██║     ██║     ███████║ ####################################################################
 -- ##### ╚═════╝  ╚═════╝ ╚═╝     ╚═╝     ╚══════╝ ####################################################################
 --[[
+	Hook apply_buffs_to_value
+--]]
+
+mod:hook("BuffExtension.apply_buffs_to_value", function(func, self, value, stat_buff)
+	local amount, procced, parent_id = func(self, value, stat_buff)
+	local always_proc = StatBuffApplicationMethods[stat_buff] ~= "proc"
+
+	if procced and (stat_buff == StatBuffIndex.HEAL_PROC or
+					stat_buff == StatBuffIndex.LIGHT_HEAL_PROC or
+					stat_buff == StatBuffIndex.HEAVY_HEAL_PROC or
+					stat_buff == StatBuffIndex.HEAL_ON_KILL) or
+					(stat_buff == StatBuffIndex.HEALING_RECEIVED and always_proc) then
+		local biggest_hit = {}
+		biggest_hit[DamageDataIndex.ATTACKER] = (VT1 and mod.attacker_hook_data) or self._unit
+		biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
+		biggest_hit[DamageDataIndex.HIT_ZONE] = nil
+		mod.floating:handle(mod.floating_unit_hook_data, biggest_hit, {healed = {amount = amount}})
+		mod.chat:handle(mod.floating_unit_hook_data, biggest_hit, {healed = {amount = amount}})
+	end
+	return amount, procced, parent_id
+end)
+mod:hook_disable("BuffExtension.apply_buffs_to_value")
+
+--[[
+	Hook ammo buff on kill
+--]]
+mod:hook("GenericAmmoUserExtension.add_ammo_to_reserve", function(func, self, amount)
+	if amount then
+		local biggest_hit = {}
+		biggest_hit[DamageDataIndex.ATTACKER] = (VT1 and mod.attacker_hook_data) or self.owner_unit
+		biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
+		biggest_hit[DamageDataIndex.HIT_ZONE] = nil
+		mod.floating:handle(mod.floating_unit_hook_data, biggest_hit, {ammo = {amount = amount}})
+		mod.chat:handle(mod.floating_unit_hook_data, biggest_hit, {ammo = {amount = amount}})
+	end
+	
+	return func(self, amount)
+end)
+mod:hook_disable("GenericAmmoUserExtension.add_ammo_to_reserve")
+
+--[[
 	Hook buff on attack
 --]]
 mod:hook("DamageUtils.buff_on_attack", function(func, unit, hit_unit, ...)
-	local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
-	
-	BuffExtension.apply_buffs_to_value = function (self, value, stat_buff)
-		local amount, procced, parent_id = func_apply_buffs_to_value(self, value, stat_buff)
-		
-		if procced and (stat_buff == StatBuffIndex.HEAL_PROC or stat_buff == StatBuffIndex.LIGHT_HEAL_PROC or stat_buff == StatBuffIndex.HEAVY_HEAL_PROC) then
-			local biggest_hit = {}
-			biggest_hit[DamageDataIndex.ATTACKER] = unit
-			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
-			biggest_hit[DamageDataIndex.HIT_ZONE] = nil
-			mod.floating:handle(hit_unit, biggest_hit, {healed = {amount = amount}})
-			mod.chat:handle(hit_unit, biggest_hit, {healed = {amount = amount}})
-		end
-		return amount, procced, parent_id
-	end
+	--info to carry in buff extension hook
+	mod.attacker_hook_data = unit
+	mod.floating_unit_hook_data = hit_unit
+	mod:hook_enable("BuffExtension.apply_buffs_to_value")
 
 	local value = func(unit, hit_unit, ...)
 
-	BuffExtension.apply_buffs_to_value = func_apply_buffs_to_value
+	mod:hook_disable("BuffExtension.apply_buffs_to_value")
+	mod.floating_unit_hook_data = nil
+	mod.attacker_hook_data = nil
 
 	return value
 end)
+
 --[[
 	Hook buff on kill
 --]]
-local DeathReactions_start_hook = nil
-if VT1 then
-	DeathReactions_start_hook = function(func, unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
-		
-		-- Health buff
-		local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
-		BuffExtension.apply_buffs_to_value = function (self, value, stat_buff)
-			local amount, procced, parent_id = func_apply_buffs_to_value(self, value, stat_buff)
-			
-			if procced and stat_buff == StatBuffIndex.HEAL_ON_KILL then
-				local biggest_hit = {}
-				biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
-				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
-				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
-				mod.floating:handle(unit, biggest_hit, {healed = {amount = amount}})
-				mod.chat:handle(unit, biggest_hit, {healed = {amount = amount}})
-			end
-			
-			return amount, procced, parent_id
-		end
-		
-		-- Ammo buff
-		local func_add_ammo_to_reserve = GenericAmmoUserExtension.add_ammo_to_reserve
-		GenericAmmoUserExtension.add_ammo_to_reserve = function (self, amount)
-			if amount then
-				local biggest_hit = {}
-				biggest_hit[DamageDataIndex.ATTACKER] = killing_blow[DamageDataIndex.ATTACKER]
-				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
-				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
-				mod.floating:handle(unit, biggest_hit, {ammo = {amount = amount}})
-				mod.chat:handle(unit, biggest_hit, {ammo = {amount = amount}})
-			end
-			
-			return func_add_ammo_to_reserve(self, amount)
-		end
-		
-		-- Execute orginal function
-		local return_val_1, return_val_2 = func(unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
+local DeathReactions_start_hook = function(func, unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
+	--info to carry in buff extension hooks
+	mod.floating_unit_hook_data = unit
+	mod.attacker_hook_data = VT1 and killing_blow[DamageDataIndex.ATTACKER]
 
-		-- Restore functions
-		BuffExtension.apply_buffs_to_value = func_apply_buffs_to_value
-		GenericAmmoUserExtension.add_ammo_to_reserve = func_add_ammo_to_reserve
-		
-		mod.floating.corpses[unit] = true
-		mod.chat.units[unit] = nil
+	-- Health and mmo buffs
+	mod:hook_enable("BuffExtension.apply_buffs_to_value")
+	mod:hook_enable("GenericAmmoUserExtension.add_ammo_to_reserve")
 
-		return return_val_1, return_val_2
-	end
-else
-	DeathReactions_start_hook = function(func, unit, context, t, killing_blow, is_server)
-		
-		-- Health buff
-		local func_apply_buffs_to_value = BuffExtension.apply_buffs_to_value
-		BuffExtension.apply_buffs_to_value = function (self, value, stat_buff)
-			local amount, procced, parent_id = func_apply_buffs_to_value(self, value, stat_buff)
-			local always_proc = StatBuffApplicationMethods[stat_buff] ~= "proc"
-			
-			if procced or always_proc and stat_buff == StatBuffIndex.HEALING_RECEIVED then
-				local biggest_hit = {}
-				biggest_hit[DamageDataIndex.ATTACKER] = self._unit --killing_blow[DamageDataIndex.ATTACKER]
-				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
-				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
-				mod.floating:handle(unit, biggest_hit, {healed = {amount = amount}})
-				mod.chat:handle(unit, biggest_hit, {healed = {amount = amount}})
-			end
-			
-			return amount, procced, parent_id
-		end
-		
-		-- Ammo buff
-		local func_add_ammo_to_reserve = GenericAmmoUserExtension.add_ammo_to_reserve
-		GenericAmmoUserExtension.add_ammo_to_reserve = function (self, amount)
-			if amount then
-				local biggest_hit = {}
-				biggest_hit[DamageDataIndex.ATTACKER] = self.owner_unit --killing_blow[DamageDataIndex.ATTACKER]
-				biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
-				biggest_hit[DamageDataIndex.HIT_ZONE] = nil
-				mod.floating:handle(unit, biggest_hit, {ammo = {amount = amount}})
-				mod.chat:handle(unit, biggest_hit, {ammo = {amount = amount}})
-			end
-			
-			return func_add_ammo_to_reserve(self, amount)
-		end
-		
-		-- Execute orginal function
-		local return_val_1, return_val_2 = func(unit, context, t, killing_blow, is_server)
+	-- Execute orginal function
+	-- cached_wall_nail_data doesn't exist in VT2, so it will be discarded
+	local return_val_1, return_val_2 = func(unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
 
-		-- Restore functions
-		BuffExtension.apply_buffs_to_value = func_apply_buffs_to_value
-		GenericAmmoUserExtension.add_ammo_to_reserve = func_add_ammo_to_reserve
-		
-		mod.floating.corpses[unit] = true
-		mod.chat.units[unit] = nil
+	-- Restore functions
+	mod:hook_disable("BuffExtension.apply_buffs_to_value")
+	mod:hook_disable("GenericAmmoUserExtension.add_ammo_to_reserve")
+	mod.floating_unit_hook_data = nil
+	mod.attacker_hook_data = nil
 
-		return return_val_1, return_val_2
-	end
+	mod.floating.corpses[unit] = true
+	mod.chat.units[unit] = nil
+
+	return return_val_1, return_val_2
 end
+
 --[[
 	Hook all breed templates
 --]]
