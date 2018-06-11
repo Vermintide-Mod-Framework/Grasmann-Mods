@@ -6,7 +6,7 @@ local mod = get_mod("ChatBlock")
 	Author: IamLupo
 	Ported: Grasmann
 	Improvements: bi
-	Version: 2.0.0
+	Version: 2.0.2
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗  ############################################################################
@@ -32,7 +32,7 @@ mod.block_state = block_state.NOT_BLOCKING
 --[[
 	Execute weapon action
 --]]
-mod:hook("CharacterStateHelper.update_weapon_actions", function(func, t, unit, input_extension, inventory_extension, ...)
+mod:hook(CharacterStateHelper, "update_weapon_actions", function(func, t, unit, input_extension, inventory_extension, ...)
 	local player_unit = Managers.player and Managers.player:local_player().player_unit
 	
 	-- Check if local player
@@ -118,21 +118,9 @@ end)
 -- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
 -- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
 --[[
-	Mod Setting changed
---]]
-mod.on_setting_changed = function(setting_name)
-end
---[[
-	Mod Suspended
---]]
-mod.on_disabled = function(initial_call)
-	mod:disable_all_hooks()
-end
---[[
 	Mod Unsuspended
 --]]
 mod.on_enabled = function(initial_call)
-	mod:enable_all_hooks()
 	-- Set block because option menu must be open
 	if not initial_call then
 		mod.block_state = block_state.SHOULD_BLOCK
