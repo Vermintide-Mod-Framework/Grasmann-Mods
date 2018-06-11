@@ -240,6 +240,22 @@ local mod_data = {
 					["default_value"] = 1,
 				},
 				{
+					["setting_name"] = "floating_numbers_pop",
+					["widget_type"] = "checkbox",
+					["text"] = "Pop Effect",
+					["tooltip"] = "Pop Effect\n" ..
+						"Adds a pop-effect to high damage numbers / heal / ammo to make them stand out more.",
+					["default_value"] = false,
+				},
+				{
+					["setting_name"] = "floating_numbers_fade",
+					["widget_type"] = "checkbox",
+					["text"] = "Fade Effect",
+					["tooltip"] = "Fade Effect\n" ..
+						"Adds a fade-effect to all floating numbers.",
+					["default_value"] = false,
+				},
+				{
 					["setting_name"] = "floating_damage_numbers",
 					["widget_type"] = "checkbox",
 					["text"] = "Damage",
@@ -484,11 +500,11 @@ if not VT1 then
 	mod_data.options_widgets[1].sub_widgets[3].tooltip = "Ammo on Kill\n" ..
 		"Shows heal numbers when receiving ammo on kill in chat."
 	-- Overwrite floating text
-	mod_data.options_widgets[2].sub_widgets[3].text = "Heal on Kill"
-	mod_data.options_widgets[2].sub_widgets[3].tooltip = "Heal on Kill\n" ..
+	mod_data.options_widgets[2].sub_widgets[5].text = "Heal on Kill"
+	mod_data.options_widgets[2].sub_widgets[5].tooltip = "Heal on Kill\n" ..
 		"Shows floating heal numbers when receiving health on kill in chat."
-	mod_data.options_widgets[2].sub_widgets[4].text = "Ammo on Kill"
-	mod_data.options_widgets[2].sub_widgets[4].tooltip = "Ammo on Kill\n" ..
+	mod_data.options_widgets[2].sub_widgets[6].text = "Ammo on Kill"
+	mod_data.options_widgets[2].sub_widgets[6].tooltip = "Ammo on Kill\n" ..
 		"Shows floating ammo numbers when receiving ammo on kill in chat."
 end
 return mod_data

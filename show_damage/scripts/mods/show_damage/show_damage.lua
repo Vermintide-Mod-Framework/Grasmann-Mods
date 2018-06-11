@@ -4,7 +4,7 @@ local mod = get_mod("ShowDamage")
 		- Shows damage / healing in chat and as floating numbers.
 	
 	Author: grasmann
-	Version: 2.0.0
+	Version: 2.1.0
 --]]
 
 -- ##### ███████╗██╗  ██╗████████╗███████╗███╗   ██╗███████╗██╗ ██████╗ ███╗   ██╗ ####################################
@@ -415,6 +415,8 @@ mod.blocked_hit = function(self, attacker_unit, unit, hit_zone)
 			if table.contains(hit_zones, hit_zone) and not self:check_backstab(attacker_unit, unit) then
 				return true
 			end
+		else
+			self:echo(tostring(inv_template))
 		end
 	end
 	return false
@@ -441,6 +443,7 @@ mod.floating = {
 	units = {},
 	delete = {},
 	fade_time = 2,
+	pop_time = 0.5,
 	definition = {
 		-- Data
 		damage = 0,
@@ -448,6 +451,7 @@ mod.floating = {
 		timer = 0,
 		blocked = false,
 		icon = "",
+		pop = 0,
 		-- Movement
 		position = nil,
 		horizontal_random = 0,
@@ -594,31 +598,37 @@ mod.floating = {
 			font_name, font_material, font_size = self:fonts(45)
 			if mod:get("floating_icons_headshot") then
 				unit_dmg.icon = "melee"
+				unit_dmg.pop = 2
 			end
 		elseif poison then
 			font_name, font_material, font_size = self:fonts(20)
 			if mod:get("floating_icons_poison") then
 				unit_dmg.icon = "poison"
+				unit_dmg.pop = 1
 			end
 		elseif burn then
 			font_name, font_material, font_size = self:fonts(20)
 			if mod:get("floating_icons_burn") then
 				unit_dmg.icon = "flame"
+				unit_dmg.pop = 1
 			end
 		elseif blocked then
 			font_name, font_material, font_size = self:fonts(20)
 			if mod:get("floating_icons_block") then
 				unit_dmg.icon = "block"
+				unit_dmg.pop = 1
 			end
 		elseif healed or ammo then
 			font_name, font_material, font_size = self:fonts(60)
 			if ammo then
 				if mod:get("floating_icons_ammo") then
 					unit_dmg.icon = "ranged"
+					unit_dmg.pop = 2
 				end
 			elseif healed then
 				if mod:get("floating_icons_heal") then
 					unit_dmg.icon = "health"
+					unit_dmg.pop = 2
 				end
 			end
 		end
@@ -647,13 +657,7 @@ mod.floating = {
 			local healed = parameters.healed
 			local ammo = parameters.ammo
 			
-			-- mod:pcall(function()
-				-- table.dump(biggest_hit, "biggest_hit", 4)
-				-- mod:echo(tostring(damage_type))
-			-- end)
-			
-			--mod:echo("damage_type:'"..tostring(damage_type).."'")
-			
+			-- Heal number
 			if healed and mod:get("floating_heal") then
 				if mod.players:is_local_player(attacker_unit) then
 					self:trigger_heal(attacker_unit, unit, healed)
@@ -662,6 +666,7 @@ mod.floating = {
 				end
 			end
 			
+			-- Ammo number
 			if ammo and mod:get("floating_ammo") then
 				if mod.players:is_local_player(attacker_unit) then
 					self:trigger_ammo(attacker_unit, unit, ammo)
@@ -669,22 +674,9 @@ mod.floating = {
 					self:trigger_ammo(attacker_unit, attacker_unit, ammo)
 				end
 			end
-			
-			--local position = Unit.world_position(unit, 0)
-			-- local color = {255, 255, 255, 255}
-			
-			-- if unit_is_dead then
-				-- color = {255, 255, 56, 56}
-			-- elseif hit_zone_name == "head" or hit_zone_name == "neck" then
-				-- color = {255, 255, 127, 127}
-			-- elseif blocked then
-				-- color = {255, 127, 127, 127}
-			-- end
-			
-			--mod:echo(tostring(breed_data))
-			
+
 			--if breed_data and 
-			if mod:get("floating_damage_numbers") then
+			if mod:get("floating_damage_numbers") and not healed and not ammo then
 				if mod:get("floating_numbers_source") == 1 then
 					self:local_player(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, poison, burn)
 				elseif mod:get("floating_numbers_source") == 2 then
@@ -733,9 +725,12 @@ mod.floating = {
 							
 							local life = (mod:get_time() - unit_dmg.timer) / self.fade_time
 							local alpha = life*2
+							if not mod:get("floating_numbers_fade") then
+								alpha = 1
+							end
 							if alpha > 1 then alpha = 2 - alpha end
 							local color = Color(unit_dmg.color[1] * alpha, unit_dmg.color[2], unit_dmg.color[3], unit_dmg.color[4])
-							local black = Color(255 * alpha, 0, 0, 0)
+							local black = Color(255 * (alpha/2), 0, 0, 0)
 							local position = Unit.world_position(unit, 0)
 							--local position = Vector3Aux.unbox(unit_dmg.position)
 							position[3] = position[3] + offset
@@ -753,27 +748,37 @@ mod.floating = {
 							local x = inOutQuad(life, 0, horizontal, 1)
 							local y = inOutQuad((life*2)-1, 0, -vertical, 1)
 							local offset_vis = {x, y + vertical}
-
+							local border = 1
+							
+							local size_pop_multiplier = 1
+							if mod:get("floating_numbers_pop") then
+								size_pop_multiplier = life*6
+								if size_pop_multiplier > 1 then size_pop_multiplier = 2 - size_pop_multiplier end
+								size_pop_multiplier = (size_pop_multiplier + 1) * unit_dmg.pop
+								if size_pop_multiplier < 1 then size_pop_multiplier = 1 end
+							end
+							
 							if depth < 1 or mod.players:is_local_player(unit) then
 								-- local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
 								-- if ingame_ui_exists then
 									-- local ui_renderer = ingame_ui.ui_top_renderer
 									-- if ui_renderer then
 										mod:pcall(function()
-											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
-											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
-											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]-2+offset_vis[2]), black)
-											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]-2+offset_vis[1], position2d[2]+2+offset_vis[2]), black)
-											Gui.text(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
-											-- local width, height, min = ui_renderer:text_size(damage, unit_dmg.font_material, unit_dmg.font_size)
+											local font_size = unit_dmg.font_size * size_pop_multiplier
+											Gui.text(mod.gui, damage, unit_dmg.font_material, font_size, unit_dmg.font_name, Vector2(position2d[1]+border+offset_vis[1], position2d[2]-border+offset_vis[2]), black)
+											Gui.text(mod.gui, damage, unit_dmg.font_material, font_size, unit_dmg.font_name, Vector2(position2d[1]+border+offset_vis[1], position2d[2]+border+offset_vis[2]), black)
+											Gui.text(mod.gui, damage, unit_dmg.font_material, font_size, unit_dmg.font_name, Vector2(position2d[1]-border+offset_vis[1], position2d[2]-border+offset_vis[2]), black)
+											Gui.text(mod.gui, damage, unit_dmg.font_material, font_size, unit_dmg.font_name, Vector2(position2d[1]-border+offset_vis[1], position2d[2]+border+offset_vis[2]), black)
+											Gui.text(mod.gui, damage, unit_dmg.font_material, font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
+											-- local width, height, min = ui_renderer:text_size(damage, unit_dmg.font_material, font_size)
 											if unit_dmg.icon ~= "" then
 												local width = (64 * mod:get("floating_numbers_size")) * scale
 												local height = (64 * mod:get("floating_numbers_size")) * scale
 												local icon_offset = {0, 0}
-												local icon_size = Vector2(width, height)
+												local icon_size = Vector2(width * size_pop_multiplier, height * size_pop_multiplier)
 												
 												if unit_dmg.damage > 0 then
-													local min, max, caret = Gui.text_extents(mod.gui, damage, unit_dmg.font_material, unit_dmg.font_size)
+													local min, max, caret = Gui.text_extents(mod.gui, damage, unit_dmg.font_material, font_size)
 													local inv_scaling = RESOLUTION_LOOKUP.inv_scale
 													local t_width = (max.x - min.x)*inv_scaling
 													local t_height = ((max.y - min.y)*inv_scaling) * 0.75
@@ -782,10 +787,10 @@ mod.floating = {
 												end
 												
 												--local icon_pos = Vector2(position2d[1]+offset_vis[1]+icon_offset[1], position2d[2]+offset_vis[2]+icon_offset[2]) --Vector3(position2d[1]+icon_offset[1], position2d[2]+icon_offset[2], 0)
-												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]+2+offset_vis[1]+icon_offset[1], position2d[2]-2+offset_vis[2]+icon_offset[2]), icon_size, black)
-												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]+2+offset_vis[1]+icon_offset[1], position2d[2]+2+offset_vis[2]+icon_offset[2]), icon_size, black)
-												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]-2+offset_vis[1]+icon_offset[1], position2d[2]-2+offset_vis[2]+icon_offset[2]), icon_size, black)
-												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]-2+offset_vis[1]+icon_offset[1], position2d[2]+2+offset_vis[2]+icon_offset[2]), icon_size, black)
+												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]+border+offset_vis[1]+icon_offset[1], position2d[2]-border+offset_vis[2]+icon_offset[2]), icon_size, black)
+												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]+border+offset_vis[1]+icon_offset[1], position2d[2]+border+offset_vis[2]+icon_offset[2]), icon_size, black)
+												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]-border+offset_vis[1]+icon_offset[1], position2d[2]-border+offset_vis[2]+icon_offset[2]), icon_size, black)
+												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]-border+offset_vis[1]+icon_offset[1], position2d[2]+border+offset_vis[2]+icon_offset[2]), icon_size, black)
 												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]+offset_vis[1]+icon_offset[1], position2d[2]+offset_vis[2]+icon_offset[2]), icon_size, color)
 											end
 										end)

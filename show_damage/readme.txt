@@ -4,6 +4,10 @@ Description :
 Adds the ability to display damage dealt by players in chat and in game world.
 
 Changelog
+2.1.0
+	- Added pop effect for high damage numbers / heal / ammo
+	- Added option to toggle fade for numbers
+	- Fixed error that showed heal / ammo as damage
 2.0.4 - Fixed positioning of heal and ammo numbers in vt2
 2.0.3 - Fix for heal numbers not working in vt2
 2.0.2 - Fix to prevent crash on death reactions
