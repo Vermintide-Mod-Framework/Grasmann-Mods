@@ -506,16 +506,15 @@ end
 --[[
 	InventoryView
 --]]
-mod:hook("InventoryView.on_exit", function(func, ...)
-	func(...)
+mod:hook_safe(InventoryView, "on_exit", function(...)
 	mod:destroy_window()
 	-- No profile has been selected anymore when closing the inventory menu
 	mod.last_profile_name = ""
 end)
-mod:hook("InventoryView.handle_index_changes", function(func, self)
+mod:hook(InventoryView, "handle_index_changes", function(func, self, ...)
 	-- Can not switch hero display during Loadout Restore or equipment can get equipped to wrong hero.
 	if not mod.original_update_resync_loadout then
-		func(self)
+		func(self, ...)
 		local pages = self.ui_pages
 		local equipment_page = pages.equipment
 		if equipment_page.character_profile_changed then
@@ -523,14 +522,13 @@ mod:hook("InventoryView.handle_index_changes", function(func, self)
 		end
 	end
 end)
-mod:hook("InventoryView.exit", function(func, ...)
+mod:hook(InventoryView, "exit", function(func, ...)
 	-- Can not exit before Loadout Restore is finished else game crash
 	if not mod.original_update_resync_loadout then
 		func(...)
 	end
 end)
-mod:hook("InventoryView.update_animations", function(func, ...)
-	func(...)
+mod:hook_safe(InventoryView, "update_animations", function(...)
 	-- Check profile name that has been selected
 	local name = mod:current_profile_name()
 	if mod.last_profile_name ~= name then
@@ -541,48 +539,20 @@ end)
 --[[
 	Join popup
 --]]
-mod:hook("PopupJoinLobbyHandler.draw", function(func, self, ...)
+mod:hook(PopupJoinLobbyHandler, "draw", function(func, self, ...)
 	func(self, ...)
 	if self.visible and not mod.hero_selection_popup then
 		mod.hero_selection_popup = self
 		mod:reload_window()
 	end
 end)
-mod:hook("PopupJoinLobbyHandler.hide", function(func, ...)
+mod:hook(PopupJoinLobbyHandler, "hide", function(func, ...)
 	mod:destroy_window()
 	mod.hero_selection_popup = nil
 	func(...)
 end)
-mod:hook("PopupJoinLobbyHandler.update_lobby_data", function(func, ...)
-	func(...)
+mod:hook_safe(PopupJoinLobbyHandler, "update_lobby_data", function(...)
 	if mod.window then
 		mod:reload_window()
 	end
 end)
-
--- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
--- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
--- ##### █████╗  ██║   ██║█████╗  ██╔██╗ ██║   ██║   ███████╗ #########################################################
--- ##### ██╔══╝  ╚██╗ ██╔╝██╔══╝  ██║╚██╗██║   ██║   ╚════██║ #########################################################
--- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
--- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
---[[
-	Mod Setting changed
---]]
-mod.on_setting_changed = function(setting_name)
-end
---[[
-	Mod Suspended
---]]
-mod.on_disabled = function(initial_call)
-end
---[[
-	Mod Unsuspended
---]]
-mod.on_enabled = function(initial_call)
-end
---[[
-	Update cycle - wait for chatmanager to be present
---]]
-mod.update = function(dt)
-end
