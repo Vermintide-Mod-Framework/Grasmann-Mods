@@ -13,7 +13,7 @@ local mod = get_mod("HeatIndicator")
 	
 	Author: walterr
 	Ported: grasmann
-	Version: 2.0.0
+	Version: 2.0.2
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -177,7 +177,7 @@ mod.display_info = {
 --[[
 	Staff Update widget
 --]]
-mod:hook("ActionCharge.client_owner_post_update", function(func, self, ...)
+mod:hook(ActionCharge, "client_owner_post_update", function(func, self, ...)
 	func(self, ...)
 	
 	local display_info = mod.display_info["ActionCharge"]
@@ -191,7 +191,7 @@ end)
 --[[
 	Staff Start fade out
 --]]
-mod:hook("ActionCharge.finish", function(func, self, reason, ...)
+mod:hook(ActionCharge, "finish", function(func, self, reason, ...)
 	local result = func(self, reason, ...)
 	
 	local display_info = mod.display_info["ActionCharge"]
@@ -211,7 +211,7 @@ end)
 --[[
 	Trueflight update widget
 --]]
-mod:hook("ActionTrueFlightBowAim.client_owner_post_update", function (func, self, ...)
+mod:hook(ActionTrueFlightBowAim, "client_owner_post_update", function (func, self, ...)
 	func(self, ...)
 	
 	local display_info = mod.display_info["ActionTrueFlightBowAim"]
@@ -225,7 +225,7 @@ end)
 --[[
 	Truflight start fade out
 --]]
-mod:hook("ActionTrueFlightBowAim.finish", function(func, self, reason, ...)
+mod:hook(ActionTrueFlightBowAim, "finish", function(func, self, reason, ...)
 	local result = func(self, reason, ...)
 	
 	local display_info = mod.display_info["ActionTrueFlightBowAim"]
@@ -245,7 +245,7 @@ end)
 --[[
 	Geiser update widget
 --]]
-mod:hook("ActionGeiserTargeting.client_owner_post_update", function (func, self, ...)
+mod:hook(ActionGeiserTargeting, "client_owner_post_update", function (func, self, ...)
 	func(self, ...)
 	
 	local display_info = mod.display_info["ActionGeiserTargeting"]
@@ -259,7 +259,7 @@ end)
 --[[
 	Geiser start fade out
 --]]
-mod:hook("ActionGeiserTargeting.finish", function(func, self, reason, ...)
+mod:hook(ActionGeiserTargeting, "finish", function(func, self, reason, ...)
 	local result = func(self, reason, ...)
 	
 	local display_info = mod.display_info["ActionGeiserTargeting"]
@@ -284,7 +284,7 @@ if not VT1 then
 	--[[
 		Bolt staff update widget
 	--]]
-	mod:hook("ActionAim.client_owner_post_update", function(func, self, dt, t, ...)
+	mod:hook(ActionAim, "client_owner_post_update", function(func, self, dt, t, ...)
 		func(self, dt, t, ...)
 		
 		if self.item_name == "bw_skullstaff_spear" then
@@ -307,7 +307,7 @@ if not VT1 then
 	--[[
 		Bolt staff start fade out
 	--]]
-	mod:hook("ActionAim.finish", function(func, self, reason, ...)
+	mod:hook(ActionAim, "finish", function(func, self, reason, ...)
 		local result = func(self, reason, ...)
 		
 		if self.item_name == "bw_skullstaff_spear" then
@@ -333,7 +333,7 @@ end
 --[[
 	Render widget
 --]]
-mod:hook("OverchargeBarUI.update", function(func, self, dt, t, player, ...)
+mod:hook(OverchargeBarUI, "update", function(func, self, dt, t, player, ...)
 
 	-- Original function
 	func(self, dt, t, player, ...)
@@ -463,20 +463,6 @@ mod.on_setting_changed = function(setting_name)
 	mod._hudmod_charge_level_indicator = nil
 	mod._hudmod_charge_level_indicator_bg = nil
 end
---[[
-	Mod Suspended
---]]
-mod.on_disabled = function(initial_call)
-	mod:disable_all_hooks()
-end
---[[
-	Mod Unsuspended
---]]
-mod.on_enabled = function(initial_call)
-	mod:enable_all_hooks()
-end
 
---mod.on_unload = function(exit_game)
 mod._hudmod_charge_level_indicator = nil
 mod._hudmod_charge_level_indicator_bg = nil
---end

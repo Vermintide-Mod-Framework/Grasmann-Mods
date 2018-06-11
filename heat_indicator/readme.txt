@@ -11,6 +11,7 @@ green=(3 <= damage < 5, 0.75 <= area < 2.25), orange=(5 <= damage < 6, 2.25 <= a
 Where 'damage' means AoE instantaneous damage to normal targets, not including impact damage or DoT.
 
 Changelog
+2.0.2 - Updated for latest vmf
 2.0.1 - Fix to prevent crash with incorrect load order
 2.0.0 - Updated for vmb and vt2
 1.4.0 - Updated for latest vmf
