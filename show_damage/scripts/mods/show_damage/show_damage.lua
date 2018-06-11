@@ -415,8 +415,6 @@ mod.blocked_hit = function(self, attacker_unit, unit, hit_zone)
 			if table.contains(hit_zones, hit_zone) and not self:check_backstab(attacker_unit, unit) then
 				return true
 			end
-		else
-			self:echo(tostring(inv_template))
 		end
 	end
 	return false
