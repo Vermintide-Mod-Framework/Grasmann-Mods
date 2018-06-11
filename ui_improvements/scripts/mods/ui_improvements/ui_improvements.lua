@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 	
 	Lets you switch equippment of all characters / classes in inventory
 	
-	Version: 1.0.0
+	Version: 1.0.3
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -433,22 +433,23 @@ end
 -- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
-
-
-mod:hook("HeroViewStateLoot.on_enter", function(func, self, params, optional_ignore_item_population)
-	func(self, params, optional_ignore_item_population)
+--[[
+	Delete windows when opening loot window
+--]]
+mod:hook_safe(HeroViewStateLoot, "on_enter", function(...)
 	mod:destroy_windows()
 end)
-
-mod:hook("HeroViewStateOverview._change_window", function(func, self, window_index, window_name)
-	func(self, window_index, window_name)
+--[[
+	Set current sub screen in hero view
+--]]
+mod:hook(HeroViewStateOverview, "_change_window", function(func, self, window_index, window_name, ...)
+	func(self, window_index, window_name, ...)
 	mod.sub_screen = mod.window_settings[window_name] or mod.sub_screen
 end)
-
 --[[
 	Render correct item tooltips
 --]]
-mod:hook("UIPasses.item_tooltip.draw", function(func, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, parent_size, input_service, dt, ui_style_global)
+mod:hook(UIPasses.item_tooltip, "draw", function(func, ...)
 	local player = Managers.player:local_player()
 	local orig_profile_index, orig_career_index
 	
@@ -465,7 +466,7 @@ mod:hook("UIPasses.item_tooltip.draw", function(func, ui_renderer, pass_data, ui
 	end
 	
 	-- Original function
-	func(ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, parent_size, input_service, dt, ui_style_global)
+	func(...)
 	
 	-- Reset functions
 	player.profile_index = orig_profile_index
@@ -475,18 +476,18 @@ end)
 --[[
 	Prevent equipment to be destroyed and spawned when not active character
 --]]
-mod:hook("SimpleInventoryExtension.create_equipment_in_slot", function(func, self, slot_id, backend_id)
+mod:hook(SimpleInventoryExtension, "create_equipment_in_slot", function(func, ...)
 	local player = Managers.player:local_player()
 	-- If profile / career doesn't equal actual value cancel
 	if mod.profile_index ~= mod.actual_profile_index or mod.career_index ~= mod.actual_career_index then
 		return
 	end
-	func(self, slot_id, backend_id)
+	func(...)
 end)
 --[[
 	Get correct items for selected character
 --]]
-mod:hook("ItemGridUI._get_items_by_filter", function(func, self, item_filter)
+mod:hook(ItemGridUI, "_get_items_by_filter", function(func, self, ...)
 	local player = Managers.player:local_player()
 	local orig_profile_index, orig_career_index
 	
@@ -503,7 +504,7 @@ mod:hook("ItemGridUI._get_items_by_filter", function(func, self, item_filter)
 	end
 	
 	-- Orig function
-	local items = func(self, item_filter)
+	local items = func(self, ...)
 	
 	-- Reset functions
 	player.profile_index = orig_profile_index
@@ -514,9 +515,7 @@ end)
 --[[
 	Create window when opening hero view
 --]]
-mod:hook("HeroView.on_enter", function(func, self, menu_state_name, menu_sub_state_name)
-	-- Orig function
-	func(self, menu_state_name, menu_sub_state_name)
+mod:hook_safe(HeroView, "on_enter", function(...)
 	-- Set values
 	local player = Managers.player:local_player()
 	mod.actual_profile_index = player:profile_index()
@@ -529,16 +528,14 @@ end)
 --[[
 	Create window when unsuspending hero view
 --]]
-mod:hook("HeroView.unsuspend", function(func, self)
-	-- Orig function
-	func(self)
+mod:hook_safe(HeroView, "unsuspend", function(...)
 	-- Reload window
 	mod:reload_windows()
 end)
 --[[
 	Destroy window when closing hero view
 --]]
-mod:hook("HeroView.on_exit", function(func, self)
+mod:hook(HeroView, "on_exit", function(func, self)
 	-- Reset profile function
 	if mod.orig_profile_by_peer then
 		self.ingame_ui_context.profile_synchronizer.profile_by_peer = mod.orig_profile_by_peer
@@ -556,22 +553,3 @@ mod:hook("HeroView.on_exit", function(func, self)
 	-- Destroy window
 	mod:destroy_windows()
 end)
-
--- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
--- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
--- ##### █████╗  ██║   ██║█████╗  ██╔██╗ ██║   ██║   ███████╗ #########################################################
--- ##### ██╔══╝  ╚██╗ ██╔╝██╔══╝  ██║╚██╗██║   ██║   ╚════██║ #########################################################
--- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
--- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
---[[
-	Mod disabled
---]]
-mod.on_disabled = function(is_first_call)
-	mod:disable_all_hooks()
-end
---[[
-	Mod enabled
---]]
-mod.on_enabled = function(is_first_call)
-	mod:enable_all_hooks()
-end
