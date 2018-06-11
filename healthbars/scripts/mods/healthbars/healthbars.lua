@@ -555,36 +555,32 @@ end
 --[[
 	GenericHealthExtension Add damage hook
 --]]
-mod:hook("GenericHealthExtension.add_damage", function(func, self, ...)
-	func(self, ...)
+mod:hook_safe(GenericHealthExtension, "add_damage", function(...)
 	mod:on_enemy_damage(self)
 end)
 --[[
 	GenericHealthExtension Set damage hook
 --]]
-mod:hook("GenericHealthExtension.set_current_damage", function(func, self, ...)
-	func(self, ...)
+mod:hook_safe(GenericHealthExtension, "set_current_damage", function(...)
 	mod:on_enemy_damage(self)
 end)
 --[[
 	RatOgreHealthExtension Add ogre damage hook
 --]]
-mod:hook("RatOgreHealthExtension.add_damage", function(func, self, ...)
-	func(self, ...)
+mod:hook_safe(RatOgreHealthExtension, "add_damage", function(...)
 	mod:on_enemy_damage(self)
 end)
 --[[
 	RatOgreHealthExtension Set ogre damage hook
 --]]
-mod:hook("RatOgreHealthExtension.set_current_damage", function(func, self, ...)
-	func(self, ...)
+mod:hook_safe(RatOgreHealthExtension, "set_current_damage", function(...)
 	mod:on_enemy_damage(self)
 end)
 --[[
 	Check units before updating health bars
 	Necessary fix to avoid rare crashes
 --]]
-mod:hook("TutorialUI.update_health_bars", function(func, tutorial_ui, ...)
+mod:hook(TutorialUI, "update_health_bars", function(func, tutorial_ui, ...)
 	if mod:get("mode") then
 		mod:clean_units()
 		mod:set_sizes(tutorial_ui)
@@ -599,7 +595,7 @@ end)
 --[[
 	Remove health bar from gutter runner when he's vanishing
 --]]
-mod:hook("BTSelector_gutter_runner.run", function(func, self, unit, blackboard, ...)
+mod:hook(BTSelector_gutter_runner, "run", function(func, self, unit, blackboard, ...)
 	--func(self, unit, blackboard, ...)
 	local result, evaluate = func(self, unit, blackboard, ...)
 	local child_running = self.current_running_child(self, blackboard)
@@ -771,25 +767,10 @@ end
 -- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
 -- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
 --[[
-	Settings changed
---]]
-mod.on_setting_changed = function(setting_name)
-	if setting_name == "mode" then
-		mod:clean_units(true)
-	end
-end
---[[
 	Mod Suspended
 --]]
 mod.on_disabled = function(initial_call)
-	mod:disable_all_hooks()
 	mod:clean_units(true)
-end
---[[
-	Mod Unsuspended
---]]
-mod.on_enabled = function(initial_call)
-	mod:enable_all_hooks()
 end
 
 -- #####  █████╗  ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ######################################################

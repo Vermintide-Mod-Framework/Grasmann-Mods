@@ -10,8 +10,7 @@ mod_data.options_widgets = {
 		["setting_name"] = "position",
 		["widget_type"] = "dropdown",
 		["text"] = "Position",
-		["tooltip"] = "Position",
-			 "Switch position of the enemy health bars.",
+		["tooltip"] = "Switch position of the enemy health bars.",
 		["options"] = {
 			{text = "Bottom", value = 1},
 			{text = "Top", value = 2}
@@ -22,24 +21,19 @@ mod_data.options_widgets = {
 		["setting_name"] = "mode",
 		["widget_type"] = "dropdown",
 		["text"] = "Mode",
-		["tooltip"] = "Mode",
-			"Switch mode for the enemy health bars.",
-			"",
-			"-- All --",
-			"Create health bars for all wounded enemies.",
-			"",
-			"-- SPECIALS ONLY --",
-			"Create health bars for specials only.",
-			"",
-			"-- BOSSES ONLY --",
-			"Create health bars only for bosses.",
-			"",
-			"-- CUSTOM --",
+		["tooltip"] = "Switch mode for the enemy health bars.\n\n"..
+			"-- All --\n"..
+			"Create health bars for all wounded enemies.\n\n"..
+			"-- SPECIALS ONLY --\n"..
+			"Create health bars for specials only.\n\n"..
+			"-- BOSSES ONLY --\n"..
+			"Create health bars only for bosses.\n\n"..
+			"-- CUSTOM --\n"..
 			"Choose which enemies should have a health bar.",
 		["options"] = {
 			{--[[1]] text = "All", value = 2},
 			{--[[2]] text = "Specials", value = 3}, 
-			{--[[3]] text = "Ogre", value = 4},
+			{--[[3]] text = "Bosses", value = 4},
 			{--[[4]] text = "Custom", value = 5},
 		},
 		["default_value"] = 2,
