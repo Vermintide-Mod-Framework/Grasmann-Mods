@@ -1006,7 +1006,6 @@ mod.chat = {
 --[[
 	Hook apply_buffs_to_value
 --]]
-
 mod:hook("BuffExtension.apply_buffs_to_value", function(func, self, value, stat_buff)
 	local amount, procced, parent_id = func(self, value, stat_buff)
 	local always_proc = StatBuffApplicationMethods[stat_buff] ~= "proc"
@@ -1026,7 +1025,6 @@ mod:hook("BuffExtension.apply_buffs_to_value", function(func, self, value, stat_
 	return amount, procced, parent_id
 end)
 mod:hook_disable("BuffExtension.apply_buffs_to_value")
-
 --[[
 	Hook ammo buff on kill
 --]]
@@ -1043,7 +1041,6 @@ mod:hook("GenericAmmoUserExtension.add_ammo_to_reserve", function(func, self, am
 	return func(self, amount)
 end)
 mod:hook_disable("GenericAmmoUserExtension.add_ammo_to_reserve")
-
 --[[
 	Hook buff on attack
 --]]
