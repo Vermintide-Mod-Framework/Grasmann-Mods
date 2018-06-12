@@ -1,8 +1,8 @@
 local mod = get_mod("LoadoutManager")
---[[ 
+--[[
 	LoadoutManager
 		- Saves load out settings
-	
+
 	Author: walterr, iamlupo & grasmann
 	Version: 2.0.0
 --]]
@@ -48,11 +48,11 @@ mod.save_loadout = function(self, loadout_number, profile_name)
 			loadout[slot_name] = item_backend_id
 		end
 	end
-	
+
 	-- ##### Save #####################################################################################################
 	local name = self:get_name()
 	self:set(name.."/"..profile_name.."/"..tostring(loadout_number), loadout, true)
-	
+
 	-- ##### Feedback #################################################################################################
 	self:echo("Loadout #"..tostring(loadout_number).." saved for hero "..profile_name)
 end
@@ -63,14 +63,14 @@ mod.set_up_update_resync_loadout_queue = function(self)
 	local player_unit = Managers.player:local_player().player_unit
 	local inventory_extn = ScriptUnit.extension(player_unit, "inventory_system")
 	local attachment_extn = ScriptUnit.extension(player_unit, "attachment_system")
-	
+
 	-- ##### Save orginal function ####################################################################################
 	self.original_update_resync_loadout = inventory_extn.update_resync_loadout
 
 	inventory_extn.update_resync_loadout = function(self)
 		local lm = get_mod("LoadoutManager")
 		local is_queue_empty = lm:process_equipment_queue(self, attachment_extn)
-		
+
 		-- ##### Check if there are still items to sync ###############################################################
 		if self._item_to_spawn then
 			-- Sync item
@@ -87,17 +87,17 @@ end
 --]]
 mod.process_equipment_queue = function(self, inventory_extn, attachment_extn)
 	local equipment_queue = self.equipment_queue
-	
+
 	while equipment_queue[1] and not inventory_extn._item_to_spawn and not attachment_extn._item_to_spawn do
 		local next_equip = equipment_queue[1]
 		table.remove(equipment_queue, 1)
-		
+
 		-- ##### Check if item_backend_id still exist #################################################################
 		if ScriptBackendItem.get_key(next_equip.item_backend_id) then
 			local item = BackendUtils.get_item_from_masterlist(next_equip.item_backend_id)
 			if item then
 				local success = next_equip.equipment_page:equip_inventory_item(item, next_equip.slot.inventory_button_index)
-				
+
 				if success then
 					next_equip.items_page:refresh_items_status()
 				end
@@ -139,14 +139,14 @@ mod.restore_loadout = function(self, loadout_number, profile_name)
 	local equipment_page = pages.equipment
 	local items_page = pages.items
 	local equipment_queue = self.equipment_queue
-	
+
 	-- First remove all trinkets in case the loadout contains a trinket that is currently
 	-- equipped but in a different slot.
 	for _, slot_name in ipairs(InventorySettings.slot_names_by_type["trinket"]) do
 		local slot_index = InventorySettings.slots_by_name[slot_name].inventory_button_index
 		equipment_page:remove_inventory_item(nil, slot_index)
 	end
-	
+
 	-- Note that this ordering does slot_hat last, which is important because the
 	-- new hat doesn't appear on the player model unless it's done last (for some
 	-- reason that I dont have time to figure out right now).
@@ -164,7 +164,7 @@ mod.restore_loadout = function(self, loadout_number, profile_name)
 			end
 		end
 	end
-	
+
 	-- ##### Feedback #################################################################################################
 	self:echo("Loadout #"..tostring(loadout_number).." restored for hero "..profile_name)
 end
@@ -177,7 +177,7 @@ mod.restore_background_loadout = function(self, profile_name, loadout_number)
 		self:echo("Error: cannot background-restore current hero's loadout")
 		return
 	end
-	
+
 	-- ##### Only works in inn ########################################################################################
 	if not DamageUtils.is_in_inn then
 		self:echo("Error: can only restore other hero's loadout in Red Moon Inn")
@@ -198,7 +198,7 @@ mod.restore_background_loadout = function(self, profile_name, loadout_number)
 		self:echo("Error: loadout #"..tostring(loadout_number).." not found for hero "..profile_name)
 		return
 	end
-	
+
 	-- ##### Feedback #################################################################################################
 	self:echo("Loadout #"..tostring(loadout_number).." restored for hero "..profile_name)
 end
@@ -220,11 +220,11 @@ mod.get_loadout_icons = function(self, loadout_number, profile_name)
 		self:echo("Error: loadout #"..tostring(loadout_number).." not found for hero "..profile_name)
 		return
 	end
-	
+
 	-- ##### Colors ###################################################################################################
 	local rarity_colors = {common = "green", plentiful = "white", exotic = "yellow",
 		rare = "blue", promo = "purple", unique = "red"}
-	
+
 	-- ##### Get loadout icons ########################################################################################
 	local results = {}
 	for i = #InventorySettings.slots_by_inventory_button_index, 1, -1 do
@@ -260,45 +260,45 @@ mod.loadout_tooltip = function(self, loadout_info, font_size, line_padding, offs
 		-- Get mouse position
 		local cursor_axis_id = stingray.Mouse.axis_id("cursor")
 		local mouse = stingray.Mouse.axis(cursor_axis_id)
-		
+
 		-- UI
 		local scale = UIResolutionScale()
 		local screen_w, screen_h = UIResolution()
 		local basic_gui = get_mod("BasicUI")
-		
+
 		-- Font
 		font_size = font_size or screen_w / 100
 		font_material = font_material or basic_gui.default_font_material
-		
+
 		-- Offset / Padding
 		offset = offset or {20*scale, -20*scale}
 		padding = padding or {5*scale, 5*scale, 5*scale, 5*scale}
 		line_padding = line_padding or 0*scale
-		
+
 		-- Render background
 		local tooltip_position = Vector3(mouse[1] + offset[1], mouse[2] + offset[2], 999)
 		local size = Vector2(250*scale, 190*scale)
 		basic_gui:rect(tooltip_position, size, Color(200, 0, 0, 0))
-		
+
 		-- Render Text
 		local text_position = Vector3(tooltip_position[1] + padding[1], tooltip_position[2] + size[2] - font_size - padding[2], 999)
 		local color = Colors.get_color_with_alpha("cheeseburger", 255)
 		basic_gui:text("Loadout "..tostring(loadout_info[2]), text_position, font_size+2, color)
-		
+
 		-- Render Icons
 		local index = 1
 		local icon_size = Vector2(60*scale, 60*scale)
 		local icon_x = text_position[1]
 		local lines_y = {text_position[2] - icon_size[2] - font_size, text_position[2] - font_size - icon_size[2]*2 - 20*scale}
 		for _, item in pairs(loadout) do
-		
+
 			color = Colors.get_color_with_alpha(item.color_name, 255)
 			local icon_position = Vector3(icon_x, lines_y[1], 999)
 			if index > 3 then icon_position = Vector3(icon_x, lines_y[2], 999) end
-			
+
 			basic_gui:draw_icon(item.icon, icon_position, nil, icon_size, "gui_item_icons_atlas")
 			basic_gui:draw_icon("frame_01", icon_position, color, icon_size, "gui_item_icons_atlas")
-			
+
 			-- Render traits
 			if item.traits then
 				local trait_x = icon_position[1] + icon_size[1] - 10*scale
@@ -315,12 +315,12 @@ mod.loadout_tooltip = function(self, loadout_info, font_size, line_padding, offs
 					end
 				end
 			end
-			
+
 			icon_x = icon_x + icon_size[1] + 20*scale
 			index = index + 1
 			if index == 4 then icon_x = text_position[1] end
 		end
-		
+
 	end
 end
 
@@ -368,7 +368,7 @@ mod.create_window = function(self)
 	local border = 3*scale
 	local ui = get_mod("SimpleUI")
 	local middle_center = ui and ui.text_alignment.middle_center
-	
+
 	-- ##### Check if character selection on join #####################################################################
 	if not self.hero_selection_popup then
 		-- ##### Inventory must be open ###############################################################################
@@ -379,7 +379,7 @@ mod.create_window = function(self)
 		end
 		local pages = inventory_ui.ui_pages
 		local profile_name = pages.items:current_profile_name()
-		
+
 		-- ##### Window ###############################################################################################
 		local window_size = {415, 60}
 		local button_size = {(window_size[1]-30)/11, 24}
@@ -389,18 +389,18 @@ mod.create_window = function(self)
 		local window_position = {80, 185}
 		self.window = ui:create_window("loadout_saver_window", window_position, window_size)
 		--self.window:set("transparent", true)
-		
+
 		-- ##### Load / Save labels ###################################################################################
 		local label = self.window:create_label("loadout_saver_load_text", {label_x, line_y[2]}, label_size, nil, "Load")
 		label:set("text_alignment", middle_center)
 		local label = self.window:create_label("loadout_saver_save_text", {label_x, line_y[1]}, label_size, nil, "Save")
 		label:set("text_alignment", middle_center)
-		
+
 		-- ##### Loadout buttons ######################################################################################
 		for i=1, 9 do
 			if self:loadout_exists(profile_name, i) then
 				local position = {30+(button_size[1]+border)*(i), line_y[2]}
-				
+
 				-- ##### Load button ##################################################################################
 				local button = self.window:create_button("loadout_saver_load"..tostring(i), position, button_size, nil, tostring(i), {profile_name, i})
 				button:set("on_click", function(self)
@@ -413,7 +413,7 @@ mod.create_window = function(self)
 				end)
 			end
 			local position = {30+(button_size[1]+border)*(i), line_y[1]}
-			
+
 			-- ##### Save button ######################################################################################
 			local button = self.window:create_button("loadout_saver_save"..tostring(i), position, button_size, nil, tostring(i), {profile_name, i})
 			button:set("on_click", function(self)
@@ -421,18 +421,18 @@ mod.create_window = function(self)
 				lm:save_loadout(self.params[2], self.params[1])
 				lm:reload_window()
 			end)
-			
+
 			button:set("tooltip", "Save loadout "..tostring(i))
 		end
 	else
 		-- ##### Char popup ###########################################################################################
 		local window_size = {screen_w, screen_h}
 		local window_position = {0, 0}
-		
+
 		-- ##### Window ###############################################################################################
 		self.window = ui:create_window("loadout_saver_window", window_position, window_size)
 		self.window:set("transparent", true)
-		
+
 		-- ##### Load / Save labels ###################################################################################
 		local label = self.window:create_label("loadout_saver_load_text", {0, screen_h*0.42}, {screen_w, 24}, nil, "Change Loadouts")
 		label:set("text_alignment", middle_center)
@@ -453,7 +453,7 @@ mod.create_window = function(self)
 					local button_size = {frame_width/3, frame_height/6}
 					for j = 1, 9 do
 						if self:loadout_exists(hero_name, i) then
-						
+
 							-- ##### Get position #####################################################################
 							local position = {}
 							if j <= 3 then
@@ -461,7 +461,7 @@ mod.create_window = function(self)
 							else
 								position = {frame_x + (button_size[1] + border)*(3), frame_y + frame_height - (button_size[2] + border)*(j-4)}
 							end
-							
+
 							-- ##### Load button ######################################################################
 							local button = self.window:create_button("loadout_saver_load"..tostring(j), position, button_size, nil, tostring(j), {hero_name, j})
 							button:set("on_click", function(self)
@@ -506,7 +506,7 @@ end
 --[[
 	InventoryView
 --]]
-mod:hook_safe(InventoryView, "on_exit", function(...)
+mod:hook_safe(InventoryView, "on_exit", function()
 	mod:destroy_window()
 	-- No profile has been selected anymore when closing the inventory menu
 	mod.last_profile_name = ""
@@ -528,7 +528,7 @@ mod:hook(InventoryView, "exit", function(func, ...)
 		func(...)
 	end
 end)
-mod:hook_safe(InventoryView, "update_animations", function(...)
+mod:hook_safe(InventoryView, "update_animations", function()
 	-- Check profile name that has been selected
 	local name = mod:current_profile_name()
 	if mod.last_profile_name ~= name then
@@ -539,8 +539,7 @@ end)
 --[[
 	Join popup
 --]]
-mod:hook(PopupJoinLobbyHandler, "draw", function(func, self, ...)
-	func(self, ...)
+mod:hook_safe(PopupJoinLobbyHandler, "draw", function(self)
 	if self.visible and not mod.hero_selection_popup then
 		mod.hero_selection_popup = self
 		mod:reload_window()
@@ -551,7 +550,7 @@ mod:hook(PopupJoinLobbyHandler, "hide", function(func, ...)
 	mod.hero_selection_popup = nil
 	func(...)
 end)
-mod:hook_safe(PopupJoinLobbyHandler, "update_lobby_data", function(...)
+mod:hook_safe(PopupJoinLobbyHandler, "update_lobby_data", function()
 	if mod.window then
 		mod:reload_window()
 	end
