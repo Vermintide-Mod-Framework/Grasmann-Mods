@@ -754,7 +754,6 @@ mod.floating = {
 								if size_pop_multiplier > 1 then size_pop_multiplier = 2 - size_pop_multiplier end
 								size_pop_multiplier = (size_pop_multiplier + 1) * unit_dmg.pop
 								if size_pop_multiplier < 1 then size_pop_multiplier = 1 end
-								mod:echo(tostring(size_pop_multiplier))
 							end
 
 							if depth < 1 or mod.players:is_local_player(unit) then
