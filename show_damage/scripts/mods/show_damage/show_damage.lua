@@ -1,8 +1,8 @@
 local mod = get_mod("ShowDamage")
---[[ 
+--[[
 	Show Damage
 		- Shows damage / healing in chat and as floating numbers.
-	
+
 	Author: grasmann
 	Version: 2.1.0
 --]]
@@ -22,7 +22,7 @@ end
 --[[
 	Update player names when option menu is open
 --]]
-mod:hook("VMFOptionsView.update", function(func, self, ...)
+mod:hook(VMFOptionsView, "update", function(func, self, ...)
 	if mod:get_time() > mod.players.updated + mod.players.interval then
 		mod.players.updated = mod:get_time()
 		mod.players.set_names()
@@ -38,7 +38,7 @@ mod.update_setting_text = function(self, setting_name, text)
 		local vmf_options_view = ingame_ui.views["vmf_options_view"]
 		if vmf_options_view then
 			local searched_widget = nil
-			
+
 			for _, mod_widgets in ipairs(vmf_options_view.settings_list_widgets) do
 				if mod_widgets[1].content.mod_name == self._name then
 					for _, widget in ipairs(mod_widgets) do
@@ -49,7 +49,7 @@ mod.update_setting_text = function(self, setting_name, text)
 					end
 				end
 			end
-			
+
 			if searched_widget then
 				searched_widget.content.text = text
 			end
@@ -260,8 +260,8 @@ end
 mod.gui = nil
 mod.create_gui = function(self)
 	local top_world = Managers.world:world("top_ingame_view")
-	self.gui = World.create_screen_gui(top_world, "immediate", "material", "materials/fonts/gw_fonts", --"material", "materials/ui/ui_1080p_ingame_common", 
-		"material", "materials/show_damage/block", "material", "materials/show_damage/melee", "material", "materials/show_damage/ranged", 
+	self.gui = World.create_screen_gui(top_world, "immediate", "material", "materials/fonts/gw_fonts", --"material", "materials/ui/ui_1080p_ingame_common",
+		"material", "materials/show_damage/block", "material", "materials/show_damage/melee", "material", "materials/show_damage/ranged",
 		"material", "materials/show_damage/health", "material", "materials/show_damage/poison", "material", "materials/show_damage/flame")
 end
 mod.destroy_gui = function(self)
@@ -402,15 +402,15 @@ end
 mod.blocked_hit = function(self, attacker_unit, unit, hit_zone)
 	local hit_zones = {"left_arm", "torso", "left_leg"}
 	local more_rat_weapons = get_mod("MoreRatWeapons")
-	if more_rat_weapons then 
+	if more_rat_weapons then
 		hit_zones = more_rat_weapons.shield_data.hit_zones
 		self.check_backstab = more_rat_weapons.check_backstab
 	end
-	
+
 	if unit and Unit.has_data(unit, "breed") and ScriptUnit.has_extension(unit, "ai_inventory_system") then
 		local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
 		local inv_template = inventory_extension.inventory_configuration_name
-		
+
 		if inv_template == "sword_and_shield" and not inventory_extension.already_dropped_shield then
 			if table.contains(hit_zones, hit_zone) and not self:check_backstab(attacker_unit, unit) then
 				return true
@@ -525,9 +525,9 @@ mod.floating = {
 		Post message for custom chosen player
 	--]]
 	custom = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
-		if mod.players.is_player_unit(attacker_unit) then			
+		if mod.players.is_player_unit(attacker_unit) then
 			local player_manager = Managers.player
-			local players = player_manager:human_and_bot_players()				
+			local players = player_manager:human_and_bot_players()
 			local i = 1
 			for _, p in pairs(players) do
 				local setting = "floating_numbers_player_"..tostring(i)
@@ -538,7 +538,7 @@ mod.floating = {
 				end
 				if mod:get(setting) then
 					if attacker_unit == p.player_unit and (not self.corpses[unit]) then
-						
+
 						self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 					end
 				end
@@ -561,7 +561,7 @@ mod.floating = {
 		--unit_dmg.position = Vector3Aux.box(nil, position)
 		unit_dmg.position = Vector3Aux.box(nil, Unit.world_position(unit, 0))
 		unit_dmg.damage = damage or 0
-		
+
 		local color = {255, 255, 255, 255}
 		if poison then
 			color = {255, 128, 0, 128}
@@ -579,7 +579,7 @@ mod.floating = {
 			color = {255, 255, 255, 0}
 		end
 		unit_dmg.color = color
-		
+
 		unit_dmg.timer = mod:get_time()
 		unit_dmg.blocked = blocked
 		-- Movement
@@ -591,7 +591,7 @@ mod.floating = {
 			-- --unit_dmg.icon = "ranged"
 		-- else
 			-- --unit_dmg.icon = "melee"
-		-- end		
+		-- end
 		if hit_zone_name == "head" or hit_zone_name == "neck" then
 			font_name, font_material, font_size = self:fonts(45)
 			if mod:get("floating_icons_headshot") then
@@ -634,14 +634,14 @@ mod.floating = {
 		unit_dmg.font_material = font_material
 		font_size = font_size * mod:get("floating_numbers_size")
 		unit_dmg.font_size = font_size
-		
+
 		return unit_dmg
 	end,
 	--[[
 		Post message for player in filter file
 	--]]
 	handle = function(self, unit, biggest_hit, parameters)
-		
+
 		if mod:get("floating_numbers") and self:has_unit(unit) then
 			--local breed_data = Unit.get_data(unit, "breed")
 			local attacker_unit = biggest_hit[DamageDataIndex.ATTACKER]
@@ -654,7 +654,7 @@ mod.floating = {
 			local burn = damage_type == "burn" or damage_type == "burninating" or damage_type == "fire_grenade_glance"
 			local healed = parameters.healed
 			local ammo = parameters.ammo
-			
+
 			-- Heal number
 			if healed and mod:get("floating_heal") then
 				if mod.players:is_local_player(attacker_unit) then
@@ -663,7 +663,7 @@ mod.floating = {
 					self:trigger_heal(attacker_unit, attacker_unit, healed)
 				end
 			end
-			
+
 			-- Ammo number
 			if ammo and mod:get("floating_ammo") then
 				if mod.players:is_local_player(attacker_unit) then
@@ -673,7 +673,7 @@ mod.floating = {
 				end
 			end
 
-			--if breed_data and 
+			--if breed_data and
 			if mod:get("floating_damage_numbers") and not healed and not ammo then
 				if mod:get("floating_numbers_source") == 1 then
 					self:local_player(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, poison, burn)
@@ -683,7 +683,7 @@ mod.floating = {
 					self:custom(attacker_unit, unit, dead, damage_amount, nil, nil, hit_zone_name, blocked, poison, burn)
 				end
 			end
-			
+
 			if dead then
 				--self.corpses[unit] = true
 				self.delete[unit] = unit
@@ -707,10 +707,10 @@ mod.floating = {
 				local index = 1
 				for _, unit_dmg in pairs(self.units[unit]) do
 					if mod:get_time() - unit_dmg.timer < self.fade_time then
-						
+
 						local damage = ""
 						if unit_dmg.damage > 0 or unit_dmg.blocked then
-						
+
 							-- If damage is a integer
 							if unit_dmg.damage > 0 and unit_dmg.damage == math.floor(unit_dmg.damage) then
 								damage = tostring(unit_dmg.damage)
@@ -720,7 +720,7 @@ mod.floating = {
 							-- if unit_dmg.blocked then
 								-- damage = "Blocked"
 							-- end
-							
+
 							local life = (mod:get_time() - unit_dmg.timer) / self.fade_time
 							local alpha = life*2
 							if not mod:get("floating_numbers_fade") then
@@ -734,10 +734,10 @@ mod.floating = {
 							position[3] = position[3] + offset
 							local position2d, depth = Camera.world_to_screen(camera, position)
 							local player_pos = ScriptCamera.position(camera)
-							
+
 							-- local local_player = Managers.player:local_player()
 							-- local player_pos = local_player and Unit.local_position(local_player.player_unit, 0) or Vector3(0, 0, 0)
-							
+
 							-- local player_pos = Unit.local_position(player.player_unit, 0)
 							local distance = Vector3.distance(player_pos, position) / 5
 							--mod:echo("distance: "..tostring(distance))
@@ -747,7 +747,7 @@ mod.floating = {
 							local y = inOutQuad((life*2)-1, 0, -vertical, 1)
 							local offset_vis = {x, y + vertical}
 							local border = 1
-							
+
 							local size_pop_multiplier = 1
 							if mod:get("floating_numbers_pop") then
 								size_pop_multiplier = life*6
@@ -755,7 +755,7 @@ mod.floating = {
 								size_pop_multiplier = (size_pop_multiplier + 1) * unit_dmg.pop
 								if size_pop_multiplier < 1 then size_pop_multiplier = 1 end
 							end
-							
+
 							if depth < 1 or mod.players:is_local_player(unit) then
 								-- local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
 								-- if ingame_ui_exists then
@@ -774,7 +774,7 @@ mod.floating = {
 												local height = (64 * mod:get("floating_numbers_size")) * scale
 												local icon_offset = {0, 0}
 												local icon_size = Vector2(width * size_pop_multiplier, height * size_pop_multiplier)
-												
+
 												if unit_dmg.damage > 0 then
 													local min, max, caret = Gui.text_extents(mod.gui, damage, unit_dmg.font_material, font_size)
 													local inv_scaling = RESOLUTION_LOOKUP.inv_scale
@@ -783,7 +783,7 @@ mod.floating = {
 													icon_size = Vector2(t_height, t_height)
 													icon_offset = {t_width, 0}
 												end
-												
+
 												--local icon_pos = Vector2(position2d[1]+offset_vis[1]+icon_offset[1], position2d[2]+offset_vis[2]+icon_offset[2]) --Vector3(position2d[1]+icon_offset[1], position2d[2]+icon_offset[2], 0)
 												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]+border+offset_vis[1]+icon_offset[1], position2d[2]-border+offset_vis[2]+icon_offset[2]), icon_size, black)
 												Gui.bitmap(mod.gui, unit_dmg.icon, Vector2(position2d[1]+border+offset_vis[1]+icon_offset[1], position2d[2]+border+offset_vis[2]+icon_offset[2]), icon_size, black)
@@ -859,19 +859,19 @@ mod.chat = {
 			local unit_is_dead = parameters.death
 			local healed = parameters.healed
 			local ammo = parameters.ammo
-			
+
 			-- Post option specific message
 			if mod:get("chat_mode") == 4 then
 				hit_zone_name = nil
 			end
-			
+
 			if healed and mod:get("chat_heal") then
 				self:trigger_heal(attacker_unit, healed)
 			end
 			if ammo and mod:get("chat_ammo") then
 				self:trigger_ammo(attacker_unit, ammo)
 			end
-			
+
 			if breed_data and mod:get("chat_damage") then
 				if mod:get("chat_damage_source") == 1 and (mod:get("chat_mode") == 2 or unit_is_dead) then
 					self:local_player(attacker_unit, damage_amount, hit_zone_name, unit_is_dead, breed_data.name)
@@ -881,7 +881,7 @@ mod.chat = {
 					self:custom(attacker_unit, damage_amount, hit_zone_name, unit_is_dead, breed_data.name)
 				end
 			end
-			
+
 			-- If unit dead remove from system
 			if unit_is_dead then
 				--self.units[unit] = nil
@@ -919,9 +919,9 @@ mod.chat = {
 		Post message for custom chosen player
 	--]]
 	custom = function(self, attacker_unit, damage_amount, hit_zone, dead, breed, healed, ammo)
-		if mod.players.is_player_unit(attacker_unit) then			
+		if mod.players.is_player_unit(attacker_unit) then
 			local player_manager = Managers.player
-			local players = player_manager:human_and_bot_players()				
+			local players = player_manager:human_and_bot_players()
 			local player = mod.players.from_player_unit(attacker_unit)
 			local name = mod.strings.check({player._cached_name, mod.players.unit_name(player.player_name)})
 			local i = 1
@@ -944,19 +944,19 @@ mod.chat = {
 		local hit_zone_name = mod.enemies.hit_zones[hit_zone]
 		--local message = string.format("%s %i dmg", name, damage)
 		local message = string.format("%s", name)
-		
+
 		-- Hit / Kill
 		if dead then
 			message = string.format("%s killed", message)
 		elseif damage then
 			message = string.format("%s hit", message)
 		end
-		
+
 		-- Damage
 		if damage ~= nil then
 			message = string.format("%s ( %i )", message, damage)
 		end
-		
+
 		-- Breed
 		if breed_name ~= nil then
 			--if table.has_item2(mod.enemies.specials, breed) then
@@ -968,30 +968,30 @@ mod.chat = {
 		elseif damage then
 			message = string.format("%s an enemy", message)
 		end
-		
+
 		-- Add hitzone
-		if mod:get("chat_hit_zone") and hit_zone_name ~= nil then		
+		if mod:get("chat_hit_zone") and hit_zone_name ~= nil then
 			message = string.format("%s ( %s )", message, hit_zone_name)
 		end
-		
+
 		-- Add kill indicator
 		if mod:get("chat_kill") and dead then
 			message = string.format("%s ( Kill )", message)
 		end
-		
+
 		if healed then
 			message = string.format("%s restored %i health", message, healed.amount)
 		end
-		
+
 		if ammo then
 			message = string.format("%s retrieved %i ammo", message, ammo.amount)
 		end
-		
+
 		-- -- Try console output
 		-- if mod.console.post(name, damage, hit_zone_name, dead, breed) then
 			-- onlysend = true
 		-- end
-		
+
 		-- mod.chat.send(message, onlysend)
 		mod:echo(message)
 	end,
@@ -1006,7 +1006,7 @@ mod.chat = {
 --[[
 	Hook apply_buffs_to_value
 --]]
-mod:hook("BuffExtension.apply_buffs_to_value", function(func, self, value, stat_buff)
+mod:hook(BuffExtension, "apply_buffs_to_value", function(func, self, value, stat_buff)
 	local amount, procced, parent_id = func(self, value, stat_buff)
 	local always_proc = StatBuffApplicationMethods[stat_buff] ~= "proc"
 
@@ -1024,11 +1024,11 @@ mod:hook("BuffExtension.apply_buffs_to_value", function(func, self, value, stat_
 	end
 	return amount, procced, parent_id
 end)
-mod:hook_disable("BuffExtension.apply_buffs_to_value")
+mod:hook_disable(BuffExtension, "apply_buffs_to_value")
 --[[
 	Hook ammo buff on kill
 --]]
-mod:hook("GenericAmmoUserExtension.add_ammo_to_reserve", function(func, self, amount)
+mod:hook(GenericAmmoUserExtension, "add_ammo_to_reserve", function(func, self, amount)
 	if amount then
 		local biggest_hit = {}
 		biggest_hit[DamageDataIndex.ATTACKER] = (VT1 and mod.attacker_hook_data) or self.owner_unit
@@ -1037,22 +1037,22 @@ mod:hook("GenericAmmoUserExtension.add_ammo_to_reserve", function(func, self, am
 		mod.floating:handle(mod.floating_unit_hook_data, biggest_hit, {ammo = {amount = amount}})
 		mod.chat:handle(mod.floating_unit_hook_data, biggest_hit, {ammo = {amount = amount}})
 	end
-	
+
 	return func(self, amount)
 end)
-mod:hook_disable("GenericAmmoUserExtension.add_ammo_to_reserve")
+mod:hook_disable(GenericAmmoUserExtension, "add_ammo_to_reserve")
 --[[
 	Hook buff on attack
 --]]
-mod:hook("DamageUtils.buff_on_attack", function(func, unit, hit_unit, ...)
+mod:hook(DamageUtils, "buff_on_attack", function(func, unit, hit_unit, ...)
 	--info to carry in buff extension hook
 	mod.attacker_hook_data = unit
 	mod.floating_unit_hook_data = hit_unit
-	mod:hook_enable("BuffExtension.apply_buffs_to_value")
+	mod:hook_enable(BuffExtension, "apply_buffs_to_value")
 
 	local value = func(unit, hit_unit, ...)
 
-	mod:hook_disable("BuffExtension.apply_buffs_to_value")
+	mod:hook_disable(BuffExtension, "apply_buffs_to_value")
 	mod.floating_unit_hook_data = nil
 	mod.attacker_hook_data = nil
 
@@ -1068,16 +1068,16 @@ local DeathReactions_start_hook = function(func, unit, dt, context, t, killing_b
 	mod.attacker_hook_data = VT1 and killing_blow[DamageDataIndex.ATTACKER]
 
 	-- Health and mmo buffs
-	mod:hook_enable("BuffExtension.apply_buffs_to_value")
-	mod:hook_enable("GenericAmmoUserExtension.add_ammo_to_reserve")
+	mod:hook_enable(BuffExtension, "apply_buffs_to_value")
+	mod:hook_enable(GenericAmmoUserExtension, "add_ammo_to_reserve")
 
 	-- Execute orginal function
 	-- cached_wall_nail_data doesn't exist in VT2, so it will be discarded
 	local return_val_1, return_val_2 = func(unit, dt, context, t, killing_blow, is_server, cached_wall_nail_data)
 
 	-- Restore functions
-	mod:hook_disable("BuffExtension.apply_buffs_to_value")
-	mod:hook_disable("GenericAmmoUserExtension.add_ammo_to_reserve")
+	mod:hook_disable(BuffExtension, "apply_buffs_to_value")
+	mod:hook_disable(GenericAmmoUserExtension, "add_ammo_to_reserve")
 	mod.floating_unit_hook_data = nil
 	mod.attacker_hook_data = nil
 
@@ -1106,28 +1106,25 @@ end
 --[[
 	Update - Add units to system if alive
 --]]
-mod:hook("GenericHitReactionExtension.update", function(func, self, unit, input, dt, context, t, ...)
+mod:hook(GenericHitReactionExtension, "update", function(func, self, unit, input, dt, context, t, ...)
 
 	-- Add new units to process
 	if mod:is_enabled() and self.health_extension:is_alive() then
 		mod:add_unit(unit)
 	end
-	
+
 	-- Render damages
 	mod.floating:render(unit)
-	
+
 	-- Original function
 	func(self, unit, input, dt, context, t, ...)
-	
+
 end)
 --[[
 	Execute Effect - Post message and remove unit from system
 --]]
-mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, unit, effect_template, biggest_hit, parameters, ...)
-	
-	-- Original function
-	func(self, unit, effect_template, biggest_hit, parameters, ...)
-	
+mod:hook_safe(GenericHitReactionExtension, "_execute_effect", function(self, unit, effect_template_, biggest_hit, parameters)
+
 	-- Chat output
 	if mod:is_enabled() then
 		mod.chat:handle(unit, biggest_hit, parameters)
@@ -1136,7 +1133,7 @@ mod:hook("GenericHitReactionExtension._execute_effect", function(func, self, uni
 			mod.chat.units[unit] = nil
 		end
 	end
-	
+
 	-- Floating numbers
 	if mod:is_enabled() then
 		mod.floating:handle(unit, biggest_hit, parameters)
@@ -1151,11 +1148,8 @@ if not VT1 then
 	--[[
 		TrainingDummyHealthExtension - Compitibility for training dummies
 	--]]
-	mod:hook("TrainingDummyHealthExtension.add_damage", function(func, self, attacker_unit, damage_amount, hit_zone_name, damage_type, ...)
-		
-		-- Original function
-		func(self, attacker_unit, damage_amount, hit_zone_name, damage_type, ...)
-		
+	mod:hook_safe(TrainingDummyHealthExtension, "add_damage", function(self, attacker_unit, damage_amount, hit_zone_name, damage_type)
+
 		-- Data
 		local unit = self.unit
 		local biggest_hit = {
@@ -1165,25 +1159,25 @@ if not VT1 then
 			hit_zone_name,
 		}
 		local parameters = {}
-		
+
 		-- Add unit
 		mod:add_unit(unit)
-		
+
 		-- Chat output
 		if mod:is_enabled() then
 			mod.chat:handle(unit, biggest_hit, parameters)
 		end
-		
+
 		-- Floating numbers
 		if mod:is_enabled() then
 			mod.floating:handle(unit, biggest_hit, parameters)
 		end
-		
+
 	end)
 	--[[
 		Disable default numbers
 	--]]
-	mod:hook("DamageNumbersUI.event_add_damage_number", function(func, ...)
+	mod:hook(DamageNumbersUI, "event_add_damage_number", function(func, ...)
 		if not mod:get("disable_default_numbers") then
 			func(...)
 		end
@@ -1205,15 +1199,13 @@ end
 	Mod Suspended
 --]]
 mod.on_disabled = function(initial_call)
-	mod:disable_all_hooks()
-	mod:hook_enable("GenericHitReactionExtension.update")
-	mod:hook_enable("GenericHitReactionExtension._execute_effect")
+	mod:hook_enable(GenericHitReactionExtension, "update")
+	mod:hook_enable(GenericHitReactionExtension, "_execute_effect")
 end
 --[[
 	Mod Unsuspended
 --]]
 mod.on_enabled = function(initial_call)
-	mod:enable_all_hooks()
 end
 --[[
 	Mod Update - create gui
