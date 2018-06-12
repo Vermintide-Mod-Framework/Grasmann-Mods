@@ -8,7 +8,7 @@ local mod = get_mod("ThirdPerson")
 		- When camera collides backwards with map aiming inaccurate
 
 	Author: grasmann
-	Version: 2.0.0
+	Version: 2.0.3
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
