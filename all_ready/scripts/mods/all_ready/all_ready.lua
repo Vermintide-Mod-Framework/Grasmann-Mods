@@ -1,8 +1,8 @@
 local mod = get_mod("AllReady")
---[[ 
+--[[
 	All Ready
 		- Lets you start the game without waiting for people to press ready
-	
+
 	Author: IamLupo
 	Ported: Grasmann
 	Version: 1.2.2
@@ -14,6 +14,6 @@ local mod = get_mod("AllReady")
 -- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
-mod:hook("MatchmakingManager.all_peers_ready", function(func, ...)
+mod:hook_origin(MatchmakingManager, "all_peers_ready", function()
 	return true
 end)
