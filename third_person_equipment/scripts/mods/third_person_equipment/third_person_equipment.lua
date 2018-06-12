@@ -5,7 +5,7 @@ local mod = get_mod("ThirdPersonEquipment")
 		- Works with player and bots
 
 	Author: grasmann
-	Version: 2.0.0
+	Version: 2.0.3
 --]]
 
 -- Global to keep track of spawned units
