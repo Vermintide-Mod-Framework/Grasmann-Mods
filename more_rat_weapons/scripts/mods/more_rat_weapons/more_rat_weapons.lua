@@ -1,5 +1,5 @@
 local mod = get_mod("MoreRatWeapons")
---[[ 
+--[[
 	More Rat Weapons
 		- Unlocks shields and visual weapons for rats
 		- Unlocks shields for rats
@@ -11,7 +11,7 @@ local mod = get_mod("MoreRatWeapons")
 			- Loading of packages disabled on line 1266 & 1286
 	ToDo:
 		- Network calls to trigger particle effects and shield drops
-	
+
 	Author: grasmann
 	Version: 2.1.0
 --]]
@@ -273,7 +273,7 @@ local function get_dialogue_event_index(dialogue)
 		return 1
 	end
 
-	return 
+	return
 end
 --[[
 	Find players near unit
@@ -320,7 +320,7 @@ mod.play_dialogue = function(self, player, t)
 		if other_players and #other_players > 0 then
 			local rand = math.random(1, #other_players)
 			local other_player = other_players[rand]
-			
+
 			if other_player and other_player.player_unit and ScriptUnit.has_extension(other_player.player_unit, "dialogue_system") then
 				-- Try to let dialog mod play the dialog
 				if self:dialog_mod_installed() then
@@ -340,19 +340,19 @@ mod.play_dialogue = function(self, player, t)
 						local other_profile_name = SPProfiles[other_profile_index].unit_name
 						local dialogue_name = self.dialogue.armor[other_profile_name][profile_name]
 						local dialogue_id = NetworkLookup.dialogues[dialogue_name]
-						
+
 						-- Speaking unit
 						local go_id, is_level_unit = Managers.state.network:game_object_or_level_id(other_player.player_unit)
-						
+
 						-- Dialogue index
 						local dialogue = dialogue_system.dialogues[dialogue_name]
 						local dialogue_index = get_dialogue_event_index(dialogue)
 						local local_player = Managers.player:local_player()
-						
+
 						if go_id and dialogue_id and dialogue_index then
 							local players = Managers.player:players()
 							for _, player in pairs(players) do
-								
+
 								if player and player.player_unit and not player.is_server and dialogue_system.unit_extension_data[player.player_unit] then
 									Managers.state.network.network_transmit:send_rpc(
 										'rpc_play_dialogue_event', player.peer_id, go_id, is_level_unit, dialogue_id, dialogue_index)
@@ -388,9 +388,9 @@ end
 --[[
 	Manage server damage
 --]]
-mod:hook("DamageUtils.server_apply_hit", function(func, t, attack_template, attacker_unit, hit_unit, hit_zone_name, attack_direction, hit_ragdoll_actor, damage_source, attack_damage_value_type, ...)
+mod:hook(DamageUtils, "server_apply_hit", function(func, t, attack_template, attacker_unit, hit_unit, hit_zone_name, attack_direction, hit_ragdoll_actor, damage_source, attack_damage_value_type, ...)
 	--local args = table.pack(...)
-	
+
 	--safe_pcall(function()
 		if mod:is_enabled() and mod:get("shield_mechanics") then
 			if Managers.player.is_server then
@@ -401,16 +401,16 @@ mod:hook("DamageUtils.server_apply_hit", function(func, t, attack_template, atta
 
 						-- Shielded region
 						if table.contains(mod.shield_data.hit_zones, hit_zone_name) then
-							if not mod:check_backstab(attacker_unit, hit_unit) then 
+							if not mod:check_backstab(attacker_unit, hit_unit) then
 								local players = Managers.player:players()
 								local network_manager = Managers.state.network
 								local unit_id = network_manager.unit_game_object_id(network_manager, hit_unit)
-								
+
 								-- Play sound
 								if mod:get("play_shield_sounds") then
 									mod:play_shield_sound(hit_unit)
 								end
-								
+
 								-- Play dialogue
 								if mod:get("play_comments") then
 									local player = Managers.player:owner(attacker_unit)
@@ -431,32 +431,32 @@ mod:hook("DamageUtils.server_apply_hit", function(func, t, attack_template, atta
 								if attack_damage_value_type then
 									local piercing = attack_damage_value_type[2]
 
-									local shield_damage = attack_damage_value_type[1] > 0 and attack_damage_value_type[1] or 
+									local shield_damage = attack_damage_value_type[1] > 0 and attack_damage_value_type[1] or
 										attack_damage_value_type[2] > 0 and attack_damage_value_type[2] * 2 or
 										attack_damage_value_type[3] > 0 and attack_damage_value_type[3] / 2 or
 										attack_damage_value_type[4]
-										
+
 									if mod:get("shield_type") == 1 then
-									
+
 										if inventory_extension.shield_health > shield_damage then
 											inventory_extension.shield_health = inventory_extension.shield_health - shield_damage
 										else
 											inventory_extension.shield_health = 0
 										end
-										
+
 									elseif mod:get("shield_type") == 2 then
-									
+
 										inventory_extension.shield_health = inventory_extension.shield_health - 1
-										
+
 									end
-									
+
 									if piercing > 0 then
 										attack_damage_value_type = {0, piercing / 2, 0, 0}
 									else
 										attack_damage_value_type = {0, 0, 0, 0}
 									end
 								end
-								
+
 								-- Drop shield
 								mod:drop_shield(hit_unit, attack_direction)
 							end
@@ -471,7 +471,7 @@ end)
 --[[
 	Give stormvermin, clan rats, slave rats shields
 --]]
-mod:hook("ConflictDirector.spawn_unit", function(func, self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, inventory_template, group_data, ...)
+mod:hook(ConflictDirector, "spawn_unit", function(func, self, breed, spawn_pos, spawn_rot, spawn_category, spawn_animation, spawn_type, inventory_template, group_data, ...)
 	local ai_unit = nil
 	if mod:is_enabled() and Managers.player.is_server then
 		local luck = math.random(1, 100)
@@ -492,7 +492,7 @@ end)
 --[[
 	Prevent running attack with shield
 --]]
-mod:hook("BTAttackAction.run", function(func, self, unit, blackboard, ...)
+mod:hook(BTAttackAction, "run", function(func, self, unit, blackboard, ...)
 	--safe_pcall(function()
 		if mod:is_enabled() and mod:get("remove_running_attacks") then
 			if unit and ScriptUnit.has_extension(unit, "ai_inventory_system") and AiUtils.unit_alive(unit) then
@@ -565,7 +565,7 @@ mod.execute_drop_shield = function(self, unit_id, damage_direction)
 						local actor = Unit.create_actor(new_item_unit, "rp_dropped")
 						Actor.add_angular_velocity(actor, Vector3(math.random(), math.random(), math.random())*10)
 						Actor.add_velocity(actor, Vector3(damage_direction[1], damage_direction[2], 1)*5)
-						
+
 						inventory_extension:relink_visual_replacement(new_item_unit, actor, item_inventory_index, "dropped")
 					end
 					Unit.set_unit_visibility(item_unit, false)
@@ -610,7 +610,7 @@ local function link_unit(attachment_node_linking, world, target, source)
 		World.link_unit(world, target, target_node_index, source, source_node_index)
 	end
 
-	return 
+	return
 end
 
 -- #####  █████╗ ██╗██╗███╗   ██╗██╗   ██╗███████╗███╗   ██╗████████╗ ██████╗ ██████╗ ██╗   ██╗ #######################
@@ -631,7 +631,7 @@ AIInventoryExtension.set_inventory = function(self, inventory_template)
 	local inventory_configuration = InventoryConfigurations[inventory_configuration_name]
 	local items = inventory_configuration.items
 	local items_n = inventory_configuration.items_n
-	
+
 	-- Make current inventory items invisible
 	for _, unit in pairs(self.inventory_item_units) do
 		-- World.destroy_unit(world, unit)
@@ -641,13 +641,13 @@ AIInventoryExtension.set_inventory = function(self, inventory_template)
 			unit_spawner:mark_for_deletion(unit)
 		end
 	end
-	
+
 	local item_extension_init_data = {
 		ai_inventory_item_system = {
 			wielding_unit = self.unit,
 		},
 	}
-	
+
 	for i = 1, items_n, 1 do
 		local item_category = items[i]
 		local item_category_n = item_category.count
@@ -680,7 +680,7 @@ AIInventoryExtension.set_inventory = function(self, inventory_template)
 		if script_data.ai_debug_inventory then
 			printf("[AIInventorySystem] unit[%s] wielding item[%s] of category[%s] in slot[%d]", tostring(self.unit), item_unit_name, item_category_name, i)
 		end
-		
+
 		self.wield_anim = inventory_configuration.wield_anim
 		self.inventory_items_n = items_n
 		self.inventory_item_units = inventory_item_units
@@ -705,7 +705,7 @@ AIInventoryExtension.replace_inventory_visually = function(self, inventory_templ
 					local items = inventory_configuration.items
 					local items_n = inventory_configuration.items_n
 					local world = Managers.world:world("level_world")
-					
+
 					for i = 1, items_n do
 						local item_category = items[i]
 						local item_category_n = item_category.count
@@ -714,7 +714,7 @@ AIInventoryExtension.replace_inventory_visually = function(self, inventory_templ
 						local item = item_category[item_index]
 						local item_unit_name = item.unit_name
 						local item_unit_template_name = item.unit_extension_template or "ai_inventory_item"
-						
+
 						-- Check package
 						local manager = Managers.package
 						local reference = "MoreRatWeapons"
@@ -725,19 +725,19 @@ AIInventoryExtension.replace_inventory_visually = function(self, inventory_templ
 								self.link_on_drop[i] = item_unit
 								if not self.linked_item then self.linked_item = {} end
 								self.linked_item[i] = item
-								
+
 								-- World.link_unit(world, item_unit, self.inventory_item_units[i], 0)
 								-- local pos = item.offset or {0, 0, 0}
 								-- local rot = item.rotation or {0, 0, 0}
 								-- local scale = item.scale or {1, 1, 1}
 								-- Unit.set_local_position(item_unit, 0, Vector3(pos[1], pos[2], pos[3]))
 								-- Unit.set_local_rotation(item_unit, 0, Quaternion.from_euler_angles_xyz(rot[1], rot[2], rot[3]))
-								-- Unit.set_local_scale(item_unit, 0, Vector3(scale[1], scale[2], scale[3])) 
+								-- Unit.set_local_scale(item_unit, 0, Vector3(scale[1], scale[2], scale[3]))
 								-- Unit.set_unit_visibility(self.inventory_item_units[i], false)
-								
+
 								self:relink_visual_replacement(self.inventory_item_units[i], nil, i, "unwielded")
 								--self:relink_visual_replacement(self.inventory_item_units[i], nil, i, "wielded")
-								
+
 							end
 						end
 					end
@@ -755,7 +755,7 @@ AIInventoryExtension.relink_visual_replacement = function(self, new_item_unit, a
 		local item = self.linked_item[item_inventory_index]
 		local item_unit = self.link_on_drop[item_inventory_index]
 		-- local world = Managers.world:world("level_world")
-		
+
 		Unit.set_unit_visibility(new_item_unit, false)
 		World.unlink_unit(self.world, item_unit)
 		local node = actor and Actor.node(actor) or 0
@@ -764,7 +764,7 @@ AIInventoryExtension.relink_visual_replacement = function(self, new_item_unit, a
 		else
 			World.link_unit(self.world, item_unit, new_item_unit, node)
 		end
-		
+
 		local offset = item[link_type]
 		if offset then
 			local pos = offset.position or {0, 0, 0}
@@ -772,7 +772,7 @@ AIInventoryExtension.relink_visual_replacement = function(self, new_item_unit, a
 			local scale = offset.scale or {1, 1, 1}
 			Unit.set_local_position(item_unit, 0, Vector3(pos[1], pos[2], pos[3]))
 			Unit.set_local_rotation(item_unit, 0, Quaternion.from_euler_angles_xyz(rot[1], rot[2], rot[3]))
-			Unit.set_local_scale(item_unit, 0, Vector3(scale[1], scale[2], scale[3])) 
+			Unit.set_local_scale(item_unit, 0, Vector3(scale[1], scale[2], scale[3]))
 		end
 	end
 end
@@ -792,7 +792,7 @@ end
 --[[
 	AIInventorySystem.update
 --]]
-mod:hook("AIInventorySystem.update", function(func, self, ...)
+mod:hook(AIInventorySystem, "update", function(func, self, ...)
 	if self.units_to_wield_n > 0 then
 		for i = 1, self.units_to_wield_n, 1 do
 			local unit = self.units_to_wield[i]
@@ -861,7 +861,7 @@ mod.package_callback = function(self, name)
 	more_rat_weapons_loaded_packages[name] = true
 end
 
--- mod:hook("PackageManager.unload", function(func, self, package_name, reference_name, ...)
+-- mod:hook(PackageManager, "unload", function(func, self, package_name, reference_name, ...)
 	-- if more_rat_weapons_loading_packages[package_name] or more_rat_weapons_loaded_packages[package_name] then
 		-- mod:echo("lol")
 		-- return
@@ -878,8 +878,7 @@ end
 --[[
 	Empty cache on game start
 --]]
-mod:hook("StateInGameRunning.event_game_started", function(func, ...)
-	func(...)
+mod:hook_safe(StateInGameRunning, "event_game_started", function()
 	--mod:load_packages(true)
 	more_rat_weapons_ignored_units = {}
 	more_rat_weapons_shielded_units = {}
@@ -894,11 +893,11 @@ mod.init_enemy_unit = function(self, go_id)
 		if unit and Unit.has_data(unit, "breed") and ScriptUnit.has_extension(unit, "ai_inventory_system") then
 			local breed = Unit.get_data(unit, "breed")
 			local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-			
+
 			local inv_template = inventory_extension.inventory_configuration_name
 			local mod_config = inventory_extension.inventory_configuration_name
 			if inv_template == "sword_and_shield" and not inventory_extension.was_changed then
-			
+
 				-- Set inventory
 				mod_config = self.shield_data.inventory_config[breed.name]
 				--mod_config = "test"
@@ -906,7 +905,7 @@ mod.init_enemy_unit = function(self, go_id)
 				inventory_extension.was_changed = true
 				more_rat_weapons_ignored_units[unit] = unit
 				more_rat_weapons_shielded_units[#more_rat_weapons_shielded_units+1] = unit
-				
+
 				-- Set Health
 				local diff = Managers.state.difficulty:get_difficulty_rank()
 				if self:get("shield_type") == 1 then
@@ -917,7 +916,7 @@ mod.init_enemy_unit = function(self, go_id)
 					inventory_extension.shield_health = 1
 				end
 			end
-			
+
 			inventory_extension:replace_inventory_visually(mod_config)
 		end
 	--end)
@@ -934,7 +933,7 @@ end
 --[[
 	Prevent shield from being dropped
 --]]
-mod:hook("AIInventoryExtension.drop_single_item", function(func, self, item_inventory_index, ...)
+mod:hook(AIInventoryExtension, "drop_single_item", function(func, self, item_inventory_index, ...)
 	if item_inventory_index == 2 and self.already_dropped_shield then
 		return
 	end
@@ -946,21 +945,20 @@ end)
 --[[
 	Delete visual weapons
 --]]
-mod:hook("AIInventoryExtension.destroy", function(func, self, ...)
+mod:hook(AIInventoryExtension, "destroy", function(func, self, ...)
 	self:delete_visual_replacements()
 	func(self, ...)
 end)
 --[[
 	Catch unit spawn to change equipment
 --]]
-mod:hook("UnitSpawner.spawn_unit_from_game_object", function (func, self, go_id, ...)
-	func(self, go_id, ...)
+mod:hook_safe(UnitSpawner, "spawn_unit_from_game_object", function (self_, go_id)
 	mod:init_enemy_unit(go_id)
 end)
 --[[
 	Catch unit spawn to change equipment
 --]]
-mod:hook("UnitSpawner.spawn_network_unit", function (func, ...)
+mod:hook(UnitSpawner, "spawn_network_unit", function (func, ...)
 	local unit, go_id = func(...)
 	mod:init_enemy_unit(go_id)
 	return unit, go_id
@@ -978,7 +976,7 @@ end)
 mod.check_hit_on_owner = function(self, hit_unit, impact_data)
 	local damage_data = impact_data.damage
 	if not damage_data or not ScriptUnit.has_extension(hit_unit, "damage_system") then
-		
+
 		for _, unit in pairs(more_rat_weapons_shielded_units) do
 			if unit and ScriptUnit.has_extension(unit, "ai_inventory_system") and AiUtils.unit_alive(unit) then
 				local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
@@ -991,19 +989,19 @@ mod.check_hit_on_owner = function(self, hit_unit, impact_data)
 						if breed then
 							return true, unit, breed
 						end
-						
+
 					end
 				end
 			end
 		end
-		
+
 	end
 	return false, nil, nil
 end
 --[[
 	Catch missing hits to shields
 --]]
-mod:hook("PlayerProjectileHuskExtension.hit_non_level_unit", function(func, self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
+mod:hook(PlayerProjectileHuskExtension, "hit_non_level_unit", function(func, self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
 	local hit, unit, breed = mod:check_hit_on_owner(hit_unit, impact_data)
 	if hit then
 		self.hit_enemy(self, impact_data, unit, hit_position, hit_direction, hit_normal, Unit.actor(unit, "c_lefthand"), breed)
@@ -1014,7 +1012,7 @@ end)
 --[[
 	Catch missing hits to shields
 --]]
-mod:hook("PlayerProjectileUnitExtension.hit_non_level_unit", function(func, self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
+mod:hook(PlayerProjectileUnitExtension, "hit_non_level_unit", function(func, self, impact_data, hit_unit, hit_position, hit_direction, hit_normal, ...)
 	--safe_pcall(function()
 		local hit, unit, breed = mod:check_hit_on_owner(hit_unit, impact_data)
 		if hit then

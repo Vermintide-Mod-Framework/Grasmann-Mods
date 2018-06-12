@@ -1,5 +1,5 @@
 local mod = get_mod("HeatIndicator")
---[[ 
+--[[
 	Heat Indicator
 	( Charge Level Indicator. )
 	*	When charging the Bolt staff or Fireball staff, a colored marker will be shown on the HUD
@@ -10,7 +10,7 @@ local mod = get_mod("HeatIndicator")
 		green=(3 <= damage < 5, 0.75 <= area < 2.25), orange=(5 <= damage < 6, 2.25 <= area < 3),
 		red=(damage = 6, area = 3). (Where 'damage' means AoE instantaneous damage to normal
 		targets, not including impact damage or DoT.)
-	
+
 	Author: walterr
 	Ported: grasmann
 	Version: 2.0.2
@@ -140,7 +140,7 @@ mod.display_info = {
 			return nil
 		end,
 	},
-	
+
 	ActionAim = {
 		compute_level_value = function(action)
 			return (action.overcharge_extension and action.charge_value) or nil
@@ -177,9 +177,7 @@ mod.display_info = {
 --[[
 	Staff Update widget
 --]]
-mod:hook(ActionCharge, "client_owner_post_update", function(func, self, ...)
-	func(self, ...)
-	
+mod:hook_safe(ActionCharge, "client_owner_post_update", function(self)
 	local display_info = mod.display_info["ActionCharge"]
 	local charge_value = display_info.compute_level_value(self)
 	if charge_value then
@@ -193,7 +191,7 @@ end)
 --]]
 mod:hook(ActionCharge, "finish", function(func, self, reason, ...)
 	local result = func(self, reason, ...)
-	
+
 	local display_info = mod.display_info["ActionCharge"]
 	if reason == "new_interupting_action" then
 		local charge_value = display_info.compute_level_value(self)
@@ -211,9 +209,7 @@ end)
 --[[
 	Trueflight update widget
 --]]
-mod:hook(ActionTrueFlightBowAim, "client_owner_post_update", function (func, self, ...)
-	func(self, ...)
-	
+mod:hook_safe(ActionTrueFlightBowAim, "client_owner_post_update", function (self)
 	local display_info = mod.display_info["ActionTrueFlightBowAim"]
 	local charge_value = display_info.compute_level_value(self)
 	if charge_value then
@@ -227,7 +223,7 @@ end)
 --]]
 mod:hook(ActionTrueFlightBowAim, "finish", function(func, self, reason, ...)
 	local result = func(self, reason, ...)
-	
+
 	local display_info = mod.display_info["ActionTrueFlightBowAim"]
 	if reason == "new_interupting_action" then
 		local charge_value = display_info.compute_level_value(self)
@@ -245,9 +241,7 @@ end)
 --[[
 	Geiser update widget
 --]]
-mod:hook(ActionGeiserTargeting, "client_owner_post_update", function (func, self, ...)
-	func(self, ...)
-	
+mod:hook_safe(ActionGeiserTargeting, "client_owner_post_update", function (self)
 	local display_info = mod.display_info["ActionGeiserTargeting"]
 	local charge_value = display_info.compute_level_value(self)
 	if charge_value then
@@ -261,7 +255,7 @@ end)
 --]]
 mod:hook(ActionGeiserTargeting, "finish", function(func, self, reason, ...)
 	local result = func(self, reason, ...)
-	
+
 	local display_info = mod.display_info["ActionGeiserTargeting"]
 	if reason == "new_interupting_action" then
 		local charge_value = display_info.compute_level_value(self)
@@ -284,15 +278,13 @@ if not VT1 then
 	--[[
 		Bolt staff update widget
 	--]]
-	mod:hook(ActionAim, "client_owner_post_update", function(func, self, dt, t, ...)
-		func(self, dt, t, ...)
-		
+	mod:hook_safe(ActionAim, "client_owner_post_update", function(self, dt_, t)
 		if self.item_name == "bw_skullstaff_spear" then
 			if not aim_start then aim_start = t end
 			local aim_time = t - aim_start
 			if aim_time < 0 then aim_time = 0 end
 			if aim_time > 2.25 then aim_time = 2.25 end
-			
+
 			local display_info = mod.display_info["ActionAim"]
 			-- local charge_value = display_info.compute_level_value(self)
 			local charge_value = aim_time / 2.25
@@ -309,10 +301,10 @@ if not VT1 then
 	--]]
 	mod:hook(ActionAim, "finish", function(func, self, reason, ...)
 		local result = func(self, reason, ...)
-		
+
 		if self.item_name == "bw_skullstaff_spear" then
 			if aim_start then aim_start = nil end
-			
+
 			local display_info = mod.display_info["ActionAim"]
 			if reason == "new_interupting_action" then
 				local charge_value = self.charge_value
@@ -325,7 +317,7 @@ if not VT1 then
 				mod.current_charge_level.color = nil
 			end
 		end
-		
+
 		return result
 	end)
 
@@ -333,11 +325,8 @@ end
 --[[
 	Render widget
 --]]
-mod:hook(OverchargeBarUI, "update", function(func, self, dt, t, player, ...)
+mod:hook_safe(OverchargeBarUI, "update", function(self, dt, t_, player)
 
-	-- Original function
-	func(self, dt, t, player, ...)
-	
 	if mod.current_charge_level.color and self:_update_overcharge(player, dt) then
 		local widget = self._hudmod_charge_level_indicator
 		if not widget then
@@ -345,7 +334,7 @@ mod:hook(OverchargeBarUI, "update", function(func, self, dt, t, player, ...)
 			widget = UIWidget.init(mod.widget_settings.CHARGE_LEVEL)
 			self._hudmod_charge_level_indicator = widget
 		end
-		
+
 		-- Background
 		local widget_bg = nil
 		if mod:get("mode") == 2 then
@@ -358,7 +347,7 @@ mod:hook(OverchargeBarUI, "update", function(func, self, dt, t, player, ...)
 		else
 			self._hudmod_charge_level_indicator_bg = nil
 		end
-		
+
 		if mod.current_charge_level.fade_out == mod.anim_state.ONGOING and not UIWidget.has_animation(widget) then
 			-- Fade-out animation just finished.
 			mod.current_charge_level.color = nil
@@ -369,13 +358,13 @@ mod:hook(OverchargeBarUI, "update", function(func, self, dt, t, player, ...)
 				local color = table.clone(mod.current_charge_level.color)
 				widget.style.indicator.color = color
 				UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 255, 0, 1, math.easeInCubic))
-				
+
 				if widget_bg then
 					local bg_color = table.clone(mod.current_charge_level.bg_color)
 					widget_bg.style.indicator.color = bg_color
 					UIWidget.animate(widget_bg, UIAnimation.init(UIAnimation.function_by_time, bg_color, 1, 100, 0, 1, math.easeInCubic))
 				end
-				
+
 				mod.current_charge_level.fade_out = mod.anim_state.ONGOING
 
 			elseif not mod.current_charge_level.fade_out then
@@ -384,15 +373,15 @@ mod:hook(OverchargeBarUI, "update", function(func, self, dt, t, player, ...)
 					UIWidget.stop_animations(widget)
 				end
 				widget.style.indicator.color = mod.current_charge_level.color
-				
+
 				if widget_bg then
-					if UIWidget.has_animation(widget_bg) then 
+					if UIWidget.has_animation(widget_bg) then
 						UIWidget.stop_animations(widget_bg)
 					end
 					widget_bg.style.indicator.color = mod.current_charge_level.bg_color
 				end
 			end
-			
+
 			-- Change size and appearance
 			if mod:get("mode") == 1 then
 				-- Rectangle
@@ -435,7 +424,7 @@ mod:hook(OverchargeBarUI, "update", function(func, self, dt, t, player, ...)
 					widget_bg.style.indicator.corner_radius = 2
 				end
 			end
-			
+
 			-- Draw the charge level indicator.
 			local input_service = self.input_manager:get_service("ingame_menu")
 			local ui_renderer = self.ui_renderer
@@ -447,7 +436,7 @@ mod:hook(OverchargeBarUI, "update", function(func, self, dt, t, player, ...)
 			UIRenderer.end_pass(ui_renderer)
 		end
 	end
-	
+
 end)
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################

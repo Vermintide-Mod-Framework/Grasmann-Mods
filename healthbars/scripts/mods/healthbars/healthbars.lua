@@ -1,8 +1,8 @@
 local mod = get_mod("Healthbars")
---[[ 
+--[[
 	Healthbars
 		- Shows healthbars for all or specific enemies
-	
+
 	Author: grasmann
 	Version: 2.0.0
 --]]
@@ -339,8 +339,8 @@ mod.enemy_settings = {
 		-- special = false,
 		-- setting = "chaos_tentacle",
 	-- },
-	
-	
+
+
 }
 mod.permanent_units = mod:persistent_table("permanent_units")
 
@@ -378,7 +378,7 @@ end
 	Add a health bar only to ogres
 --]]
 mod.add_health_bar_bosses = function(self, unit, enemie_setting)
-	-- if enemie_setting.name == "skaven_rat_ogre" 
+	-- if enemie_setting.name == "skaven_rat_ogre"
 	-- or enemie_setting.name == "skaven_storm_vermin_champion" then
 	if enemie_setting.boss then
 		self:add_health_bar_all(unit)
@@ -387,7 +387,7 @@ end
 --[[
 	Add a health bar to the specified unit
 --]]
-mod.add_health_bar = function(self, unit, enemie_setting)		
+mod.add_health_bar = function(self, unit, enemie_setting)
 	if self:get("mode") == 2 then
 		self:add_health_bar_all(unit)
 	elseif self:get("mode") == 3 then
@@ -418,20 +418,20 @@ mod.on_enemy_damage = function(self, health_extension)
 		if GenericHealthExtension.current_health(health_extension) > 0 then
 			local unit = health_extension.unit
 			local breed = Unit.get_data(unit, "breed")
-			
+
 			if breed and breed.name then
 				local enemie_setting = self.enemy_settings[breed.name] or self.enemy_settings.default
 				if enemie_setting then
 					enemie_setting.name = breed.name
-				
+
 					self:add_health_bar(unit, enemie_setting)
 				else
 					mod:echo(tostring(breed.name))
 				end
 			end
-		else			
+		else
 			self:remove_health_bar(health_extension.unit)
-		end		
+		end
 	else
 		self:remove_health_bar(health_extension.unit)
 	end
@@ -447,9 +447,9 @@ mod.clean_units = function(self, clean_all)
 			local unit_pos = Unit.world_position(unit, 0)
 			local local_player = Managers.player:local_player()
 			local player_pos = Unit.world_position(local_player.player_unit, 0)
-			
+
 			local distance = Vector3.length(unit_pos - player_pos)
-			
+
 			if distance > self.VERY_FAR or self:obstructed_line_of_sight(local_player.player_unit, unit) then
 				self:remove_health_bar(unit)
 			end
@@ -469,10 +469,10 @@ end
 mod.set_sizes = function(self, tutorial_ui)
 	for _, unit in pairs(mod.permanent_units) do
 		local breed = Unit.get_data(unit, "breed")
-		
+
 		if breed and breed.name then
 			local enemie_setting = self.enemy_settings[breed.name] or self.enemy_settings.default
-			
+
 			self:set_size(unit, tutorial_ui, enemie_setting)
 		end
 	end
@@ -500,10 +500,10 @@ mod.set_offsets = function(self, tutorial_ui)
 	and self:get("position") == 2 then
 		for _, unit in pairs(mod.permanent_units) do
 			local breed = Unit.get_data(unit, "breed")
-		
+
 			if breed and breed.name then
 				local enemie_setting = self.enemy_settings[breed.name] or self.enemy_settings.default
-			
+
 				self:set_offset(unit, tutorial_ui, enemie_setting)
 			end
 		end
@@ -516,8 +516,8 @@ mod.set_offset = function(self, unit, tutorial_ui, enemie_setting)
 	local player = Managers.player:local_player()
 	local world = tutorial_ui.world_manager:world("level_world")
 	local viewport = ScriptWorld.viewport(world, player.viewport_name)
-	local camera = ScriptViewport.camera(viewport)	
-	
+	local camera = ScriptViewport.camera(viewport)
+
 	for _, health_bar in pairs(tutorial_ui.health_bars) do
 		if health_bar.unit == unit then
 			-- Enemy position
@@ -539,7 +539,7 @@ mod.set_offset = function(self, unit, tutorial_ui, enemie_setting)
 			texture_bg.offset[2] = diff - texture_bg.size[2]/2
 			local texture_fg = health_bar.widget.style.texture_fg
 			texture_fg.offset[2] = diff - texture_fg.size[2]/2
-			
+
 			return true
 		end
 	end
@@ -555,25 +555,25 @@ end
 --[[
 	GenericHealthExtension Add damage hook
 --]]
-mod:hook_safe(GenericHealthExtension, "add_damage", function(...)
+mod:hook_safe(GenericHealthExtension, "add_damage", function(self)
 	mod:on_enemy_damage(self)
 end)
 --[[
 	GenericHealthExtension Set damage hook
 --]]
-mod:hook_safe(GenericHealthExtension, "set_current_damage", function(...)
+mod:hook_safe(GenericHealthExtension, "set_current_damage", function(self)
 	mod:on_enemy_damage(self)
 end)
 --[[
 	RatOgreHealthExtension Add ogre damage hook
 --]]
-mod:hook_safe(RatOgreHealthExtension, "add_damage", function(...)
+mod:hook_safe(RatOgreHealthExtension, "add_damage", function(self)
 	mod:on_enemy_damage(self)
 end)
 --[[
 	RatOgreHealthExtension Set ogre damage hook
 --]]
-mod:hook_safe(RatOgreHealthExtension, "set_current_damage", function(...)
+mod:hook_safe(RatOgreHealthExtension, "set_current_damage", function(self)
 	mod:on_enemy_damage(self)
 end)
 --[[
@@ -585,7 +585,7 @@ mod:hook(TutorialUI, "update_health_bars", function(func, tutorial_ui, ...)
 		mod:clean_units()
 		mod:set_sizes(tutorial_ui)
 		mod:set_offsets(tutorial_ui)
-		
+
 		--safe_pcall(func, tutorial_ui, ...)
 		func(tutorial_ui, ...)
 	else
@@ -601,7 +601,7 @@ mod:hook(BTSelector_gutter_runner, "run", function(func, self, unit, blackboard,
 	local child_running = self.current_running_child(self, blackboard)
 	local node_ninja_vanish = self._children[5]
 	if node_ninja_vanish == child_running then
-		mod:remove_health_bar(unit)		
+		mod:remove_health_bar(unit)
 	end
 	return result, evaluate
 end)
@@ -664,27 +664,27 @@ mod.ui = {
 mod.create_extra_health_bars = function(self, total)
 	local script = package.loaded["scripts/ui/views/tutorial_ui_definitions"]
 	local scenegraph = nil
-	
+
 	-- 1.4.3 and beta check
 	if script.floating_icons_scene_graph then
 		scenegraph = script.floating_icons_scene_graph
 	else
 		scenegraph = script.scenegraph
 	end
-	
+
 	script.health_bar_definitions = {}
-	
-	
+
+
 	for x = 1, total do
 		local name = "health_bar_" .. tostring(x)
-		
+
 		-- definitions
 		self.ui.item_definitions.scenegraph_id = name
 		self.ui.item_definitions.style.texture_bg.scenegraph_id = name
 		self.ui.item_definitions.style.texture_fg.scenegraph_id = name
-		
+
 		script.health_bar_definitions[x] = table.clone(self.ui.item_definitions)
-		
+
 		scenegraph[name] = table.clone(self.ui.item_scene_graph)
 	end
 
@@ -723,7 +723,7 @@ mod.obstructed_line_of_sight = function(self, player_unit, target_unit)
 	local world = tutorial_ui.world_manager:world("level_world")
 	local physics_world = World.get_data(world, "physics_world")
 	local max_distance = Vector3.length(target_unit_pos - player_unit_pos)
-	
+
 	if max_distance < 5 then
 		return false
 	end

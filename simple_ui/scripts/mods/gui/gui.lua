@@ -1,9 +1,9 @@
 local mod = get_mod("SimpleUI")
 --[[
 	Simple UI
-		
+
 		Provides functionalities to create simple ui widgets.
-		
+
 	author: grasmann
 	version: 2.0.0
 --]]
@@ -22,7 +22,7 @@ local UTF8 = {
 	-- 1110yyyy - First byte of a 3 byte UTF-8 codepoint
 	-- 11110zzz - First byte of a 4 byte UTF-8 codepoint
 	-- 10xxxxxx - Inner byte of a multi-byte UTF-8 codepoint
-	 
+
 	chsize = function(self, char)
 		if not char then
 			return 0
@@ -36,12 +36,12 @@ local UTF8 = {
 			return 1
 		end
 	end,
-	 
+
 	-- This function can return a substring of a UTF-8 string, properly handling
 	-- UTF-8 codepoints.  Rather than taking a start index and optionally an end
 	-- index, it takes the string, the starting character, and the number of
 	-- characters to select from the string.
-	 
+
 	utf8sub = function(self, str, startChar, numChars)
 		local startIndex = 1
 		while startChar > 1 do
@@ -69,8 +69,8 @@ local UTF8 = {
 -- ##### ╚═╝╚═╝  ╚═══╝╚═╝      ╚═════╝    ╚═╝    ######################################################################
 MOD_GUI_KEY_MAP = {
 	win32 = {
-		["backspace"] = {"keyboard", "backspace", "held"}, 
-		["enter"] = {"keyboard", "enter", "pressed"}, 
+		["backspace"] = {"keyboard", "backspace", "held"},
+		["enter"] = {"keyboard", "enter", "pressed"},
 		["esc"] = {"keyboard", "esc", "pressed"},
 	},
 }
@@ -160,7 +160,7 @@ mod.create_window = function(self, name, position, size)
 
 	-- Add window to list
 	self.windows:add_window(window)
-	
+
 	return window
 end
 
@@ -173,7 +173,7 @@ mod.update_windows = function(self, dt)
 	self.timers:update(dt)
 
 	self.input:check()
-	
+
 	-- Click
 	local position = self.mouse:cursor()
 	if stingray.Mouse.pressed(stingray.Mouse.button_id("left")) then
@@ -181,10 +181,10 @@ mod.update_windows = function(self, dt)
 	elseif stingray.Mouse.released(stingray.Mouse.button_id("left")) then
 		self.mouse:release(position, self.windows.list)
 	end
-	
+
 	-- Hover
 	self.mouse:hover(position, self.windows.list)
-	
+
 	-- Update windows
 	self.windows:update()
 end
@@ -368,7 +368,7 @@ mod.timers = {
 		enabled = false,
 		time_passed = 0,
 		params = nil,
-		
+
 		-- ##### Methods ##############################################################################
 		--[[
 			Enable timer
@@ -382,7 +382,7 @@ mod.timers = {
 		disable = function(self)
 			self.enabled = false
 		end,
-		
+
 		-- ##### Cycle ################################################################################
 		--[[
 			Process tick
@@ -406,7 +406,7 @@ mod.timers = {
 				self.time_passed = 0
 			end
 		end,
-		
+
 		-- ##### Events ################################################################################
 		--[[
 			On click event
@@ -772,7 +772,7 @@ mod.widgets = {
 		widgets = {},
 		visible = true,
 		transparent = false,
-		
+
 		-- ################################################################################################################
 		-- ##### Init #####################################################################################################
 		-- ################################################################################################################
@@ -804,7 +804,7 @@ mod.widgets = {
 				self.theme[key] = element
 			end
 		end,
-		
+
 		-- ################################################################################################################
 		-- ##### Create widgets ##########################################################################################
 		-- ################################################################################################################
@@ -912,11 +912,11 @@ mod.widgets = {
 			Create widget
 		--]]
 		create_widget = function(self, name, position, size, _type, anchor, params)
-			
+
 
 			position = mod:adjust_to_fit_scale(position)
 			size = mod:adjust_to_fit_scale(size)
-			
+
 			-- Create widget
 			local widget = table.clone(mod.widgets.widget)
 			widget.name = name or "name"
@@ -941,7 +941,7 @@ mod.widgets = {
 			widget.z_order = 1
 			self.widgets[#self.widgets+1] = widget
 		end,
-		
+
 		-- ################################################################################################################
 		-- ##### Methods ##################################################################################################
 		-- ################################################################################################################
@@ -951,19 +951,19 @@ mod.widgets = {
 		init = function(self)
 			-- Event
 			self:on_init()
-			
+
 			-- Theme
 			self:refresh_theme()
-			
+
 			-- Init widgets
 			if #self.widgets > 0 then
 				for _, widget in pairs(self.widgets) do
 					widget:init()
 				end
 			end
-			
+
 			self:update()
-			
+
 			self.initialized = true
 		end,
 		--[[
@@ -1090,7 +1090,7 @@ mod.widgets = {
 			end
 			self:on_release(position)
 		end,
-		
+
 		-- ################################################################################################################
 		-- ##### Events ###################################################################################################
 		-- ################################################################################################################
@@ -1159,7 +1159,7 @@ mod.widgets = {
 		--]]
 		before_destroy = function(self)
 		end,
-		
+
 		-- ################################################################################################################
 		-- ##### Attributes ###############################################################################################
 		-- ################################################################################################################
@@ -1228,7 +1228,7 @@ mod.widgets = {
 			end
 			return nil
 		end,
-		
+
 		-- ################################################################################################################
 		-- ##### Cycle ####################################################################################################
 		-- ################################################################################################################
@@ -1266,7 +1266,7 @@ mod.widgets = {
 		resize = function(self, cursor)
 			if self.resizing then
 				local new_size = {
-					cursor[1] - self.resize_origin[1] + self.resize_offset[1], 
+					cursor[1] - self.resize_origin[1] + self.resize_offset[1],
 					self.resize_origin[2] - cursor[2] + self.resize_offset[2],
 				}
 				if new_size[1] < self.original_size[1] then new_size[1] = self.original_size[1] end
@@ -1298,7 +1298,7 @@ mod.widgets = {
 				end
 			end
 		end,
-		
+
 		-- ################################################################################################################
 		-- ##### Render ###################################################################################################
 		-- ################################################################################################################
@@ -1359,7 +1359,7 @@ mod.widgets = {
 		end,
 
 	},
-	
+
 	widget = {
 		name = "",
 		position = {0, 0},
@@ -1373,7 +1373,7 @@ mod.widgets = {
 		visible = true,
 		theme = {},
 		params = {},
-		
+
 		-- ################################################################################################################
 		-- ##### widget Methods ##########################################################################################
 		-- ################################################################################################################
@@ -1650,7 +1650,7 @@ mod.widgets = {
 		after_update = function(self)
 		end,
 	},
-	
+
 	title = {
 		-- ################################################################################################################
 		-- ##### widget overrides ########################################################################################
@@ -1742,7 +1742,7 @@ mod.widgets = {
 		before_drag = function(self)
 		end,
 		--[[
-			On drag 
+			On drag
 		--]]
 		on_drag = function(self)
 		end,
@@ -1752,9 +1752,9 @@ mod.widgets = {
 		after_drag = function(self)
 		end,
 	},
-	
+
 	button = {},
-	
+
 	resizer = {
 		-- ################################################################################################################
 		-- ##### widget overrides ########################################################################################
@@ -1871,7 +1871,7 @@ mod.widgets = {
 		after_resize = function(self)
 		end,
 	},
-	
+
 	close_button = {
 		-- ################################################################################################################
 		-- ##### widget overrides ########################################################################################
@@ -2120,7 +2120,7 @@ mod.widgets = {
 		on_text_changed = function(self)
 		end,
 	},
-	
+
 	checkbox = {
 		-- ################################################################################################################
 		-- ##### Methods ##################################################################################################
@@ -2226,9 +2226,9 @@ mod.widgets = {
 		on_value_changed = function(self)
 		end,
 	},
-	
+
 	label = {},
-	
+
 	dropdown = {
 		-- ################################################################################################################
 		-- ##### Methods ##################################################################################################
@@ -2417,7 +2417,7 @@ mod.widgets = {
 		on_index_changed = function(self)
 		end,
 	},
-	
+
 	dropdown_item = {
 		-- ################################################################################################################
 		-- ##### widget overrides ########################################################################################
@@ -2446,7 +2446,7 @@ mod.widgets = {
 			return self.parent:position_z()+1
 		end,
 	},
-	
+
 }
 
 -- ##### ████████╗██╗  ██╗███████╗███╗   ███╗███████╗███████╗ #########################################################
@@ -2533,7 +2533,7 @@ mod.themes = {
 				color = {20, 10, 10, 10},
 			},
 		}
-	},	
+	},
 }
 
 -- ##### Default stuff ################################################################################################
@@ -2544,7 +2544,7 @@ mod.fonts:create("hell_shark", "hell_shark", 22, nil, true)
 --[[
 	Update windows
 --]]
-mod:hook("MatchmakingManager.update", function(func, self, dt, ...)
+mod:hook(MatchmakingManager, "update", function(func, self, dt, ...)
 	mod:update_windows(dt)
 	func(self, dt, ...)
 end)

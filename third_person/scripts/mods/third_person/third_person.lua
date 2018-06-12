@@ -338,7 +338,7 @@ end
 --[[
 	Get look input
 --]]
-mod:hook("PlayerUnitFirstPerson.calculate_look_rotation", function(func, self, current_rotation, look_delta)
+mod:hook(PlayerUnitFirstPerson, "calculate_look_rotation", function(func, self, current_rotation, look_delta)
 	mod.camera.sway.mouse.x = look_delta.x
 	mod.camera.sway.mouse.y = look_delta.y
 	return func(self, current_rotation, look_delta)
@@ -346,7 +346,7 @@ end)
 --[[
 	Fix to make mission objectives visible in third person
 --]]
-mod:hook("TutorialUI.update", function(func, self, ...)
+mod:hook(TutorialUI, "update", function(func, self, ...)
 	if mod:is_third_person_active() then
 		if self._first_person_extension then self._first_person_extension.first_person_mode = true end
 		func(self, ...)
@@ -358,10 +358,7 @@ end)
 --[[
 	MAIN FUNCTION - Camera positioning
 --]]
-mod:hook("CameraManager.post_update", function(func, self, dt, t, viewport_name, ...)
-
-	-- ##### Original function ########################################################################################
-	func(self, dt, t, viewport_name, ...)
+mod:hook_safe(CameraManager, "post_update", function(self, dt, t_, viewport_name)
 
 	-- ##### Get data #################################################################################################
 	local viewport = ScriptWorld.viewport(self._world, viewport_name)
@@ -387,7 +384,7 @@ end)
 --[[
 	Fix to apply camera offset to ranged weapons
 --]]
-mod:hook("PlayerUnitFirstPerson.current_position", function(func, self, ...)
+mod:hook(PlayerUnitFirstPerson, "current_position", function(func, self, ...)
 
 	-- ##### Get data #############################################################################################
 	--local position = Unit.local_position(self.first_person_unit, 0)
@@ -408,7 +405,7 @@ end)
 --[[
 	MAIN FUNCTION - Set first / third person mode - Hide first person ammo
 --]]
-mod:hook("PlayerUnitFirstPerson.update", function(func, self, unit, ...)
+mod:hook(PlayerUnitFirstPerson, "update", function(func, self, unit, ...)
 
 	if mod.reset then
 		mod.camera.sway.updated = 0
@@ -456,7 +453,7 @@ end)
 --[[
 	Fix to apply camera offset to projectiles
 --]]
-mod:hook("ActionUtils.spawn_player_projectile", function(func, owner_unit, position, ...)
+mod:hook(ActionUtils, "spawn_player_projectile", function(func, owner_unit, position, ...)
 
 	-- ##### Get data #############################################################################################
 	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
@@ -480,7 +477,7 @@ end)
 --[[
 	Fix to apply camera offset to trueflight projectiles
 --]]
-mod:hook("ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, target_unit, true_flight_template_id, position, ...)
+mod:hook(ActionUtils, "spawn_true_flight_projectile", function(func, owner_unit, target_unit, true_flight_template_id, position, ...)
 
 	-- ##### Get data #############################################################################################
 	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
@@ -498,25 +495,25 @@ mod:hook("ActionUtils.spawn_true_flight_projectile", function(func, owner_unit, 
 	position = position + x + y + z
 
 	func(owner_unit, target_unit, true_flight_template_id, position, ...)
-	
+
 end)
 --[[
 	Fix to apply camera offset to raycast projectiles
 --]]
 mod.raycast_hook = function(func, ...)
-	mod:hook_enable("PlayerUnitFirstPerson.current_position")
+	mod:hook_enable(PlayerUnitFirstPerson, "current_position")
 	func(...)
-	mod:hook_disable("PlayerUnitFirstPerson.current_position")
+	mod:hook_disable(PlayerUnitFirstPerson, "current_position")
 end
-mod:hook("ActionHandgun.client_owner_post_update", mod.raycast_hook)
-mod:hook("ActionHandgunLock.client_owner_post_update", mod.raycast_hook)
-mod:hook("ActionHandgunLockTargeting.client_owner_post_update", mod.raycast_hook)
-mod:hook("ActionShotgun.client_owner_post_update", mod.raycast_hook)
-mod:hook("ActionBeam.client_owner_post_update", mod.raycast_hook)
-mod:hook("ActionGeiser.client_owner_post_update", mod.raycast_hook)
-mod:hook("ActionGeiserTargeting.client_owner_post_update", mod.raycast_hook)
-mod:hook("ActionBulletSpray.client_owner_post_update", mod.raycast_hook)
-mod:hook("ActionBulletSprayTargeting.client_owner_post_update", mod.raycast_hook)
+mod:hook(ActionHandgun, "client_owner_post_update", mod.raycast_hook)
+mod:hook(ActionHandgunLock, "client_owner_post_update", mod.raycast_hook)
+mod:hook(ActionHandgunLockTargeting, "client_owner_post_update", mod.raycast_hook)
+mod:hook(ActionShotgun, "client_owner_post_update", mod.raycast_hook)
+mod:hook(ActionBeam, "client_owner_post_update", mod.raycast_hook)
+mod:hook(ActionGeiser, "client_owner_post_update", mod.raycast_hook)
+mod:hook(ActionGeiserTargeting, "client_owner_post_update", mod.raycast_hook)
+mod:hook(ActionBulletSpray, "client_owner_post_update", mod.raycast_hook)
+mod:hook(ActionBulletSprayTargeting, "client_owner_post_update", mod.raycast_hook)
 
 -- ##### ██████╗ ███████╗███████╗███████╗████████╗ ####################################################################
 -- ##### ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝ ####################################################################
@@ -528,32 +525,27 @@ mod:hook("ActionBulletSprayTargeting.client_owner_post_update", mod.raycast_hook
 	On some occasions it's necessary to reset the visibility of first- and third person model
 	A game was started
 --]]
-mod:hook("StateInGameRunning.event_game_started", function(func, self, ...)
-	func(self, ...)
+mod:hook_safe(StateInGameRunning, "event_game_started", function()
 	mod.reset = true
 end)
 --[[
 	Set first person mode for cutscenes
 --]]
-mod:hook("CutsceneSystem.set_first_person_mode", function(func, self, enabled, ...)
-	func(self, enabled, ...)
+mod:hook_safe(CutsceneSystem, "set_first_person_mode", function()
 	mod.reset = true
 end)
 --[[
 	Reset view after character change
 --]]
 if VT1 then
-	mod:hook("ProfileView.on_exit", function(func, ...)
-		func(...)
+	mod:hook_safe(ProfileView, "on_exit", function()
 		mod.reset = true
 	end)
 else
-	mod:hook("CharacterSelectionView.on_exit", function(func, ...)
-		func(...)
+	mod:hook_safe(CharacterSelectionView, "on_exit", function()
 		mod.reset = true
 	end)
-	mod:hook("StartMenuView.on_exit", function(func, ...)
-		func(...)
+	mod:hook_safe(StartMenuView, "on_exit", function()
 		mod.reset = true
 	end)
 end
@@ -561,13 +553,11 @@ end
 	Reset view after equipment change
 --]]
 if VT1 then
-	mod:hook("InventoryView.on_exit", function(func, ...)
-		func(...)
+	mod:hook_safe(InventoryView, "on_exit", function()
 		mod.reset = true
 	end)
 else
-	mod:hook("HeroView.on_exit", function(func, ...)
-		func(...)
+	mod:hook_safe(HeroView, "on_exit", function()
 		mod.reset = true
 	end)
 end
@@ -581,8 +571,7 @@ end
 --[[
 	Play third person animation for yourself
 --]]
-mod:hook("GenericAmmoUserExtension.start_reload_animation", function(func, self, reload_time, ...)
-	func(self, reload_time, ...)
+mod:hook_safe(GenericAmmoUserExtension, "start_reload_animation", function(self, reload_time)
 	if self.reload_event then
 		-- ##### Play 3rd person animation ############################################################################
 		Unit.animation_event(self.owner_unit, self.reload_event)
@@ -598,7 +587,7 @@ end)
 --[[
 	Start reload
 --]]
-mod:hook("GenericAmmoUserExtension.start_reload", function(func, self, ...)
+mod:hook(GenericAmmoUserExtension, "start_reload", function(func, self, ...)
 	if self.reload_event and Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 		mod:start_view("automatic_reload")
 	end
@@ -607,8 +596,7 @@ end)
 --[[
 	Check to disable animation when reloading is done
 --]]
-mod:hook("GenericAmmoUserExtension.update", function(func, self, unit, input, dt, context, t, ...)
-	func(self, unit, input, dt, context, t, ...)
+mod:hook_safe(GenericAmmoUserExtension, "update", function(self, unit_, input_, dt_, context_, t)
 	mod.reload.t = t
 
 	-- ##### Check if reload process is issued ########################################################################
@@ -648,8 +636,7 @@ end)
 --[[
 	Cancel reload
 --]]
-mod:hook("GenericAmmoUserExtension.abort_reload", function(func, self, ...)
-	func(self, ...)
+mod:hook_safe(GenericAmmoUserExtension, "abort_reload", function(self)
 	mod.reload.reloading[self.owner_unit] = nil
 	mod.reload.extended[self.owner_unit] = nil
 	if self.reload_event and Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
@@ -666,13 +653,13 @@ end)
 --[[
 	Aim
 --]]
-mod:hook("ActionAim.client_owner_start_action", function(func, self, ...)
+mod:hook(ActionAim, "client_owner_start_action", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 		mod:start_view("automatic_aim")
 	end
 	func(self, ...)
 end)
-mod:hook("ActionAim.finish", function(func, self, ...)
+mod:hook(ActionAim, "finish", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 		--mod:start_view("automatic_ranged")
 		mod:start_view(nil)
@@ -682,13 +669,13 @@ end)
 --[[
 	trueflight aim
 --]]
-mod:hook("ActionTrueFlightBowAim.client_owner_start_action", function(func, self, ...)
+mod:hook(ActionTrueFlightBowAim, "client_owner_start_action", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 		mod:start_view("automatic_aim")
 	end
 	func(self, ...)
 end)
-mod:hook("ActionTrueFlightBowAim.finish", function(func, self, ...)
+mod:hook(ActionTrueFlightBowAim, "finish", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 		--mod:start_view("automatic_ranged")
 		mod:start_view(nil)
@@ -698,13 +685,13 @@ end)
 --[[
 	Block
 --]]
-mod:hook("ActionBlock.client_owner_start_action", function(func, self, ...)
+mod:hook(ActionBlock, "client_owner_start_action", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 		mod:start_view("automatic_block")
 	end
 	func(self, ...)
 end)
-mod:hook("ActionBlock.finish", function(func, self, reason)
+mod:hook(ActionBlock, "finish", function(func, self, reason)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() and reason == "hold_input_released" then
 		--mod:start_view("automatic_melee")
 		mod:start_view(nil)
@@ -714,13 +701,13 @@ end)
 --[[
 	Push
 --]]
-mod:hook("ActionPushStagger.client_owner_start_action", function(func, self, ...)
+mod:hook(ActionPushStagger, "client_owner_start_action", function(func, self, ...)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 		mod:start_view("automatic_push")
 	end
 	func(self, ...)
 end)
-mod:hook("ActionPushStagger.finish", function(func, self, reason)
+mod:hook(ActionPushStagger, "finish", function(func, self, reason)
 	if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 		--mod:start_view("automatic_melee")
 		mod:start_view(nil)
@@ -730,13 +717,13 @@ end)
 --[[
 	Stunned
 --]]
-mod:hook("PlayerCharacterStateStunned.on_enter", function(func, self, unit, ...)
+mod:hook(PlayerCharacterStateStunned, "on_enter", function(func, self, unit, ...)
 	if Managers.player:owner(unit) == Managers.player:local_player() then
 		mod:start_view("automatic_stunned")
 	end
 	func(self, unit, ...)
 end)
-mod:hook("PlayerCharacterStateStunned.on_exit", function(func, self, unit, ...)
+mod:hook(PlayerCharacterStateStunned, "on_exit", function(func, self, unit, ...)
 	if Managers.player:owner(unit) == Managers.player:local_player() then
 		--mod:start_view("automatic_melee")
 		mod:start_view(nil)
@@ -747,13 +734,13 @@ end)
 	Vent
 --]]
 if VT1 then
-	mod:hook("OverChargeExtension.vent_overcharge", function(func, self)
+	mod:hook(OverChargeExtension, "vent_overcharge", function(func, self)
 		if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 			mod:start_view("automatic_vent")
 		end
 		func(self)
 	end)
-	mod:hook("OverChargeExtension.vent_overcharge_done", function(func, self)
+	mod:hook(OverChargeExtension, "vent_overcharge_done", function(func, self)
 		if Managers.player:owner(self.owner_unit) == Managers.player:local_player() then
 			--mod:start_view("automatic_ranged")
 			mod:start_view(nil)
@@ -761,13 +748,13 @@ if VT1 then
 		func(self)
 	end)
 else
-	mod:hook("PlayerUnitOverchargeExtension.vent_overcharge", function(func, self)
+	mod:hook(PlayerUnitOverchargeExtension, "vent_overcharge", function(func, self)
 		if Managers.player:owner(self.unit) == Managers.player:local_player() then
 			mod:start_view("automatic_vent")
 		end
 		func(self)
 	end)
-	mod:hook("PlayerUnitOverchargeExtension.vent_overcharge_done", function(func, self)
+	mod:hook(PlayerUnitOverchargeExtension, "vent_overcharge_done", function(func, self)
 		if Managers.player:owner(self.unit) == Managers.player:local_player() then
 			--mod:start_view("automatic_ranged")
 			mod:start_view(nil)
@@ -778,8 +765,7 @@ end
 --[[
 	Wield
 --]]
-mod:hook("SimpleInventoryExtension.wield", function(func, self, slot_name)
-	func(self, slot_name)
+mod:hook_safe(SimpleInventoryExtension, "wield", function(self, slot_name)
 	if Managers.player:owner(self._unit) == Managers.player:local_player() then
 		mod:start_view("automatic_"..string.sub(slot_name, 6))
 	end
@@ -802,17 +788,17 @@ end
 	Mod Suspended
 --]]
 mod.on_disabled = function(initial_call)
+	mod:enable_all_hooks()
 	mod:start_first_person(function()
 		mod:disable_all_hooks()
-		mod:hook_enable("CameraManager.post_update")
+		mod:hook_enable(CameraManager, "post_update")
 	end)
 end
 --[[
 	Mod Unsuspended
 --]]
 mod.on_enabled = function(initial_call)
-	mod:enable_all_hooks()
-	mod:hook_disable("PlayerUnitFirstPerson.current_position")
+	mod:hook_disable(PlayerUnitFirstPerson, "current_position")
 	mod:start_view(nil)
 	mod:start_third_person()
 end

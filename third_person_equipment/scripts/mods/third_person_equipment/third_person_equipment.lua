@@ -224,13 +224,13 @@ end
 mod.add_item = function(self, unit, slot_name, item_data)
 	local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 	local equipment = inventory_extension.equipment(inventory_extension)
-	
+
 	local career_name = nil
 	if not VT1 then
 		local career_extension = ScriptUnit.extension(unit, "career_system")
 		career_name = career_extension._career_data.name
 	end
-	
+
 	if self.definitions[item_data.item_type] ~= nil then
 		local right, left, right_pack, left_pack = nil
 		if item_data.right_hand_unit ~= nil then
@@ -426,39 +426,33 @@ end
 --[[
 	Wield equipment hooks
 --]]
-mod:hook("InventorySystem.rpc_wield_equipment", function(func, self, sender, go_id, slot_id, ...)
-	func(self, sender, go_id, slot_id, ...)
+mod:hook_safe(InventorySystem, "rpc_wield_equipment", function(self, sender_, go_id, slot_id)
 	local unit = self.unit_storage:unit(go_id)
 	local slot_name = NetworkLookup.equipment_slots[slot_id]
 	mod:wield_equipment(unit, slot_name)
 end)
-mod:hook("SimpleInventoryExtension.wield", function(func, self, slot_name, ...)
-	func(self, slot_name, ...)
+mod:hook_safe(SimpleInventoryExtension, "wield", function(self, slot_name)
 	mod:wield_equipment(self._unit, slot_name)
 end)
-mod:hook("SimpleHuskInventoryExtension.wield", function(func, self, slot_name, ...)
-	func(self, slot_name, ...)
+mod:hook_safe(SimpleHuskInventoryExtension, "wield", function(self, slot_name)
 	mod:wield_equipment(self._unit, slot_name)
 end)
 --[[
 	Despawn equipment
 --]]
-mod:hook("SimpleInventoryExtension.destroy_slot", function(func, self, ...)
-	func(self, ...)
+mod:hook_safe(SimpleInventoryExtension, "destroy_slot", function(self)
 	mod:delete_units(self._unit)
 end)
-mod:hook("SimpleHuskInventoryExtension.destroy_slot", function(func, self, ...)
-	func(self, ...)
+mod:hook_safe(SimpleHuskInventoryExtension, "destroy_slot", function(self)
 	mod:delete_units(self._unit)
 end)
-mod:hook("PlayerUnitHealthExtension.die", function(func, self, ...)
-	func(self, ...)
+mod:hook_safe(PlayerUnitHealthExtension, "die", function(self)
 	mod:delete_units(self.unit)
 end)
 --[[
 	Unloading packages
 --]]
-mod:hook("PackageManager.unload", function(func, self, package_name, ...)
+mod:hook(PackageManager, "unload", function(func, self, package_name, ...)
 	for unit, equip in pairs(mod.current.equipment) do
 		for _, i_unit in pairs(equip) do
 			if i_unit.right_pack and i_unit.right_pack == package_name then mod:delete_units(unit) end
@@ -471,7 +465,7 @@ end)
 --[[
 	Inventory synchronizer hook
 --]]
-mod:hook("InventoryPackageSynchronizer.set_inventory_list", function(func, self, profile_index, ...)
+mod:hook(InventoryPackageSynchronizer, "set_inventory_list", function(func, self, profile_index, ...)
 	local players = Managers.player:human_and_bot_players()
 	for k, player in pairs(players) do
 		local profile_synchronizer = Managers.state.network.profile_synchronizer
@@ -486,7 +480,7 @@ end)
 	Delete equipment on host character change in vt2
 --]]
 if not VT1 then
-	mod:hook("PlayerManager.rpc_to_client_spawn_player", function(func, ...)
+	mod:hook(PlayerManager, "rpc_to_client_spawn_player", function(func, ...)
 		mod:delete_all_units()
 		func(...)
 	end)
@@ -533,14 +527,12 @@ end
 	Mod Suspended
 --]]
 mod.on_disabled = function(initial_call)
-	mod:disable_all_hooks()
 	mod:delete_all_units()
 end
 --[[
 	Mod Unsuspended
 --]]
 mod.on_enabled = function(initial_call)
-	mod:enable_all_hooks()
 end
 --[[
 	Mod update
