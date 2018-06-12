@@ -754,6 +754,7 @@ mod.floating = {
 								if size_pop_multiplier > 1 then size_pop_multiplier = 2 - size_pop_multiplier end
 								size_pop_multiplier = (size_pop_multiplier + 1) * unit_dmg.pop
 								if size_pop_multiplier < 1 then size_pop_multiplier = 1 end
+								mod:echo(tostring(size_pop_multiplier))
 							end
 
 							if depth < 1 or mod.players:is_local_player(unit) then
@@ -762,7 +763,7 @@ mod.floating = {
 									-- local ui_renderer = ingame_ui.ui_top_renderer
 									-- if ui_renderer then
 										mod:pcall(function()
-											local font_size = unit_dmg.font_size * size_pop_multiplier
+											local font_size = (unit_dmg.font_size * size_pop_multiplier) * scale
 											Gui.text(mod.gui, damage, unit_dmg.font_material, font_size, unit_dmg.font_name, Vector2(position2d[1]+border+offset_vis[1], position2d[2]-border+offset_vis[2]), black)
 											Gui.text(mod.gui, damage, unit_dmg.font_material, font_size, unit_dmg.font_name, Vector2(position2d[1]+border+offset_vis[1], position2d[2]+border+offset_vis[2]), black)
 											Gui.text(mod.gui, damage, unit_dmg.font_material, font_size, unit_dmg.font_name, Vector2(position2d[1]-border+offset_vis[1], position2d[2]-border+offset_vis[2]), black)
@@ -770,10 +771,10 @@ mod.floating = {
 											Gui.text(mod.gui, damage, unit_dmg.font_material, font_size, unit_dmg.font_name, Vector2(position2d[1]+offset_vis[1], position2d[2]+offset_vis[2]), color)
 											-- local width, height, min = ui_renderer:text_size(damage, unit_dmg.font_material, font_size)
 											if unit_dmg.icon ~= "" then
-												local width = (64 * mod:get("floating_numbers_size")) * scale
-												local height = (64 * mod:get("floating_numbers_size")) * scale
+												local width = ((64 * mod:get("floating_numbers_size")) * scale) * size_pop_multiplier
+												local height = ((64 * mod:get("floating_numbers_size")) * scale) * size_pop_multiplier
 												local icon_offset = {0, 0}
-												local icon_size = Vector2(width * size_pop_multiplier, height * size_pop_multiplier)
+												local icon_size = Vector2(width, height)
 
 												if unit_dmg.damage > 0 then
 													local min, max, caret = Gui.text_extents(mod.gui, damage, unit_dmg.font_material, font_size)
@@ -781,7 +782,7 @@ mod.floating = {
 													local t_width = (max.x - min.x)*inv_scaling
 													local t_height = ((max.y - min.y)*inv_scaling) * 0.75
 													icon_size = Vector2(t_height, t_height)
-													icon_offset = {t_width, 0}
+													icon_offset = {t_width * scale, 0}
 												end
 
 												--local icon_pos = Vector2(position2d[1]+offset_vis[1]+icon_offset[1], position2d[2]+offset_vis[2]+icon_offset[2]) --Vector3(position2d[1]+icon_offset[1], position2d[2]+icon_offset[2], 0)
