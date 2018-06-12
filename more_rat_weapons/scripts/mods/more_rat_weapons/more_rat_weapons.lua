@@ -13,7 +13,7 @@ local mod = get_mod("MoreRatWeapons")
 		- Network calls to trigger particle effects and shield drops
 
 	Author: grasmann
-	Version: 2.1.0
+	Version: 2.2.2
 --]]
 
 -- Load data
