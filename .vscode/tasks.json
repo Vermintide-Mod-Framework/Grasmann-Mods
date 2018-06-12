@@ -1,0 +1,295 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build | All Ready (VT1)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "all_ready",
+        "--verbose",
+        "-g=1"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Chat Block (VT1)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "chat_block",
+        "--verbose",
+        "-g=1"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Chat Block (VT2)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "chat_block",
+        "--verbose",
+        "-g=2"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Healthbars (VT1)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "healthbars",
+        "--verbose",
+        "-g=1"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Healthbars (VT2)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "healthbars",
+        "--verbose",
+        "-g=2"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Heat Indicator (VT1)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "heat_indicator",
+        "--verbose",
+        "-g=1"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Heat Indicator (VT2)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "heat_indicator",
+        "--verbose",
+        "-g=2"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Loadout Manager (VT1)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "loadout_manager",
+        "--verbose",
+        "-g=1"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | More Rats Weapons (VT1)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "more_rat_weapons",
+        "--verbose",
+        "-g=1"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Show Damage (VT1)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "show_damage",
+        "--verbose",
+        "-g=1"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Show Damage (VT2)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "show_damage",
+        "--verbose",
+        "-g=2"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Simple UI (VT1)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "simple_ui",
+        "--verbose",
+        "-g=1"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Simple UI (VT2)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "simple_ui",
+        "--verbose",
+        "-g=2"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Third Person (VT1)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "third_person",
+        "--verbose",
+        "-g=1"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Third Person (VT2)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "third_person",
+        "--verbose",
+        "-g=2"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Third Person Equipment (VT1)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "third_person_equipment",
+        "--verbose",
+        "-g=1"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | Third Person Equipment (VT2)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "third_person_equipment",
+        "--verbose",
+        "-g=2"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build | UI Improvements (VT2)",
+      "type": "shell",
+      "command": "vmb",
+      "args": [
+        "build",
+        "ui_improvements",
+        "--verbose",
+        "-g=2"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+  ]
+}
