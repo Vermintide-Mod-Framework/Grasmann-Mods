@@ -9,8 +9,7 @@ return {
       ["setting_name"] = "dwarf_weapon_position",
       ["widget_type"] = "dropdown",
       ["text"] = "Dwarf Weapon Position",
-      ["tooltip"] =  VT1 and "Dwarf Weapon Position\n" ..
-        "Choose the position of the dwarf weapons.\n\n" ..
+      ["tooltip"] = "Choose the position of the dwarf weapons.\n\n" ..
         "-- Backpack --\n" ..
         "Weapons will be placed on the backpack.\n\n" ..
         "-- Back --\n" ..
@@ -27,8 +26,7 @@ return {
       ["setting_name"] = "dwarf_onehand_weapon_position",
       ["widget_type"] = "dropdown",
       ["text"] = "Dwarf One-Handed Weapon Position",
-      ["tooltip"] =  "Dwarf One-Handed Weapon Position\n" ..
-        "Choose the position of the one-handed dwarf weapons.\n\n" ..
+      ["tooltip"] = "Choose the position of the one-handed dwarf weapons.\n\n" ..
         "-- Default --\n" ..
         "Uses dwarf weapon position.\n\n" ..
         "-- Belt --\n" ..
@@ -44,8 +42,7 @@ return {
       ["setting_name"] = "waywatcher_dualweapon_position",
       ["widget_type"] = "dropdown",
       ["text"] = "Waywatcher Dual Weapon Position",
-      ["tooltip"] =  "Waywatcher Dual Weapon Position\n" ..
-        "Choose the position of the waywatcher dual weapons.\n\n" ..
+      ["tooltip"] = "Choose the position of the waywatcher dual weapons.\n\n" ..
         "-- Belt --\n" ..
         "Weapons will be placed on the belt.\n\n" ..
         "-- Back --\n" ..
@@ -60,8 +57,7 @@ return {
       ["setting_name"] = "onehand_weapon_position",
       ["widget_type"] = "dropdown",
       ["text"] = "One-Handed Weapon Position",
-      ["tooltip"] =  "One-Handed Weapon Position\n" ..
-        "Choose the position of the one-handed weapons.\n\n" ..
+      ["tooltip"] = "Choose the position of the one-handed weapons.\n\n" ..
         "-- Belt --\n" ..
         "Weapons will be placed on the belt.\n\n" ..
         "-- Back --\n" ..
@@ -77,8 +73,7 @@ return {
       ["widget_type"] = "numeric",
       ["text"] = "Downscale Big Weapons",
       ["unit_text"] = "%",
-      ["tooltip"] =  "Downscale Big Weapons\n" ..
-        "Downscale the biggest weapons in the game.\n\n" ..
+      ["tooltip"] = "Downscale the biggest weapons in the game.\n\n" ..
         "Affects: Red staffs, volley crossbow, wh crossbow",
       ["range"] = {50, 100},
       ["default_value"] = 75,
