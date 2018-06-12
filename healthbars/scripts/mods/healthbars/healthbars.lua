@@ -4,7 +4,7 @@ local mod = get_mod("Healthbars")
 		- Shows healthbars for all or specific enemies
 
 	Author: grasmann
-	Version: 2.0.0
+	Version: 2.0.2
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
