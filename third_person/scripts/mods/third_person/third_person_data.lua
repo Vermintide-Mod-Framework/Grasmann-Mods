@@ -10,8 +10,7 @@ return {
       ["setting_name"] = "mode",
       ["widget_type"] = "dropdown",
       ["text"] = "Mode",
-      ["tooltip"] = "Mode\n\n" ..
-        "-- THIRD PERSON --\nCamera is always in third person.\n\n" ..
+      ["tooltip"] = "-- THIRD PERSON --\nCamera is always in third person.\n\n" ..
         "-- AUTOMATIC --\nSetup camera settings for specific situations.",
       ["options"] = {
         {text = "Third Person", value = "third_person"}, --1
@@ -25,16 +24,14 @@ return {
           ["setting_name"] = "automatic_ranged",
           ["widget_type"] = "checkbox",
           ["text"] = "Ranged Weapon",
-          ["tooltip"] = "Ranged Weapon\n" ..
-            "Camera settings when holding a ranged weapon.",
+          ["tooltip"] = "Camera settings when holding a ranged weapon.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_ranged_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -46,8 +43,7 @@ return {
                   ["setting_name"] = "automatic_ranged_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -60,8 +56,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -71,8 +66,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -83,8 +77,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -98,16 +91,14 @@ return {
           ["setting_name"] = "automatic_aim",
           ["widget_type"] = "checkbox",
           ["text"] = "Aiming",
-          ["tooltip"] = "Aiming\n" ..
-            "Camera settings for aiming with a ranged weapon.",
+          ["tooltip"] = "Camera settings for aiming with a ranged weapon.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_aim_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -119,8 +110,7 @@ return {
                   ["setting_name"] = "automatic_aim_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -133,8 +123,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -143,8 +132,7 @@ return {
                   ["setting_name"] = "automatic_aim_zoom",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Zoom",
-                  ["tooltip"] = "Zoom\n" ..
-                    "Change the zoom strength.",
+                  ["tooltip"] = "Change the zoom strength.",
                   ["options"] = {
                     {text = "Default", value = 1},
                     {text = "Medium", value = 2},
@@ -159,8 +147,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -171,8 +158,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -186,16 +172,14 @@ return {
           ["setting_name"] = "automatic_reload",
           ["widget_type"] = "checkbox",
           ["text"] = "Reloading",
-          ["tooltip"] = "Reloading\n" ..
-            "Camera settings for reloading a ranged weapon.",
+          ["tooltip"] = "Camera settings for reloading a ranged weapon.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_reload_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -207,8 +191,7 @@ return {
                   ["setting_name"] = "automatic_reload_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -221,8 +204,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -232,8 +214,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -244,8 +225,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -259,16 +239,14 @@ return {
           ["setting_name"] = "automatic_vent",
           ["widget_type"] = "checkbox",
           ["text"] = "Venting Overcharge",
-          ["tooltip"] = "Venting Overcharge\n" ..
-            "Camera settings when venting overcharge.",
+          ["tooltip"] = "Camera settings when venting overcharge.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_vent_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -280,8 +258,7 @@ return {
                   ["setting_name"] = "automatic_vent_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -294,8 +271,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -305,8 +281,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -317,8 +292,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -332,16 +306,14 @@ return {
           ["setting_name"] = "automatic_melee",
           ["widget_type"] = "checkbox",
           ["text"] = "Melee Weapon",
-          ["tooltip"] = "Melee Weapon\n" ..
-            "Camera settings with a melee weapon.",
+          ["tooltip"] = "Camera settings with a melee weapon.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_melee_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -353,8 +325,7 @@ return {
                   ["setting_name"] = "automatic_melee_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -367,8 +338,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -378,8 +348,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -390,8 +359,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -405,16 +373,14 @@ return {
           ["setting_name"] = "automatic_block",
           ["widget_type"] = "checkbox",
           ["text"] = "Blocking",
-          ["tooltip"] = "Blocking\n" ..
-            "Camera settings for blocking with a melee weapon.",
+          ["tooltip"] = "Camera settings for blocking with a melee weapon.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_block_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -426,8 +392,7 @@ return {
                   ["setting_name"] = "automatic_block_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -440,8 +405,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -451,8 +415,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -463,8 +426,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.5,
@@ -478,16 +440,14 @@ return {
           ["setting_name"] = "automatic_push",
           ["widget_type"] = "checkbox",
           ["text"] = "Pushing",
-          ["tooltip"] = "Pushing\n" ..
-            "Camera settings for pushing with a melee weapon.",
+          ["tooltip"] = "Camera settings for pushing with a melee weapon.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_push_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -499,8 +459,7 @@ return {
                   ["setting_name"] = "automatic_push_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -513,8 +472,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -524,8 +482,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -536,8 +493,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -551,16 +507,14 @@ return {
           ["setting_name"] = "automatic_stunned",
           ["widget_type"] = "checkbox",
           ["text"] = "Stunned",
-          ["tooltip"] = "Stunned\n" ..
-            "Camera settings when stunned after was broken.",
+          ["tooltip"] = "Camera settings when stunned after was broken.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_stunned_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -572,8 +526,7 @@ return {
                   ["setting_name"] = "automatic_stunned_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -586,8 +539,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -597,8 +549,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -609,8 +560,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -624,16 +574,14 @@ return {
           ["setting_name"] = "automatic_potion",
           ["widget_type"] = "checkbox",
           ["text"] = "Holding Potion",
-          ["tooltip"] = "Holding Potion\n" ..
-            "Camera settings when holding a potion.",
+          ["tooltip"] = "Camera settings when holding a potion.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_potion_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -645,8 +593,7 @@ return {
                   ["setting_name"] = "automatic_potion_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -659,8 +606,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -670,8 +616,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -682,8 +627,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -697,16 +641,14 @@ return {
           ["setting_name"] = "automatic_healthkit",
           ["widget_type"] = "checkbox",
           ["text"] = "Holding Healing Item",
-          ["tooltip"] = "Holding Healing Item\n" ..
-            "Camera settings when holding a healing item.",
+          ["tooltip"] = "Camera settings when holding a healing item.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_healthkit_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -718,8 +660,7 @@ return {
                   ["setting_name"] = "automatic_healthkit_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -732,8 +673,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -743,8 +683,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -755,8 +694,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -770,16 +708,14 @@ return {
           ["setting_name"] = "automatic_grenade",
           ["widget_type"] = "checkbox",
           ["text"] = "Holding Grenades",
-          ["tooltip"] = "Holding Grenades\n" ..
-            "Camera settings when holding a grenade.",
+          ["tooltip"] = "Camera settings when holding a grenade.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_grenade_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -791,8 +727,7 @@ return {
                   ["setting_name"] = "automatic_grenade_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -805,8 +740,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -816,8 +750,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -828,8 +761,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -843,16 +775,14 @@ return {
           ["setting_name"] = "automatic_level_event",
           ["widget_type"] = "checkbox",
           ["text"] = "Carrying Event Item",
-          ["tooltip"] = "Carrying Event Item\n" ..
-            "Camera settings when carrying objective items.",
+          ["tooltip"] = "Camera settings when carrying objective items.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
               ["setting_name"] = "automatic_level_event_mode",
               ["widget_type"] = "dropdown",
               ["text"] = "Mode",
-              ["tooltip"] = "Mode\n" ..
-                "Camera mode to be used by this event.",
+              ["tooltip"] = "Camera mode to be used by this event.",
               ["options"] = {
                 {text = "First Peson", value = "first_person"}, --1
                 {text = "Third Person", value = "third_person"}, --2
@@ -864,8 +794,7 @@ return {
                   ["setting_name"] = "automatic_level_event_side",
                   ["widget_type"] = "dropdown",
                   ["text"] = "Side",
-                  ["tooltip"] = "Side\n" ..
-                    "Choose if the camera is to left or right of your character.",
+                  ["tooltip"] = "Choose if the camera is to left or right of your character.",
                   ["options"] = {
                     {text = "Right", value = "right"},
                     {text = "Left", value = "left"},
@@ -878,8 +807,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Offset",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Offset\n" ..
-                    "Change the distance between the camera and the character.",
+                  ["tooltip"] = "Change the distance between the camera and the character.",
                   ["range"] = {50, 400},
                   ["default_value"] = 100,
                 },
@@ -889,8 +817,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Length",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Length\n" ..
-                    "Change the length of the transition.",
+                  ["tooltip"] = "Change the length of the transition.",
                   ["range"] = {0.1, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 1,
@@ -901,8 +828,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Delay",
                   ["unit_text"] = " sec",
-                  ["tooltip"] = "Delay\n" ..
-                    "Change the delay of the transition.",
+                  ["tooltip"] = "Change the delay of the transition.",
                   ["range"] = {0, 2},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.1,
@@ -917,8 +843,7 @@ return {
           ["setting_name"] = "side",
           ["widget_type"] = "dropdown",
           ["text"] = "Side",
-          ["tooltip"] = "Side\n" ..
-            "Choose if the camera is to left or right of your character.",
+          ["tooltip"] = "Choose if the camera is to left or right of your character.",
           ["options"] = {
             {text = "Right", value = "right"},
             {text = "Left", value = "left"}
@@ -931,8 +856,7 @@ return {
           ["widget_type"] = "numeric",
           ["text"] = "Offset",
           ["unit_text"] = "",
-          ["tooltip"] = "Offset\n" ..
-            "Change the distance between the camera and the character.",
+          ["tooltip"] = "Change the distance between the camera and the character.",
           ["range"] = {50, 400},
           ["default_value"] = 100,
         },
@@ -941,8 +865,7 @@ return {
           ["setting_name"] = "zoom",
           ["widget_type"] = "dropdown",
           ["text"] = "Zoom",
-          ["tooltip"] = "Zoom\n" ..
-            "Change the zoom strength.",
+          ["tooltip"] = "Change the zoom strength.",
           ["options"] = {
             {text = "Default", value = 1},
             {text = "Medium", value = 2},
@@ -956,8 +879,7 @@ return {
           ["setting_name"] = "sway",
           ["widget_type"] = "checkbox",
           ["text"] = "Dynamic Swaying",
-          ["tooltip"] = "Dynamic Swaying\n" ..
-            "In third person the camera smoothly sways from left to right when strafing.",
+          ["tooltip"] = "In third person the camera smoothly sways from left to right when strafing.",
           ["default_value"] = false,
           ["sub_widgets"] = {
             {
@@ -965,8 +887,7 @@ return {
               ["widget_type"] = "numeric",
               ["text"] = "Speed",
               ["unit_text"] = "",
-              ["tooltip"] = "Speed\n" ..
-                "Camera sway speed.",
+              ["tooltip"] = "Camera sway speed.",
               ["range"] = {0.1, 1},
               ["decimals_number"] = 1,
               ["default_value"] = 0.5,
@@ -975,16 +896,14 @@ return {
               ["setting_name"] = "sway_normalize",
               ["widget_type"] = "checkbox",
               ["text"] = "Normalize",
-              ["tooltip"] = "Normalize\n" ..
-                "Smoothly resets sway amount when not strafing.",
+              ["tooltip"] = "Smoothly resets sway amount when not strafing.",
               ["default_value"] = false,
             },
             {
               ["setting_name"] = "sway_input",
               ["widget_type"] = "dropdown",
               ["text"] = "Input Type",
-              ["tooltip"] = "Input Type\n" ..
-                "The type of input used for camera sway.",
+              ["tooltip"] = "The type of input used for camera sway.",
               ["options"] = {
                 {text = "Keyboard", value = "keyboard"},
                 {text = "Mouse", value = "mouse"},
@@ -995,8 +914,7 @@ return {
               ["setting_name"] = "sway_avoid_character",
               ["widget_type"] = "checkbox",
               ["text"] = "Avoid Character",
-              ["tooltip"] = "Avoid Character\n" ..
-                "Avoids the character being in front of the camera.",
+              ["tooltip"] = "Avoids the character being in front of the camera.",
               ["default_value"] = false,
               ["sub_widgets"] = {
                 {
@@ -1004,8 +922,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Vertical",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Vertical\n" ..
-                    "The strength of sway applied vertically to avoid the character.",
+                  ["tooltip"] = "The strength of sway applied vertically to avoid the character.",
                   ["range"] = {0, 1},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.75,
@@ -1015,8 +932,7 @@ return {
                   ["widget_type"] = "numeric",
                   ["text"] = "Backwards",
                   ["unit_text"] = "",
-                  ["tooltip"] = "Backwards\n" ..
-                    "The strength of sway applied backwards to avoid the character.",
+                  ["tooltip"] = "The strength of sway applied backwards to avoid the character.",
                   ["range"] = {0, 1},
                   ["decimals_number"] = 1,
                   ["default_value"] = 0.75,
@@ -1058,8 +974,7 @@ return {
       ["setting_name"] = "reload_stop_when_finished",
       ["widget_type"] = "checkbox",
       ["text"] = "Stop Reload When Finished",
-      ["tooltip"] = "Stop Reload When Finished\n" ..
-        "Toggle stop reload when finished off or on.\n\n" ..
+      ["tooltip"] = "Toggle stop reload when finished off or on.\n\n" ..
         "The first- and third person animations can differ a lot.\n" ..
         "Especially the reload animation for ranged weapons.\n" ..
         "Stops third person reload animation after the correct time.",
@@ -1069,8 +984,7 @@ return {
       ["setting_name"] = "reload_extend_too_short",
       ["widget_type"] = "checkbox",
       ["text"] = "Extend Short Reload Animations",
-      ["tooltip"] = "Extend short Animations\n" ..
-        "Toggle extend short animations off or on.\n\n" ..
+      ["tooltip"] = "Toggle extend short animations off or on.\n\n" ..
         "The first- and third person animations can differ a lot.\n" ..
         "Especially the reload animation for ranged weapons.\n" ..
         "Repeats third person reload animation if too short.",
