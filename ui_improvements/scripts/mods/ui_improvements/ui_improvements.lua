@@ -14,9 +14,9 @@ local mod = get_mod("ui_improvements")
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
 -- Custom theme for highlighting
-local simple_ui = get_mod("SimpleUI")
-mod.custom_theme = table.clone(simple_ui.themes.default.default)
-mod.custom_theme.color_text = mod.custom_theme.color_text_clicked
+mod.simple_ui = nil --get_mod("SimpleUI")
+mod.custom_theme = nil --table.clone(simple_ui.themes.default.default)
+--mod.custom_theme.color_text = mod.custom_theme.color_text_clicked
 mod.character_window = nil
 mod.career_window = nil
 mod.actual_profile_index = nil
@@ -184,8 +184,7 @@ end
 --]]
 mod.create_character_window = function(self)
 
-	local simple_ui = get_mod("SimpleUI")
-	if simple_ui and not self.character_window then
+	if mod.simple_ui and not self.character_window then
 
 		local feedback = function(self)
 			local hero_view = mod:get_hero_view()
@@ -258,7 +257,7 @@ mod.create_character_window = function(self)
 		local profile_index = player:profile_index()
 
 		-- Create window
-		self.character_window = simple_ui:create_window("ui_improvements_character", window_position, window_size)
+		self.character_window = mod.simple_ui:create_window("ui_improvements_character", window_position, window_size)
 
 		self.character_window.position = {120*scale, screen_height - window_size[2]*scale - 5}
 
@@ -291,8 +290,7 @@ end
 --]]
 mod.create_career_window = function(self, profile_index)
 
-	local simple_ui = get_mod("SimpleUI")
-	if simple_ui and not self.career_window then
+	if mod.simple_ui and not self.career_window then
 
 		local feedback = function(self)
 			local hero_view = mod:get_hero_view()
@@ -366,7 +364,7 @@ mod.create_career_window = function(self, profile_index)
 		local window_position = {120, screen_height - window_size[2]*2 - 5}
 
 		-- Create window
-		self.career_window = simple_ui:create_window("ui_improvements_career", window_position, window_size)
+		self.career_window = mod.simple_ui:create_window("ui_improvements_career", window_position, window_size)
 
 		self.career_window.position = {120*scale, screen_height - (window_size[2]*2)*scale - 5}
 
@@ -552,3 +550,15 @@ mod:hook(HeroView, "on_exit", function(func, self)
 	-- Destroy window
 	mod:destroy_windows()
 end)
+
+-- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
+-- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
+-- ##### █████╗  ██║   ██║█████╗  ██╔██╗ ██║   ██║   ███████╗ #########################################################
+-- ##### ██╔══╝  ╚██╗ ██╔╝██╔══╝  ██║╚██╗██║   ██║   ╚════██║ #########################################################
+-- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
+-- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
+mod.on_all_mods_loaded = function()
+	mod.simple_ui = get_mod("SimpleUI")
+	mod.custom_theme = table.clone(mod.simple_ui.themes.default.default)
+	mod.custom_theme.color_text = mod.custom_theme.color_text_clicked
+end
