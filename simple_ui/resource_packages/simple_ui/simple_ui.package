@@ -1,0 +1,12 @@
+mod =  [
+	"simple_ui"
+]
+
+package = [
+	"resource_packages/simple_ui/simple_ui"
+]
+
+lua = [
+	"scripts/mods/simple_ui/simple_ui"
+	"scripts/mods/simple_ui/basic_gui"
+]
