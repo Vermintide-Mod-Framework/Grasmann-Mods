@@ -42,7 +42,10 @@ mod.create_screen_ui = function(self)
 		self.gui = World.create_screen_gui(world, "immediate", "material", "materials/fonts/gw_fonts", 
 			"material", "materials/ui/ui_1080p_ingame_common")
 	else
-		self.gui = World.create_screen_gui(world, "immediate", "material", "materials/fonts/gw_fonts")
+		self.gui = World.create_screen_gui(world, "immediate",
+			"material", "materials/fonts/gw_fonts",
+			"material", "materials/ui/ui_1080p_hud_atlas_textures",
+			"material", "materials/ui/ui_1080p_common")
 	end
 end
 --[[
