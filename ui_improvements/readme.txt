@@ -4,6 +4,7 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.1.0 - Update for better integration into menu
 1.0.4 - Removed necessity for correct load order with simple ui
 1.0.3
 	- Updated for latest vmf
