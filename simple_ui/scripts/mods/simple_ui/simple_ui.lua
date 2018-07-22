@@ -5,7 +5,7 @@ local mod = get_mod("SimpleUI")
 		Provides functionalities to create simple ui widgets.
 
 	author: grasmann
-	version: 2.0.0
+	version: 2.0.1
 --]]
 local basic_gui = get_mod("BasicUI")
 
