@@ -390,6 +390,24 @@ mod.play_sound = function(self, sound_name)
 	local hero_view = self:get_hero_view()
 	hero_view:play_sound(sound_name)
 end
+
+mod.career_unlocked = function(self, profile_index, career_index)
+	local unlocked = false
+
+	local profile_settings = SPProfiles[profile_index]
+	local display_name = profile_settings.display_name
+
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
+	local hero_experience = hero_attributes:get(display_name, "experience") or 0
+	local hero_level = ExperienceSettings.get_level(hero_experience)
+
+	local career_name = SPProfiles[profile_index].careers[career_index].name
+
+	unlocked = ProgressionUnlocks.is_unlocked_for_profile(career_name, display_name, hero_level)
+
+	return unlocked
+end
+
 --[[
 	Create character selection window
 --]]
@@ -596,7 +614,8 @@ mod.create_career_window = function(self, profile_index)
 			local index = 1
 			for _, career in pairs(careers) do
 				local size = {((window_size[1]-15)/3), (window_size[2])-10}
-				if index ~= mod.career_index then
+				local career_unlocked = self:career_unlocked(mod.profile_index, index)
+				if index ~= mod.career_index and career_unlocked then
 					local button = self.new_career_window:create_button("ui_improvements_career_"..career.name, {pos_x, 5}, size, nil, career.name, {career.character_index, career.career_index})
 					button.visible = false
 					button.on_click = feedback
@@ -675,7 +694,8 @@ mod.render_career_icons = function(self)
 	if self.new_career_window then
 		local scale = UIResolutionScale()
 		for _, c in pairs(self.careers[self.profile_index]) do
-			if c.career_index ~= self.career_index then
+			local career_unlocked = self:career_unlocked(c.character_index, c.career_index)
+			if c.career_index ~= self.career_index and career_unlocked then
 				local color = Color(255, 100, 100, 100)
 				if c.hovered then
 					color = Color(255, 255, 255, 255)
