@@ -5,7 +5,7 @@ local mod = get_mod("SimpleUI")
 		Provides functionalities to create simple ui widgets.
 
 	author: grasmann
-	version: 2.0.1
+	version: 2.0.2
 --]]
 local basic_gui = get_mod("BasicUI")
 
@@ -1287,6 +1287,7 @@ mod.widgets = {
 			Update widgets
 		--]]
 		update_widgets = function(self)
+			
 			if #self.widgets > 0 then
 				local catched = false
 				for z=1, #self.widgets do
@@ -1493,7 +1494,7 @@ mod.widgets = {
 			-- Trigger event
 			self:before_update()
 			-- Disabled
-			if self.disabled or not self.visible then return end
+			if self.disabled then return end
 			-- Mouse position
 			local cursor = mod.mouse.cursor()
 			-- Set widget position via anchor
@@ -1501,11 +1502,21 @@ mod.widgets = {
 				self.position, self.size = mod.anchor[self.anchor].position(self.window, self)
 			end
 			-- Check hovered
-			self.hovered, self.cursor = mod:point_in_bounds(cursor, self:extended_bounds())
+			local hovered = false
+			hovered, self.cursor = mod:point_in_bounds(cursor, self:extended_bounds())
+			-- Hover enter
+			if not self.hovered and hovered then
+				self:on_hover_enter()
+			end
 			if self.hovered then
 				if self.tooltip then basic_gui:tooltip(self.tooltip) end
 				self:on_hover()
 			end
+			-- Hover exit
+			if self.hovered and not hovered then
+				self:on_hover_exit()
+			end
+			self.hovered = hovered
 			-- Clicked
 			if self.clicked then
 				self.clicked = self.hovered
@@ -1635,9 +1646,19 @@ mod.widgets = {
 		on_click = function(self)
 		end,
 		--[[
+			On hover enter
+		--]]
+		on_hover_enter = function(self)
+		end,
+		--[[
 			On hover
 		--]]
 		on_hover = function(self)
+		end,
+		--[[
+			On hover exit
+		--]]
+		on_hover_exit = function(self)
 		end,
 		--[[
 			Before update

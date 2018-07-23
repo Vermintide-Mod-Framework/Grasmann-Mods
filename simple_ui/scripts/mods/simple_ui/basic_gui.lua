@@ -5,7 +5,7 @@ local mod = get_mod("BasicUI")
 		Provides a screen gui and functionality to draw to it
 		
 	author: grasmann
-	version: 2.0.1
+	version: 2.0.2
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
