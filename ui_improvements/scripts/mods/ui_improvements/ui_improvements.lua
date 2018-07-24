@@ -381,7 +381,19 @@ mod.get_hero_view = function(self)
 	local ingame_ui = matchmaking_manager and matchmaking_manager._ingame_ui
 	local hero_view_active = ingame_ui and ingame_ui.current_view == "hero_view"
 	local hero_view = hero_view_active and ingame_ui.views["hero_view"]
+
 	return hero_view
+end
+--[[
+	Get bottom left corner of hero view
+--]]
+mod.get_hero_view_bottom_left_corner = function(self)
+	local scale = UIResolutionScale()
+	local size = UISettings.game_start_windows.large_window_size
+	size = {size[1] * scale, size[2] * scale}
+	local screen = {1920 * scale, 1080 * scale}
+	local position = {screen[1]/2 - size[1]/2, screen[2]/2 - size[2]/2}
+	return position
 end
 --[[
 	Play sound
@@ -390,7 +402,9 @@ mod.play_sound = function(self, sound_name)
 	local hero_view = self:get_hero_view()
 	hero_view:play_sound(sound_name)
 end
-
+--[[
+	Check if a career is unlocked
+--]]
 mod.career_unlocked = function(self, profile_index, career_index)
 	local unlocked = false
 
@@ -407,7 +421,6 @@ mod.career_unlocked = function(self, profile_index, career_index)
 
 	return unlocked
 end
-
 --[[
 	Create character selection window
 --]]
@@ -484,18 +497,17 @@ mod.create_character_window = function(self)
 
 	if mod.simple_ui and not self.new_character_window then
 
-		
-
 		local scale = UIResolutionScale()
 		local screen_width, screen_height = UIResolution()
 		local window_size = {350, 80}
-		local window_position = {230, screen_height - window_size[2] - 40}
+		local hero_view_pos = self:get_hero_view_bottom_left_corner()
+		--local window_position = {-700, 415}
+		local window_position = {hero_view_pos[1] + 140, hero_view_pos[2] + 880}
 		local player = Managers.player:local_player()
 		local profile_index = player:profile_index()
 
 		-- Create window
 		self.new_character_window = mod.simple_ui:create_window("ui_improvements_character_new", window_position, window_size)
-		self.new_character_window.position = {230*scale, screen_height - window_size[2]*scale - 40}
 
 		-- Create buttons
 		local pos_x = 5
@@ -603,11 +615,13 @@ mod.create_career_window = function(self, profile_index)
 		local scale = UIResolutionScale()
 		local screen_width, screen_height = UIResolution()
 		local window_size = {300, 100}
-		local window_position = {360, screen_height - 315}
+		local hero_view_pos = self:get_hero_view_bottom_left_corner()
+		--local window_position = {-600, 225}
+		local window_position = {hero_view_pos[1] + 260, hero_view_pos[2] + 680}
 
 		-- Create window
 		self.new_career_window = mod.simple_ui:create_window("ui_improvements_career", window_position, window_size)
-		self.new_career_window.position = {360*scale, screen_height - 315*scale}
+		--self.new_career_window.position = {360*scale, screen_height - 315*scale}
 
 		if careers then
 			local pos_x = 5
@@ -899,6 +913,10 @@ mod:hook(HeroWindowOptions, "_update_hero_portrait_frame", function(func, self, 
 		{ x = -80, },
 		{ x = 30, },
 	}
+
+	mod:pcall(function()
+		mod:dump(self._portrait_widget, "self._portrait_widget", 2)
+	end)
 
 	self._portrait_widget.offset[1] = offset[mod.career_index].x
 end)
