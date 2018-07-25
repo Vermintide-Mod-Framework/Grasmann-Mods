@@ -22,6 +22,7 @@ mod.orig_get_career = nil
 mod.sub_screen = "equipment"
 mod.character_widgets = {}
 mod.career_widgets = {}
+mod.crafting_animation_running = false
 mod.window_settings = {
 	loadout = "equipment",
 	talents = "talents",
@@ -601,18 +602,26 @@ end)
 	Handle button press
 --]]
 mod:hook_safe(HeroWindowOptions, "post_update", function(self, ...)
-	-- Character buttons
-	for _, widget in pairs(mod.character_widgets) do
-		if self:_is_button_pressed(widget) then
-			mod:change_character(widget.content.profile_index)
+	if not mod.crafting_animation_running then
+		-- Character buttons
+		for _, widget in pairs(mod.character_widgets) do
+			if self:_is_button_pressed(widget) then
+				mod:change_character(widget.content.profile_index)
+			end
+		end
+		-- Career buttons
+		for _, widget in pairs(mod.career_widgets) do
+			if self:_is_button_pressed(widget) then
+				mod:change_career(widget.content.profile_index, widget.content.career_index)
+			end
 		end
 	end
-	-- Career buttons
-	for _, widget in pairs(mod.career_widgets) do
-		if self:_is_button_pressed(widget) then
-			mod:change_career(widget.content.profile_index, widget.content.career_index)
-		end
-	end
+end)
+--[[
+	Check if crafting animations are running
+--]]
+mod:hook_safe(HeroWindowCrafting, "_update_animations", function(self, ...)
+	mod.crafting_animation_running = #self._animations == 0
 end)
 --[[
 	Open chest for other heroes
