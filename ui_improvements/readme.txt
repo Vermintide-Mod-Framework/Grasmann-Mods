@@ -4,6 +4,7 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.2.0 - Converted SimpleUI to UIWidgets
 1.1.1 - Fixed bugs with changing cosmetic items
 1.1.0 - Update for better integration into menu
 1.0.4 - Removed necessity for correct load order with simple ui
