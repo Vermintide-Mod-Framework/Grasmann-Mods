@@ -10,3 +10,7 @@ lua = [
 	"localization/*"
 	"scripts/mods/ui_improvements/*"
 ]
+
+material = [
+	"materials/ui_improvements/*"
+]

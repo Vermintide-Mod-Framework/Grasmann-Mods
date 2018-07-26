@@ -1,0 +1,14 @@
+menu_frame_09_divider_middle = {
+	material_contexts = {
+		surface_material = ""
+	}
+	
+	shader = "gui:DIFFUSE_MAP"
+	
+	textures = {
+		diffuse_map = "textures/ui_improvements/menu_frame_09_divider_middle"
+	}
+	
+	variables = {
+	}
+}

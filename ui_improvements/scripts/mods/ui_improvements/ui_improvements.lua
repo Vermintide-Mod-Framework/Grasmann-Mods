@@ -7,6 +7,8 @@ local mod = get_mod("ui_improvements")
 	Version: 1.2.0
 --]]
 
+mod:dofile("scripts/mods/ui_improvements/ui_improvements_crafting")
+
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
 -- ##### ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗ ############################################################################
 -- ##### ██║  ██║███████║   ██║   ███████║ ############################################################################
@@ -247,6 +249,17 @@ mod.change_character = function(self, profile_index)
 		--hero_view:_change_screen_by_name("overview", mod.sub_screen)
 		self:reopen_hero_view()
 
+		-- Reset profile function
+		if mod.orig_profile_by_peer then
+			hero_view.ingame_ui_context.profile_synchronizer.profile_by_peer = mod.orig_profile_by_peer
+			mod.orig_profile_by_peer = nil
+		end
+		-- Reset career function
+		if mod.orig_get_career then
+			Managers.backend._interfaces["hero_attributes"].get = mod.orig_get_career
+			mod.orig_get_career = nil
+		end
+
 	end
 end
 --[[
@@ -401,6 +414,17 @@ mod.change_career = function(self, profile_index, career_index)
 		--hero_view:_change_screen_by_name("overview", mod.sub_screen)
 		self:reopen_hero_view()
 
+		-- Reset profile function
+		if mod.orig_profile_by_peer then
+			hero_view.ingame_ui_context.profile_synchronizer.profile_by_peer = mod.orig_profile_by_peer
+			mod.orig_profile_by_peer = nil
+		end
+		-- Reset career function
+		if mod.orig_get_career then
+			Managers.backend._interfaces["hero_attributes"].get = mod.orig_get_career
+			mod.orig_get_career = nil
+		end
+
 	end
 end
 
@@ -525,16 +549,16 @@ end)
 	Destroy window when closing hero view
 --]]
 mod:hook(HeroView, "on_exit", function(func, self, ...)
-	-- Reset profile function
-	if mod.orig_profile_by_peer then
-		self.ingame_ui_context.profile_synchronizer.profile_by_peer = mod.orig_profile_by_peer
-		mod.orig_profile_by_peer = nil
-	end
-	-- Reset career function
-	if mod.orig_get_career then
-		Managers.backend._interfaces["hero_attributes"].get = mod.orig_get_career
-		mod.orig_get_career = nil
-	end
+	-- -- Reset profile function
+	-- if mod.orig_profile_by_peer then
+	-- 	self.ingame_ui_context.profile_synchronizer.profile_by_peer = mod.orig_profile_by_peer
+	-- 	mod.orig_profile_by_peer = nil
+	-- end
+	-- -- Reset career function
+	-- if mod.orig_get_career then
+	-- 	Managers.backend._interfaces["hero_attributes"].get = mod.orig_get_career
+	-- 	mod.orig_get_career = nil
+	-- end
 	mod.profile_index = nil
 	mod.career_index = nil
 	-- Orig function
@@ -657,260 +681,7 @@ end)
 
 
 
--- #####  ██████╗██████╗  █████╗ ███████╗████████╗██╗███╗   ██╗ ██████╗  ##############################################
--- ##### ██╔════╝██╔══██╗██╔══██╗██╔════╝╚══██╔══╝██║████╗  ██║██╔════╝  ##############################################
--- ##### ██║     ██████╔╝███████║█████╗     ██║   ██║██╔██╗ ██║██║  ███╗ ##############################################
--- ##### ██║     ██╔══██╗██╔══██║██╔══╝     ██║   ██║██║╚██╗██║██║   ██║ ##############################################
--- ##### ╚██████╗██║  ██║██║  ██║██║        ██║   ██║██║ ╚████║╚██████╔╝ ##############################################
--- #####  ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝   ╚═╝╚═╝  ╚═══╝ ╚═════╝  ##############################################
-mod.craft_page = nil
-mod.dont_save_craft_page = false
-mod.craft_button_widgets = {}
-mod.create_craft_button = function(self, index, text)
 
-	local move_table = {
-		{0, 3, 0}, {1, 3, 6}, {0, 2, 0}, {1, 2, 6},
-		{0, 1, 0}, {1, 1, 6}, {0, 0, 0}, {1, 0, 6},
-	}
-	local size = {242, 30}
-	local root = {16, 8, 20}
-	local pos = {root[1] + move_table[index][3] + size[1]*move_table[index][1], root[2] + (size[2]+4)*move_table[index][2], root[3]}
-	local font_size = 14
-
-	local definition = {
-		scenegraph_id = "window_top",
-		element = {
-			passes = {
-				-- TEXTURES
-				{
-					texture_id = "background_fade",
-					style_id = "background_fade",
-					pass_type = "texture",
-				},
-				{
-					texture_id = "hover_glow",
-					style_id = "hover_glow",
-					pass_type = "texture",
-					content_check_function = function(content)
-						return content.button_hotspot.is_hover
-					end,
-				},
-				{
-					style_id = "text",
-					pass_type = "text",
-					text_id = "text",
-					content_check_function = function(content)
-						return not content.button_hotspot.is_hover
-					end,
-				},
-				{
-					style_id = "text_glow",
-					pass_type = "text",
-					text_id = "text",
-					content_check_function = function(content)
-						return content.button_hotspot.is_hover
-					end,
-				},
-				{
-					style_id = "text_shadow",
-					pass_type = "text",
-					text_id = "text"
-				},
-				{
-					texture_id = "glass",
-					style_id = "glass_top",
-					pass_type = "texture"
-				},
-				{
-					texture_id = "glass",
-					style_id = "glass_bottom",
-					pass_type = "texture"
-				},
-				{
-					texture_id = "button_left",
-					style_id = "button_left",
-					pass_type = "texture"
-				},
-				{
-					texture_id = "button_right",
-					style_id = "button_right",
-					pass_type = "texture"
-				},
-				-- HOTSPOT
-				{
-					style_id = "background",
-					pass_type = "hotspot",
-					content_id = "button_hotspot",
-				},
-			},
-		},
-
-		content = {
-			glass = "button_glass_02",
-			background_fade = "button_bg_fade",
-			hover_glow = "button_state_default",
-			button_left = "button_detail_05_left",
-			button_right = "button_detail_05_right",
-			text = text or "n/a",
-			button_hotspot = {},
-			index = index,
-		},
-
-		style = {
-			-- TEXTURES
-			background = {
-				color = {255, 150, 150, 150},
-				--offset = pos,
-				offset = {0, 0, 0},
-				size = size,
-			},
-			background_fade = {
-				color = {200, 255, 255, 255},
-				--offset = pos,
-				offset = {0, 0, 0},
-				size = size,
-			},
-			hover_glow = {
-				color = {200, 255, 255, 255},
-				--offset = pos,
-				offset = {0, 0, 0},
-				size = {size[1], math.min(size[2] - 5, 80)},
-			},
-			text = {
-				upper_case = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				font_type = "hell_shark",
-				font_size = font_size or 24,
-				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-				select_text_color = Colors.get_color_table_with_alpha("white", 255),
-				--offset = pos,
-				offset = {0, 0, 0},
-				size = size,
-			},
-			text_glow = {
-				upper_case = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				font_type = "hell_shark",
-				font_size = font_size or 24,
-				text_color = Colors.get_color_table_with_alpha("white", 255),
-				default_text_color = Colors.get_color_table_with_alpha("white", 255),
-				select_text_color = Colors.get_color_table_with_alpha("white", 255),
-				--offset = pos,
-				offset = {0, 0, 0},
-				size = size,
-			},
-			text_shadow = {
-				upper_case = true,
-				word_wrap = true,
-				horizontal_alignment = "center",
-				vertical_alignment = "center",
-				font_type = "hell_shark",
-				font_size = font_size or 24,
-				text_color = Colors.get_color_table_with_alpha("black", 255),
-				default_text_color = Colors.get_color_table_with_alpha("black", 255),
-				--offset = {pos[1], pos[2], pos[3]-1},
-				offset = {0, 0, -1},
-				size = size,
-			},
-			glass_top = {
-				color = {255, 255, 255, 255},
-				--offset = {pos[1], pos[2]+15, pos[3]+4},
-				offset = {0, 19, pos[3]+4},
-				size = {size[1], 11},
-			},
-			glass_bottom = {
-				color = {100, 255, 255, 255},
-				--offset = {pos[1], pos[2]-3, pos[3]+4},
-				offset = {0, -8, pos[3]+4},
-				size = {size[1], 11},
-			},
-			button_left = {
-				color = {255, 255, 255, 255},
-				--offset = {pos[1], pos[2]+15, pos[3]+4},
-				offset = {0, 0, pos[3]+1},
-				size = {10, size[2]},
-			},
-			button_right = {
-				color = {255, 255, 255, 255},
-				offset = {size[1]-10, 0, pos[3]+1},
-				size = {10, size[2]},
-			},
-		},
-
-		offset = pos,
-
-	}
-
-	return UIWidget.init(definition)
-end
-
---HeroWindowCrafting.draw = function (self, dt)
-mod:hook_safe(HeroWindowCrafting, "draw", function(self, dt, ...)
-	-- Get some shit
-	local ui_renderer = self.ui_renderer
-	local ui_top_renderer = self.ui_top_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
-	-- Begin drawing
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
-	-- Render buttons
-	for _, widget in pairs(mod.craft_button_widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, widget)
-	end
-	-- End drawing
-	UIRenderer.end_pass(ui_top_renderer)
-end)
-
---HeroWindowCrafting.create_ui_elements = function (self, params, offset)
-mod:hook_safe(HeroWindowCrafting, "create_ui_elements", function(self, params, offset, ...)
-	local button_list = {
-		"Salvage Items", "Craft Item", "Re-Roll Properties", "Re-Roll Trait",
-		"Upgrade Item", "Extract Illusion", "Apply Illusion", "Convert Dust"
-	}
-	for n, text in pairs(button_list) do
-		mod.craft_button_widgets[n] = mod:create_craft_button(n, text)
-	end
-end)
-
-mod:hook_safe(HeroWindowCrafting, "_change_recipe_page", function(self, current_page, ...)
-	local widgets_by_name = self._widgets_by_name
-	widgets_by_name.description_text.content.text = ""
-	if not mod.dont_save_craft_page then
-		mod.craft_page = current_page
-	end
-end)
-
-mod:hook_safe(HeroWindowCrafting, "post_update", function(self, dt, t, ...)
-	for _, widget in pairs(mod.craft_button_widgets) do
-		if self:_is_button_pressed(widget) then
-			self:_play_sound("play_gui_craft_recipe_next")
-			self:_change_recipe_page(widget.content.index)
-		end
-	end
-end)
-
-mod:hook_safe(HeroWindowCrafting, "update", function(self, dt, t, ...)
-	for _, widget in pairs(mod.craft_button_widgets) do
-		if widget.content.button_hotspot.on_hover_enter then
-			self:_play_sound("play_gui_equipment_button_hover")
-		end
-	end
-end)
-
---HeroWindowCrafting.on_enter = function (self, params, offset)
-mod:hook(HeroWindowCrafting, "on_enter", function(func, self, params, offset, ...)
-	mod.dont_save_craft_page = true
-	func(self, params, offset, ...)
-	mod.dont_save_craft_page = false
-
-	if mod.craft_page then
-		--self:_play_sound("play_gui_craft_recipe_next")
-		self:_change_recipe_page(mod.craft_page)
-	end
-end)
 
 
 
