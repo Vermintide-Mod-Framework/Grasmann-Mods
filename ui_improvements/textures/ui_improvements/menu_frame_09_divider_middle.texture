@@ -3,7 +3,7 @@ common = {
 		filename = "textures/ui_improvements/menu_frame_09_divider_middle"
 	}
 	output = {
-		apply_processing = true
+		apply_processing = false
 		correct_gamma = true
 		cut_alpha_threshold = 0.5
 		enable_cut_alpha_threshold = false

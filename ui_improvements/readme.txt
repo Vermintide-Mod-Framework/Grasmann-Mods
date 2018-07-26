@@ -4,6 +4,10 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.3.0
+	- Added crafting buttons
+	- Added hotkey for okri's challenges
+	- Cleaned and optimized code
 1.2.0 - Converted SimpleUI to UIWidgets
 1.1.1 - Fixed bugs with changing cosmetic items
 1.1.0 - Update for better integration into menu

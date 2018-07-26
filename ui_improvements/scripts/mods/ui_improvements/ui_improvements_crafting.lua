@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Displays seperate buttons for every crafting page
 
-	Version: 1.2.0
+	Version: 1.3.0
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -13,7 +13,7 @@ local mod = get_mod("ui_improvements")
 -- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
-mod.craft_page = nil
+mod.craft_page = 1
 mod.dont_save_craft_page = false
 mod.craft_button_widgets = {}
 mod.button_list = {
@@ -43,7 +43,7 @@ mod.create_craft_button = function(self, index, text)
 		{0, 3, 0}, {1, 3, border}, {0, 2, 0}, {1, 2, border},
 		{0, 1, 0}, {1, 1, border}, {0, 0, 0}, {1, 0, border},
 	}
-	local size = {254, 30}
+	local size = {254, 28}
 	local root = {4, 5, 10}
 	local pos = {root[1] + move_table[index][3] + size[1]*move_table[index][1], root[2] + (size[2]+border)*move_table[index][2], root[3]}
 	local font_size = 14
@@ -59,11 +59,15 @@ mod.create_craft_button = function(self, index, text)
 					pass_type = "texture",
 				},
 				{
+					style_id = "background_solid",
+					pass_type = "rect",
+				},
+				{
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
 					content_check_function = function(content)
-						return content.button_hotspot.is_hover
+						return content.button_hotspot.is_hover or mod.craft_page == content.index
 					end,
 				},
 				{
@@ -71,7 +75,7 @@ mod.create_craft_button = function(self, index, text)
 					pass_type = "text",
 					text_id = "text",
 					content_check_function = function(content)
-						return not content.button_hotspot.is_hover
+						return not content.button_hotspot.is_hover or mod.craft_page == content.index
 					end,
 				},
 				{
@@ -79,7 +83,7 @@ mod.create_craft_button = function(self, index, text)
 					pass_type = "text",
 					text_id = "text",
 					content_check_function = function(content)
-						return content.button_hotspot.is_hover
+						return content.button_hotspot.is_hover or mod.craft_page == content.index
 					end,
 				},
 				{
@@ -197,6 +201,12 @@ mod.create_craft_button = function(self, index, text)
 				offset = {0, 0, 0},
 				size = size,
 			},
+			background_solid = {
+				color = {127, 0, 0, 0},
+				--offset = pos,
+				offset = {0, 0, pos[3]-10},
+				size = size,
+			},
 			background_fade = {
 				color = {255, 255, 255, 255},
 				--offset = pos,
@@ -206,7 +216,7 @@ mod.create_craft_button = function(self, index, text)
 			hover_glow = {
 				color = {200, 255, 255, 255},
 				--offset = pos,
-				offset = {0, 0, 0},
+				offset = {0, 0, pos[3]+4},
 				size = {size[1], math.min(size[2] - 5, 80)},
 			},
 			text = {
@@ -251,7 +261,7 @@ mod.create_craft_button = function(self, index, text)
 			glass_top = {
 				color = {255, 255, 255, 255},
 				--offset = {pos[1], pos[2]+15, pos[3]+4},
-				offset = {0, 19, pos[3]+4},
+				offset = {0, size[2]-12, pos[3]+4},
 				size = {size[1], 11},
 			},
 			glass_bottom = {
@@ -288,7 +298,7 @@ mod.create_craft_button = function(self, index, text)
 			},
 			divider_top = {
 				color = {255, 255, 255, 255},
-				offset = {size[1]-7, size[2]-7, pos[3]+5},
+				offset = {size[1]-7, size[2]-8, pos[3]+5},
 				size = {17, 9},
 			},
 			divider_middle = {
@@ -351,7 +361,7 @@ mod:hook_safe(HeroWindowCrafting, "draw", function(self, dt, ...)
     
 	-- Begin drawing
     UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
-    
+	
 	-- Render buttons
 	for _, widget in pairs(mod.craft_button_widgets) do
 		UIRenderer.draw_widget(ui_top_renderer, widget)
