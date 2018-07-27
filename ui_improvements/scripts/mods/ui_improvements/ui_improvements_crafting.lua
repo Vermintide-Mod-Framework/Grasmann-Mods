@@ -101,16 +101,6 @@ mod.create_craft_button = function(self, index, text)
 					style_id = "glass_bottom",
 					pass_type = "texture",
 				},
-				-- {
-				-- 	texture_id = "button_left",
-				-- 	style_id = "button_left",
-				-- 	pass_type = "texture",
-				-- },
-				-- {
-				-- 	texture_id = "button_right",
-				-- 	style_id = "button_right",
-				-- 	pass_type = "texture",
-				-- },
 				{
 					texture_id = "divider_bottom",
 					style_id = "divider_bottom",
@@ -182,7 +172,6 @@ mod.create_craft_button = function(self, index, text)
 			text = text or "n/a",
 			button_hotspot = {},
 			index = index,
-
 			move_table = move_table[index],
 			divider_bottom = "menu_frame_09_divider_bottom",
 			divider_left = "menu_frame_09_divider_left",
@@ -191,31 +180,28 @@ mod.create_craft_button = function(self, index, text)
 			divider_middle = "menu_frame_09_divider_middle",
 			divider = "menu_frame_09_divider",
 			divider_vertical = "menu_frame_09_divider_vertical",
+			disable_button = false,
 		},
 
 		style = {
 			-- TEXTURES
 			background = {
 				color = {255, 150, 150, 150},
-				--offset = pos,
 				offset = {0, 0, 0},
 				size = size,
 			},
 			background_solid = {
 				color = {127, 0, 0, 0},
-				--offset = pos,
 				offset = {0, 0, pos[3]-10},
 				size = size,
 			},
 			background_fade = {
 				color = {255, 255, 255, 255},
-				--offset = pos,
 				offset = {0, 0, 0},
 				size = size,
 			},
 			hover_glow = {
 				color = {200, 255, 255, 255},
-				--offset = pos,
 				offset = {0, 0, pos[3]+4},
 				size = {size[1], math.min(size[2] - 5, 80)},
 			},
@@ -228,7 +214,6 @@ mod.create_craft_button = function(self, index, text)
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
-				--offset = pos,
 				offset = {0, 0, 0},
 				size = size,
 			},
@@ -241,7 +226,6 @@ mod.create_craft_button = function(self, index, text)
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_text_color = Colors.get_color_table_with_alpha("white", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
-				--offset = pos,
 				offset = {0, 0, 0},
 				size = size,
 			},
@@ -254,33 +238,19 @@ mod.create_craft_button = function(self, index, text)
 				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
-				--offset = {pos[1], pos[2], pos[3]-1},
 				offset = {0, 0, -1},
 				size = size,
 			},
 			glass_top = {
 				color = {255, 255, 255, 255},
-				--offset = {pos[1], pos[2]+15, pos[3]+4},
 				offset = {0, size[2]-12, pos[3]+4},
 				size = {size[1], 11},
 			},
 			glass_bottom = {
 				color = {100, 255, 255, 255},
-				--offset = {pos[1], pos[2]-3, pos[3]+4},
 				offset = {0, -8, pos[3]+4},
 				size = {size[1], 11},
 			},
-			-- button_left = {
-			-- 	color = {255, 255, 255, 255},
-			-- 	--offset = {pos[1], pos[2]+15, pos[3]+4},
-			-- 	offset = {0, 0, pos[3]+1},
-			-- 	size = {10, size[2]},
-			-- },
-			-- button_right = {
-			-- 	color = {255, 255, 255, 255},
-			-- 	offset = {size[1]-10, 0, pos[3]+1},
-			-- 	size = {10, size[2]},
-			-- },
 			divider_bottom = {
 				color = {255, 255, 255, 255},
 				offset = {size[1]-7, -2, pos[3]+5},
@@ -317,12 +287,18 @@ mod.create_craft_button = function(self, index, text)
 				size = {5, size[2]},
 			},
 		},
-
 		offset = pos,
-
 	}
 
 	return UIWidget.init(definition)
+end
+--[[
+	Disable controls
+--]]
+mod.disable_crafting_controls = function(self, disable)
+	for _, widget in pairs(mod.craft_button_widgets) do
+		widget.content.disable_button = disable
+	end
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -396,7 +372,7 @@ mod:hook_safe(HeroWindowCrafting, "post_update", function(self, dt, t, ...)
 	-- Iterate through crafting buttons
 	for _, widget in pairs(mod.craft_button_widgets) do
 		-- Check if button is pressed
-		if self:_is_button_pressed(widget) then
+		if not widget.content.disable_button and self:_is_button_pressed(widget) then
 			-- Open crafting page
 			self:_play_sound("play_gui_craft_recipe_next")
 			self:_change_recipe_page(widget.content.index)
@@ -410,7 +386,7 @@ mod:hook_safe(HeroWindowCrafting, "update", function(self, dt, t, ...)
 	-- Iterate through crafting buttons
 	for _, widget in pairs(mod.craft_button_widgets) do
 		-- Check if button is hovered
-		if widget.content.button_hotspot.on_hover_enter then
+		if not widget.content.disable_button and widget.content.button_hotspot.on_hover_enter then
 			-- Play hover sound
 			self:_play_sound("play_gui_equipment_button_hover")
 		end
@@ -429,6 +405,30 @@ mod:hook(HeroWindowCrafting, "on_enter", function(func, self, params, offset, ..
 	-- Open saved craft page
 	if mod.craft_page and mod:get("remember_categories") then
 		self:_change_recipe_page(mod.craft_page)
+	end
+
+end)
+--[[
+	Disable controls on craft
+--]]
+mod:hook_safe(HeroWindowCrafting, "craft", function(self, items, recipe_override, ...)
+	mod:disable_controls(true)
+end)
+--[[
+	Enable controls after craft
+--]]
+mod:hook(HeroWindowCrafting, "_update_craft_end_time", function(func, self, dt, t, ...)
+	
+	-- Check if craft end time running
+	local is_waiting = false
+	if self._craft_end_duration then is_waiting = true end
+
+	-- Original function
+	func(self, dt, t, ...)
+
+	-- Check if craft end time reached and enable controls
+	if is_waiting and not self._craft_end_duration then
+		mod:disable_controls(false)
 	end
 
 end)

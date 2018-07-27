@@ -134,36 +134,38 @@ mod.create_character_button = function(self, profile_index)
 			profile_index = profile_index,
 			button_hotspot = {},
 			is_selected = is_selected,
+			disable_button = false,
 		},
 
 		style = {
 			-- TEXTURES
 			icon = {
-				offset = pos,
+				offset = {0, 0, 0},
 				size = size,
 				color = {255, 127, 127, 127}
 			},
 			icon_hovered = {
-				offset = {pos[1]-3, pos[2], pos[3]},
+				offset = {-3, 0, 0},
 				size = {size[1]+6, size[2]+6},
 				color = {255, 200, 200, 200}
 			},
 			icon_selected = {
-				offset = pos,
+				offset = {0, 0, 0},
 				size = size_selected,
 				color = {255, 255, 255, 255}
 			},
 			glow_selected = {
-				offset = {pos[1]-35, pos[2]-35, pos[3]},
+				offset = {-35, -35, 0},
 				size = {size_selected[1]+70, size_selected[2]+70},
 				color = {255, 200, 200, 200}
 			},
 			-- HOTSPOT
 			button_hotspot = {
-				offset = pos,
+				offset = {0, 0, 0},
 				size = size,
 			},
 		},
+		offset = pos,
 	}
 
 	return UIWidget.init(definition)
@@ -252,7 +254,8 @@ mod.create_career_button = function(self, profile_index, career_index)
 	local portrait_frame_texture = self:get_portrait_frame(profile_index, career_index)
 	local frame_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(portrait_frame_texture)
 	local frame_size = {frame_settings.size[1] / 1.55, frame_settings.size[2] / 1.55}
-	local frame_pos = {pos[1] - frame_size[1]/2 + size[1]/2, pos[2] - 5, pos[3]}
+	--local frame_pos = {pos[1] - frame_size[1]/2 + size[1]/2, pos[2] - 5, pos[3]}
+	local frame_pos = {size[1]/2 - frame_size[1]/2, -5, 0}
 
 	local definition = {
 		scenegraph_id = "hero_info_bg",
@@ -307,17 +310,18 @@ mod.create_career_button = function(self, profile_index, career_index)
 			career_index = career_index,
 			button_hotspot = {},
 			is_selected = is_selected,
+			disable_button = false,
 		},
 
 		style = {
 			-- TEXTURES
 			portrait = {
-				offset = pos,
+				offset = {0, 0, 0},
 				size = size,
 				color = {255, 127, 127, 127}
 			},
 			portrait_hovered = {
-				offset = {pos[1]-3, pos[2], pos[3]},
+				offset = {-3, 0, 0},
 				size = {size[1]+6, size[2]+6},
 				color = {255, 255, 255, 255}
 			},
@@ -333,10 +337,11 @@ mod.create_career_button = function(self, profile_index, career_index)
 			},
 			-- HOTSPOT
 			button_hotspot = {
-				offset = pos,
+				offset = {0, 0, 0},
 				size = size,
 			},
 		},
+		offset = pos,
 	}
 
 	return UIWidget.init(definition)
@@ -402,6 +407,19 @@ mod.change_career = function(self, profile_index, career_index)
 
 	end
 end
+--[[
+	Disable controls
+--]]
+mod.disable_switch_controls = function(self, disable)
+	-- Disable character buttons
+	for _, widget in pairs(mod.character_widgets) do
+		widget.content.disable_button = disable
+	end
+	-- Disable career buttons
+	for _, widget in pairs(mod.career_widgets) do
+		widget.content.disable_button = disable
+	end
+end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
@@ -463,7 +481,7 @@ end)
 mod:hook_safe(HeroWindowOptions, "update", function(self, ...)
 	-- Character buttons
 	for _, widget in pairs(mod.character_widgets) do
-		if self:_is_button_hover_enter(widget) then
+		if not widget.content.disable_button and self:_is_button_hover_enter(widget) then
 			if mod.profile_index ~= widget.content.profile_index then
 				self:_play_sound("play_gui_equipment_button_hover")
 			end
@@ -471,7 +489,7 @@ mod:hook_safe(HeroWindowOptions, "update", function(self, ...)
 	end
 	-- Career buttons
 	for _, widget in pairs(mod.career_widgets) do
-		if self:_is_button_hover_enter(widget) then
+		if not widget.content.disable_button and self:_is_button_hover_enter(widget) then
 			self:_play_sound("play_gui_equipment_button_hover")
 		end
 	end
@@ -483,13 +501,13 @@ mod:hook_safe(HeroWindowOptions, "post_update", function(self, ...)
 	--if not mod.crafting_animation_running then
 		-- Character buttons
 		for _, widget in pairs(mod.character_widgets) do
-			if self:_is_button_pressed(widget) then
+			if not widget.content.disable_button and self:_is_button_pressed(widget) then
 				mod:change_character(widget.content.profile_index)
 			end
 		end
 		-- Career buttons
 		for _, widget in pairs(mod.career_widgets) do
-			if self:_is_button_pressed(widget) then
+			if not widget.content.disable_button and self:_is_button_pressed(widget) then
 				mod:change_career(widget.content.profile_index, widget.content.career_index)
 			end
 		end

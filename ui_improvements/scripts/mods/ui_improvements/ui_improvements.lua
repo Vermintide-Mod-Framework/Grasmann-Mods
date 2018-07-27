@@ -132,6 +132,13 @@ mod.open_achievements = function()
 		end
 	end
 end
+--[[
+	Disable controls
+--]]
+mod.disable_controls = function(self, disable)
+	self:disable_switch_controls(disable)
+	self:disable_crafting_controls(disable)
+end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
@@ -172,13 +179,18 @@ mod:hook(HeroView, "on_exit", function(func, self, ...)
 	-- Orig function
 	func(self, ...)
 end)
-
-
-
--- --[[
--- 	Check if crafting animations are running
--- --]]
--- mod:hook_safe(HeroWindowCrafting, "_update_animations", function(self, ...)
--- 	--mod.crafting_animation_running = #self._animations == 0
+--[[
+	Simulate crafting
+--]]
+-- mod:hook(PlayFabRequestQueue, "enqueue", function(func, self, request, success_callback, send_eac_challenge, ...)
+-- 	send_eac_challenge = false
+-- 	func(self, request, success_callback, send_eac_challenge, ...)
 -- end)
+-- mod:hook(PlayFabRequestQueue, "playfab_request_success_cb", function(func, self, success_callback, result, ...)
+-- 	local entry = self._active_entry
+-- 	local request = entry.request
+-- 	local function_result = result.FunctionResult
 
+-- 	self._active_entry = nil
+-- 	success_callback(result)
+-- end)
