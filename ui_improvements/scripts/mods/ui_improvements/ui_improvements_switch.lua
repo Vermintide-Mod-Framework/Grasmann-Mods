@@ -432,9 +432,6 @@ mod:hook_safe(HeroWindowOptions, "create_ui_elements", function(self, ...)
 	for c = 1, 3 do
 		mod.career_widgets[c] = mod:create_career_button(mod.profile_index, c)
 	end
-
-	self._widgets_by_name.game_option_3.content.button_hotspot.disable_button = false
-	self._widgets_by_name.game_option_5.content.button_hotspot.disable_button = false
 end)
 --[[
 	Draw button widgets

@@ -7,6 +7,7 @@ Changelog:
 1.3.0
 	- Added crafting buttons
 	- Added hotkey for okri's challenges
+	- Option to let ui remember the opened inventory / crafting / cosmetics category
 	- Cleaned and optimized code
 1.2.0 - Converted SimpleUI to UIWidgets
 1.1.1 - Fixed bugs with changing cosmetic items
