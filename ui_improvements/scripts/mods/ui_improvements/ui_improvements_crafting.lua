@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Displays seperate buttons for every crafting page
 
-	Version: 1.3.0
+	Version: 1.3.1
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -13,18 +13,18 @@ local mod = get_mod("ui_improvements")
 -- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
-mod.craft_page = 1
-mod.dont_save_craft_page = false
+local saved_index = 1
+local dont_save = false
 mod.craft_button_widgets = {}
 mod.button_list = {
-    "Salvage Items",
-    "Craft Item",
-    "Re-Roll Properties",
-    "Re-Roll Trait",
-    "Upgrade Item",
-    "Extract Illusion",
-    "Apply Illusion",
-    "Convert Dust",
+	mod:localize("crafting_button_salvage"),
+	mod:localize("crafting_button_craft"),
+	mod:localize("crafting_button_properties"),
+	mod:localize("crafting_button_trait"),
+	mod:localize("crafting_button_upgrade"),
+	mod:localize("crafting_button_extract_illusion"),
+	mod:localize("crafting_button_apply_illusion"),
+	mod:localize("crafting_button_convert_dust"),
 }
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
@@ -67,7 +67,7 @@ mod.create_craft_button = function(self, index, text)
 					style_id = "hover_glow",
 					pass_type = "texture",
 					content_check_function = function(content)
-						return content.button_hotspot.is_hover or mod.craft_page == content.index
+						return content.button_hotspot.is_hover or saved_index == content.index
 					end,
 				},
 				{
@@ -75,7 +75,7 @@ mod.create_craft_button = function(self, index, text)
 					pass_type = "text",
 					text_id = "text",
 					content_check_function = function(content)
-						return not content.button_hotspot.is_hover or mod.craft_page == content.index
+						return not content.button_hotspot.is_hover or saved_index == content.index
 					end,
 				},
 				{
@@ -83,7 +83,7 @@ mod.create_craft_button = function(self, index, text)
 					pass_type = "text",
 					text_id = "text",
 					content_check_function = function(content)
-						return content.button_hotspot.is_hover or mod.craft_page == content.index
+						return content.button_hotspot.is_hover or saved_index == content.index
 					end,
 				},
 				{
@@ -310,7 +310,7 @@ end
 --[[
     Create crafting buttons
 --]]
-mod:hook_safe(HeroWindowCrafting, "create_ui_elements", function(self, params, offset, ...)
+mod:hook_safe(HeroWindowCrafting, "create_ui_elements", function(...)
 	
 	-- If crafting buttons not activated exit
 	if not mod:get("crafting_buttons") then return end
@@ -330,7 +330,6 @@ mod:hook_safe(HeroWindowCrafting, "draw", function(self, dt, ...)
 	if not mod:get("crafting_buttons") then return end
 
 	-- Get some shit
-	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
     local input_service = self.parent:window_input_service()
@@ -359,8 +358,8 @@ mod:hook_safe(HeroWindowCrafting, "_change_recipe_page", function(self, current_
 	end
 	
 	-- Save opened crafting page
-	if not mod.dont_save_craft_page then
-		mod.craft_page = current_page
+	if not dont_save then
+		saved_index = current_page
 	end
 
 end)
@@ -368,7 +367,7 @@ end)
     Check for button press
     Change crafting recipe
 --]]
-mod:hook_safe(HeroWindowCrafting, "post_update", function(self, dt, t, ...)
+mod:hook_safe(HeroWindowCrafting, "post_update", function(self, ...)
 	-- Iterate through crafting buttons
 	for _, widget in pairs(mod.craft_button_widgets) do
 		-- Check if button is pressed
@@ -382,7 +381,7 @@ end)
 --[[
     Handle hover sound
 --]]
-mod:hook_safe(HeroWindowCrafting, "update", function(self, dt, t, ...)
+mod:hook_safe(HeroWindowCrafting, "update", function(self, ...)
 	-- Iterate through crafting buttons
 	for _, widget in pairs(mod.craft_button_widgets) do
 		-- Check if button is hovered
@@ -395,36 +394,36 @@ end)
 --[[
     Change to saved crafting recipe on enter
 --]]
-mod:hook(HeroWindowCrafting, "on_enter", function(func, self, params, offset, ...)
+mod:hook(HeroWindowCrafting, "on_enter", function(func, self, ...)
 
 	-- Prevent saved craft page to be overwritten
-	mod.dont_save_craft_page = true
-	func(self, params, offset, ...)
-	mod.dont_save_craft_page = false
+	dont_save = true
+	func(self, ...)
+	dont_save = false
 
 	-- Open saved craft page
-	if mod.craft_page and mod:get("remember_categories") then
-		self:_change_recipe_page(mod.craft_page)
+	if saved_index and mod:get("remember_categories") then
+		self:_change_recipe_page(saved_index)
 	end
 
 end)
 --[[
 	Disable controls on craft
 --]]
-mod:hook_safe(HeroWindowCrafting, "craft", function(self, items, recipe_override, ...)
+mod:hook_safe(HeroWindowCrafting, "craft", function(...)
 	mod:disable_controls(true)
 end)
 --[[
 	Enable controls after craft
 --]]
-mod:hook(HeroWindowCrafting, "_update_craft_end_time", function(func, self, dt, t, ...)
+mod:hook(HeroWindowCrafting, "_update_craft_end_time", function(func, self, ...)
 	
 	-- Check if craft end time running
 	local is_waiting = false
 	if self._craft_end_duration then is_waiting = true end
 
 	-- Original function
-	func(self, dt, t, ...)
+	func(self, ...)
 
 	-- Check if craft end time reached and enable controls
 	if is_waiting and not self._craft_end_duration then

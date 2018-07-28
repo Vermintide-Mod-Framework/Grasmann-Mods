@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Lets you switch equippment of all characters / classes in inventory
 
-	Version: 1.3.0
+	Version: 1.3.1
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -76,85 +76,56 @@ end
 	Render correct item tooltips
 --]]
 mod:hook(UIPasses.item_tooltip, "draw", function(func, ...)
-	local player = Managers.player:local_player()
-	local orig_profile_index, orig_career_index
-
-	-- -- Overwrite profile function
-	-- orig_profile_index = player.profile_index
-	-- player.profile_index = function(self)
-	-- 	return mod.profile_index or orig_profile_index(self)
-	-- end
-
-	-- -- Overwrite career function
-	-- orig_career_index = player.career_index
-	-- player.career_index = function(self)
-	-- 	return mod.career_index or orig_career_index(self)
-    -- end
-    
+	
+    -- Overwrite item functions
     mod:overwrite_item_functions(true)
 
 	-- Original function
 	func(...)
 
+	-- Reset functions
     mod:overwrite_item_functions(false)
-
-	-- -- Reset functions
-	-- player.profile_index = orig_profile_index
-	-- player.career_index = orig_career_index
 
 end)
 --[[
 	Prevent equipment to be destroyed and spawned when not active character
 --]]
-mod:hook(SimpleInventoryExtension, "create_equipment_in_slot", function(func, ...)
-	-- If different character or career selected cancel process
-	if mod.profile_index ~= mod.actual_profile_index or mod.career_index ~= mod.actual_career_index then
-		return
+mod:hook(SimpleInventoryExtension, "create_equipment_in_slot", function(func, self, ...)
+	local player = Managers.player:local_player()
+	-- If local player
+	if self.player == player then
+		-- If different character or career selected cancel process
+		if mod.profile_index ~= mod.actual_profile_index or mod.career_index ~= mod.actual_career_index then
+			return
+		end
 	end
 	-- Continue with original function
-	func(...)
+	func(self, ...)
 end)
 --[[
 	Get correct items for selected character
 --]]
-mod:hook(ItemGridUI, "_get_items_by_filter", function(func, self, ...)
-	local player = Managers.player:local_player()
-	local orig_profile_index, orig_career_index
-
-	-- -- Backup profile function
-	-- orig_profile_index = player.profile_index
-	-- player.profile_index = function(self)
-	-- 	return mod.profile_index or orig_profile_index(self)
-	-- end
-
-	-- -- Backup career function
-	-- orig_career_index = player.career_index
-	-- player.career_index = function(self)
-	-- 	return mod.career_index or orig_career_index(self)
-    -- end
-    
+mod:hook(ItemGridUI, "_get_items_by_filter", function(func, ...)
+	
+	-- Overwrite item functions
     mod:overwrite_item_functions(true)
 
 	-- Orig function
-    local items = func(self, ...)
-    
+    local items = func(...)
+	
+	-- Reset functions
     mod:overwrite_item_functions(false)
-
-	-- -- Reset functions
-	-- player.profile_index = orig_profile_index
-	-- player.career_index = orig_career_index
 
 	return items
 end)
-
 --[[
     Open saved inventory category on enter
 --]]
-mod:hook(HeroWindowLoadoutInventory, "on_enter", function(func, self, params, offset, ...)
+mod:hook(HeroWindowLoadoutInventory, "on_enter", function(func, self, ...)
 
     -- Prevent saved inventory category being overwritten
 	dont_save = true
-	func(self, params, offset, ...)
+	func(self, ...)
     dont_save = false
     
     -- Open saved inventory category
@@ -166,7 +137,7 @@ end)
 --[[
     Save opened inventory category
 --]]
-mod:hook_safe(HeroWindowLoadoutInventory, "_change_category_by_index", function(self, index, force_update, ...)
+mod:hook_safe(HeroWindowLoadoutInventory, "_change_category_by_index", function(self, index, ...)
 
     -- Save selected inventory category
     if not dont_save then saved_index = index end

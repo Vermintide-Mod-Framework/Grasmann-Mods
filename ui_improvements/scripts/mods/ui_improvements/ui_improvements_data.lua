@@ -1,4 +1,11 @@
 local mod = get_mod("ui_improvements")
+--[[
+	Author: grasmann
+
+	Data script for UI Improvements
+
+	Version: 1.3.1
+--]]
 
 return {
 	name = "UI Improvements",
@@ -22,23 +29,23 @@ return {
 		{
 			["setting_name"] = "open_achievements",
 			["widget_type"] = "keybind",
-			["text"] = "Open Okri's Challenges",
-			["tooltip"] = "Press to open Okri's Challenges book.",
+			["text"] = mod:localize("open_achievements_text"),
+			["tooltip"] = mod:localize("open_achievements_tip"),
 			["default_value"] = {"o"},
 			["action"] = "open_achievements",
 		},
 		{
 			["setting_name"] = "crafting_buttons",
 			["widget_type"] = "checkbox",
-			["text"] = "Crafting Buttons",
-			["tooltip"] = "Replaces crafting descriptions with seperate buttons for every crafting recipe.",
+			["text"] = mod:localize("crafting_buttons_text"),
+			["tooltip"] = mod:localize("crafting_buttons_tip"),
 			["default_value"] = true,
 		},
 		{
 			["setting_name"] = "remember_categories",
 			["widget_type"] = "checkbox",
-			["text"] = "Remember Opened Categories",
-			["tooltip"] = "Remember inventory / crafting / cosmetics categories and reopen them when menu reloads.",
+			["text"] = mod:localize("remember_opened_text"),
+			["tooltip"] = mod:localize("remember_opened_tip"),
 			["default_value"] = true,
 		},
 	},

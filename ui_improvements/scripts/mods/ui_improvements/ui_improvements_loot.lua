@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Lets you switch equippment of all characters / classes in inventory
 
-	Version: 1.3.0
+	Version: 1.3.1
 --]]
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -28,13 +28,13 @@ end)
 --[[
     Open loot state as selected hero
 --]]
-mod:hook(HeroViewStateLoot, "on_enter", function(func, self, params, optional_ignore_item_population, ...)
+mod:hook(HeroViewStateLoot, "on_enter", function(func, ...)
 
     -- Overwrite functions
     mod:overwrite_functions(true)
     
     -- Execute original function
-    func(self, params, optional_ignore_item_population, ...)
+    func(...)
     
     -- Reset functions
     mod:overwrite_functions(false)

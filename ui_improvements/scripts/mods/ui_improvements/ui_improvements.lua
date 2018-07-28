@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Lets you switch equippment of all characters / classes in inventory
 
-	Version: 1.3.0
+	Version: 1.3.1
 --]]
 
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_switch")
@@ -12,6 +12,7 @@ mod:dofile("scripts/mods/ui_improvements/ui_improvements_items")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_crafting")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_cosmetics")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_loot")
+mod:dofile("scripts/mods/ui_improvements/ui_improvements_deeds")
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
 -- ##### ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗ ############################################################################
@@ -74,7 +75,7 @@ mod.overwrite_functions = function(self, overwrite)
 
 		-- Overwrite profile function
 		ingame_ui_context.profile_synchronizer.profile_by_peer = function(self, peer_id, local_player_id)
-			return mod.profile_index
+			return mod.profile_index or mod.orig_profile_by_peer(self, peer_id, local_player_id)
 		end
 
 		-- Backup original career function
@@ -85,7 +86,7 @@ mod.overwrite_functions = function(self, overwrite)
 		-- Overwrite career function
 		Managers.backend._interfaces["hero_attributes"].get = function(self, hero_name, attribute_name)
 			if attribute_name == "career" then
-				return mod.career_index
+				return mod.career_index or mod.orig_get_career(self, hero_name, attribute_name)
 			end
 			return mod.orig_get_career(self, hero_name, attribute_name)
 		end
@@ -170,17 +171,24 @@ end)
 --[[
 	Reset values
 --]]
-mod:hook(HeroView, "on_exit", function(func, self, ...)
+mod:hook(HeroView, "on_exit", function(func, ...)
 	-- Reset values
 	mod.profile_index = nil
 	mod.career_index = nil
 	mod.actual_profile_index = nil
 	mod.actual_career_index = nil
 	-- Orig function
-	func(self, ...)
+	func(...)
 end)
+
+-- ##### ██████╗ ███████╗██████╗ ██╗   ██╗ ██████╗  ###################################################################
+-- ##### ██╔══██╗██╔════╝██╔══██╗██║   ██║██╔════╝  ###################################################################
+-- ##### ██║  ██║█████╗  ██████╔╝██║   ██║██║  ███╗ ###################################################################
+-- ##### ██║  ██║██╔══╝  ██╔══██╗██║   ██║██║   ██║ ###################################################################
+-- ##### ██████╔╝███████╗██████╔╝╚██████╔╝╚██████╔╝ ###################################################################
+-- ##### ╚═════╝ ╚══════╝╚═════╝  ╚═════╝  ╚═════╝  ###################################################################
 --[[
-	Simulate crafting
+	Simulate crafting in modded realm
 --]]
 -- mod:hook(PlayFabRequestQueue, "enqueue", function(func, self, request, success_callback, send_eac_challenge, ...)
 -- 	send_eac_challenge = false
@@ -193,4 +201,10 @@ end)
 
 -- 	self._active_entry = nil
 -- 	success_callback(result)
+-- end)
+--[[
+	Make loot chest interactible in modded realm
+--]]
+-- mod:hook(InteractionDefinitions.loot_access.client, "can_interact", function(func, interactor_unit, interactable_unit, data, config, ...)
+-- 	return true
 -- end)

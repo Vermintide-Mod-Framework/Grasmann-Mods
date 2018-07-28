@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Lets you switch equippment of all characters / classes in inventory
 
-	Version: 1.3.0
+	Version: 1.3.1
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -46,15 +46,18 @@ end
 --]]
 mod.get_portrait_frame = function(self, profile_index, career_index)
 	local player_portrait_frame = "default"
+
 	local profile = SPProfiles[profile_index]
 	local career_data = profile.careers[career_index]
 	local career_name = career_data.name
 	local item = BackendUtils.get_loadout_item(career_name, "slot_frame")
+
 	if item then
 		local item_data = item.data
 		local frame_name = item_data.temporary_template
 		player_portrait_frame = frame_name or player_portrait_frame
 	end
+
 	return "portrait_"..player_portrait_frame
 end
 --[[
@@ -174,19 +177,10 @@ end
 	Change character
 --]]
 mod.change_character = function(self, profile_index)
-	local hero_view = mod:get_hero_view()
-
-	if hero_view and mod.profile_index ~= profile_index then
-
-		local ingame_ui_context = hero_view.ingame_ui_context
+	if mod.profile_index ~= profile_index then
 
 		-- Set selected profile index
 		mod.profile_index = profile_index
-
-		-- -- Backup orig profile function
-		-- if not mod.orig_profile_by_peer then
-		-- 	mod.orig_profile_by_peer = ingame_ui_context.profile_synchronizer.profile_by_peer
-		-- end
 
 		-- Set selected career index
 		local profile_settings = SPProfiles[profile_index]
@@ -195,42 +189,14 @@ mod.change_character = function(self, profile_index)
 		local career_index = not mod.orig_get_career and hero_attributes:get(display_name, "career") or mod.orig_get_career(hero_attributes, display_name, "career")
 		mod.career_index = career_index
 
-		-- -- Overwrite profile function
-		-- ingame_ui_context.profile_synchronizer.profile_by_peer = function(self, peer_id, local_player_id)
-		-- 	return profile_index
-		-- end
-
-		-- -- Backup original career function
-		-- if not mod.orig_get_career then
-		-- 	mod.orig_get_career = Managers.backend._interfaces["hero_attributes"].get
-		-- end
-
-		-- -- Overwrite career function
-		-- Managers.backend._interfaces["hero_attributes"].get = function(self, hero_name, attribute_name)
-		-- 	if attribute_name == "career" then
-		-- 		return career_index
-		-- 	end
-		-- 	return mod.orig_get_career(self, hero_name, attribute_name)
-		-- end
-
+		-- Overwrite functions
         mod:overwrite_functions(true)
 
 		-- Reopen view
-		--hero_view:_change_screen_by_name("overview", mod.sub_screen)
         self:reopen_hero_view()
-        
+		
+		-- Reset functions
         mod:overwrite_functions(false)
-
-		-- -- Reset profile function
-		-- if mod.orig_profile_by_peer then
-		-- 	hero_view.ingame_ui_context.profile_synchronizer.profile_by_peer = mod.orig_profile_by_peer
-		-- 	mod.orig_profile_by_peer = nil
-		-- end
-		-- -- Reset career function
-		-- if mod.orig_get_career then
-		-- 	Managers.backend._interfaces["hero_attributes"].get = mod.orig_get_career
-		-- 	mod.orig_get_career = nil
-		-- end
 
 	end
 end
@@ -350,62 +316,22 @@ end
 	Change career
 --]]
 mod.change_career = function(self, profile_index, career_index)
-	local hero_view = mod:get_hero_view()
 
-	if hero_view then
+	-- Set selected profile index
+	mod.profile_index = profile_index
 
-		local ingame_ui_context = hero_view.ingame_ui_context
+	-- Set selected career index
+	mod.career_index = career_index
 
-		-- Set selected profile index
-		mod.profile_index = profile_index
+	-- Overwrite functions
+	mod:overwrite_functions(true)
 
-		-- Set selected career index
-		mod.career_index = career_index
+	-- Reopen view
+	self:reopen_hero_view()
 
-		-- -- Backup orig profile function
-		-- if not mod.orig_profile_by_peer then
-		-- 	mod.orig_profile_by_peer = ingame_ui_context.profile_synchronizer.profile_by_peer
-		-- end
+	-- Reset functions
+	mod:overwrite_functions(false)
 
-		-- -- Overwrite profile function
-		-- ingame_ui_context.profile_synchronizer.profile_by_peer = function(self, peer_id, local_player_id)
-		-- 	return profile_index
-		-- end
-
-		-- -- Backup original career function
-		-- if not mod.orig_get_career then
-		-- 	mod.orig_get_career = Managers.backend._interfaces["hero_attributes"].get
-		-- end
-
-		-- -- Overwrite career function
-		-- Managers.backend._interfaces["hero_attributes"].get = function(self, hero_name, attribute_name)
-		-- 	if attribute_name == "career" then
-		-- 		return career_index
-		-- 	end
-		-- 	return mod.orig_get_career(self, hero_name, attribute_name)
-        -- end
-        
-        mod:overwrite_functions(true)
-
-		-- Reopen view
-		--hero_view:_change_screen_by_name("overview", mod.sub_screen)
-		self:reopen_hero_view()
-
-
-        mod:overwrite_functions(false)
-
-		-- -- Reset profile function
-		-- if mod.orig_profile_by_peer then
-		-- 	hero_view.ingame_ui_context.profile_synchronizer.profile_by_peer = mod.orig_profile_by_peer
-		-- 	mod.orig_profile_by_peer = nil
-		-- end
-		-- -- Reset career function
-		-- if mod.orig_get_career then
-		-- 	Managers.backend._interfaces["hero_attributes"].get = mod.orig_get_career
-		-- 	mod.orig_get_career = nil
-		-- end
-
-	end
 end
 --[[
 	Disable controls
@@ -450,6 +376,10 @@ mod:hook_safe(HeroWindowOptions, "create_ui_elements", function(self, ...)
 	for c = 1, 3 do
 		mod.career_widgets[c] = mod:create_career_button(mod.profile_index, c)
 	end
+
+	-- Debug
+	self._widgets_by_name.game_option_3.content.button_hotspot.disable_button = false
+	self._widgets_by_name.game_option_5.content.button_hotspot.disable_button = false
 end)
 --[[
 	Draw button widgets
