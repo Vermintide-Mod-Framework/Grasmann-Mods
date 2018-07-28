@@ -4,6 +4,7 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.3.1 - Hotfix for crash when accessing loot interactible
 1.3.0
 	- Added crafting buttons
 	- Added hotkey for okri's challenges
