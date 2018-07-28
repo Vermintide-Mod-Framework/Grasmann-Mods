@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Lets you switch equippment of all characters / classes in inventory
 
-	Version: 1.3.1
+	Version: 1.3.2
 --]]
 
 mod.deed_widgets = {}
@@ -60,17 +60,21 @@ mod.create_vertical_window_divider = function(self, scenegraph_id, size)
 	return UIWidget.init(widget)
 end
 
-mod.create_difficulty_checkbox = function(self, scenegraph_id, difficulty, offset)
+mod.create_difficulty_checkbox = function(self, scenegraph_id, difficulty, offset, is_selected)
 
+    local root = {0, 0, 0}
     local icon = DifficultySettings[difficulty].display_image
     local text = Localize(DifficultySettings[difficulty].display_name)
     local font_size = 14
     local icon_size = {38, 38}
-    local is_selected = difficulty == "hardest"
     
     local widget = {
 		element = {
 			passes = {
+                {
+                    style_id = "background",
+					pass_type = "rect",
+                },
 				{
 					texture_id = "icon",
 					style_id = "icon",
@@ -100,9 +104,14 @@ mod.create_difficulty_checkbox = function(self, scenegraph_id, difficulty, offse
             is_selected = is_selected,
 		},
 		style = {
+            background = {
+                color = {255, 0, 0, 0},
+                offset = {0, 0, 0},
+                size = {42, 42},
+            },
 			icon = {
 				color = {200, 127, 127, 127},
-				offset = {0, 4, 6},
+				offset = {10, 4, 6},
 				size = icon_size,
             },
             icon_selected = {
@@ -124,7 +133,7 @@ mod.create_difficulty_checkbox = function(self, scenegraph_id, difficulty, offse
 			},
 		},
 		scenegraph_id = scenegraph_id,
-		offset = {offset+10, 0, 10},
+		offset = {root[1], root[2], root[3]},
     }
     
     return UIWidget.init(widget)
@@ -202,7 +211,7 @@ end
 
 --     -- test
 --     mod.deed_widgets[2] = mod:create_difficulty_checkbox("page_button_next", "normal", 0)
---     mod.deed_widgets[3] = mod:create_difficulty_checkbox("page_button_next", "hard", 40)
+--     mod.deed_widgets[3] = mod:create_difficulty_checkbox("page_button_next", "hard", 40, true)
 --     mod.deed_widgets[4] = mod:create_difficulty_checkbox("page_button_next", "harder", 80)
 --     mod.deed_widgets[5] = mod:create_difficulty_checkbox("page_button_next", "hardest", 120)
     

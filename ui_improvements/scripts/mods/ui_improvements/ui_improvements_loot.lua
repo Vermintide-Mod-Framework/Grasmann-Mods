@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Lets you switch equippment of all characters / classes in inventory
 
-	Version: 1.3.1
+	Version: 1.3.2
 --]]
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -16,25 +16,32 @@ local mod = get_mod("ui_improvements")
 --[[
 	Open chest for other heroes
 --]]
-mod:hook(HeroViewStateLoot, "_open_chest", function(func, self, ...)
+-- mod:hook(HeroViewStateLoot, "_open_chest", function(func, self, ...)
 
-	-- Change hero name
-    self.hero_name = SPProfiles[mod.profile_index].display_name
+--     -- Change hero name
+--     -- local profile_index = mod.profile_index or self.profile_index
+--     -- self.hero_name = SPProfiles[mod.profile_index].display_name
     
-	-- Original function
-    func(self, ...)
+--     mod:echo(self.hero_name)
+
+-- 	-- Original function
+--     func(self, ...)
     
-end)
+-- end)
 --[[
     Open loot state as selected hero
 --]]
-mod:hook(HeroViewStateLoot, "on_enter", function(func, ...)
+mod:hook(HeroViewStateLoot, "on_enter", function(func, self, ...)
 
     -- Overwrite functions
     mod:overwrite_functions(true)
     
     -- Execute original function
-    func(...)
+    func(self, ...)
+
+    -- Change hero name
+    local profile_index = mod.profile_index or self.profile_index
+    self.hero_name = SPProfiles[profile_index].display_name
     
     -- Reset functions
     mod:overwrite_functions(false)

@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Data script for UI Improvements
 
-	Version: 1.3.1
+	Version: 1.3.2
 --]]
 
 return {
