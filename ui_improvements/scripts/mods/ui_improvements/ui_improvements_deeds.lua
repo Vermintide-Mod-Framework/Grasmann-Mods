@@ -147,95 +147,95 @@ end
 
 --]]
 --StartGameWindowMutatorGrid.on_enter = function (self, params, offset)
-mod:hook_safe(StartGameWindowMutatorGrid, "on_enter", function(self, params, offset, ...)
-    --mod:echo("rofl")
-end)
+-- mod:hook_safe(StartGameWindowMutatorGrid, "on_enter", function(self, params, offset, ...)
+--     --mod:echo("rofl")
+-- end)
 
 --StartGameWindowMutatorGrid.create_ui_elements = function (self, params, offset)
-mod:hook_safe(StartGameWindowMutatorGrid, "create_ui_elements", function (self, params, offset)
-    local button_size = {213, 42}
-    local edge_size = {0, 42}
-    local text_area_size = {213, 42}
+-- mod:hook_safe(StartGameWindowMutatorGrid, "create_ui_elements", function (self, params, offset)
+--     local button_size = {213, 42}
+--     local edge_size = {0, 42}
+--     local text_area_size = {213, 42}
 
-    -- Button previous
-    local button_previous_style = self._widgets_by_name.page_button_previous.style
-    button_previous_style["glass_bottom"].size[1] = button_size[1]
-    button_previous_style["glass_top"].size[1] = button_size[1]
-    button_previous_style["background_fade"].size[1] = button_size[1]
-    button_previous_style["hover_glow"].size[1] = button_size[1]
-    button_previous_style["title_text_disabled"].size = button_size
-    button_previous_style["title_text_shadow"].size = button_size
-    button_previous_style["title_text"].size = button_size
+--     -- Button previous
+--     local button_previous_style = self._widgets_by_name.page_button_previous.style
+--     button_previous_style["glass_bottom"].size[1] = button_size[1]
+--     button_previous_style["glass_top"].size[1] = button_size[1]
+--     button_previous_style["background_fade"].size[1] = button_size[1]
+--     button_previous_style["hover_glow"].size[1] = button_size[1]
+--     button_previous_style["title_text_disabled"].size = button_size
+--     button_previous_style["title_text_shadow"].size = button_size
+--     button_previous_style["title_text"].size = button_size
 
-    -- Button edge left
-    local button_edge_left = self._widgets_by_name.page_button_edge_left
-    button_edge_left.offset[1] = -button_size[1]
+--     -- Button edge left
+--     local button_edge_left = self._widgets_by_name.page_button_edge_left
+--     button_edge_left.offset[1] = -button_size[1]
 
-    -- Text area
-    local page_text_area = self._widgets_by_name.page_text_area
-    page_text_area.offset[1] = -button_size[1]
-    local page_text_left = self._widgets_by_name.page_text_left
-    page_text_left.offset[1] = -button_size[1]
-    local page_text_right = self._widgets_by_name.page_text_right
-    page_text_right.offset[1] = -button_size[1]
-    local page_text_center = self._widgets_by_name.page_text_center
-    page_text_center.offset[1] = -button_size[1]
+--     -- Text area
+--     local page_text_area = self._widgets_by_name.page_text_area
+--     page_text_area.offset[1] = -button_size[1]
+--     local page_text_left = self._widgets_by_name.page_text_left
+--     page_text_left.offset[1] = -button_size[1]
+--     local page_text_right = self._widgets_by_name.page_text_right
+--     page_text_right.offset[1] = -button_size[1]
+--     local page_text_center = self._widgets_by_name.page_text_center
+--     page_text_center.offset[1] = -button_size[1]
 
-    -- Button edge right
-    local button_edge_right = self._widgets_by_name.page_button_edge_right
-    button_edge_right.offset[1] = -button_size[1]
+--     -- Button edge right
+--     local button_edge_right = self._widgets_by_name.page_button_edge_right
+--     button_edge_right.offset[1] = -button_size[1]
 
-    -- Button next
-    local button_next_style = self._widgets_by_name.page_button_next.style
-    button_next_style["glass_bottom"].size[1] = button_size[1]
-    button_next_style["glass_top"].size[1] = button_size[1]
-    button_next_style["background_fade"].size[1] = button_size[1]
-    button_next_style["hover_glow"].size[1] = button_size[1]
-    button_next_style["title_text_disabled"].size = button_size
-    button_next_style["title_text_shadow"].size = button_size
-    button_next_style["title_text"].size = button_size
-    local button_next = self._widgets_by_name.page_button_next
-    button_next.offset[1] = -button_size[1]
+--     -- Button next
+--     local button_next_style = self._widgets_by_name.page_button_next.style
+--     button_next_style["glass_bottom"].size[1] = button_size[1]
+--     button_next_style["glass_top"].size[1] = button_size[1]
+--     button_next_style["background_fade"].size[1] = button_size[1]
+--     button_next_style["hover_glow"].size[1] = button_size[1]
+--     button_next_style["title_text_disabled"].size = button_size
+--     button_next_style["title_text_shadow"].size = button_size
+--     button_next_style["title_text"].size = button_size
+--     local button_next = self._widgets_by_name.page_button_next
+--     button_next.offset[1] = -button_size[1]
 
-    -- Button edge right #2
-    mod.deed_widgets[1] = mod:create_vertical_window_divider("page_button_next", edge_size)
+--     -- Button edge right #2
+--     mod.deed_widgets[1] = mod:create_vertical_window_divider("page_button_next", edge_size)
 
-    -- test
-    mod.deed_widgets[2] = mod:create_difficulty_checkbox("page_button_next", "normal", 0)
-    mod.deed_widgets[3] = mod:create_difficulty_checkbox("page_button_next", "hard", 40)
-    mod.deed_widgets[4] = mod:create_difficulty_checkbox("page_button_next", "harder", 80)
-    mod.deed_widgets[5] = mod:create_difficulty_checkbox("page_button_next", "hardest", 120)
+--     -- test
+--     mod.deed_widgets[2] = mod:create_difficulty_checkbox("page_button_next", "normal", 0)
+--     mod.deed_widgets[3] = mod:create_difficulty_checkbox("page_button_next", "hard", 40)
+--     mod.deed_widgets[4] = mod:create_difficulty_checkbox("page_button_next", "harder", 80)
+--     mod.deed_widgets[5] = mod:create_difficulty_checkbox("page_button_next", "hardest", 120)
     
-end)
+-- end)
 
 --StartGameWindowMutatorGrid.draw = function (self, dt)
-mod:hook(StartGameWindowMutatorGrid, "draw", function(func, self, dt)
-	local ui_renderer = self.ui_renderer
-	local ui_scenegraph = self.ui_scenegraph
-	local input_service = self.parent:window_input_service()
+-- mod:hook(StartGameWindowMutatorGrid, "draw", function(func, self, dt)
+-- 	local ui_renderer = self.ui_renderer
+-- 	local ui_scenegraph = self.ui_scenegraph
+-- 	local input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
+-- 	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-    for _, widget in ipairs(self._widgets) do
-        if not widget.content.invis then
-            UIRenderer.draw_widget(ui_renderer, widget)
-        end
-	end
+--     for _, widget in ipairs(self._widgets) do
+--         if not widget.content.invis then
+--             UIRenderer.draw_widget(ui_renderer, widget)
+--         end
+-- 	end
 
-	local active_node_widgets = self._active_node_widgets
+-- 	local active_node_widgets = self._active_node_widgets
 
-	if active_node_widgets then
-        for _, widget in ipairs(active_node_widgets) do
-            if not widget.content.invis then
-                UIRenderer.draw_widget(ui_renderer, widget)
-            end
-		end
-    end
+-- 	if active_node_widgets then
+--         for _, widget in ipairs(active_node_widgets) do
+--             if not widget.content.invis then
+--                 UIRenderer.draw_widget(ui_renderer, widget)
+--             end
+-- 		end
+--     end
     
-    -- Render
-    for _, widget in pairs(mod.deed_widgets) do
-        UIRenderer.draw_widget(ui_renderer, widget)
-    end
+--     -- Render
+--     for _, widget in pairs(mod.deed_widgets) do
+--         UIRenderer.draw_widget(ui_renderer, widget)
+--     end
 
-	UIRenderer.end_pass(ui_renderer)
-end)
+-- 	UIRenderer.end_pass(ui_renderer)
+-- end)
