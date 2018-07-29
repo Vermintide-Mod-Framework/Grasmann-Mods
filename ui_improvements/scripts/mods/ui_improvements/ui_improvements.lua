@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Collection of UI improvements
 
-	Version: 1.4.0
+	Version: 1.5.0
 --]]
 
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_switch")

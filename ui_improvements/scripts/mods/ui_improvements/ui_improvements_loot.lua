@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Lets you switch equippment of all characters / classes in inventory
 
-	Version: 1.4.0
+	Version: 1.5.0
 --]]
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################

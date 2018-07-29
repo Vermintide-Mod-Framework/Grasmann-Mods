@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Provides hotkey for okri's challenges
 
-	Version: 1.4.0
+	Version: 1.5.0
 --]]
 
 mod.opening_keybind_is_pressed = false

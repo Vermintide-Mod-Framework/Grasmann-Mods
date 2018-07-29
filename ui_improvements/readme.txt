@@ -4,6 +4,9 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.5.0
+	- Hotkey for Okri's Challenges also close menu
+	- Removed digit limit for crafting material panel
 1.4.0
 	- Added difficulty filter for deed list
 	- Language support for english, german and polish
