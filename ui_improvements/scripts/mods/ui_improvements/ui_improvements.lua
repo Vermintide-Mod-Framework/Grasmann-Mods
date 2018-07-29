@@ -2,9 +2,9 @@ local mod = get_mod("ui_improvements")
 --[[
 	Author: grasmann
 
-	Lets you switch equippment of all characters / classes in inventory
+	Collection of UI improvements
 
-	Version: 1.3.2
+	Version: 1.4.0
 --]]
 
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_switch")
@@ -58,6 +58,20 @@ end
 mod.reopen_hero_view = function(self)
 	local hero_view = mod:get_hero_view()
 	hero_view:_change_screen_by_name("overview", mod.sub_screen)
+end
+--[[
+	Open okri's challenges
+--]]
+mod.open_achievements = function()
+	-- Check if in inn / keep
+	if mod:is_in_inn() then
+		-- Get ingame ui
+		local ingame_ui = Managers.matchmaking and Managers.matchmaking._ingame_ui
+		if ingame_ui then
+			-- Open achievements
+			ingame_ui:transition_with_fade("hero_view_force", "achievements", nil)
+		end
+	end
 end
 --[[
 	Overwrite profile and career functions
@@ -118,20 +132,6 @@ mod.is_in_inn = function(self)
 	end
 	-- False
 	return false
-end
---[[
-	Open okri's challenges
---]]
-mod.open_achievements = function()
-	-- Check if in inn / keep
-	if mod:is_in_inn() then
-		-- Get ingame ui
-		local ingame_ui = Managers.matchmaking and Managers.matchmaking._ingame_ui
-		if ingame_ui then
-			-- Open achievements
-			ingame_ui:transition_with_fade("hero_view_force", "achievements", nil)
-		end
-	end
 end
 --[[
 	Disable controls
