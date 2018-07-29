@@ -82,4 +82,9 @@ return {
 		de = "An geöffnete Inventar / Schmiede / Kosmetik Kategoried erinnern und diese wieder öffnen.",
 		pl = "Zapamiętaj kategorię ekwipunku / craftowania / kosmetyków po zamknięciu menu.",
 	},
+	deed_filter_all = {
+		en = "All",
+		de = "Alle",
+		pl = "Wszystkie",
+	},
 }

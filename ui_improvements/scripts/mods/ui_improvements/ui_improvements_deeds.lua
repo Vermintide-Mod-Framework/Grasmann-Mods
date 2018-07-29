@@ -111,7 +111,7 @@ mod.create_difficulty_button = function(self, scenegraph_id, difficulty, is_sele
     local text = Localize(DifficultySettings[difficulty].display_name)
     if difficulty == "easy" then
         icon = "loot_chest_icon"
-        text = "All"
+        text = mod:localize("deed_filter_all")
     end
     local font_size = 16
     local icon_size = {32, 32}
@@ -453,7 +453,7 @@ end
 --[[
     Load saved difficulty on enter
 --]]
-mod:hook_safe(StartGameWindowMutatorGrid, "on_enter", function(self, params, offset, ...)
+mod:hook_safe(StartGameWindowMutatorGrid, "on_enter", function(self, ...)
     if saved_difficulty and mod:get("remember_categories") then
         if mod:activate_difficulty(saved_difficulty) then
             mod:update_difficulty_widgets()
@@ -464,7 +464,7 @@ end)
 --[[
     Manipulate default widgets and create mod widgets
 --]]
-mod:hook_safe(StartGameWindowMutatorGrid, "create_ui_elements", function(self, params, offset, ...)
+mod:hook_safe(StartGameWindowMutatorGrid, "create_ui_elements", function(self, ...)
     local button_size = {213, 42}
     local edge_size = {0, 42}
 
@@ -542,7 +542,7 @@ end)
 --[[
     Handle input
 --]]
-mod:hook_safe(StartGameWindowMutatorGrid, "update", function(self, dt, t)
+mod:hook_safe(StartGameWindowMutatorGrid, "update", function(self, ...)
     for _, widget in pairs(mod.deed_widgets) do
 
         -- Handle hover effect

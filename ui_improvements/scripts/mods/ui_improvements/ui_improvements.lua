@@ -13,6 +13,7 @@ mod:dofile("scripts/mods/ui_improvements/ui_improvements_crafting")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_cosmetics")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_loot")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_deeds")
+mod:dofile("scripts/mods/ui_improvements/ui_improvements_achievements")
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
 -- ##### ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗ ############################################################################
@@ -58,20 +59,6 @@ end
 mod.reopen_hero_view = function(self)
 	local hero_view = mod:get_hero_view()
 	hero_view:_change_screen_by_name("overview", mod.sub_screen)
-end
---[[
-	Open okri's challenges
---]]
-mod.open_achievements = function()
-	-- Check if in inn / keep
-	if mod:is_in_inn() then
-		-- Get ingame ui
-		local ingame_ui = Managers.matchmaking and Managers.matchmaking._ingame_ui
-		if ingame_ui then
-			-- Open achievements
-			ingame_ui:transition_with_fade("hero_view_force", "achievements", nil)
-		end
-	end
 end
 --[[
 	Overwrite profile and career functions

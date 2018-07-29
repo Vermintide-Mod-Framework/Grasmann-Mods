@@ -431,3 +431,23 @@ mod:hook(HeroWindowCrafting, "_update_craft_end_time", function(func, self, ...)
 	end
 
 end)
+--[[
+	Remove digit limit for crafting material panel
+--]]
+mod:hook_safe(HeroWindowInventory, "_update_crafting_material_panel", function(self, ...)
+	local backend_items = Managers.backend:get_interface("items")
+	local material_order = UISettings.crafting_material_order
+	local index = 1
+
+	for index, item_key in ipairs(material_order) do
+		local item_filter = "item_key == " .. item_key
+		local items = backend_items:get_filtered_items(item_filter)
+		local item = items and items[1]
+		local backend_id = item and item.backend_id
+		local amount = (backend_id and backend_items:get_item_amount(backend_id)) or 0
+		local widget = self._widgets_by_name["material_text_" .. index]
+		local amount_text = tostring(amount)
+		widget.content.text = amount_text
+	end
+
+end)
