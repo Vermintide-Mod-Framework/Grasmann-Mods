@@ -11,6 +11,7 @@ local mod = get_mod("ui_improvements")
 -- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
+mod.button_order = {4, 5, 2, 3, 1}
 mod.character_widgets = {}
 mod.career_widgets = {}
 
@@ -69,12 +70,15 @@ mod.create_character_button = function(self, profile_index)
 	local size_selected = {80, 80}
 	local space = 10
 
+	local p_index = mod.button_order[profile_index]
+	local mp_index = mod.button_order[mod.profile_index]
+
 	-- Calculate
-	local pos = {root[1] + (size[1]+space)*(profile_index-1), root[2], root[3]}
+	local pos = {root[1] + (size[1]+space)*(p_index-1), root[2], root[3]}
 	local is_selected = mod.profile_index == profile_index
 
 	-- Current profile
-	if mod.profile_index < profile_index then pos[1] = pos[1] + size_selected[1]-size[1] end
+	if mp_index < p_index then pos[1] = pos[1] + size_selected[1]-size[1] end
 
 	-- Textures
 	local icon_texture = SPProfiles[profile_index].hero_selection_image

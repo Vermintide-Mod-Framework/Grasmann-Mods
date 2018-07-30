@@ -7,6 +7,7 @@ Changelog:
 1.5.2
 	- Changed localization of crafting buttons
 	- Chaning heroic deed filter selects first deed in list
+	- Character buttons in inventory now in game order
 1.5.1 - Fixed inconsistencies with okri's challenges hotkey
 1.5.0
 	- Hotkey for Okri's Challenges also close menu
