@@ -316,7 +316,7 @@ mod.create_difficulty_button = function(self, scenegraph_id, difficulty, is_sele
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
-				offset = {icon_size[1] + 15, 13, 2},
+				offset = {icon_size[1] + 15, 12, 2},
             },
 			text_shadow = {
 				upper_case = true,
@@ -325,7 +325,7 @@ mod.create_difficulty_button = function(self, scenegraph_id, difficulty, is_sele
 				font_size = font_size or 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
-				offset = {icon_size[1] + 15, 13, 1},
+				offset = {icon_size[1] + 15, 12, 1},
 			},
             -- Hotspot
             hotspot = {
