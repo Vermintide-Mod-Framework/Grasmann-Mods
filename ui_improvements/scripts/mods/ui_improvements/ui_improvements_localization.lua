@@ -1,9 +1,8 @@
 --[[
 	Author: grasmann
+	Help: SkacikPL
 
 	Localization script for UI Improvements
-
-	Version: 1.5.1
 --]]
 
 return {
@@ -31,46 +30,6 @@ return {
 		en = "Replaces crafting descriptions with seperate buttons for every crafting recipe.",
 		de = "Ersetzt Schmiedebeschreibungen mit individuellen Schaltern für jedes Schmiederezept.",
 		pl = "Zamienia opisy craftowania na oddzielne przyciski dla każdego typu craftowania.",
-	},
-	crafting_button_salvage = {
-		en = "Salvage Items",
-		de = "Gegenstände Einschmelzen",
-		pl = "Rozbierz przedmioty",
-	},
-	crafting_button_craft = {
-		en = "Craft Item",
-		de = "Gegenstand Herstellen",
-		pl = "Stwórz przedmiot",
-	},
-	crafting_button_properties = {
-		en = "Re-Roll Properties",
-		de = "Attribute Erneut Würfeln",
-		pl = "Przetasuj wartości",
-	},
-	crafting_button_trait = {
-		en = "Re-Roll Trait",
-		de = "Eigenschaft Erneut Würfeln",
-		pl = "Przetasuj cechy",
-	},
-	crafting_button_upgrade = {
-		en = "Upgrade Item",
-		de = "Gegenstand Aufrüsten",
-		pl = "Ulepsz przedmiot",
-	},
-	crafting_button_extract_illusion = {
-		en = "Extract Illusion",
-		de = "Illusion Entfernen",
-		pl = "Wyekstraktuj iluzję",
-	},
-	crafting_button_apply_illusion = {
-		en = "Apply Illusion",
-		de = "Illusion Anwenden",
-		pl = "Nałóż iluzję",
-	},
-	crafting_button_convert_dust = {
-		en = "Convert Dust",
-		de = "Staub Umwandeln",
-		pl = "Konwertuj pył",
 	},
 	remember_opened_text = {
 		en = "Remember Opened Categories",

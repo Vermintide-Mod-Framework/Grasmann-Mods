@@ -3,8 +3,6 @@ local mod = get_mod("ui_improvements")
 	Author: grasmann
 
 	Collection of UI improvements
-
-	Version: 1.5.1
 --]]
 
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_switch")

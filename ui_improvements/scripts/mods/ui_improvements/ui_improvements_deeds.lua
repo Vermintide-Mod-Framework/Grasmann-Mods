@@ -3,8 +3,6 @@ local mod = get_mod("ui_improvements")
 	Author: grasmann
 
 	Difficulty filter for deed list
-
-	Version: 1.5.1
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -14,7 +12,6 @@ local mod = get_mod("ui_improvements")
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
 mod.divider_right_2 = nil
---mod.background = nil
 mod.deed_widgets = {}
 local saved_difficulty = "easy"
 local selected_deed_width = 238

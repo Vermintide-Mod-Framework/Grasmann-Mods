@@ -3,8 +3,6 @@ local mod = get_mod("ui_improvements")
 	Author: grasmann
 
 	Data script for UI Improvements
-
-	Version: 1.5.1
 --]]
 
 return {

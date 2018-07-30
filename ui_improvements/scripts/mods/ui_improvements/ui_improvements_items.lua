@@ -2,9 +2,9 @@ local mod = get_mod("ui_improvements")
 --[[
 	Author: grasmann
 
-	Lets you switch equippment of all characters / classes in inventory
-
-	Version: 1.5.1
+    Prevents crashes when switching equipment for other characters
+    Shows correct comparison tooltip on equipment for other characters
+    Reopens saved inventory pages
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################

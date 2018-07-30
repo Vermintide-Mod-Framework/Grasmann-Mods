@@ -2,9 +2,8 @@ local mod = get_mod("ui_improvements")
 --[[
 	Author: grasmann
 
-	Displays seperate buttons for every crafting page
-
-	Version: 1.5.1
+	Optionally displays seperate buttons for every crafting page
+	Removes digit limit of crafting material panel
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -17,14 +16,14 @@ local saved_index = 1
 local dont_save = false
 mod.craft_button_widgets = {}
 mod.button_list = {
-	mod:localize("crafting_button_salvage"),
-	mod:localize("crafting_button_craft"),
-	mod:localize("crafting_button_properties"),
-	mod:localize("crafting_button_trait"),
-	mod:localize("crafting_button_upgrade"),
-	mod:localize("crafting_button_extract_illusion"),
-	mod:localize("crafting_button_apply_illusion"),
-	mod:localize("crafting_button_convert_dust"),
+	"salvage",
+	"craft_random_item",
+	"reroll_weapon_properties",
+	"reroll_weapon_traits",
+	"upgrade_item_rarity_common",
+	"extract_weapon_skin",
+	"apply_weapon_skin",
+	"convert_blue_dust",
 }
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
@@ -36,7 +35,7 @@ mod.button_list = {
 --[[
     Create crafting button
 --]]
-mod.create_craft_button = function(self, index, text)
+mod.create_craft_button = function(self, index, recipe_name)
 
 	local border = 3
 	local move_table = {
@@ -47,6 +46,8 @@ mod.create_craft_button = function(self, index, text)
 	local root = {4, 5, 10}
 	local pos = {root[1] + move_table[index][3] + size[1]*move_table[index][1], root[2] + (size[2]+border)*move_table[index][2], root[3]}
 	local font_size = 14
+
+	local text = Localize(recipe_name)
 
 	local definition = {
 		scenegraph_id = "window_top",
@@ -315,8 +316,10 @@ mod:hook_safe(HeroWindowCrafting, "create_ui_elements", function(...)
 	if not mod:get("crafting_buttons") then return end
 
 	-- Create crafting buttons
-	for n, text in pairs(mod.button_list) do
-		mod.craft_button_widgets[n] = mod:create_craft_button(n, text)
+	local crafting_recipes, crafting_recipes_by_name = mod:dofile("scripts/settings/crafting/crafting_recipes")
+	for index, page_name in pairs(mod.button_list) do
+		local recipe = crafting_recipes_by_name[page_name]
+		mod.craft_button_widgets[index] = mod:create_craft_button(index, recipe.display_name)
 	end
 
 end)

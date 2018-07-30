@@ -3,8 +3,6 @@ local mod = get_mod("ui_improvements")
 	Author: grasmann
 
 	Provides hotkey for okri's challenges
-
-	Version: 1.5.1
 --]]
 
 local open_pressed = false

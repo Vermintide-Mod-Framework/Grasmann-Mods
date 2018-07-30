@@ -4,6 +4,7 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.5.2 - Changed localization of crafting buttons
 1.5.1 - Fixed inconsistencies with okri's challenges hotkey
 1.5.0
 	- Hotkey for Okri's Challenges also close menu

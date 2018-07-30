@@ -2,9 +2,7 @@ local mod = get_mod("ui_improvements")
 --[[
 	Author: grasmann
 
-	Lets you switch equippment of all characters / classes in inventory
-
-	Version: 1.5.1
+	Lets you open loot boxes for other characters
 --]]
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################

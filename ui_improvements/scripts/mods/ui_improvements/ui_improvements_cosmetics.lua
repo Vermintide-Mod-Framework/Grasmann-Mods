@@ -2,9 +2,8 @@ local mod = get_mod("ui_improvements")
 --[[
 	Author: grasmann
 
-	Displays seperate buttons for every crafting page
-
-	Version: 1.5.1
+	Prevents crashes when switching cosmetics items for other characters
+	Reopens saved cosmetics pages
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
