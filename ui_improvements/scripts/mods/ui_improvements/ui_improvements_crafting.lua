@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Displays seperate buttons for every crafting page
 
-	Version: 1.5.0
+	Version: 1.5.1
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
@@ -231,7 +231,6 @@ mod.create_craft_button = function(self, index, text)
 			},
 			text_shadow = {
 				upper_case = true,
-				word_wrap = true,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",

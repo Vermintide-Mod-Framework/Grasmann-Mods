@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Difficulty filter for deed list
 
-	Version: 1.5.0
+	Version: 1.5.1
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################

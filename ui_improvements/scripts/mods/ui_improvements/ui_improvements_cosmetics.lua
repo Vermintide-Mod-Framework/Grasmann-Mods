@@ -4,7 +4,7 @@ local mod = get_mod("ui_improvements")
 
 	Displays seperate buttons for every crafting page
 
-	Version: 1.5.0
+	Version: 1.5.1
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
