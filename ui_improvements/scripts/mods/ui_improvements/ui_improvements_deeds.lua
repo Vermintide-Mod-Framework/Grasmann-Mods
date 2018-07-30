@@ -400,22 +400,26 @@ end
 --[[
     Filter item grid
 --]]
-mod.filter_item_grid = function(self, item_grid, difficulty)
+mod.filter_item_grid = function(self, mutator_grid, difficulty)
 
+    -- Filter items
     local item_filter = "slot_type == deed"
+    local item_grid = mutator_grid._item_grid
     item_grid:change_item_filter(item_filter, true)
 
-    if difficulty == "easy" then return end
+    --if difficulty == "easy" then return end
 
     local items = {}
 
-    for _, item in pairs(item_grid._items) do
-        if item.data.difficulties[1] == difficulty then
-            items[#items+1] = item
+    if difficulty ~= "easy" then
+        for _, item in pairs(item_grid._items) do
+            if item.data.difficulties[1] == difficulty then
+                items[#items+1] = item
+            end
         end
-    end
 
-    item_grid._items = items
+        item_grid._items = items
+    end
 
     local num_slots = item_grid._widget.content.slots
     local num_items = #items
@@ -423,6 +427,12 @@ mod.filter_item_grid = function(self, item_grid, difficulty)
     item_grid._total_item_pages = total_pages
 
     item_grid:set_item_page(1)
+
+    -- Select first deed if any
+    local first_item = item_grid:get_item_in_slot(1, 1)
+    if first_item then
+        mutator_grid.parent:set_selected_heroic_deed_backend_id(first_item.backend_id)
+    end
 
 end
 --[[
@@ -454,7 +464,7 @@ mod:hook_safe(StartGameWindowMutatorGrid, "on_enter", function(self, ...)
     if saved_difficulty and mod:get("remember_categories") then
         if mod:activate_difficulty(saved_difficulty) then
             mod:update_difficulty_widgets()
-            mod:filter_item_grid(self._item_grid, saved_difficulty)
+            mod:filter_item_grid(self, saved_difficulty)
         end
     end
 end)
@@ -566,7 +576,7 @@ mod:hook_safe(StartGameWindowMutatorGrid, "update", function(self, ...)
             saved_difficulty = widget.content.difficulty
 
             -- Filter item grid
-            mod:filter_item_grid(self._item_grid, widget.content.difficulty)
+            mod:filter_item_grid(self, widget.content.difficulty)
 
         end
         
