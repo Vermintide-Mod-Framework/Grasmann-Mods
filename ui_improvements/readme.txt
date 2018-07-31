@@ -4,6 +4,9 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.5.3
+	- Fixed crash when equipping slayer hats
+	- Fixed crafting button showing previous page with remember categories off
 1.5.2
 	- Changed localization of crafting buttons
 	- Chaning heroic deed filter selects first deed in list

@@ -88,21 +88,6 @@ mod:hook(UIPasses.item_tooltip, "draw", function(func, ...)
 
 end)
 --[[
-	Prevent equipment to be destroyed and spawned when not active character
---]]
-mod:hook(SimpleInventoryExtension, "create_equipment_in_slot", function(func, self, ...)
-	local player = Managers.player:local_player()
-	-- If local player
-	if self.player == player then
-		-- If different character or career selected cancel process
-		if mod.profile_index ~= mod.actual_profile_index or mod.career_index ~= mod.actual_career_index then
-			return
-		end
-	end
-	-- Continue with original function
-	func(self, ...)
-end)
---[[
 	Get correct items for selected character
 --]]
 mod:hook(ItemGridUI, "_get_items_by_filter", function(func, ...)

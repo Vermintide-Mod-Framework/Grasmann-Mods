@@ -445,3 +445,45 @@ mod:hook_safe(HeroWindowOptions, "post_update", function(self, ...)
 		end
 	--end
 end)
+--[[
+	Prevent player respawn after skin change
+--]]
+mod:hook(HeroViewStateOverview, "update_skin_sync", function(func, self, ...)
+	-- If different character or career selected only update backend and menu
+	if mod.profile_index ~= mod.actual_profile_index or mod.career_index ~= mod.actual_career_index then
+		self.skin_sync_id = self.skin_sync_id + 1
+		return
+	end
+	-- Continue with original function
+	func(self, ...)
+end)
+--[[
+	Prevent item spawns when changing equipment
+--]]
+mod:hook(HeroViewStateOverview, "_set_loadout_item", function(func, self, item, strict_slot_type, ...)
+	-- If different character or career selected only update backend and menu
+	if mod.profile_index ~= mod.actual_profile_index or mod.career_index ~= mod.actual_career_index then
+
+		local rarity_index = {common = 2, plentiful = 1, exotic = 4, rare = 3, unique = 5}
+		local slot_type = strict_slot_type or item.data.slot_type
+		local slot = self:_get_slot_by_type(slot_type)
+		local profile = SPProfiles[mod.profile_index]
+		local career_name = profile.careers[mod.career_index].name
+		local backend_items = Managers.backend:get_interface("items")
+
+		backend_items:set_loadout_item(item.backend_id, career_name, slot.name)
+
+		self.loadout_sync_id = self.loadout_sync_id + 1
+		self.inventory_sync_id = self.inventory_sync_id + 1
+		self.skin_sync_id = self.skin_sync_id + 1
+		local highest_rarity = self.statistics_db:get_persistent_stat(self._stats_id, "highest_equipped_rarity", slot_type)
+		local item_rarity = rarity_index[item.rarity]
+		if item_rarity and highest_rarity < item_rarity then
+			self.statistics_db:set_stat(self._stats_id, "highest_equipped_rarity", slot_type, item_rarity)
+		end
+
+		return
+	end
+	-- Continue with original function
+	func(self, item, strict_slot_type, ...)
+end)

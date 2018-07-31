@@ -46,29 +46,3 @@ mod:hook_safe(HeroWindowCosmeticsInventory, "_change_category_by_index", functio
 	if not dont_save then saved_index = index end
     
 end)
---[[
-	Prevent hat to be destroyed and spawned when not active character
---]]
-mod:hook(PlayerUnitAttachmentExtension, "create_attachment_in_slot", function(func, self, ...)
-	local player = Managers.player:local_player()
-	-- If local player
-	if self._player == player then
-		-- If different character or career selected cancel process
-		if mod.profile_index ~= mod.actual_profile_index or mod.career_index ~= mod.actual_career_index then
-			return
-		end
-	end
-	-- Continue with original function
-	func(self, ...)
-end)
---[[
-	Prevent skin to be destroyed and spawned when not active character
---]]
-mod:hook(IngameUI, "respawn", function(func, ...)
-	-- If different character or career selected cancel process
-	if mod.profile_index ~= mod.actual_profile_index or mod.career_index ~= mod.actual_career_index then
-		return
-	end
-	-- Continue with original function
-	func(...)
-end)

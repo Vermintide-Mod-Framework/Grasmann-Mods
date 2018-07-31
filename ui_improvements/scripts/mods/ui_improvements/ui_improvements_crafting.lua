@@ -315,6 +315,11 @@ mod:hook_safe(HeroWindowCrafting, "create_ui_elements", function(...)
 	-- If crafting buttons not activated exit
 	if not mod:get("crafting_buttons") then return end
 
+	-- Reset saved index 
+	if not mod:get("remember_categories") then
+		saved_index = 1
+	end
+
 	-- Create crafting buttons
 	local crafting_recipes, crafting_recipes_by_name = mod:dofile("scripts/settings/crafting/crafting_recipes")
 	for index, page_name in pairs(mod.button_list) do
