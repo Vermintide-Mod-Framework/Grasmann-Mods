@@ -4,6 +4,8 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.6.0
+	- Added option to use alternative background for exotic items
 1.5.3
 	- Fixed crash when equipping slayer hats
 	- Fixed crafting button showing previous page with remember categories off
