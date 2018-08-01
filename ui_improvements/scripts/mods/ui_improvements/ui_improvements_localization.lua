@@ -49,9 +49,26 @@ return {
 	alternative_exotic_background_text = {
 		en = "Exotic Background",
 		de = "Exotischer Hintergrund",
+		pl = "Egzotyczne tło",
 	},
 	alternative_exotic_background_tip = {
 		en = "Alternative background for exotic items in inventory.",
 		de = "Alternativer Hintergrund für exotische Items im Inventar.",
+		pl = "Alternatywne tło dla egzotycznych przedmiotów w ekwipunku.",
+	},
+	achievements_filter_all = {
+		en = "All",
+		de = "Alle",
+		pl = "Wszystkie",
+	},
+	achievements_filter_open = {
+		en = "Incomplete",
+		de = "Offen",
+		pl = "Nieukończone",
+	},
+	achievements_filter_completed = {
+		en = "Complete",
+		de = "Abgeschlossen",
+		pl = "Ukończone",
 	},
 }

@@ -4,6 +4,8 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.7.0
+	- Added achievments filter buttons
 1.6.0
 	- Added option to use alternative background for exotic items
 1.5.3
