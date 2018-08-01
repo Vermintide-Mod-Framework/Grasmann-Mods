@@ -2,7 +2,6 @@ local mod = get_mod("ui_improvements")
 --[[
 	Author: grasmann
 
-    Prevents crashes when switching equipment for other characters
     Shows correct comparison tooltip on equipment for other characters
     Reopens saved inventory pages
 --]]
@@ -65,6 +64,16 @@ mod.overwrite_item_functions = function(self, overwrite)
     end
 
 end
+--[[
+    Replace exotic background texture
+--]]
+mod.overwrite_exotic_background = function(self)
+    if mod:is_enabled() and mod:get("alternative_exotic_background") then
+        UISettings.item_rarity_textures.exotic = "icon_bg_exotic_2"
+    else
+        UISettings.item_rarity_textures.exotic = "icon_bg_exotic"
+    end
+end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
@@ -90,16 +99,21 @@ end)
 --[[
 	Get correct items for selected character
 --]]
-mod:hook(ItemGridUI, "_get_items_by_filter", function(func, ...)
+mod:hook(ItemGridUI, "_get_items_by_filter", function(func, self, ...)
 	
 	-- Overwrite item functions
     mod:overwrite_item_functions(true)
 
 	-- Orig function
-    local items = func(...)
+    local items = func(self, ...)
 	
 	-- Reset functions
     mod:overwrite_item_functions(false)
+
+    -- local widget = self._widget
+    -- local content = widget.content
+    -- local passes = widget.element.passes
+    -- mod:dump(passes, "passes", 2)
 
 	return items
 end)

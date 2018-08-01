@@ -46,4 +46,12 @@ return {
 		de = "Alle",
 		pl = "Wszystkie",
 	},
+	alternative_exotic_background_text = {
+		en = "Exotic Background",
+		de = "Exotischer Hintergrund",
+	},
+	alternative_exotic_background_tip = {
+		en = "Alternative background for exotic items in inventory.",
+		de = "Alternativer Hintergrund für exotische Items im Inventar.",
+	},
 }

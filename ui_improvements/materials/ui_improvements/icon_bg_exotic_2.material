@@ -1,0 +1,14 @@
+icon_bg_exotic_2 = {
+	material_contexts = {
+		surface_material = ""
+	}
+	
+	shader = "gui:DIFFUSE_MAP"
+	
+	textures = {
+		diffuse_map = "textures/ui_improvements/icon_bg_exotic_2"
+	}
+	
+	variables = {
+	}
+}
