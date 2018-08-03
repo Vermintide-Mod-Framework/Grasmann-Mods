@@ -555,7 +555,7 @@ mod:hook(HeroWindowCrafting, "craft", function(func, self, items, recipe_overrid
     return result
 end)
 
---CraftPageSalvage.on_craft_completed = function (self)
-mod:hook_safe(CraftPageSalvage, "on_craft_completed", function(self, ...)
+-- --CraftPageSalvage.on_craft_completed = function (self)
+-- mod:hook_safe(CraftPageSalvage, "on_craft_completed", function(self, ...)
     
-end)
+-- end)
