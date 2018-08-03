@@ -414,12 +414,12 @@ mod:hook(HeroWindowCrafting, "on_enter", function(func, self, ...)
 	end
 
 end)
---[[
-	Disable controls on craft
---]]
-mod:hook_safe(HeroWindowCrafting, "craft", function(...)
-	mod:disable_controls(true)
-end)
+-- --[[
+-- 	Disable controls on craft
+-- --]]
+-- mod:hook_safe(HeroWindowCrafting, "craft", function(self, items, ...)
+-- 	mod:disable_controls(true)
+-- end)
 --[[
 	Enable controls after craft
 --]]

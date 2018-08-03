@@ -71,4 +71,12 @@ return {
 		de = "Abgeschlossen",
 		pl = "Ukończone",
 	},
+	salvage_pages_text = {
+		en = "Salvage more items",
+		de = "Mehr Items einschmelzen",
+	},
+	salvage_pages_tip = {
+		en = "Support for multiple pages of items on salvage screen.",
+		de = "Unterstützt mehrere Seiten an Items beim Einschmelzen.",
+	},
 }
