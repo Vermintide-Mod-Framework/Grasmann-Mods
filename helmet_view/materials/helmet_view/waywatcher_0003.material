@@ -1,0 +1,14 @@
+waywatcher_0003 = {
+	material_contexts = {
+		surface_material = ""
+	}
+	
+	shader = "gui:DIFFUSE_MAP"
+	
+	textures = {
+		diffuse_map = "textures/helmet_view/waywatcher_0003"
+	}
+	
+	variables = {
+	}
+}

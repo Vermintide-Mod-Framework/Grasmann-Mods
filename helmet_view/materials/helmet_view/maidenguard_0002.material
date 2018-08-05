@@ -1,0 +1,14 @@
+maidenguard_0002 = {
+	material_contexts = {
+		surface_material = ""
+	}
+	
+	shader = "gui:DIFFUSE_MAP"
+	
+	textures = {
+		diffuse_map = "textures/helmet_view/maidenguard_0002"
+	}
+	
+	variables = {
+	}
+}

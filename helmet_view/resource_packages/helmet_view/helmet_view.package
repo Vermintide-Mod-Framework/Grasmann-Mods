@@ -1,0 +1,15 @@
+mod = [
+	"helmet_view"
+]
+
+package = [
+	"resource_packages/helmet_view/helmet_view"
+]
+
+lua = [
+	"scripts/mods/helmet_view/*"
+]
+
+material = [
+	"materials/helmet_view/*"
+]
