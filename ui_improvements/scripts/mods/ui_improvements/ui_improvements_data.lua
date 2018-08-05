@@ -55,12 +55,12 @@ return {
 			["tooltip"] = mod:localize("alternative_exotic_background_tip"),
 			["default_value"] = true,
 		},
-		{
-			["setting_name"] = "salvage_pages",
-			["widget_type"] = "checkbox",
-			["text"] = mod:localize("salvage_pages_text"),
-			["tooltip"] = mod:localize("salvage_pages_tip"),
-			["default_value"] = true,
-		},
+		-- {
+		-- 	["setting_name"] = "salvage_pages",
+		-- 	["widget_type"] = "checkbox",
+		-- 	["text"] = mod:localize("salvage_pages_text"),
+		-- 	["tooltip"] = mod:localize("salvage_pages_tip"),
+		-- 	["default_value"] = true,
+		-- },
 	},
 }

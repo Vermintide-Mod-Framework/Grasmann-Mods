@@ -8,7 +8,7 @@ local mod = get_mod("ui_improvements")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_switch")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_items")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_crafting")
-mod:dofile("scripts/mods/ui_improvements/ui_improvements_salvage")
+--mod:dofile("scripts/mods/ui_improvements/ui_improvements_salvage")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_cosmetics")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_loot")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_deeds")
@@ -184,14 +184,14 @@ end
 --]]
 mod.on_setting_changed = function(setting_name)
 	mod:overwrite_exotic_background()
-	mod:set_salvage_activated()
+	--mod:set_salvage_activated()
 end
 --[[
 	Enable
 --]]
 mod.on_enabled = function(initial_call)
 	mod:overwrite_exotic_background()
-	mod:set_salvage_activated()
+	--mod:set_salvage_activated()
 end
 --[[
 	Disabled
