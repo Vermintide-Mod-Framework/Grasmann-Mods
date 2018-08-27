@@ -40,7 +40,7 @@ return {
 		en = "Remember Opened Categories",
 		de = "An geöffnete Kategorien erinnern",
 		pl = "Zapamiętaj otwartą kategorię",
-		ru = "Запоминать открытую категорию крафта",
+		ru = "Запоминать открытую категорию",
 	},
 	remember_opened_tip = {
 		en = "Remember inventory / crafting / cosmetics categories and reopen them when menu reloads.",
