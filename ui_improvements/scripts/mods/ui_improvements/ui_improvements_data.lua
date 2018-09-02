@@ -27,14 +27,6 @@ return {
 	},
 	options_widgets = {
 		{
-			["setting_name"] = "open_achievements",
-			["widget_type"] = "keybind",
-			["text"] = mod:localize("open_achievements_text"),
-			["tooltip"] = mod:localize("open_achievements_tip"),
-			["default_value"] = {"o"},
-			["action"] = "open_achievements",
-		},
-		{
 			["setting_name"] = "crafting_buttons",
 			["widget_type"] = "checkbox",
 			["text"] = mod:localize("crafting_buttons_text"),

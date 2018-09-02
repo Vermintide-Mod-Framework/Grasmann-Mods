@@ -53,11 +53,12 @@ mod.get_portrait_frame = function(self, profile_index, career_index)
 
 	if item then
 		local item_data = item.data
-		local frame_name = item_data.temporary_template
-		player_portrait_frame = frame_name or player_portrait_frame
+		local frame_name = item_data.key
+		local frame_texture = UIPlayerPortraitFrameSettings[frame_name][1].texture
+		player_portrait_frame = frame_texture or player_portrait_frame
 	end
 
-	return "portrait_"..player_portrait_frame
+	return player_portrait_frame
 end
 --[[
 	Create character button widget

@@ -104,11 +104,14 @@ mod.create_difficulty_button = function(self, scenegraph_id, difficulty, is_sele
 
     local root = {0, 0, 0}
     local start_pos = {5, 6, 2}
-    local icon = DifficultySettings[difficulty].display_image
-    local text = Localize(DifficultySettings[difficulty].display_name)
+    local icon = ""
+    local text = ""
     if difficulty == "easy" then
         icon = "loot_chest_icon"
         text = mod:localize("deed_filter_all")
+    else
+        icon = DifficultySettings[difficulty].display_image
+        text = Localize(DifficultySettings[difficulty].display_name)
     end
     local font_size = 16
     local icon_size = {32, 32}

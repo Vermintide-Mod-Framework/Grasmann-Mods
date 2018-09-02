@@ -4,6 +4,11 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.7.2
+	- Fixed bug in deed filter
+	- Fixed bug in achievements filter
+	- Fixed buttons in achievement filter overlapping tooltip
+	- Fixed bug with new portrait frames
 1.7.1
 	- Added russian translation
 1.7.0
