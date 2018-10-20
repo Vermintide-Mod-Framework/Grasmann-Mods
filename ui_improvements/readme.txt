@@ -4,6 +4,8 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.7.3
+	- Fixed bugs with version 1.2.1
 1.7.2
 	- Fixed bug in deed filter
 	- Fixed bug in achievements filter

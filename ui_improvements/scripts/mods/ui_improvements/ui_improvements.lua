@@ -134,6 +134,19 @@ end
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
 --[[
+	Hero view screen change
+--]]
+mod:hook(HeroView, "_change_screen_by_name", function(func, self, screen_name, sub_screen_name, optional_params, ...)
+	-- Get or delete data
+	if screen_name == "overview" then
+		mod:get_profile_data()
+	else
+		mod:delete_profile_data()
+	end
+	-- Orig function
+	func(self, screen_name, sub_screen_name, optional_params, ...)
+end)
+--[[
 	Set current sub screen in hero view
 --]]
 mod:hook_safe(HeroViewStateOverview, "_change_window", function(self, window_index_, window_name, ...)
@@ -142,27 +155,23 @@ end)
 --[[
 	Create window when opening hero view
 --]]
-mod:hook_safe(HeroView, "on_enter", function(self, menu_state_name, ...)
-	-- Only process when overview
-	if menu_state_name ~= "overview" then
+mod:hook(HeroView, "on_enter", function(func, self, params, ...)
+	-- Skip when overview
+	if params.menu_state_name ~= "overview" then
+		func(self, params, ...)
 		return
 	end
 	-- Set values
-	local player = Managers.player:local_player()
-	mod.actual_profile_index = player:profile_index()
-	mod.profile_index = mod.actual_profile_index
-	mod.actual_career_index = player:career_index()
-	mod.career_index = mod.actual_career_index
+	mod:get_profile_data()
+	-- Orig function
+	func(self, params, ...)
 end)
 --[[
 	Reset values
 --]]
 mod:hook(HeroView, "on_exit", function(func, ...)
 	-- Reset values
-	mod.profile_index = nil
-	mod.career_index = nil
-	mod.actual_profile_index = nil
-	mod.actual_career_index = nil
+	mod:delete_profile_data()
 	-- Orig function
 	func(...)
 end)
@@ -177,7 +186,7 @@ end)
 	Update
 --]]
 mod.update = function(dt)
-	mod:achievements_update()
+	--mod:achievements_update()
 end
 --[[
 	Settings changed

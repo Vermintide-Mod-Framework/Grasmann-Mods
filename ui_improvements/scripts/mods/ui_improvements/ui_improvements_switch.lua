@@ -349,6 +349,25 @@ mod.disable_switch_controls = function(self, disable)
 		widget.content.disable_button = disable
 	end
 end
+--[[
+	Get profile and career indices
+--]]
+mod.get_profile_data = function(self)
+	local player = Managers.player:local_player()
+	self.actual_profile_index = self.actual_profile_index or player:profile_index()
+	self.profile_index = self.profile_index or self.actual_profile_index
+	self.actual_career_index = self.actual_career_index or player:career_index()
+	self.career_index = self.career_index or self.actual_career_index
+end
+--[[
+	Delete profile and career indices
+--]]
+mod.delete_profile_data = function(self)
+	self.profile_index = nil
+	self.career_index = nil
+	self.actual_profile_index = nil
+	self.actual_career_index = nil
+end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################

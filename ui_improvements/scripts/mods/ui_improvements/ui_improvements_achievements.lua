@@ -33,16 +33,16 @@ end
 --[[
     Reset close button pressed
 --]]
-mod.achievements_update = function(self)
-    -- Check if pressed and ingame ui not active
-    if close_pressed and not mod:is_ingame_ui_active() then
+-- mod.achievements_update = function(self)
+--     -- Check if pressed and ingame ui not active
+--     if close_pressed and not mod:is_ingame_ui_active() then
 
-        -- Check keybinding
-        local close_keybind = mod:get("open_achievements")
-        close_pressed = mod:is_keybinding_pressed(close_keybind)
+--         -- Check keybinding
+--         local close_keybind = mod:get("open_achievements")
+--         close_pressed = mod:is_keybinding_pressed(close_keybind)
 
-    end
-end
+--     end
+-- end
 --[[
     Set achievements filter
 --]]
