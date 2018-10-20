@@ -13,7 +13,7 @@ mod:dofile("scripts/mods/helmet_view/helmet_view_definitions")
 -- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
-mod.helmet_model = nil
+--mod.helmet_model = nil
 mod.overlay_widget = nil
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
@@ -26,14 +26,14 @@ mod.update_helmet_overlay = function(self, helmet)
 	self.overlay_widget = nil
 
 	if not helmet then
-		local player = Managers.player:local_player()
-		local attachment_extension = ScriptUnit.extension(player.player_unit, "attachment_system")
-		local slot_data = attachment_extension:get_slot_data("slot_hat")
-		helmet = slot_data.name
+		local player = Managers.player and Managers.player:local_player()
+		local attachment_extension = player and ScriptUnit.extension(player.player_unit, "attachment_system")
+		local slot_data = attachment_extension and attachment_extension:get_slot_data("slot_hat")
+		helmet = slot_data and slot_data.name
 	end
 
-	local texture = mod.overlays[helmet]
-	local opacity = (255 / 100) * mod:get("opacity")
+	local texture = self.overlays[helmet]
+	local opacity = (255 / 100) * self:get("opacity") or 255
 
 	if texture and texture ~= "none" then
 		local widget = {
@@ -61,6 +61,15 @@ mod.update_helmet_overlay = function(self, helmet)
 			offset = {0, 0, -40}
 		}
 		self.overlay_widget = UIWidget.init(widget)
+
+		-- Sound
+		-- if table.contains(mod.sound_effect, helmet) then
+		-- 	Wwise.set_state("inside_waystone", "true")
+		-- else
+		-- 	Wwise.set_state("inside_waystone", "false")
+		-- end
+	-- else
+	-- 	Wwise.set_state("inside_waystone", "false")
 	end
 
 end

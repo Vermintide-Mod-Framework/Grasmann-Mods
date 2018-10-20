@@ -1,19 +1,22 @@
 local mod = get_mod("helmet_view")
+--[[
+	Author: grasmann
 
--- Everything here is optional. You can remove unused parts.
+	Data
+--]]
+
 return {
-	name = "helmet_view",                               -- Readable mod name
-	description = mod:localize("mod_description"),  -- Mod description
-	is_togglable = true,                            -- If the mod can be enabled/disabled
-	is_mutator = false,                             -- If the mod is mutator
-	mutator_settings = {},                          -- Extra settings, if it's mutator
+	name = "Helmet View",
+	description = mod:localize("mod_description"),
+	is_togglable = true,
+	is_mutator = false,
+	mutator_settings = {},
 	custom_gui_textures = {
 		textures = {
 			"mercenary_0001",
 			"mercenary_0002",
 			"mercenary_0003",
 			"mercenary_0004",
-			"es_0001",
 			"huntsman_0001",
 			"huntsman_0002",
 			"huntsman_0003",
@@ -37,7 +40,6 @@ return {
 				"materials/helmet_view/mercenary_0002",
 				"materials/helmet_view/mercenary_0003",
 				"materials/helmet_view/mercenary_0004",
-				"materials/helmet_view/es_0001",
 				"materials/helmet_view/huntsman_0001",
 				"materials/helmet_view/huntsman_0002",
 				"materials/helmet_view/huntsman_0003",
@@ -55,7 +57,7 @@ return {
 			},
 		},
 	},
-	options_widgets = {                             -- Widget settings for the mod options menu
+	options_widgets = {
 		{
 			["setting_name"] = "opacity",
 			["widget_type"] = "numeric",
@@ -64,5 +66,5 @@ return {
 			["range"] = {75, 100},
 			["default_value"] = 95,
 	  	},
-	}
+	},
 }

@@ -1,12 +1,13 @@
+local mod = get_mod("helmet_view")
+--[[
+	Author: grasmann
+
+	Localization
+--]]
+
 return {
 	mod_description = {
 		en = "helmet_view description"
-	},
-	example_checkbox_option_name = {
-		en = "Example Checkbox Option"
-	},
-	example_checkbox_option_tooltip = {
-		en = "Example Checkbox Option description."
 	},
 --[[
 	some_other_text_id = {
