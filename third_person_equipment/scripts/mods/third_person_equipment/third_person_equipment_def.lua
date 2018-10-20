@@ -4,7 +4,6 @@ local mod = get_mod("ThirdPersonEquipment")
 		- Provides configurations for equipment positions
 	
 	Author: grasmann
-	Version: 2.0.0
 --]]
 
 local default_node = "j_spine"
@@ -32,13 +31,8 @@ mod.definitions = {
 		right = {
 			belt = {
 				node = hip_node,
-				position = {0.1, 0, -0.21},
-				rotation = {150, -70, 150},
-				es_mercenary = {
-					node = hip_node,
-					position = {0.2, 0, -0.21},
-					rotation = {150, -70, 150},
-				},
+				position = {0.2, 0.1, -0.21},
+				rotation = {130, -70, 110},
 			},
 			back = {
 				node = default_node,
@@ -58,13 +52,8 @@ mod.definitions = {
 		right = {
 			belt = {
 				node = hip_node,
-				position = {0.1, 0, -0.21},
-				rotation = {150, -70, 150},
-				es_mercenary = {
-					node = hip_node,
-					position = {0.2, 0, -0.21},
-					rotation = {150, -70, 150},
-				},
+				position = {0.2, 0.1, -0.21},
+				rotation = {130, -70, 110},
 			},
 			back = {
 				node = default_node,
@@ -75,22 +64,22 @@ mod.definitions = {
 		left = {
 			belt = {
 				node = default_node,
-				position = {0.3, -0.22, 0.1},
+				position = {0.3, -0.2, 0.1},
 				rotation = {0, 90, 90},
 				es_knight = {
 					node = default_node,
-					position = {0.3, -0.25, 0.1},
+					position = {0.3, -0.22, 0.1},
 					rotation = {0, 90, 90},
 				},
 			},
 			back = {
 				node = default_node,
-				position = {0.3, -0.22, 0.1},
-				rotation = {0, 90, 90},
+				position = {0.4, -0.2, 0.05},
+				rotation = {0, 160, 75},
 				es_knight = {
 					node = default_node,
-					position = {0.3, -0.25, 0.1},
-					rotation = {0, 90, 90},
+					position = {0.4, -0.22, 0.05},
+					rotation = {0, 160, 75},
 				},
 			},
 		},
@@ -137,8 +126,8 @@ mod.definitions = {
 			},
 			back = {
 				node = default_node,
-				position = {0.3, -0.22, 0.1},
-				rotation = {0, 90, 90},
+				position = {0.4, -0.2, 0.05},
+				rotation = {0, 160, 75},
 			},
 		},
 	},
@@ -160,7 +149,7 @@ mod.definitions = {
 	es_2h_halberd = {
 		right = {
 			node = default_node,
-			position = {0.7, -0.22, 0.2},
+			position = {0.5, -0.22, 0.1},
 			rotation = {0, -110, 90},
 		},
 	},
@@ -548,357 +537,205 @@ mod.definitions = {
 	-- Dwarf
 	dr_1h_axe_shield = {
 		right = {
-			back = {
-				node = default_node_2,
-				position = {0.4, -0.2, 0.1},
-				rotation = {0, -110, 90},
-				dr_ranger = {
-					node = default_node_2,
-					position = {0.4, -0.15, 0.1},
-					rotation = {0, -110, 90},
-				},
-				dr_ironbreaker = {
-					node = default_node_2,
-					position = {0.4, -0.15, 0.1},
-					rotation = {0, -110, 90},
-				},
+			back = { node = default_node_2, position = {0.4, -0.2, 0.1}, rotation = {0, -110, 90}, 
+				dr_ranger = { node = default_node_2, position = {0.3, -0.2, 0.1}, rotation = {0, -110, 90}, },
+				dr_ironbreaker = { node = default_node_2, position = {0.3, -0.2, 0.1}, rotation = {0, -110, 90}, },
+				dr_slayer = { node = default_node_2, position = {0.3, -0.2, 0.1}, rotation = {0, -110, 90}, },
 			},
-			backpack = {
-				node = backpack_node,
-				position = {0.3, -0.5, 0.1},
-				rotation = {40, 160, 20},
+			backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.1}, rotation = {0, 180, 180}, },
 			},
-			belt = {
-				node = hip_node,
-				position = {0.13, 0.1, -0.27},
-				rotation = {130, -70, 110},
-				dr_slayer = {
-					node = hip_node,
-					position = {0.13, 0.1, -0.25},
-					rotation = {130, -70, 110},
-				},
+			belt = { node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110},
+				dr_ranger = { node = hip_node, position = {0.2, 0.1, -0.25}, rotation = {110, -70, -70}, },
+				dr_ironbreaker = { node = hip_node, position = {0.2, 0.1, -0.25}, rotation = {110, -70, -70}, },
+				dr_slayer = { node = hip_node, position = {0.2, 0.1, -0.25}, rotation = {110, -70, -70}, },
 			},
 		},
 		left = {
-			back = {
-				node = backpack_node,
-				position = {0.3, -0.3, 0.12},
-				rotation = {60, -40, -100},
-				dr_ranger = {
-					node = default_node_2,
-					position = {0.1, -0.12, 0.12},
-					rotation = {0, 120, 90},
-				},
-				dr_ironbreaker = {
-					node = default_node_2,
-					position = {0.1, -0.21, 0.12},
-					rotation = {0, 120, 90},
-				},
+			back = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
+				dr_ranger = { copy = "backpack", },
+				dr_ironbreaker = { copy = "backpack", },
 			},
-			backpack = {
-				node = backpack_node,
-				position = {0.3, -0.3, 0.12},
-				rotation = {60, -40, -100},
+			backpack = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.02, -0.07, -0.2}, rotation = {0, -140, 90}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.07, 0.1}, rotation = {0, 0, 90}, },
 			},
-			belt = {
-				node = backpack_node,
-				position = {0.3, -0.3, 0.12},
-				rotation = {60, -40, -100},
-				dr_ranger = {
-					node = default_node_2,
-					position = {0.1, -0.12, 0.12},
-					rotation = {0, 120, 90},
-				},
-				dr_ironbreaker = {
-					node = default_node_2,
-					position = {0.1, -0.21, 0.12},
-					rotation = {0, 120, 90},
-				},
+			belt = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
+				dr_ranger = { copy = "backpack", },
+				dr_ironbreaker = { copy = "backpack", },
 			},
 		},
 	},
 	dr_handgun = {
 		right = {
-			backpack = {
-				node = backpack_node,
-				position = {-0.2, -0.45, 0.25},
-				rotation = {-30, 90, -10},
+			backpack = { node = backpack_node, position = {-0.2, -0.45, 0.25}, rotation = {-30, 90, -10},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {-0.35, 0.05, -0.3}, rotation = {90, 0, 0}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0.15, 0, 0.3}, rotation = {-90, 180, 0}, },
 			},
-			back = {
-				node = default_node_2,
-				position = {0.3, -0.2, -0.2},
-				rotation = {0, 30, 90},
+			back = { node = default_node_2, position = {0.3, -0.2, -0.2}, rotation = {0, 30, 90},
+				dr_ranger = { node = default_node_2, position = {0.2, -0.2, -0.2}, rotation = {0, 30, 90}, },
+				dr_ironbreaker = { node = default_node_2, position = {0.2, -0.2, -0.2}, rotation = {0, 30, 90}, },
 			},
 		},
 	},
 	dr_1h_hammer = {
 		right = {
-			back = {
-				node = default_node_2,
-				position = {0.4, -0.2, 0.1},
-				rotation = {0, -110, 90},
-				dr_slayer = {
-					node = default_node_2,
-					position = {0.2, -0.2, 0.1},
-					rotation = {0, -110, 90},
-				},
+			back = { node = default_node_2, position = {0.4, -0.2, 0.1}, rotation = {0, -110, 90},
+				dr_ranger = { copy = "backpack", },
+				dr_ironbreaker = { node = default_node_2, position = {0.2, -0.2, 0.1}, rotation = {0, -110, 90}, },
+				dr_slayer = { node = default_node_2, position = {0.2, -0.2, 0.1}, rotation = {0, -110, 90}, },
 			},
-			backpack = {
-				node = backpack_node,
-				position = {0.3, -0.5, 0.1},
-				rotation = {40, 160, 20},
+			backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.10, -0.03, -0.25}, rotation = {0, 15, 180}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.25}, rotation = {0, 180, 180}, },
+				dr_slayer = { copy = "back", },
 			},
-			belt = {
-				node = hip_node,
-				position = {0.13, 0.1, -0.28},
-				rotation = {130, -70, 110},
-				dr_slayer = {
-					node = hip_node,
-					position = {0.13, 0.1, -0.25},
-					rotation = {130, -70, 110},
-				},
+			belt = { node = hip_node, position = {0.13, 0.1, -0.28}, rotation = {130, -70, 110},
+				dr_ranger = { node = hip_node, position = {0.13, 0.1, -0.28}, rotation = {130, -70, 110}, },
+				dr_ironbreaker = { node = hip_node, position = {0.13, 0.1, -0.25}, rotation = {130, -70, 110}, },
+				dr_slayer = { node = hip_node, position = {0.13, 0.1, -0.25}, rotation = {130, -70, 110}, },
 			},
 		},
 	},
 	dr_2h_hammer = {
 		right = {
-			back = {
-				node = default_node_2,
-				position = {0.5, -0.15, 0.2},
-				rotation = {0, -110, 90},
-				dr_ironbreaker = {
-					node = default_node_2,
-					position = {0.5, -0.22, 0.2},
-					rotation = {0, -110, 90},
-				},
-				dr_slayer = {
-					node = default_node_2,
-					position = {0.5, -0.22, 0.2},
-					rotation = {0, -110, 90},
-				},
+			back = { node = default_node_2, position = {0.5, -0.15, 0.2}, rotation = {0, -110, 90},
+				dr_ranger = { copy = "backpack", },
+				dr_ironbreaker = { node = default_node_2, position = {0.5, -0.22, 0.2}, rotation = {0, -110, 90}, },
+				dr_slayer = { node = default_node_2, position = {0.5, -0.22, 0.2}, rotation = {0, -110, 90}, replace = "backpack", },
 			},
-			backpack = {
-				node = backpack_node,
-				position = {0.1, -0.8, 0.5},
-				rotation = {40, 160, 20},
+			backpack = { node = backpack_node, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.7}, rotation = {0, 180, -90}, },
+				dr_slayer = { node = default_node_2, position = {0.5, -0.2, -0.3}, rotation = {0, -60, -90}, replace = "back", },
 			},
 		},
 	},
 	dr_1h_axes = {
 		right = {
-			back = {
-				node = default_node_2,
-				position = {0.4, -0.2, 0.1},
-				rotation = {0, -110, 90},
-				dr_slayer = {
-					node = default_node_2,
-					position = {0.2, -0.2, 0.1},
-					rotation = {0, -110, 90},
-				},
+			back = { node = default_node_2, position = {0.4, -0.2, 0.1}, rotation = {0, -110, 90},
+				dr_ranger = { node = default_node_2, position = {0.2, -0.2, 0.1}, rotation = {0, -110, 90}, },
+				dr_ironbreaker = { node = default_node_2, position = {0.2, -0.21, 0.1}, rotation = {0, -110, 90}, },
+				dr_slayer = { node = default_node_2, position = {0.2, -0.2, 0.1}, rotation = {0, -110, 90}, },
 			},
-			backpack = {
-				node = backpack_node,
-				position = {0.3, -0.5, 0.1},
-				rotation = {40, 160, 20},
+			backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.10, -0.03, -0.25}, rotation = {0, 15, 180}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.3}, rotation = {0, 180, 180}, },
+				dr_slayer = { copy = "back", },
 			},
-			belt = {
-				node = hip_node,
-				position = {0.13, 0.1, -0.27},
-				rotation = {130, -70, 110},
-				dr_slayer = {
-					node = hip_node,
-					position = {0.13, 0.1, -0.25},
-					rotation = {130, -70, 110},
-				},
+			belt = { node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110},
+				dr_ranger = { node = hip_node, position = {0.13, 0.1, -0.25}, rotation = {130, -70, -40}, },
+				dr_ironbreaker = { node = hip_node, position = {0.13, 0.1, -0.25}, rotation = {130, -70, -40}, },
+				dr_slayer = { node = hip_node, position = {0.13, 0.1, -0.25}, rotation = {130, -70, 110}, },
 			},
 		},
 	},
 	dr_1h_hammer_shield = {
 		right = {
-			back = {
-				node = default_node_2,
-				position = {0.4, -0.2, 0.1},
-				rotation = {0, -110, 90},
-				dr_ranger = {
-					node = default_node_2,
-					position = {0.4, -0.15, 0.1},
-					rotation = {0, -110, 90},
-				},
-				dr_ironbreaker = {
-					node = default_node_2,
-					position = {0.4, -0.15, 0.1},
-					rotation = {0, -110, 90},
-				},
+			back = { node = default_node_2, position = {0.4, -0.2, 0.1}, rotation = {0, -110, 90},
+				dr_ranger = { copy = "backpack", },
+				dr_ironbreaker = { copy = "backpack", },
 			},
-			backpack = {
-				node = backpack_node,
-				position = {0.3, -0.5, 0.1},
-				rotation = {40, 160, 20},
+			backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.25}, rotation = {0, 180, 90}, },
 			},
-			belt = {
-				node = hip_node,
-				position = {0.13, 0.1, -0.27},
-				rotation = {130, -70, 110},
-				dr_slayer = {
-					node = hip_node,
-					position = {0.13, 0.1, -0.25},
-					rotation = {130, -70, 110},
-				},
+			belt = { node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110},
+				dr_ranger = { node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110}, },
+				dr_ironbreaker = { node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110}, },
 			},
 		},
 		left = {
-			back = {
-				node = backpack_node,
-				position = {0.3, -0.3, 0.12},
-				rotation = {60, -40, -100},
-				dr_ranger = {
-					node = default_node_2,
-					position = {0.1, -0.12, 0.12},
-					rotation = {0, 120, 90},
-				},
-				dr_ironbreaker = {
-					node = default_node_2,
-					position = {0.1, -0.21, 0.12},
-					rotation = {0, 120, 90},
-				},
+			back = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
+				dr_ranger = { copy = "backpack", },
+				dr_ironbreaker = { copy = "backpack", },
 			},
-			backpack = {
-				node = backpack_node,
-				position = {0.3, -0.3, 0.12},
-				rotation = {60, -40, -100},
+			backpack = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.02, -0.07, -0.2}, rotation = {0, -140, 90}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.07, 0.1}, rotation = {0, 0, 90}, },
 			},
-			belt = {
-				node = backpack_node,
-				position = {0.3, -0.3, 0.12},
-				rotation = {60, -40, -100},
-				dr_ranger = {
-					node = default_node_2,
-					position = {0.1, -0.12, 0.12},
-					rotation = {0, 120, 90},
-				},
-				dr_ironbreaker = {
-					node = default_node_2,
-					position = {0.1, -0.21, 0.12},
-					rotation = {0, 120, 90},
-				},
+			belt = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
+				dr_ranger = { copy = "backpack", },
+				dr_ironbreaker = { copy = "backpack", },
 			},
 		},
 	},
 	dr_2h_axes = {
 		right = {
-			back = {
-				node = default_node_2,
-				position = {0.5, -0.2, 0.2},
-				rotation = {0, -110, 90},
-				dr_ironbreaker = {
-					node = default_node_2,
-					position = {0.5, -0.22, 0.2},
-					rotation = {0, -110, 90},
-				},
+			back = { node = default_node_2, position = {0.5, -0.2, 0.2}, rotation = {0, -110, 90},
+				dr_ironbreaker = { node = default_node_2, position = {0.5, -0.22, 0.2}, rotation = {0, -110, 90}, },
+				dr_slayer = { node = default_node_2, position = {0.5, -0.2, 0.2}, rotation = {0, -110, 90}, replace = "backpack", }
 			},
-			backpack = {
-				node = backpack_node,
-				position = {0.1, -0.8, 0.5},
-				rotation = {40, 160, 20},
+			backpack = { node = backpack_node, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.7}, rotation = {0, 180, -90}, },
+				dr_slayer = { node = default_node_2, position = {0.5, -0.2, -0.3}, rotation = {0, -60, -90}, replace = "back", },
 			},
 		},
 	},
 	dr_2h_picks = {
 		right = {
-			back = {
-				node = default_node_2,
-				position = {0.5, -0.17, 0.2},
-				rotation = {0, -110, 90},
-				dr_ironbreaker = {
-					node = default_node_2,
-					position = {0.5, -0.22, 0.2},
-					rotation = {0, -110, 90},
-				},
-				dr_slayer = {
-					node = default_node_2,
-					position = {0.5, -0.22, 0.2},
-					rotation = {0, -110, 90},
-				},
+			back = { node = default_node_2, position = {0.5, -0.17, 0.2}, rotation = {0, -110, 90},
+				dr_ironbreaker = { node = default_node_2, position = {0.5, -0.22, 0.2}, rotation = {0, -110, 90}, },
+				dr_slayer = { node = default_node_2, position = {0.5, -0.2, 0.2}, rotation = {0, -110, 90}, replace = "backpack", },
 			},
-			backpack = {
-				node = backpack_node,
-				position = {0.1, -0.8, 0.5},
-				rotation = {40, 160, 20},
+			backpack = { node = backpack_node, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.7}, rotation = {0, 180, -60}, },
+				dr_slayer = { replace = "back", node = default_node_2, position = {0.5, -0.2, -0.3}, rotation = {0, -60, -90}, },
 			},
 		},
 	},
 	dr_grudgeraker = {
 		right = {
-			backpack = {
-				node = backpack_node,
-				position = {-0.2, -0.3, 0.1},
-				rotation = {-30, 90, -10},
+			backpack = { node = backpack_node, position = {-0.2, -0.3, 0.1}, rotation = {-30, 90, -10},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {-0.35, 0.05, -0.3}, rotation = {90, 0, 0}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0.15, -0.02, 0.3}, rotation = {-90, 180, 0}, },
 			},
-			back = {
-				node = default_node_2,
-				position = {0.3, -0.2, -0.2},
-				rotation = {0, 30, 90},
+			back = { node = default_node_2, position = {0.3, -0.2, -0.2}, rotation = {0, 30, 90},
+				dr_ranger = { node = default_node_2, position = {0.2, -0.2, -0.2}, rotation = {0, 30, 90}, },
+				dr_ironbreaker = { node = default_node_2, position = {0.2, -0.2, -0.2}, rotation = {0, 30, 90}, },
 			},
 		},
 	},
 	dr_crossbow = {
 		left = {
-			backpack = {
-				node = backpack_node,
-				position = {-0.1, -0.3, 0.15},
-				rotation = {-10, 120, -10},
+			backpack = { node = backpack_node, position = {-0.1, -0.3, 0.15}, rotation = {-10, 120, -10},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {-0.4, 0, -0.15}, rotation = {90, 0, 0}, },
+				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0.17, -0.05, 0.22}, rotation = {90, 0, 180}, },
 			},
-			back = {
-				node = default_node_2,
-				position = {0.2, -0.2, -0.1},
-				rotation = {270, 0, 110},
+			back = { node = default_node_2, position = {0.2, -0.2, -0.1}, rotation = {270, 0, 110},
+				dr_ranger = { copy = "backpack", },
+				dr_ironbreaker = { copy = "backpack", },
 			},
 		},
 	},
 	dr_drakefire_pistols = {
-		right = {
-			node = "j_hips",
-			position = {0.1, 0, 0.3},
-			rotation = {70, 130, -70},
+		right = { node = hip_node, position = {0.1, 0, 0.3}, rotation = {70, 130, -70},
+			dr_ironbreaker = { node = hip_node, position = {0.1, 0, 0.3}, rotation = {-90, 130, -90}, },
 		},
-		left = {
-			node = "j_hips",
-			position = {0.1, 0, -0.3},
-			rotation = {90, 130, -90},
+		left = { node = hip_node, position = {0.1, 0, -0.3}, rotation = {90, 130, -90},
+			dr_ironbreaker = { node = hip_node, position = {0.1, 0, -0.3}, rotation = {-90, 130, -90}, },
 		},
 	},
 	-- VT2
 	dr_drakegun = {
 		right = {
-			node = default_node_2,
-			position = {0, -0.2, 0.2},
-			rotation = {90, 0, 0},
+			back = { copy = "backpack", },
+			backpack = { attachment = 1, attachment_node = 6, position = {0.05, -0.02, 0.25}, rotation = {90, 0, 0}, },
 		},
 	},
 	dr_dual_axes = {
 		right = {
-			belt = {
-				node = hip_node,
-				position = {0.2, 0.1, -0.25},
-				rotation = {110, -70, -70},
-			},
-			back = {
-				node = default_node_2,
-				position = {0.2, -0.2, 0.1},
-				rotation = {0, -110, 90},
-			},
+			belt = { node = hip_node, position = {0.2, 0.1, -0.25}, rotation = {110, -70, -70}, replace = "back", },
+			back = { node = default_node_2, position = {0.2, -0.2, 0.1}, rotation = {0, -110, 90}, replace = "belt", },
+			backpack = { copy = "back", replace = "belt", },
 		},
 		left = {
-			belt = {
-				node = hip_node,
-				position = {0.2, 0, 0.25},
-				rotation = {40, -70, 180},
-			},
-			back = {
-				node = default_node_2,
-				position = {0.2, -0.2, -0.2},
-				rotation = {0, -50, -90},
-			},
+			belt = { node = hip_node, position = {0.2, 0.1, 0.25}, rotation = {20, -80, 200}, replace = "back", },
+			back = { node = default_node_2, position = {0.2, -0.2, -0.2}, rotation = {12, -50, -78}, replace = "belt", },
+			backpack = { copy = "back", replace = "belt", },
 		},
 	},
 	
@@ -982,19 +819,15 @@ mod.definitions = {
 				node = backpack_node,
 				position = {0.07, 0.04, -0.04},
 				rotation = {40, -20, -10},
-				dr_ranger = {
-					node = default_node,
-					position = {-0.05, 0.3, 0.1},
-					rotation = {-70, 110, -90},
-				},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {0, -0.1, 0}, rotation = {-20, 180, 0}, },
 				dr_ironbreaker = {
 					node = default_node,
-					position = {-0.05, 0.3, 0.1},
+					position = {-0.05, 0.25, 0.15},
 					rotation = {-70, 110, -90},
 				},
 				dr_slayer = {
 					node = default_node,
-					position = {-0.05, 0.3, 0.1},
+					position = {-0.05, 0.25, 0.1},
 					rotation = {-70, 110, -90},
 				},
 			},
@@ -1302,10 +1135,10 @@ mod.definitions = {
 				node = backpack_node,
 				position = {0.15, -0.2, 0.13},
 				rotation = {60, -20, -10},
-				dr_ranger = {
-					node = default_node,
-					position = {-0.05, -0.16, -0.05},
-					rotation = {0, 0, 170},
+				dr_ranger = { attachment = 1, attachment_node = 9, position = {-0.25, -0.03, -0.25}, rotation = {40, 180, 185},
+					-- node = default_node,
+					-- position = {-0.05, -0.16, -0.05},
+					-- rotation = {0, 0, 170},
 				},
 				dr_ironbreaker = {
 					node = default_node,
@@ -1314,8 +1147,8 @@ mod.definitions = {
 				},
 				dr_slayer = {
 					node = default_node,
-					position = {-0.05, -0.16, -0.05},
-					rotation = {0, 0, 170},
+					position = {-0.05, -0.2, -0.05},
+					rotation = {0, 90, 170},
 				},
 			},
 		},
@@ -1375,6 +1208,13 @@ mod.definitions.dwarf_weapons = {
 	"dr_crossbow",
 	"dr_2h_picks",
 	"dr_dual_axes",
+	"dr_drakegun",
+	"dr_drakefire_pistols",
+}
+mod.definitions.dwarf_two_handed = {
+	"dr_2h_hammer",
+	"dr_2h_axes",
+	"dr_2h_picks",
 }
 mod.definitions.one_handed = {
 	"es_1h_sword",
@@ -1414,4 +1254,5 @@ mod.definitions.big_weapons = {
 	"bw_staff_geiser",
 	"bw_staff_firball",
 	"bw_staff_flamethrower",
+	"es_2h_halberd",
 }

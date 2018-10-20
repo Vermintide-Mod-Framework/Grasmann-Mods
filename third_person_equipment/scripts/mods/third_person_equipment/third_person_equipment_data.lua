@@ -1,4 +1,9 @@
 local mod = get_mod("ThirdPersonEquipment")
+--[[ 
+  Third person equipment data
+	
+	Author: grasmann
+--]]
 
 return {
   name = "Third Person Equipment",
@@ -14,10 +19,14 @@ return {
         "Weapons will be placed on the backpack.\n\n" ..
         "-- Back --\n" ..
         "Weapons will be placed on the back.",
-      ["options"] = VT1 and {
+      -- ["options"] = VT1 and {
+      --   {text = "Backpack", value = 1},
+      --   {text = "Back", value = 2},
+      -- } or {
+      --   {text = "Back", value = 2},
+      -- },
+      ["options"] = {
         {text = "Backpack", value = 1},
-        {text = "Back", value = 2},
-      } or {
         {text = "Back", value = 2},
       },
       ["default_value"] = VT1 and 1 or 2,
@@ -77,6 +86,15 @@ return {
         "Affects: Red staffs, volley crossbow, wh crossbow",
       ["range"] = {50, 100},
       ["default_value"] = 75,
+    },
+    {
+      ["show_widget_condition"] = {1},
+      ["setting_name"] = "change_index",
+      ["widget_type"] = "keybind",
+      ["text"] = "Index",
+      ["tooltip"] = "Index.",
+      ["default_value"] = {},
+      ["action"] = "change_index"
     },
   }
 }

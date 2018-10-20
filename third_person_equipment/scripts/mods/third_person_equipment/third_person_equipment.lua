@@ -5,7 +5,6 @@ local mod = get_mod("ThirdPersonEquipment")
 		- Works with player and bots
 
 	Author: grasmann
-	Version: 2.0.3
 --]]
 
 -- Global to keep track of spawned units
@@ -23,6 +22,13 @@ mod.current = {
 	equipment = {},
 	profile = {},
 }
+
+mod.used_index = 1
+mod.change_index = function()
+	mod.used_index = mod.used_index + 1
+	mod:echo("used index = "..tostring(mod.used_index))
+	mod:delete_all_units()
+end
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
 -- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
@@ -80,22 +86,43 @@ end
 --]]
 mod.spawn = function(self, package_name, unit, item_setting, item_data)
 	local s_unit = nil
-	if Unit.has_node(unit, item_setting.node) then
+	--if Unit.has_node(unit, item_setting.node) then
 		local world = Managers.world:world("level_world")
-		local node = Unit.node(unit, item_setting.node)
+		-- local node = Unit.node(unit, item_setting.node)
+		-- local attachment = item_setting.attachment or nil
 
+		-- local unit_attachments = Unit.get_data(unit, "flow_unit_attachments")
+		-- mod:echo("unit_attachments: "..tostring(#unit_attachments))
+		-- local attachment_unit = attachment and unit_attachments[attachment]
+		-- local bones = attachment_unit and Unit.bones(attachment_unit)
+		-- if bones then
+		-- 	mod:echo("bones: "..tostring(#bones))
+		-- end
+		
 		s_unit = World.spawn_unit(world, package_name)
-		World.link_unit(world, s_unit, unit, node)
 		third_person_equipment_spawned_items[s_unit] = s_unit
+		self:link_unit(unit, s_unit, item_setting)
 
-		local i_pos = item_setting.position
-		local pos_offset = i_pos ~= nil and Vector3(i_pos[1], i_pos[2], i_pos[3]) or Vector3(0,0,0)
-		Unit.set_local_position(s_unit, 0, pos_offset)
+		-- if not attachment or not attachment_unit then
+		-- 	s_unit = World.spawn_unit(world, package_name)
+		-- 	World.link_unit(world, s_unit, unit, node)
+		-- 	third_person_equipment_spawned_items[s_unit] = s_unit
+		-- else
+		-- 	mod:pcall(function()
+		-- 	s_unit = World.spawn_unit(world, package_name)
+		-- 	World.link_unit(world, s_unit, attachment_unit, item_setting.attachment_node)
+		-- 	third_person_equipment_spawned_items[s_unit] = s_unit
+		-- 	end)
+		-- end
 
-		local i_rot = item_setting.rotation
-		local rot_offset = i_rot ~= nil and Vector3(i_rot[1], i_rot[2], i_rot[3]) or Vector3(0,0,0)
-		local rotation = Quaternion.from_euler_angles_xyz(rot_offset[1], rot_offset[2], rot_offset[3])
-		Unit.set_local_rotation(s_unit, 0, rotation)
+		-- local i_pos = item_setting.position
+		-- local pos_offset = i_pos ~= nil and Vector3(i_pos[1], i_pos[2], i_pos[3]) or Vector3(0,0,0)
+		-- Unit.set_local_position(s_unit, 0, pos_offset)
+
+		-- local i_rot = item_setting.rotation
+		-- local rot_offset = i_rot ~= nil and Vector3(i_rot[1], i_rot[2], i_rot[3]) or Vector3(0,0,0)
+		-- local rotation = Quaternion.from_euler_angles_xyz(rot_offset[1], rot_offset[2], rot_offset[3])
+		-- Unit.set_local_rotation(s_unit, 0, rotation)
 
 		-- Hardcoded scaling
 		local grim = "units/weapons/player/wpn_grimoire_01/wpn_grimoire_01_3p"
@@ -110,10 +137,45 @@ mod.spawn = function(self, package_name, unit, item_setting, item_data)
 			local scale = Vector3(scaling, scaling, scaling)
 			Unit.set_local_scale(s_unit, 0, scale)
 		end
-	end
+	--end
 
 	return s_unit
 end
+
+mod.link_unit = function(self, unit, s_unit, item_setting)
+	local attachment = item_setting.attachment or nil
+	local world = Managers.world:world("level_world")
+
+	if attachment then
+
+		local unit_attachments = Unit.get_data(unit, "flow_unit_attachments")
+		mod:echo("unit_attachments: "..tostring(#unit_attachments))
+		local attachment_unit = attachment and unit_attachments[attachment]
+		local bones = attachment_unit and Unit.bones(attachment_unit)
+		if bones then
+			mod:echo("bones: "..tostring(#bones))
+		end
+
+		World.link_unit(world, s_unit, attachment_unit, item_setting.attachment_node)
+
+	elseif Unit.has_node(unit, item_setting.node) then
+
+		local node = Unit.node(unit, item_setting.node)
+		World.link_unit(world, s_unit, unit, node)
+
+	end
+
+	local i_pos = item_setting.position
+	local pos_offset = i_pos ~= nil and Vector3(i_pos[1], i_pos[2], i_pos[3]) or Vector3(0,0,0)
+	Unit.set_local_position(s_unit, 0, pos_offset)
+
+	local i_rot = item_setting.rotation
+	local rot_offset = i_rot ~= nil and Vector3(i_rot[1], i_rot[2], i_rot[3]) or Vector3(0,0,0)
+	local rotation = Quaternion.from_euler_angles_xyz(rot_offset[1], rot_offset[2], rot_offset[3])
+	Unit.set_local_rotation(s_unit, 0, rotation)
+
+end
+
 --[[
 	Spawn single equipment unit
 --]]
@@ -216,7 +278,80 @@ mod.get_item_setting = function(self, unit, slot_name, item_data, left)
 		item_setting = item_setting or def.default.left
 	end
 
-	return item_setting
+	local replaced = false
+	if not VT1 then
+		local career_extension = ScriptUnit.extension(unit, "career_system")
+		local career_name = career_extension._career_data.name
+
+		item_setting = item_setting[career_name] or item_setting
+
+		if career_name == "dr_slayer" then
+
+			-- Dual axes
+			if item_data.item_type == "dr_dual_axes" then
+				local something_replaced = false
+				if self.current.equipment[unit] then
+					for _, i_unit in pairs(self.current.equipment[unit]) do
+						if i_unit.replaced then
+							something_replaced = true
+							break
+						end
+					end
+				end
+				if not something_replaced then
+					if item_setting.replace then
+						if not left then
+							item_setting = def[item_data.item_type].right[item_setting.replace]
+						else
+							item_setting = def[item_data.item_type].left[item_setting.replace]
+						end
+						item_setting = item_setting[career_name] or item_setting
+						replaced = true
+					end
+				end
+
+			-- Two handed
+			elseif table.contains(def.dwarf_two_handed, item_data.item_type) then
+				local another_two_handed = false
+				if self.current.equipment[unit] then
+					for _, i_unit in pairs(self.current.equipment[unit]) do
+						if table.contains(def.dwarf_two_handed, i_unit.item_type) then
+							another_two_handed = true
+							break
+						end
+					end
+				end
+				if another_two_handed then
+					if item_setting.replace then
+						if not left then
+							item_setting = def[item_data.item_type].right[item_setting.replace]
+						else
+							item_setting = def[item_data.item_type].left[item_setting.replace]
+						end
+						item_setting = item_setting[career_name] or item_setting
+						replaced = true
+					end
+				end
+			end
+		end		
+	end
+
+	if item_setting.copy then
+		if not left then
+			item_setting = def[item_data.item_type].right[item_setting.copy]
+		else
+			item_setting = def[item_data.item_type].left[item_setting.copy]
+		end
+
+		if not VT1 then
+			local career_extension = ScriptUnit.extension(unit, "career_system")
+			local career_name = career_extension._career_data.name
+	
+			item_setting = item_setting[career_name] or item_setting
+		end
+	end
+
+	return item_setting, replaced
 end
 --[[
 	Add single equipment item
@@ -233,14 +368,16 @@ mod.add_item = function(self, unit, slot_name, item_data)
 
 	if self.definitions[item_data.item_type] ~= nil then
 		local right, left, right_pack, left_pack = nil
+		local replaced = nil
 		if item_data.right_hand_unit ~= nil then
-			local item_setting = self:get_item_setting(unit, slot_name, item_data)
+			local item_setting, replace = self:get_item_setting(unit, slot_name, item_data)
+			replaced = replace
 
-			if not VT1 and career_name then
-				item_setting = item_setting[career_name] or item_setting
-			end
+			-- if not VT1 and career_name then
+			-- 	item_setting = item_setting[career_name] or item_setting
+			-- end
 
-			if item_setting.node ~= nil then
+			-- if item_setting.node ~= nil then
 
 				if VT1 then
 					right_pack = item_data.right_hand_unit.."_3p"
@@ -255,16 +392,18 @@ mod.add_item = function(self, unit, slot_name, item_data)
 				else
 					--self:echo("right_pack "..tostring(item_data.item_type).." missing")
 				end
-			else
-				--self:echo(slot_name)
-			end
+			-- else
+			-- 	--self:echo(slot_name)
+			-- end
 		end
 		if item_data.left_hand_unit ~= nil then
-			local item_setting = self:get_item_setting(unit, slot_name, item_data, true)
+			local item_setting, replace = self:get_item_setting(unit, slot_name, item_data, true)
+			replaced = replace
+
 			if not VT1 and career_name then
 				item_setting = item_setting[career_name] or item_setting
 			end
-			if item_setting.node ~= nil then
+			-- if item_setting.node ~= nil then
 
 				if VT1 then
 					left_pack = item_data.left_hand_unit.."_3p"
@@ -279,9 +418,9 @@ mod.add_item = function(self, unit, slot_name, item_data)
 				else
 					--self:echo("left_pack "..tostring(item_data.item_type).." missing")
 				end
-			else
-				--self:echo(slot_name)
-			end
+			-- else
+			-- 	--self:echo(slot_name)
+			-- end
 		end
 
 		self.current.equipment[unit] = self.current.equipment[unit] or {}
@@ -291,6 +430,8 @@ mod.add_item = function(self, unit, slot_name, item_data)
 			slot = slot_name,
 			right_pack = right_pack,
 			left_pack = left_pack,
+			replaced = replaced,
+			item_type = item_data.item_type,
 		}
 	elseif item_data.item_type ~= nil and item_data.item_type ~= "inventory_item" then
 		--self:echo(tostring(item_data.item_type).." is missing!")
@@ -358,25 +499,25 @@ end
 --[[
 	Function from third person to check if forced third person is active
 --]]
-mod.is_first_person_blocked = function(self, unit)
-	local blocked = false
-	if ScriptUnit.has_extension(unit, "character_state_machine_system") then
-		local state_system = ScriptUnit.extension(unit, "character_state_machine_system")
-		if state_system ~= nil then
-			blocked = blocked or state_system.state_machine.state_current.name == "dead"
-			blocked = blocked or state_system.state_machine.state_current.name == "grabbed_by_pack_master"
-			blocked = blocked or state_system.state_machine.state_current.name == "inspecting"
-			blocked = blocked or state_system.state_machine.state_current.name == "interacting"
-			blocked = blocked or state_system.state_machine.state_current.name == "knocked_down"
-			--blocked = blocked or state_system.state_machine.state_current.name == "leave_ledge_hanging_falling"
-			--blocked = blocked or state_system.state_machine.state_current.name == "leave_ledge_hanging_pull_up"
-			blocked = blocked or state_system.state_machine.state_current.name == "ledge_hanging"
-			blocked = blocked or state_system.state_machine.state_current.name == "pounced_down"
-			blocked = blocked or state_system.state_machine.state_current.name == "waiting_for_assisted_respawn"
-		end
-	end
-	return blocked
-end
+-- mod.is_first_person_blocked = function(self, unit)
+-- 	local blocked = false
+-- 	if ScriptUnit.has_extension(unit, "character_state_machine_system") then
+-- 		local state_system = ScriptUnit.extension(unit, "character_state_machine_system")
+-- 		if state_system ~= nil then
+-- 			blocked = blocked or state_system.state_machine.state_current.name == "dead"
+-- 			blocked = blocked or state_system.state_machine.state_current.name == "grabbed_by_pack_master"
+-- 			blocked = blocked or state_system.state_machine.state_current.name == "inspecting"
+-- 			blocked = blocked or state_system.state_machine.state_current.name == "interacting"
+-- 			blocked = blocked or state_system.state_machine.state_current.name == "knocked_down"
+-- 			--blocked = blocked or state_system.state_machine.state_current.name == "leave_ledge_hanging_falling"
+-- 			--blocked = blocked or state_system.state_machine.state_current.name == "leave_ledge_hanging_pull_up"
+-- 			blocked = blocked or state_system.state_machine.state_current.name == "ledge_hanging"
+-- 			blocked = blocked or state_system.state_machine.state_current.name == "pounced_down"
+-- 			blocked = blocked or state_system.state_machine.state_current.name == "waiting_for_assisted_respawn"
+-- 		end
+-- 	end
+-- 	return blocked
+-- end
 --[[
 	Create items if needed
 --]]
@@ -409,10 +550,15 @@ mod.create_items_if_needed = function(self)
 		end
 		-- First person
 		local player = Managers.player:local_player()
-		if player then
-			local third_person_mod = get_mod("ThirdPerson")
-			local third_person = third_person_mod and not third_person_mod.firstperson or self:is_first_person_blocked(player.player_unit) or false
-			self:set_equipment_visibility(player.player_unit, not third_person)
+		if player and player.player_unit then
+			local first_person_extension = ScriptUnit.extension(player.player_unit, "first_person_system")
+			if first_person_extension then
+				mod:set_equipment_visibility(player.player_unit, not first_person_extension.first_person_mode)
+			end
+
+		-- 	local third_person_mod = get_mod("ThirdPerson")
+		-- 	local third_person = third_person_mod and not third_person_mod.firstperson or self:is_first_person_blocked(player.player_unit) or false
+		-- 	self:set_equipment_visibility(player.player_unit, not third_person)
 		end
 	end
 end
@@ -423,6 +569,14 @@ end
 -- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
+
+-- mod:hook_safe(PlayerUnitFirstPerson, "set_first_person_mode", function(self, active, override, ...)
+-- 	local player = Managers.player:local_player()
+-- 	if player then
+-- 		mod:set_equipment_visibility(player.player_unit, active)
+-- 	end
+-- end)
+
 --[[
 	Wield equipment hooks
 --]]
@@ -533,6 +687,25 @@ end
 	Mod Unsuspended
 --]]
 mod.on_enabled = function(initial_call)
+	-- local player = Managers.player:local_player()
+	-- if player then
+	-- 	-- local bones = Unit.bones(player.player_unit)
+	-- 	-- for _, bone in pairs(bones) do
+	-- 	-- 	mod:echo(bone)
+	-- 	-- end
+		
+	-- 	-- mod:pcall(function()
+	-- 	-- 	local actor_count = Unit.num_actors(player.player_unit)
+	-- 	-- 	mod:echo(tostring(actor_count))
+	-- 	-- 	for i = 1, actor_count do
+	-- 	-- 		local actor = Unit.actor(player.player_unit, i)
+	-- 	-- 		mod:echo(tostring(actor.node))
+	-- 	-- 	end
+	-- 	-- end)
+
+	-- 	mod:echo(tostring(Unit.has_node(player.player_unit, "a_hanging_trophy_2")))
+
+	-- end
 end
 --[[
 	Mod update
