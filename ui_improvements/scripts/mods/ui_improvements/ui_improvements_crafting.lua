@@ -21,7 +21,6 @@ mod.button_list = {
 	"reroll_weapon_properties",
 	"reroll_weapon_traits",
 	"upgrade_item_rarity_common",
-	"extract_weapon_skin",
 	"apply_weapon_skin",
 	"convert_blue_dust",
 }
@@ -58,17 +57,23 @@ mod.create_craft_button = function(self, index, recipe_name)
 					texture_id = "background_fade",
 					style_id = "background_fade",
 					pass_type = "texture",
+					content_check_function = function(content)
+						return content.recipe_name ~= "empty"
+					end
 				},
 				{
 					style_id = "background_solid",
 					pass_type = "rect",
+					content_check_function = function(content)
+						return content.recipe_name ~= "empty"
+					end
 				},
 				{
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
 					content_check_function = function(content)
-						return content.button_hotspot.is_hover or saved_index == content.index
+						return content.recipe_name ~= "empty" and (content.button_hotspot.is_hover or saved_index == content.index)
 					end,
 				},
 				{
@@ -76,7 +81,7 @@ mod.create_craft_button = function(self, index, recipe_name)
 					pass_type = "text",
 					text_id = "text",
 					content_check_function = function(content)
-						return not content.button_hotspot.is_hover or saved_index == content.index
+						return content.recipe_name ~= "empty" and (not content.button_hotspot.is_hover or saved_index == content.index)
 					end,
 				},
 				{
@@ -84,23 +89,32 @@ mod.create_craft_button = function(self, index, recipe_name)
 					pass_type = "text",
 					text_id = "text",
 					content_check_function = function(content)
-						return content.button_hotspot.is_hover or saved_index == content.index
+						return content.recipe_name ~= "empty" and (content.button_hotspot.is_hover or saved_index == content.index)
 					end,
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
+					content_check_function = function(content)
+						return content.recipe_name ~= "empty"
+					end
 				},
 				{
 					texture_id = "glass",
 					style_id = "glass_top",
 					pass_type = "texture",
+					content_check_function = function(content)
+						return content.recipe_name ~= "empty"
+					end
 				},
 				{
 					texture_id = "glass",
 					style_id = "glass_bottom",
 					pass_type = "texture",
+					content_check_function = function(content)
+						return content.recipe_name ~= "empty"
+					end
 				},
 				{
 					texture_id = "divider_bottom",
@@ -171,6 +185,7 @@ mod.create_craft_button = function(self, index, recipe_name)
 			button_left = "button_detail_05_left",
 			button_right = "button_detail_05_right",
 			text = text or "n/a",
+			recipe_name = recipe_name or "n/a",
 			button_hotspot = {},
 			index = index,
 			move_table = move_table[index],
@@ -326,6 +341,10 @@ mod:hook_safe(HeroWindowCrafting, "create_ui_elements", function(...)
 		local recipe = crafting_recipes_by_name[page_name]
 		mod.craft_button_widgets[index] = mod:create_craft_button(index, recipe.display_name)
 	end
+
+	-- Empty slot
+	local index = #mod.button_list + 1
+	mod.craft_button_widgets[index] = mod:create_craft_button(index, "empty")
 
 end)
 --[[

@@ -4,6 +4,8 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.7.5
+	- Fixed bug with crafting buttons
 1.7.4
 	- Fixed bug with loot menu
 1.7.3
