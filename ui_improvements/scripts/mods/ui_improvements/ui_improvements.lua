@@ -140,7 +140,7 @@ mod:hook(HeroView, "_change_screen_by_name", function(func, self, screen_name, s
 	-- Get or delete data
 	if screen_name == "overview" then
 		mod:get_profile_data()
-	else
+	elseif screen_name ~= "loot" then
 		mod:delete_profile_data()
 	end
 	-- Orig function
