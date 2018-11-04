@@ -577,31 +577,49 @@ mod.definitions = {
 	dr_1h_axe_shield = {
 		right = {
 			back = { node = default_node_2, position = {0.4, -0.2, 0.1}, rotation = {0, -110, 90}, 
-				dr_ranger = { node = default_node_2, position = {0.3, -0.2, 0.1}, rotation = {0, -110, 90}, },
+				dr_ranger = {
+					node = default_node_2, position = {0.3, -0.2, 0.1}, rotation = {0, -110, 90}, 
+					skin_dr_default = { node = default_node_2, position = {0.4, -0.2, 0.1}, rotation = {0, -110, 90}, },
+				},
 				dr_ironbreaker = { node = default_node_2, position = {0.3, -0.2, 0.1}, rotation = {0, -110, 90}, },
 				dr_slayer = { node = default_node_2, position = {0.3, -0.2, 0.1}, rotation = {0, -110, 90}, },
 			},
 			backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180}, },
+				dr_ranger = {
+					attachment = 1, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.1}, rotation = {0, 180, 180}, },
 			},
 			belt = { node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110},
-				dr_ranger = { node = hip_node, position = {0.2, 0.1, -0.25}, rotation = {110, -70, -70}, },
+				dr_ranger = {
+					node = hip_node, position = {0.2, 0.1, -0.25}, rotation = {110, -70, -70},
+					skin_dr_default = { node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110}, },
+				},
 				dr_ironbreaker = { node = hip_node, position = {0.2, 0.1, -0.25}, rotation = {110, -70, -70}, },
 				dr_slayer = { node = hip_node, position = {0.2, 0.1, -0.25}, rotation = {110, -70, -70}, },
 			},
 		},
 		left = {
 			back = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
-				dr_ranger = { copy = "backpack", },
+				dr_ranger = {
+					copy = "backpack",
+					--skin_dr_default = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100}, },
+				},
 				dr_ironbreaker = { copy = "backpack", },
 			},
 			backpack = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.02, -0.07, -0.2}, rotation = {0, -140, 90}, },
+				dr_ranger = {
+					attachment = 1, attachment_node = 9, position = {0.02, -0.07, -0.2}, rotation = {0, -140, 90},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.07, 0.1}, rotation = {0, 0, 90}, },
 			},
 			belt = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
-				dr_ranger = { copy = "backpack", },
+				dr_ranger = {
+					copy = "backpack",
+					--skin_dr_default = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100}, },
+				},
 				dr_ironbreaker = { copy = "backpack", },
 			},
 		},
@@ -609,7 +627,10 @@ mod.definitions = {
 	dr_handgun = {
 		right = {
 			backpack = { node = backpack_node, position = {-0.2, -0.45, 0.25}, rotation = {-30, 90, -10},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {-0.35, 0.05, -0.3}, rotation = {90, 0, 0}, },
+				dr_ranger = {
+					attachment = 1, attachment_node = 9, position = {-0.35, 0.05, -0.3}, rotation = {90, 0, 0},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {-0.2, -0.45, 0.25}, rotation = {-30, 90, -10}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0.15, 0, 0.3}, rotation = {-90, 180, 0}, },
 			},
 			back = { node = default_node_2, position = {0.3, -0.2, -0.2}, rotation = {0, 30, 90},
@@ -626,7 +647,10 @@ mod.definitions = {
 				dr_slayer = { node = default_node_2, position = {0.2, -0.2, 0.1}, rotation = {0, -110, 90}, },
 			},
 			backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.10, -0.03, -0.25}, rotation = {0, 15, 180}, },
+				dr_ranger = { 
+					attachment = 1, attachment_node = 9, position = {0.10, -0.03, -0.25}, rotation = {0, 15, 180},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.25}, rotation = {0, 180, 180}, },
 				dr_slayer = { copy = "back", },
 			},
@@ -645,7 +669,10 @@ mod.definitions = {
 				dr_slayer = { node = default_node_2, position = {0.5, -0.22, 0.2}, rotation = {0, -110, 90}, replace = "backpack", },
 			},
 			backpack = { node = backpack_node, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90}, },
+				dr_ranger = {
+					attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.7}, rotation = {0, 180, -90}, },
 				dr_slayer = { node = default_node_2, position = {0.5, -0.2, -0.3}, rotation = {0, -60, -90}, replace = "back", },
 			},
@@ -659,7 +686,10 @@ mod.definitions = {
 				dr_slayer = { node = default_node_2, position = {0.2, -0.2, 0.1}, rotation = {0, -110, 90}, },
 			},
 			backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.10, -0.03, -0.25}, rotation = {0, 15, 180}, },
+				dr_ranger = { 
+					attachment = 1, attachment_node = 9, position = {0.10, -0.03, -0.25}, rotation = {0, 15, 180},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.3}, rotation = {0, 180, 180}, },
 				dr_slayer = { copy = "back", },
 			},
@@ -677,7 +707,10 @@ mod.definitions = {
 				dr_ironbreaker = { copy = "backpack", },
 			},
 			backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180}, },
+				dr_ranger = { 
+					attachment = 1, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.25}, rotation = {0, 180, 90}, },
 			},
 			belt = { node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110},
@@ -691,7 +724,10 @@ mod.definitions = {
 				dr_ironbreaker = { copy = "backpack", },
 			},
 			backpack = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.02, -0.07, -0.2}, rotation = {0, -140, 90}, },
+				dr_ranger = { 
+					attachment = 1, attachment_node = 9, position = {0.02, -0.07, -0.2}, rotation = {0, -140, 90},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.07, 0.1}, rotation = {0, 0, 90}, },
 			},
 			belt = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},
@@ -707,7 +743,10 @@ mod.definitions = {
 				dr_slayer = { node = default_node_2, position = {0.5, -0.2, 0.2}, rotation = {0, -110, 90}, replace = "backpack", }
 			},
 			backpack = { node = backpack_node, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90}, },
+				dr_ranger = {
+					attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.7}, rotation = {0, 180, -90}, },
 				dr_slayer = { node = default_node_2, position = {0.5, -0.2, -0.3}, rotation = {0, -60, -90}, replace = "back", },
 			},
@@ -720,7 +759,10 @@ mod.definitions = {
 				dr_slayer = { node = default_node_2, position = {0.5, -0.2, 0.2}, rotation = {0, -110, 90}, replace = "backpack", },
 			},
 			backpack = { node = backpack_node, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90}, },
+				dr_ranger = {
+					attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.7}, rotation = {0, 180, -60}, },
 				dr_slayer = { replace = "back", node = default_node_2, position = {0.5, -0.2, -0.3}, rotation = {0, -60, -90}, },
 			},
@@ -729,7 +771,10 @@ mod.definitions = {
 	dr_grudgeraker = {
 		right = {
 			backpack = { node = backpack_node, position = {-0.2, -0.3, 0.1}, rotation = {-30, 90, -10},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {-0.35, 0.05, -0.3}, rotation = {90, 0, 0}, },
+				dr_ranger = {
+					attachment = 1, attachment_node = 9, position = {-0.35, 0.05, -0.3}, rotation = {90, 0, 0},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {-0.17, -0.35, 0.1}, rotation = {-30, 20, -10}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0.15, -0.02, 0.3}, rotation = {-90, 180, 0}, },
 			},
 			back = { node = default_node_2, position = {0.3, -0.2, -0.2}, rotation = {0, 30, 90},
@@ -741,7 +786,10 @@ mod.definitions = {
 	dr_crossbow = {
 		left = {
 			backpack = { node = backpack_node, position = {-0.1, -0.3, 0.15}, rotation = {-10, 120, -10},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {-0.4, 0, -0.15}, rotation = {90, 0, 0}, },
+				dr_ranger = { 
+					attachment = 1, attachment_node = 9, position = {-0.4, 0, -0.15}, rotation = {90, 0, 0},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {-0.1, -0.3, 0.15}, rotation = {-10, 120, -10}, },
+				},
 				dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0.17, -0.05, 0.22}, rotation = {90, 0, 180}, },
 			},
 			back = { node = default_node_2, position = {0.2, -0.2, -0.1}, rotation = {270, 0, 110},
@@ -762,7 +810,9 @@ mod.definitions = {
 	dr_drakegun = {
 		right = {
 			back = { copy = "backpack", },
-			backpack = { attachment = 1, attachment_node = 6, position = {0.05, -0.02, 0.25}, rotation = {90, 0, 0}, },
+			backpack = {
+				attachment = 1, attachment_node = 6, position = {0.05, -0.02, 0.25}, rotation = {90, 0, 0},
+			},
 		},
 	},
 	dr_dual_axes = {
@@ -855,20 +905,13 @@ mod.definitions = {
 		},
 		dwarf_ranger = {
 			left = {
-				node = backpack_node,
-				position = {0.07, 0.04, -0.04},
-				rotation = {40, -20, -10},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {0, -0.1, 0}, rotation = {-20, 180, 0}, },
-				dr_ironbreaker = {
-					node = default_node,
-					position = {-0.05, 0.25, 0.15},
-					rotation = {-70, 110, -90},
+				node = backpack_node, position = {0.07, 0.04, -0.04}, rotation = {40, -20, -10},
+				dr_ranger = {
+					attachment = 1, attachment_node = 9, position = {0, -0.1, 0}, rotation = {-20, 180, 0}, 
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.07, 0.04, -0.04}, rotation = {40, -20, -10}, },
 				},
-				dr_slayer = {
-					node = default_node,
-					position = {-0.05, 0.25, 0.1},
-					rotation = {-70, 110, -90},
-				},
+				dr_ironbreaker = { node = default_node, position = {-0.05, 0.25, 0.15}, rotation = {-70, 110, -90}, },
+				dr_slayer = { node = default_node, position = {-0.05, 0.25, 0.1}, rotation = {-70, 110, -90}, },
 			},
 		},
 		left = {
@@ -1240,10 +1283,10 @@ mod.definitions = {
 		},
 		dwarf_ranger = {
 			left = {
-				node = backpack_node,
-				position = {0.15, -0.2, 0.13},
-				rotation = {60, -20, -10},
-				dr_ranger = { attachment = 1, attachment_node = 9, position = {-0.25, -0.03, -0.25}, rotation = {40, 180, 185},
+				node = backpack_node, position = {0.15, -0.2, 0.13}, rotation = {60, -20, -10},
+				dr_ranger = { 
+					attachment = 1, attachment_node = 9, position = {-0.25, -0.03, -0.25}, rotation = {40, 180, 185},
+					skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.15, -0.2, 0.13}, rotation = {60, -20, -10}, },
 					-- node = default_node,
 					-- position = {-0.05, -0.16, -0.05},
 					-- rotation = {0, 0, 170},

@@ -199,7 +199,7 @@ end
 --[[
 	Spawn single equipment unit
 --]]
-mod.get_item_setting = function(self, unit, slot_name, item_data, left)
+mod.get_item_setting = function(self, unit, slot_name, item_data, left, skin)
 	local def = self.definitions
 	local item_setting = nil
 
@@ -371,12 +371,17 @@ mod.get_item_setting = function(self, unit, slot_name, item_data, left)
 		end
 	end
 
+	-- Skin
+	if skin then
+		item_setting = item_setting[skin] or item_setting
+	end
+
 	return item_setting, replaced
 end
 --[[
 	Add single equipment item
 --]]
-mod.add_item = function(self, unit, slot_name, item_data)
+mod.add_item = function(self, unit, slot_name, item_data, skin)
 	local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 	local equipment = inventory_extension.equipment(inventory_extension)
 
@@ -389,8 +394,9 @@ mod.add_item = function(self, unit, slot_name, item_data)
 	if self.definitions[item_data.item_type] ~= nil then
 		local right, left, right_pack, left_pack = nil
 		local replaced = nil
+		local material_settings = nil
 		if item_data.right_hand_unit ~= nil then
-			local item_setting, replace = self:get_item_setting(unit, slot_name, item_data)
+			local item_setting, replace = self:get_item_setting(unit, slot_name, item_data, nil, skin)
 			replaced = replace
 
 			if not VT1 and career_name then
@@ -404,12 +410,20 @@ mod.add_item = function(self, unit, slot_name, item_data)
 				else
 					right_pack = WeaponSkins and equipment.slots[slot_name] and WeaponSkins.skins[equipment.slots[slot_name].skin] and
 						WeaponSkins.skins[equipment.slots[slot_name].skin].right_hand_unit.."_3p"
+
+					local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+					local weapon_slot = inventory_extension:get_wielded_slot_name()
+					local weapon_data = inventory_extension:get_slot_data(weapon_slot)
+					material_settings = weapon_data and weapon_data.material_settings
 					--mod:echo("right_pack = "..tostring(right_pack))
 					right_pack = right_pack or item_data.right_hand_unit.."_3p"
 				end
 
 				if right_pack then
 					right = self:spawn(right_pack, unit, item_setting, item_data)
+					if material_settings then
+						GearUtils.apply_material_settings(right, material_settings)
+					end	
 				else
 					--self:echo("right_pack "..tostring(item_data.item_type).." missing")
 				end
@@ -417,8 +431,9 @@ mod.add_item = function(self, unit, slot_name, item_data)
 			-- 	--self:echo(slot_name)
 			-- end
 		end
+		material_settings = nil
 		if item_data.left_hand_unit ~= nil then
-			local item_setting, replace = self:get_item_setting(unit, slot_name, item_data, true)
+			local item_setting, replace = self:get_item_setting(unit, slot_name, item_data, true, skin)
 			replaced = replace
 
 			if not VT1 and career_name then
@@ -432,11 +447,20 @@ mod.add_item = function(self, unit, slot_name, item_data)
 					left_pack = WeaponSkins and equipment.slots[slot_name] and WeaponSkins.skins[equipment.slots[slot_name].skin] and
 						WeaponSkins.skins[equipment.slots[slot_name].skin].left_hand_unit.."_3p"
 					--mod:echo("left_pack = "..tostring(left_pack))
+
+					local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+					local weapon_slot = inventory_extension:get_wielded_slot_name()
+					local weapon_data = inventory_extension:get_slot_data(weapon_slot)
+					material_settings = weapon_data and weapon_data.material_settings
+
 					left_pack = left_pack or item_data.left_hand_unit.."_3p"
 				end
 
 				if left_pack then
 					left = self:spawn(left_pack, unit, item_setting, item_data)
+					if material_settings then
+						GearUtils.apply_material_settings(left, material_settings)
+					end	
 				else
 					--self:echo("left_pack "..tostring(item_data.item_type).." missing")
 				end
@@ -471,8 +495,12 @@ mod.add_all_items = function(self, unit)
 			self:echo("Creating equipment for player '"..tostring(unit).."' ...")
 			local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 			local equipment = inventory_extension.equipment(inventory_extension)
+			local cosmetic_extension = ScriptUnit.extension(unit, "cosmetic_system")
+			local skin = cosmetic_extension:get_equipped_skin().name
 			for name, slot in pairs(equipment.slots) do
-				self:add_item(unit, name, slot.item_data)
+				--mod:dump(skin, "skin", 1)
+				--mod:echo("skin = '"..tostring(skin).."'")
+				self:add_item(unit, name, slot.item_data, skin)
 			end
 			self.current.slot[unit] = self.current.slot[unit] or equipment.wielded_slot or "slot_melee"
 			--self:set_equipment_visibility(unit)
@@ -580,7 +608,7 @@ mod.create_items_if_needed = function(self)
 			if player then
 				local player_unit = player.player_unit
 				if player_unit ~= nil and not self.current.equipment[player_unit] then
-					self:echo("Trying to create equipment for player '"..tostring(player_unit).."' ...")
+					--self:echo("Trying to create equipment for player '"..tostring(player_unit).."' ...")
 					local profile_synchronizer = Managers.state.network.profile_synchronizer
 					local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
 					if profile_index ~= nil then
@@ -767,7 +795,7 @@ mod:hook_safe(SimpleInventoryExtension, "destroy_slot", function(self, slot_name
 end)
 mod:hook_safe(SimpleInventoryExtension, "destroy", function(self)
 	mod:delete_units(self._unit)
-	mod:echo("SimpleInventoryExtension.destroy")
+	--mod:echo("SimpleInventoryExtension.destroy")
 end)
 mod:hook_safe(SimpleHuskInventoryExtension, "destroy_slot", function(self, slot_name)
 	mod:delete_units(self._unit)
@@ -776,7 +804,7 @@ mod:hook_safe(SimpleHuskInventoryExtension, "destroy_slot", function(self, slot_
 end)
 mod:hook_safe(SimpleHuskInventoryExtension, "destroy", function(self)
 	mod:delete_units(self._unit)
-	mod:echo("SimpleHuskInventoryExtension.destroy")
+	--mod:echo("SimpleHuskInventoryExtension.destroy")
 end)
 mod:hook_safe(PlayerUnitHealthExtension, "die", function(self)
 	mod:delete_units(self.unit)
