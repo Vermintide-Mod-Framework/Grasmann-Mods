@@ -388,46 +388,38 @@ mod.definitions = {
 	-- Waywatcher
 	ww_2h_axe = {
 		right = {
-			node = default_node_2,
-			position = {0.4, -0.1, 0.1},
-			rotation = {0, -110, 90},
+			node = default_node_2, position = {0.4, -0.1, 0.1}, rotation = {0, -110, 90},
 			--we_waywatcher = {attachment = 2, attachment_node = 8, position = {-0.4, -0.3, 0.1}, rotation = {90, 90, 80}, },
-			we_waywatcher = {node = default_node_2, position = {0.4, -0.1, 0.1}, rotation = {-40, -110, 50}, },
-			we_maidenguard = {
-				--4
-				attachment = 2, attachment_node = 19, position = {-0.2, -0.02, 0.06}, rotation = {25, 120, 75},
+			we_waywatcher = {
+				attachment = 2, attachment_node = 19, position = {-0.2, -0.05, 0}, rotation = {0, 120, 75},
+				skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.2, 0.05, 0.2}, rotation = {0, 120, 75}, },
 			},
-			we_shade = {
-				attachment = 2, attachment_node = 18, position = {-0.2, -0.02, 0.06}, rotation = {25, 120, 75},
-			},
+			we_maidenguard = { attachment = 2, attachment_node = 19, position = {-0.2, 0.02, -0.05}, rotation = {0, 120, 75}, },
+			we_shade = { attachment = 2, attachment_node = 18, position = {-0.2, -0.02, 0.06}, rotation = {25, 120, 75}, },
 		},
 	},
 	ww_trueflight = {
-		left = {
-			node = default_node_2,
-			position = {0.1, -0.15, 0},
-			rotation = {0, -45, -90},
-		},
+		left = { node = default_node_2, position = {0.1, -0.15, 0}, rotation = {0, -45, -90}, },
 	},
 	ww_1h_sword = {
 		right = {
 			belt = {
-				node = hip_node,
-				position = {0.2, 0.1, -0.17},
-				rotation = {130, -70, 110},
-				we_shade = {
-					node = hip_node,
-					position = {0.16, 0, 0.16},
-					rotation = {40, -70, 220},
+				node = hip_node, position = {0.2, 0.1, -0.17}, rotation = {130, -70, 110},
+				we_waywatcher = { 
+					node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220},
+					skin_ww_default = { node = hip_node, position = {0.2, 0.1, -0.17}, rotation = {130, -70, 110}, },
 				},
+				we_maidenguard = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
+				we_shade = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
 			},
 			back = {
-				node = default_node_2,
-				position = {0.2, -0.1, 0.1},
-				rotation = {0, -110, 90},
-				we_shade = {
-					attachment = 2, attachment_node = 18, position = {-0.2, -0.02, 0.06}, rotation = {25, 120, 75},
-				}
+				node = default_node_2, position = {0.2, -0.1, 0.1}, rotation = {0, -110, 90},
+				we_waywatcher = { 
+					attachment = 2, attachment_node = 19, position = {-0.2, -0.05, 0}, rotation = {0, 120, 75},
+					skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.1, -0.02, 0.2}, rotation = {35, 120, 75}, },
+				},
+				we_maidenguard = { attachment = 2, attachment_node = 19, position = {-0.2, 0.02, -0.05}, rotation = {0, 120, 75}, },
+				we_shade = { attachment = 2, attachment_node = 18, position = {-0.2, -0.02, 0.06}, rotation = {25, 120, 75}, },
 			},
 		},
 	},
@@ -435,11 +427,17 @@ mod.definitions = {
 		right = {
 			belt = {
 				node = hip_node, position = {0.2, 0.1, -0.17}, rotation = {130, -70, 110},
+				we_waywatcher = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
 				we_shade = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
 				we_maidenguard = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
 			},
 			back = {
 				node = default_node_2, position = {0.2, -0.1, 0.1}, rotation = {0, -110, 90},
+				--we_waywatcher = { attachment = 2, attachment_node = 10, position = {-0.2, 0.05, 0.2}, rotation = {0, 120, 75}, },
+				we_waywatcher = { 
+					attachment = 2, attachment_node = 19, position = {-0.2, -0.05, 0}, rotation = {0, 120, 75},
+					skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.1, -0.02, 0.2}, rotation = {35, 120, 75}, },
+				},
 				we_shade = { attachment = 2, attachment_node = 18, position = {-0.1, 0, 0.06}, rotation = {20, 120, 80}, },
 				we_maidenguard = { attachment = 2, attachment_node = 19, position = {-0.1, 0, 0}, rotation = {20, 120, 80}, },
 			},
@@ -447,11 +445,16 @@ mod.definitions = {
 		left = {
 			belt = {
 				node = hip_node, position = {0.2, 0, 0.17}, rotation = {40, -70, 180},
+				we_waywatcher = { node = hip_node, position = {0.16, 0, -0.17}, rotation = {130, -70, 140}, },
 				we_shade = { node = hip_node, position = {0.16, 0, -0.17}, rotation = {130, -70, 140}, },
 				we_maidenguard = { node = hip_node, position = {0.16, 0, -0.17}, rotation = {130, -70, 140}, },
 			},
 			back = {
 				node = default_node_2, position = {0.2, -0.1, -0.2}, rotation = {0, -50, 90},
+				we_waywatcher = { 
+					attachment = 2, attachment_node = 4, position = {-0.2, 0.02, 0}, rotation = {90, 90, -30},
+					skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.1, -0.02, -0.2}, rotation = {-30, 60, 100}, },
+				},
 				we_shade = { attachment = 2, attachment_node = 5, position = {-0.1, 0, -0.06}, rotation = {-20, 60, 100}, },
 				we_maidenguard = { attachment = 2, attachment_node = 4, position = {-0.1, 0, 0}, rotation = {-20, 60, 100}, },
 			},
@@ -461,11 +464,16 @@ mod.definitions = {
 		right = {
 			belt = {
 				node = hip_node, position = {0.2, 0.1, -0.17}, rotation = {130, -70, 110},
+				we_waywatcher = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
 				we_shade = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
 				we_maidenguard = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
 			},
 			back = {
 				node = default_node_2, position = {0.2, -0.1, 0.1}, rotation = {0, -110, 90},
+				we_waywatcher = { 
+					attachment = 2, attachment_node = 19, position = {-0.2, -0.05, 0}, rotation = {0, 120, 75},
+					skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.1, -0.02, 0.2}, rotation = {35, 120, 75}, },
+				},
 				we_shade = { attachment = 2, attachment_node = 18, position = {-0.1, 0, 0.06}, rotation = {20, 120, 80}, },
 				we_maidenguard = { attachment = 2, attachment_node = 19, position = {-0.1, 0, 0}, rotation = {20, 120, 80}, },
 			},
@@ -473,13 +481,16 @@ mod.definitions = {
 		left = {
 			belt = {
 				node = hip_node, position = {0.2, 0, 0.17}, rotation = {40, -70, 180},
+				we_waywatcher = { node = hip_node, position = {0.16, 0, -0.17}, rotation = {130, -70, 140}, },
 				we_shade = { node = hip_node, position = {0.16, 0, -0.17}, rotation = {130, -70, 140}, },
 				we_maidenguard = { node = hip_node, position = {0.16, 0, -0.17}, rotation = {130, -70, 140}, },
 			},
 			back = {
-				node = default_node_2,
-				position = {0.2, -0.1, -0.2},
-				rotation = {0, -50, 90},
+				node = default_node_2, position = {0.2, -0.1, -0.2}, rotation = {0, -50, 90},
+				we_waywatcher = { 
+					attachment = 2, attachment_node = 4, position = {-0.2, 0.02, 0}, rotation = {90, 90, -30},
+					skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.1, -0.02, -0.2}, rotation = {-30, 60, 100}, },
+				},
 				we_shade = { attachment = 2, attachment_node = 5, position = {-0.1, 0, -0.06}, rotation = {-20, 60, 100}, },
 				we_maidenguard = { attachment = 2, attachment_node = 4, position = {-0.1, 0, 0}, rotation = {-20, 60, 100}, },
 			},
@@ -489,11 +500,16 @@ mod.definitions = {
 		right = {
 			belt = {
 				node = hip_node, position = {0.2, 0.1, -0.17}, rotation = {130, -70, 110},
+				we_waywatcher = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
 				we_shade = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
 				we_maidenguard = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },
 			},
 			back = {
 				node = default_node_2, position = {0.2, -0.1, 0.1}, rotation = {0, -110, 90},
+				we_waywatcher = { 
+					attachment = 2, attachment_node = 19, position = {-0.2, -0.05, 0}, rotation = {0, 120, 75},
+					skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.1, -0.02, 0.2}, rotation = {35, 120, 75}, },
+				},
 				we_shade = { attachment = 2, attachment_node = 18, position = {-0.1, 0, 0.06}, rotation = {20, 120, 80}, },
 				we_maidenguard = { attachment = 2, attachment_node = 19, position = {-0.1, 0, 0}, rotation = {20, 120, 80}, },
 			},
@@ -501,11 +517,16 @@ mod.definitions = {
 		left = {
 			belt = {
 				node = hip_node, position = {0.2, 0, 0.17}, rotation = {40, -70, 180},
+				we_waywatcher = { node = hip_node, position = {0.16, 0, -0.17}, rotation = {130, -70, 140}, },
 				we_shade = { node = hip_node, position = {0.16, 0, -0.17}, rotation = {130, -70, 140}, },
 				we_maidenguard = { node = hip_node, position = {0.16, 0, -0.17}, rotation = {130, -70, 140}, },
 			},
 			back = {
 				node = default_node_2, position = {0.2, -0.1, -0.2}, rotation = {0, -50, 90},
+				we_waywatcher = { 
+					attachment = 2, attachment_node = 4, position = {-0.2, 0.02, 0}, rotation = {90, 90, -30},
+					skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.1, -0.02, -0.2}, rotation = {-30, 60, 100}, },
+				},
 				we_shade = { attachment = 2, attachment_node = 5, position = {-0.1, 0, -0.06}, rotation = {-20, 60, 100}, },
 				we_maidenguard = { attachment = 2, attachment_node = 4, position = {-0.1, 0, 0}, rotation = {-20, 60, 100}, },
 			},
@@ -513,63 +534,60 @@ mod.definitions = {
 	},
 	ww_longbow = {
 		left = {
-			node = default_node_2,
-			position = {0.1, -0.15, 0},
-			rotation = {0, -45, -90},
-			es_huntsman = {
-				node = default_node,
-				position = {0.3, -0.23, 0.1},
-				rotation = {0, -60, -90},
+			node = default_node_2, position = {0.1, -0.15, 0}, rotation = {0, -45, -90},
+			es_huntsman = { node = default_node, position = {0.3, -0.23, 0.1}, rotation = {0, -60, -90}, },
+			empire_soldier_tutorial = { node = default_node, position = {0.3, -0.23, 0.1}, rotation = {0, -60, -90}, },
+			we_waywatcher = { 
+				attachment = 2, attachment_node = 5, position = {-0.2, -0.02, -0.1}, rotation = {45, 90, 0},
+				skin_ww_default = { attachment = 2, attachment_node = 11, position = {0, 0.06, 0}, rotation = {-30, 60, 100}, },
 			},
-			empire_soldier_tutorial = {
-				node = default_node,
-				position = {0.3, -0.23, 0.1},
-				rotation = {0, -60, -90},
-			},
-			we_shade = {
-				attachment = 2, attachment_node = 5, position = {0, 0.03, 0.1}, rotation = {0, 45, 90},
-			},
+			we_maidenguard = { attachment = 2, attachment_node = 4, position = {0, 0.01, 0.2}, rotation = {0, 45, 90}, },
+			we_shade = { attachment = 2, attachment_node = 5, position = {0, 0.03, 0.1}, rotation = {0, 45, 90}, },
 		},
 	},
 	ww_shortbow = {
 		left = {
-			node = default_node_2,
-			position = {0.1, -0.15, 0},
-			rotation = {0, -45, -90},
-			we_shade = {
-				attachment = 2, attachment_node = 5, position = {0, 0.03, 0.1}, rotation = {0, 45, 90},
+			node = default_node_2, position = {0.1, -0.15, 0}, rotation = {0, -45, -90},
+			we_waywatcher = { 
+				attachment = 2, attachment_node = 5, position = {-0.2, -0.02, -0.1}, rotation = {45, 90, 0},
+				skin_ww_default = { attachment = 2, attachment_node = 11, position = {0, 0.06, 0}, rotation = {-30, 60, 100}, },
 			},
+			we_maidenguard = { attachment = 2, attachment_node = 4, position = {0, 0.01, 0.2}, rotation = {0, 45, 90}, },
+			we_shade = { attachment = 2, attachment_node = 5, position = {0, 0.03, 0.1}, rotation = {0, 45, 90}, },
 		},
 	},
 	ww_hagbane = {
 		left = {
-			node = default_node_2,
-			position = {0.1, -0.15, 0},
-			rotation = {0, -45, -90},
-			we_shade = {
-				attachment = 2, attachment_node = 5, position = {0, 0.03, 0.1}, rotation = {0, 45, 90},
+			node = default_node_2, position = {0.1, -0.15, 0}, rotation = {0, -45, -90},
+			we_waywatcher = { 
+				attachment = 2, attachment_node = 5, position = {-0.2, -0.02, -0.1}, rotation = {45, 90, 0},
+				skin_ww_default = { attachment = 2, attachment_node = 11, position = {0, 0.06, 0}, rotation = {-30, 60, 100}, },
 			},
+			we_maidenguard = { attachment = 2, attachment_node = 4, position = {0, 0.01, 0.2}, rotation = {0, 45, 90}, },
+			we_shade = { attachment = 2, attachment_node = 5, position = {0, 0.03, 0.1}, rotation = {0, 45, 90}, },
 		},
 	},
 	-- VT2
 	we_2h_spear = {
 		right = {
-			node = default_node_2,
-			position = {-0.1, -0.15, -0.1},
-			rotation = {0, -290, 90},
-			we_shade = {
-				attachment = 2, attachment_node = 18, position = {0.2, 0.05, -0.1}, rotation = {20, -60, 90},
-			}
+			node = default_node_2, position = {-0.1, -0.15, -0.1}, rotation = {0, -290, 90},
+			we_waywatcher = {
+				attachment = 2, attachment_node = 19, position = {-0.2, -0.05, 0}, rotation = {0, 120, 75},
+				skin_ww_default = { attachment = 2, attachment_node = 10, position = {0.3, 0.05, -0.1}, rotation = {0, 300, 75}, },
+			},
+			we_maidenguard = { attachment = 2, attachment_node = 19, position = {0, 0.02, -0.2}, rotation = {0, 300, 75}, },
+			we_shade = { attachment = 2, attachment_node = 18, position = {0.2, 0.05, -0.1}, rotation = {20, -60, 90}, },
 		},
 	},
 	ww_2h_sword = {
 		right = {
-			node = default_node_2,
-			position = {0.4, -0.1, 0.1},
-			rotation = {0, -110, 90},
-			we_shade = {
-				attachment = 2, attachment_node = 18, position = {-0.1, -0.01, 0.06}, rotation = {20, 120, 90},
+			node = default_node_2, position = {0.4, -0.1, 0.1}, rotation = {0, -110, 90},
+			we_waywatcher = {
+				attachment = 2, attachment_node = 19, position = {-0.2, -0.05, 0}, rotation = {0, 120, 75},
+				skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.2, 0.05, 0.2}, rotation = {0, 120, 75}, },
 			},
+			we_maidenguard = { attachment = 2, attachment_node = 19, position = {-0.2, 0.02, -0.05}, rotation = {0, 120, 75}, },
+			we_shade = { attachment = 2, attachment_node = 18, position = {-0.1, -0.01, 0.06}, rotation = {20, 120, 90}, },
 		},
 	},
 	
@@ -861,24 +879,13 @@ mod.definitions = {
 		},
 		wood_elf = {
 			left = {
-				node = default_node,
-				position = {-0.1, -0.15, -0.1},
-				rotation = {120, 110, 90},
-				we_waywatcher = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
+				node = default_node, position = {-0.1, -0.15, -0.1}, rotation = {120, 110, 90},
+				we_waywatcher = { 
+					node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0},
+					skin_ww_default = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },
 				},
-				we_maidenguard = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
-				},
-				we_shade = {
-					node = right_leg_node,
-					position = {-0.1, -0.05, 0.12},
-					rotation = {-55, 110, 0},
-				},
+				we_maidenguard = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },
+				we_shade = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },
 			},
 		},
 		witch_hunter = {
@@ -922,24 +929,13 @@ mod.definitions = {
 		-- VT2
 		way_watcher = {
 			left = {
-				node = default_node,
-				position = {-0.1, -0.15, -0.1},
-				rotation = {120, 110, 90},
-				we_waywatcher = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
+				node = default_node, position = {-0.1, -0.15, -0.1}, rotation = {120, 110, 90},
+				we_waywatcher = { 
+					node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0},
+					skin_ww_default = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },
 				},
-				we_maidenguard = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
-				},
-				we_shade = {
-					node = right_leg_node,
-					position = {-0.1, -0.05, 0.12},
-					rotation = {-55, 110, 0},
-				},
+				we_maidenguard = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },
+				we_shade = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },
 			},
 		},
 	},
@@ -1000,44 +996,22 @@ mod.definitions = {
 		},
 		wood_elf = {
 			right = {
-				node = default_node,
-				position = {-0.1, -0.18, 0.08},
-				rotation = {60, 120, 0},
-				we_waywatcher = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
+				node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 0},
+				we_waywatcher = { 
+					node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0},
+					skin_ww_default = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },
 				},
-				we_maidenguard = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
-				},
-				we_shade = {
-					node = hip_node,
-					position = {0.05, -0.1, -0.15},
-					rotation = {-45, 70, 0},
-				},
+				we_maidenguard = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },
+				we_shade = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },
 			},
 			left = {
-				node = default_node,
-				position = {-0.1, -0.18, 0.08},
-				rotation = {60, 120, 30},
-				we_waywatcher = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
+				node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 30},
+				we_waywatcher = { 
+					node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60},
+					skin_ww_default = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },
 				},
-				we_maidenguard = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
-				},
-				we_shade = {
-					node = hip_node,
-					position = {0.05, -0.1, -0.15},
-					rotation = {-45, 70, 0},
-				},
+				we_maidenguard = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },
+				we_shade = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },
 			},
 		},
 		witch_hunter = {
@@ -1137,50 +1111,22 @@ mod.definitions = {
 		-- VT2
 		way_watcher = {
 			right = {
-				node = default_node,
-				position = {-0.1, -0.18, 0.08},
-				rotation = {60, 120, 0},
-				we_waywatcher = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
+				node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 0},
+				we_waywatcher = { 
+					node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0},
+					skin_ww_default = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },
 				},
-				we_maidenguard = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
-				},
-				we_shade = {
-					node = hip_node,
-					position = {0.05, -0.1, -0.15},
-					rotation = {-45, 70, 0},
-				},
-				-- we_shade = {
-				-- 	attachment = 1, attachment_node = 4, position = {-0.1, -0.2, 0.15}, rotation = {-80, -70, 90},
-				-- },
+				we_maidenguard = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },
+				we_shade = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },
 			},
 			left = {
-				node = default_node,
-				position = {-0.1, -0.18, 0.08},
-				rotation = {60, 120, 30},
-				we_waywatcher = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
+				node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 30},
+				we_waywatcher = { 
+					node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60},
+					skin_ww_default = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },
 				},
-				we_maidenguard = {
-					node = default_node,
-					position = {0, 0.15, 0.05},
-					rotation = {0, 90, 20},
-				},
-				we_shade = {
-					node = hip_node,
-					position = {0.05, -0.02, -0.18},
-					rotation = {-50, 70, -60},
-				},
-				-- we_shade = {
-				-- 	attachment = 1, attachment_node = 4, position = {-0.1, -0.2, 0.15}, rotation = {-80, -70, 90},
-				-- },
+				we_maidenguard = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },
+				we_shade = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },
 			},
 		},
 	},
@@ -1236,27 +1182,13 @@ mod.definitions = {
 		},
 		wood_elf = {
 			left = {
-				node = default_node,
-				position = {0, 0.15, 0.05},
-				rotation = {0, 90, 20},
-				we_waywatcher = {
-					node = default_node,
-					position = {-0.1, -0.1, -0.13},
-					rotation = {100, 110, 90},
+				node = default_node, position = {0, 0.15, 0.05}, rotation = {0, 90, 20},
+				we_waywatcher = { 
+					node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90},
+					skin_ww_default = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },
 				},
-				we_maidenguard = {
-					node = default_node,
-					position = {-0.1, -0.1, -0.13},
-					rotation = {100, 110, 90},
-				},
-				we_shade = {
-					node = hip_node,
-					position = {0.08, -0.12, 0},
-					rotation = {260, 75, -90},
-				},
-				-- we_shade = {
-				-- 	attachment = 1, attachment_node = 4, position = {-0.1, -0.25, 0}, rotation = {-80, -70, 90},
-				-- },
+				we_maidenguard = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },
+				we_shade = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },
 			},
 		},
 		witch_hunter = {
@@ -1311,27 +1243,13 @@ mod.definitions = {
 		-- VT2
 		way_watcher = {
 			left = {
-				node = default_node,
-				position = {0, 0.15, 0.05},
-				rotation = {0, 90, 20},
-				we_waywatcher = {
-					node = default_node,
-					position = {-0.1, -0.1, -0.13},
-					rotation = {100, 110, 90},
+				node = default_node, position = {0, 0.15, 0.05}, rotation = {0, 90, 20},
+				we_waywatcher = { 
+					node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90},
+					skin_ww_default = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },
 				},
-				we_maidenguard = {
-					node = default_node,
-					position = {-0.1, -0.1, -0.13},
-					rotation = {100, 110, 90},
-				},
-				we_shade = {
-					node = hip_node,
-					position = {0.08, -0.12, 0},
-					rotation = {260, 75, -90},
-				},
-				-- we_shade = {
-				-- 	attachment = 1, attachment_node = 4, position = {-0.1, -0.25, 0}, rotation = {-80, -70, 90},
-				-- },
+				we_maidenguard = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },
+				we_shade = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },
 			},
 		},
 	},
