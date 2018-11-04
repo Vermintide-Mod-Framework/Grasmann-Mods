@@ -21,6 +21,8 @@ mod.current = {
 	slot = {},
 	equipment = {},
 	profile = {},
+	firstperson = true,
+	--packs = {},
 }
 
 mod.used_index = 1
@@ -75,10 +77,27 @@ end
 --]]
 mod.delete_units = function(self, unit)
 	if self.current.equipment[unit] then
+		self:echo("Deleting equipment for player '"..tostring(unit).."' ...")
 		for _, i_unit in pairs(self.current.equipment[unit]) do
 			self:delete_i_unit(i_unit)
 		end
 		self.current.equipment[unit] = nil
+	end
+end
+mod.delete_slot = function(self, unit, slot_name)
+	if self.current.equipment[unit] then
+		for ind = #self.current.equipment[unit], 1, -1 do
+			local i_unit = self.current.equipment[unit][ind]
+			if i_unit.slot == slot_name then
+				self:delete_i_unit(i_unit)
+			end
+		end
+
+		-- for _, i_unit in pairs(self.current.equipment[unit]) do
+		-- 	if i_unit.slot == slot_name then
+		-- 		self:delete_i_unit(i_unit)
+		-- 	end
+		-- end
 	end
 end
 --[[
@@ -157,6 +176,7 @@ mod.link_unit = function(self, unit, s_unit, item_setting)
 		end
 
 		World.link_unit(world, s_unit, attachment_unit, item_setting.attachment_node)
+		--World.link_unit(world, s_unit, attachment_unit, mod.used_index)
 
 	elseif Unit.has_node(unit, item_setting.node) then
 
@@ -185,7 +205,7 @@ mod.get_item_setting = function(self, unit, slot_name, item_data, left)
 
 	-- ####### Fixes and options #######
 	if slot_name == "slot_melee" or slot_name == "slot_ranged" then
-
+		--self:echo(tostring(item_data.item_type))
 		-- Dwarf
 		if table.contains(def.dwarf_weapons, item_data.item_type) then
 			local dwarf_weapon_position = self:get("dwarf_weapon_position")
@@ -373,9 +393,9 @@ mod.add_item = function(self, unit, slot_name, item_data)
 			local item_setting, replace = self:get_item_setting(unit, slot_name, item_data)
 			replaced = replace
 
-			-- if not VT1 and career_name then
-			-- 	item_setting = item_setting[career_name] or item_setting
-			-- end
+			if not VT1 and career_name then
+				item_setting = item_setting[career_name] or item_setting
+			end
 
 			-- if item_setting.node ~= nil then
 
@@ -384,6 +404,7 @@ mod.add_item = function(self, unit, slot_name, item_data)
 				else
 					right_pack = WeaponSkins and equipment.slots[slot_name] and WeaponSkins.skins[equipment.slots[slot_name].skin] and
 						WeaponSkins.skins[equipment.slots[slot_name].skin].right_hand_unit.."_3p"
+					--mod:echo("right_pack = "..tostring(right_pack))
 					right_pack = right_pack or item_data.right_hand_unit.."_3p"
 				end
 
@@ -410,6 +431,7 @@ mod.add_item = function(self, unit, slot_name, item_data)
 				else
 					left_pack = WeaponSkins and equipment.slots[slot_name] and WeaponSkins.skins[equipment.slots[slot_name].skin] and
 						WeaponSkins.skins[equipment.slots[slot_name].skin].left_hand_unit.."_3p"
+					--mod:echo("left_pack = "..tostring(left_pack))
 					left_pack = left_pack or item_data.left_hand_unit.."_3p"
 				end
 
@@ -442,16 +464,24 @@ end
 --]]
 mod.add_all_items = function(self, unit)
 	if not self.current.equipment[unit] then
+		--mod:echo("SimpleInventoryExtension._spawn_attached_units")
 		local slots_by_name = InventorySettings.slots_by_name
 		local wieldable_slots = InventorySettings.slots_by_wield_input
 		if ScriptUnit.has_extension(unit, "inventory_system") then
+			self:echo("Creating equipment for player '"..tostring(unit).."' ...")
 			local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 			local equipment = inventory_extension.equipment(inventory_extension)
 			for name, slot in pairs(equipment.slots) do
 				self:add_item(unit, name, slot.item_data)
 			end
 			self.current.slot[unit] = self.current.slot[unit] or equipment.wielded_slot or "slot_melee"
-			self:set_equipment_visibility(unit)
+			--self:set_equipment_visibility(unit)
+			-- local player = Managers.player:local_player()
+			-- if player and player.player_unit and unit == player.player_unit then
+			-- 	self:set_equipment_visibility(unit, self.current.firstperson)
+			-- else
+			-- 	self:set_equipment_visibility(unit)
+			-- end
 		end
 	end
 end
@@ -466,24 +496,45 @@ end
 --]]
 mod.set_equipment_visibility = function(self, unit, hide)
 	if self.current.equipment[unit] then
+
+		local player = Managers.player:local_player()
+		if player and player.player_unit and unit == player.player_unit then
+			hide = hide or self.current.firstperson
+		-- 	self:set_equipment_visibility(unit, self.current.firstperson)
+		-- else
+		-- 	self:set_equipment_visibility(unit)
+			--mod:echo("hide:"..tostring(hide))
+		end
+
+		--hide = hide or self.current.firstperson
 		for _, equip in pairs(self.current.equipment[unit]) do
+			-- mod:echo("Current slot:"..tostring(self.current.slot[unit]))
+			-- mod:echo("Current slot:"..tostring(equip.visible))
 			if equip.slot == self.current.slot[unit] or hide then
-				if equip.right ~= nil then
-					Unit.set_unit_visibility(equip.right, false)
-				end
-				if equip.left ~= nil then
-					Unit.set_unit_visibility(equip.left, false)
+				if equip.visible or equip.visible == nil then
+					if equip.right ~= nil then
+						Unit.set_unit_visibility(equip.right, false)
+					end
+					if equip.left ~= nil then
+						Unit.set_unit_visibility(equip.left, false)
+					end
+					-- mod:echo(tostring(equip.slot).." false")
+					equip.visible = false
 				end
 			else
-				if equip.right ~= nil then
-					Unit.set_unit_visibility(equip.right, true)
-					Unit.flow_event(equip.right, "lua_wield")
-					Unit.flow_event(equip.right, "lua_unwield")
-				end
-				if equip.left ~= nil then
-					Unit.set_unit_visibility(equip.left, true)
-					Unit.flow_event(equip.left, "lua_wield")
-					Unit.flow_event(equip.left, "lua_unwield")
+				if not equip.visible then
+					if equip.right ~= nil then
+						Unit.set_unit_visibility(equip.right, true)
+						Unit.flow_event(equip.right, "lua_wield")
+						Unit.flow_event(equip.right, "lua_unwield")
+					end
+					if equip.left ~= nil then
+						Unit.set_unit_visibility(equip.left, true)
+						Unit.flow_event(equip.left, "lua_wield")
+						Unit.flow_event(equip.left, "lua_unwield")
+					end
+					-- mod:echo(tostring(equip.slot).." true")
+					equip.visible = true
 				end
 			end
 		end
@@ -495,6 +546,7 @@ end
 mod.wield_equipment = function(self, unit, slot_name)
 	self.current.slot[unit] = slot_name
 	self:set_equipment_visibility(unit)
+	--mod:echo(slot_name)
 end
 --[[
 	Function from third person to check if forced third person is active
@@ -527,8 +579,8 @@ mod.create_items_if_needed = function(self)
 		for k, player in pairs(players) do
 			if player then
 				local player_unit = player.player_unit
-				if player_unit ~= nil then
-
+				if player_unit ~= nil and not self.current.equipment[player_unit] then
+					self:echo("Trying to create equipment for player '"..tostring(player_unit).."' ...")
 					local profile_synchronizer = Managers.state.network.profile_synchronizer
 					local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
 					if profile_index ~= nil then
@@ -538,10 +590,9 @@ mod.create_items_if_needed = function(self)
 							local health_extension = ScriptUnit.extension(player_unit, "health_system")
 							local status_extension = ScriptUnit.extension(player_unit, "status_system")
 							local is_alive = health_extension.is_alive(health_extension) and not status_extension.is_disabled(status_extension)
-							if is_alive and self:is_not_loading() and self.current.profile[player_unit] and not self.current.equipment[player_unit] then
+							if is_alive and self:is_not_loading() then
 								self:add_all_items(player_unit)
-							elseif not is_alive then
-								self:delete_units(player_unit)
+								self:set_equipment_visibility(player_unit)
 							end
 						end
 					end
@@ -549,18 +600,46 @@ mod.create_items_if_needed = function(self)
 			end
 		end
 		-- First person
-		local player = Managers.player:local_player()
-		if player and player.player_unit then
-			local first_person_extension = ScriptUnit.extension(player.player_unit, "first_person_system")
-			if first_person_extension then
-				mod:set_equipment_visibility(player.player_unit, not first_person_extension.first_person_mode)
-			end
+		-- local player = Managers.player:local_player()
+		-- if player and player.player_unit then
+		-- 	-- local first_person_extension = ScriptUnit.extension(player.player_unit, "first_person_system")
+		-- 	-- if first_person_extension then
+		-- 	-- 	mod:echo(tostring(first_person_extension.first_person_mode))
+		-- 	-- 	mod:set_equipment_visibility(player.player_unit, first_person_extension.first_person_mode)
+		-- 	-- end
 
-		-- 	local third_person_mod = get_mod("ThirdPerson")
-		-- 	local third_person = third_person_mod and not third_person_mod.firstperson or self:is_first_person_blocked(player.player_unit) or false
-		-- 	self:set_equipment_visibility(player.player_unit, not third_person)
-		end
+		-- 	-- local third_person_mod = get_mod("ThirdPerson")
+		-- 	-- local third_person = third_person_mod and not third_person_mod.firstperson or self:is_first_person_blocked(player.player_unit) or false
+		-- 	if not mod.current.firstperson == not third_person then
+		-- 		self:set_equipment_visibility(player.player_unit, not third_person)
+		-- 		mod:echo(tostring(third_person))
+		-- 		mod.current.firstperson = not third_person
+		-- 	end
+		-- end
 	end
+end
+--[[
+	Check if first person is blocked
+--]]
+mod.is_first_person_blocked = function(self, unit)
+	local blocked = nil
+	local state_system = ScriptUnit.extension(unit, "character_state_machine_system")
+	if state_system ~= nil then
+		local state = state_system.state_machine.state_current
+		blocked = blocked or state.name == "dead"
+		blocked = blocked or state.name == "grabbed_by_pack_master"
+		blocked = blocked or state.name == "inspecting"
+		blocked = blocked or state.name == "interacting"
+		blocked = blocked or state.name == "knocked_down"
+		blocked = blocked or state.name == "leave_ledge_hanging_falling"
+		blocked = blocked or state.name == "leave_ledge_hanging_pull_up"
+		blocked = blocked or state.name == "ledge_hanging"
+		blocked = blocked or state.name == "pounced_down"
+		blocked = blocked or state.name == "waiting_for_assisted_respawn"
+		blocked = blocked or state.name == "catapulted"
+		blocked = blocked or state.name == "overcharge_exploding"
+	end
+	return blocked
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -570,39 +649,143 @@ end
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
 
--- mod:hook_safe(PlayerUnitFirstPerson, "set_first_person_mode", function(self, active, override, ...)
--- 	local player = Managers.player:local_player()
--- 	if player then
--- 		mod:set_equipment_visibility(player.player_unit, active)
+mod:hook_safe(PlayerUnitFirstPerson, "set_first_person_mode", function(self, active, override, ...)
+	mod.current.firstperson = active
+	mod:set_equipment_visibility(self.unit, active)
+end)
+
+-- mod:hook_safe(PlayerUnitAttachmentExtension, "create_attachment", function(self, slot_name, item_data)
+-- 	mod:echo("PlayerUnitAttachmentExtension.create_attachment")
+-- end)
+
+-- mod:hook_safe(PlayerHuskAttachmentExtension, "create_attachment", function(self, slot_name, item_data)
+-- 	mod:echo("PlayerHuskAttachmentExtension.create_attachment")
+-- end)
+
+-- mod:hook_safe(MenuWorldPreviewer, "_spawn_hero_unit", function(self, skin_data, optional_scale)
+-- 	mod:echo("MenuWorldPreviewer._spawn_hero_unit for '"..tostring(self.character_unit).."'")
+-- 	mod:add_all_items(self.character_unit)
+
+-- 	for equip, _ in pairs(mod.current.equipment[self.character_unit]) do
+-- 		if equip.right then
+-- 			self:_request_mip_streaming_for_unit(equip.right)
+-- 		end
+-- 		if equip.left then
+-- 			self:_request_mip_streaming_for_unit(equip.left)
+-- 		end
+-- 		--self:_request_mip_streaming_for_unit(unit)
 -- 	end
+
+-- 	--mod:set_equipment_visibility(self.character_unit)
+-- end)
+
+-- mod:hook_safe(MenuWorldPreviewer, "wield_weapon_slot", function(self, slot_type)
+-- 	mod:echo("MenuWorldPreviewer.wield_weapon_slot for '"..tostring(self.character_unit).."'")
 -- end)
 
 --[[
 	Wield equipment hooks
 --]]
-mod:hook_safe(InventorySystem, "rpc_wield_equipment", function(self, sender_, go_id, slot_id)
-	local unit = self.unit_storage:unit(go_id)
-	local slot_name = NetworkLookup.equipment_slots[slot_id]
-	mod:wield_equipment(unit, slot_name)
-end)
+-- mod:hook_safe(InventorySystem, "rpc_wield_equipment", function(self, sender_, go_id, slot_id)
+-- 	local unit = self.unit_storage:unit(go_id)
+-- 	local slot_name = NetworkLookup.equipment_slots[slot_id]
+-- 	mod:wield_equipment(unit, slot_name)
+-- 	mod:echo("InventorySystem.rpc_wield_equipment")
+-- end)
 mod:hook_safe(SimpleInventoryExtension, "wield", function(self, slot_name)
 	mod:wield_equipment(self._unit, slot_name)
+	--mod:set_equipment_visibility(self._unit)
+	--mod:echo("SimpleInventoryExtension.wield")
+	--mod:set_equipment_visibility(self._unit)
 end)
 mod:hook_safe(SimpleHuskInventoryExtension, "wield", function(self, slot_name)
 	mod:wield_equipment(self._unit, slot_name)
+	--mod:set_equipment_visibility(self._unit)
+	--mod:echo("SimpleHuskInventoryExtension.wield")
 end)
+
+-- mod:hook_safe(SimpleInventoryExtension, "extensions_ready", function(self, world, unit, ...)
+-- 	mod:add_all_items(self._unit)
+-- 	mod:echo("SimpleInventoryExtension.extensions_ready")
+-- end)
+
+-- mod:hook_safe(SimpleInventoryExtension, "extensions_ready", function(self, world, unit)
+-- 	mod:add_all_items(self._unit)
+-- 	mod:set_equipment_visibility(self._unit)
+-- 	mod:echo("SimpleInventoryExtension.extensions_ready")
+-- end)
+
+-- mod:hook_safe(SimpleInventoryExtension, "_spawn_attached_units", function(self, attached_units)
+-- 	mod:add_all_items(self._unit)
+-- 	-- local slot_name = self._equipment.wielded_slot
+-- 	-- mod:echo(tostring(slot_name))
+-- 	-- mod:wield_equipment(self._unit, slot_name)
+-- 	-- mod:set_equipment_visibility(self._unit)
+-- 	--mod:echo("SimpleInventoryExtension._spawn_attached_units")
+-- end)
+
+-- mod:hook_safe(SimpleHuskInventoryExtension, "_spawn_attached_units", function(self, attached_units)
+-- 	mod:add_all_items(self._unit)
+-- 	--mod:echo("SimpleHuskInventoryExtension._spawn_attached_units")
+-- end)
+
+-- mod:hook_safe(SimpleInventoryExtension, "destroy", function(self)
+-- 	mod:delete_units(self._unit)
+-- 	mod:echo("SimpleInventoryExtension._despawn_attached_units")
+-- end)
+
+-- mod:hook_safe(SimpleInventoryExtension, "_despawn_attached_units", function(self)
+-- 	-- mod:delete_units(self._unit)
+-- 	-- mod:echo("SimpleInventoryExtension._despawn_attached_units")
+-- end)
+
+-- mod:hook_safe(InventorySystem, "rpc_add_equipment", function(self, sender, go_id, slot_id, item_name_id, weapon_skin_id)
+-- 	mod:echo("InventorySystem.rpc_add_equipment")
+-- end)
+
+-- mod:hook_safe(SimpleInventoryExtension, "add_equipment", function(self, slot_name, item_data, unit_template, extra_extension_data, ammo_percent)
+-- 	mod:echo("SimpleInventoryExtension.add_equipment")
+-- 	mod:add_item(self._unit, slot_name, item_data)
+-- 	--mod:set_equipment_visibility(self._unit)
+-- end)
+
+-- mod:hook_safe(SimpleInventoryExtension, "create_equipment_in_slot", function(self, slot_id, backend_id)
+-- 	mod:echo("SimpleInventoryExtension.create_equipment_in_slot")
+-- end)
+
+-- mod:hook_safe(SimpleInventoryExtension, "add_equipment_by_category", function(self, category)
+-- 	mod:echo("SimpleInventoryExtension.add_equipment_by_category")
+-- end)
+
 --[[
 	Despawn equipment
 --]]
-mod:hook_safe(SimpleInventoryExtension, "destroy_slot", function(self)
+mod:hook_safe(SimpleInventoryExtension, "destroy_slot", function(self, slot_name, allow_destroy_weapon)
 	mod:delete_units(self._unit)
+	--mod:delete_slot(self._unit, slot_name)
+	--mod:echo("SimpleInventoryExtension.destroy_slot")
 end)
-mod:hook_safe(SimpleHuskInventoryExtension, "destroy_slot", function(self)
+mod:hook_safe(SimpleInventoryExtension, "destroy", function(self)
 	mod:delete_units(self._unit)
+	mod:echo("SimpleInventoryExtension.destroy")
+end)
+mod:hook_safe(SimpleHuskInventoryExtension, "destroy_slot", function(self, slot_name)
+	mod:delete_units(self._unit)
+	--mod:delete_slot(self._unit, slot_name)
+	--mod:echo("SimpleHuskInventoryExtension.destroy_slot")
+end)
+mod:hook_safe(SimpleHuskInventoryExtension, "destroy", function(self)
+	mod:delete_units(self._unit)
+	mod:echo("SimpleHuskInventoryExtension.destroy")
 end)
 mod:hook_safe(PlayerUnitHealthExtension, "die", function(self)
 	mod:delete_units(self.unit)
+	--mod:echo("PlayerUnitHealthExtension.die")
 end)
+-- mod:hook_safe(PlayerUnitHealthExtension, "cb_game_session_disconnect", function(self)
+-- 	mod:delete_units(self.unit)
+-- 	--mod:echo("PlayerUnitHealthExtension.cb_game_session_disconnect")
+-- end)
 --[[
 	Unloading packages
 --]]
@@ -619,25 +802,26 @@ end)
 --[[
 	Inventory synchronizer hook
 --]]
-mod:hook(InventoryPackageSynchronizer, "set_inventory_list", function(func, self, profile_index, ...)
-	local players = Managers.player:human_and_bot_players()
-	for k, player in pairs(players) do
-		local profile_synchronizer = Managers.state.network.profile_synchronizer
-		local profile_index_ = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
-		if profile_index == profile_index_ then
-			mod:delete_units(player.player_unit)
-		end
-	end
-	func(self, profile_index, ...)
-end)
+-- mod:hook(InventoryPackageSynchronizer, "set_inventory_list", function(func, self, profile_index, ...)
+-- 	-- local players = Managers.player:human_and_bot_players()
+-- 	-- for k, player in pairs(players) do
+-- 	-- 	local profile_synchronizer = Managers.state.network.profile_synchronizer
+-- 	-- 	local profile_index_ = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
+-- 	-- 	if profile_index == profile_index_ then
+-- 	-- 		mod:delete_units(player.player_unit)
+-- 	-- 	end
+-- 	-- end
+-- 	mod:echo("InventoryPackageSynchronizer.set_inventory_list")
+-- 	func(self, profile_index, ...)
+-- end)
 --[[
 	Delete equipment on host character change in vt2
 --]]
 if not VT1 then
-	mod:hook(PlayerManager, "rpc_to_client_spawn_player", function(func, ...)
-		mod:delete_all_units()
-		func(...)
-	end)
+	-- mod:hook(PlayerManager, "rpc_to_client_spawn_player", function(func, ...)
+	-- 	mod:delete_all_units()
+	-- 	func(...)
+	-- end)
 end
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
@@ -653,28 +837,38 @@ mod.on_setting_changed = function(setting_name)
 	-- Dwarf weapons
 	if setting_name == "dwarf_weapon_position" then
 		for unit, name in pairs(mod.current.profile) do
-			if name == "dwarf_ranger" then mod:delete_units(unit) end
+			if name == "dwarf_ranger" then
+				mod:delete_units(unit)
+			end
 		end
 	end
 	-- Dwarf one-handed weapons
 	if setting_name == "dwarf_onehand_weapon_position" then
 		for unit, name in pairs(mod.current.profile) do
-			if name == "dwarf_ranger" then mod:delete_units(unit) end
+			if name == "dwarf_ranger" then
+				mod:delete_units(unit)
+			end
 		end
 	end
 	-- Waywatcher dual weapons
 	if setting_name == "waywatcher_dualweapon_position" then
 		for unit, name in pairs(mod.current.profile) do
-			if name == "way_watcher" then mod:delete_units(unit) end
+			if name == "way_watcher" then
+				mod:delete_units(unit)
+			end
 		end
 	end
 	-- One-handed weapons
 	if setting_name == "onehand_weapon_position" then
-		for unit, name in pairs(mod.current.profile) do mod:delete_units(unit) end
+		for unit, name in pairs(mod.current.profile) do
+			mod:delete_units(unit)
+		end
 	end
 	-- Downscale big weapons
 	if setting_name == "downscale_big_weapons" then
-		for unit, name in pairs(mod.current.profile) do mod:delete_units(unit) end
+		for unit, name in pairs(mod.current.profile) do
+			mod:delete_units(unit)
+		end
 	end
 end
 --[[
@@ -687,6 +881,7 @@ end
 	Mod Unsuspended
 --]]
 mod.on_enabled = function(initial_call)
+	--mod:create_items_if_needed()
 	-- local player = Managers.player:local_player()
 	-- if player then
 	-- 	-- local bones = Unit.bones(player.player_unit)
