@@ -484,6 +484,7 @@ mod.add_all_items = function(self, unit)
 			local equipment = inventory_extension.equipment(inventory_extension)
 			local cosmetic_extension = ScriptUnit.extension(unit, "cosmetic_system")
 			local skin = cosmetic_extension:get_equipped_skin().name
+			self:echo(skin)
 			for name, slot in pairs(equipment.slots) do
 				self:add_item(unit, name, slot.item_data, skin)
 			end

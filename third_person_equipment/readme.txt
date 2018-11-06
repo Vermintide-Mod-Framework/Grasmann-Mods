@@ -6,6 +6,8 @@ Melee- and ranged weapon as well as tomes, grims, potions, bombs and heal items.
 Works for yourself, other players and bots.
 
 Changelog:
+2.0.7
+	- Reworked soldier positions
 2.0.6
 	- Fixed bug when player leaving / joining resulting in floating items
 	- Reworked dwarf positions
