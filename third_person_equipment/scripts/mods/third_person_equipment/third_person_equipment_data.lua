@@ -29,7 +29,7 @@ return {
         {text = "Backpack", value = 1},
         {text = "Back", value = 2},
       },
-      ["default_value"] = VT1 and 1 or 2,
+      ["default_value"] = 1,
     },
     {
       ["setting_name"] = "dwarf_onehand_weapon_position",
