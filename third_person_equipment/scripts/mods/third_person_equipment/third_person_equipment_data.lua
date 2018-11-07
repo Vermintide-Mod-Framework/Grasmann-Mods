@@ -87,14 +87,14 @@ return {
       ["range"] = {50, 100},
       ["default_value"] = 75,
     },
-    {
-      ["show_widget_condition"] = {1},
-      ["setting_name"] = "change_index",
-      ["widget_type"] = "keybind",
-      ["text"] = "Index",
-      ["tooltip"] = "Index.",
-      ["default_value"] = {},
-      ["action"] = "change_index"
-    },
+    -- {
+    --   ["show_widget_condition"] = {1},
+    --   ["setting_name"] = "change_index",
+    --   ["widget_type"] = "keybind",
+    --   ["text"] = "Index",
+    --   ["tooltip"] = "Index.",
+    --   ["default_value"] = {},
+    --   ["action"] = "change_index"
+    -- },
   }
 }

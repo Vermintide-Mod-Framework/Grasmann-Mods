@@ -25,12 +25,12 @@ mod.current = {
 	--packs = {},
 }
 
-mod.used_index = 1
-mod.change_index = function()
-	mod.used_index = mod.used_index + 1
-	mod:echo("used index = "..tostring(mod.used_index))
-	mod:delete_all_units()
-end
+-- mod.used_index = 1
+-- mod.change_index = function()
+-- 	mod.used_index = mod.used_index + 1
+-- 	mod:echo("used index = "..tostring(mod.used_index))
+-- 	mod:delete_all_units()
+-- end
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
 -- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
@@ -484,7 +484,7 @@ mod.add_all_items = function(self, unit)
 			local equipment = inventory_extension.equipment(inventory_extension)
 			local cosmetic_extension = ScriptUnit.extension(unit, "cosmetic_system")
 			local skin = cosmetic_extension:get_equipped_skin().name
-			self:echo(skin)
+			--self:echo(skin)
 			for name, slot in pairs(equipment.slots) do
 				self:add_item(unit, name, slot.item_data, skin)
 			end

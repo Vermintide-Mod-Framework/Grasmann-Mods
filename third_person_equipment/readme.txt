@@ -6,6 +6,8 @@ Melee- and ranged weapon as well as tomes, grims, potions, bombs and heal items.
 Works for yourself, other players and bots.
 
 Changelog:
+2.1.0
+	- Restructured definitions
 2.0.9
 	- Reworked mage positions
 2.0.8
