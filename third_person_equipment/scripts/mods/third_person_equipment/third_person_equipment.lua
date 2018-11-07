@@ -183,6 +183,8 @@ mod.link_unit = function(self, unit, s_unit, item_setting)
 		local node = Unit.node(unit, item_setting.node)
 		World.link_unit(world, s_unit, unit, node)
 
+	-- else
+	-- 	mod:echo("Node = '"..tostring(item_setting.node).."'")
 	end
 
 	local i_pos = item_setting.position

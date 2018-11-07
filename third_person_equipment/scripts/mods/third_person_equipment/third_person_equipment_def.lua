@@ -6,6 +6,13 @@ local mod = get_mod("ThirdPersonEquipment")
 	Author: grasmann
 --]]
 
+local default_node = "j_spine"
+local default_node_2 = "j_spine2"
+local backpack_node = VT1 and "a_hanging_trophy_3" or default_node
+local hip_node = "j_hips"
+local left_leg_node = "j_leftupleg"
+local right_leg_node = "j_rightupleg"
+
 mod.definitions = {
 	dwarf_weapons = {
 		"dr_1h_axe_shield",

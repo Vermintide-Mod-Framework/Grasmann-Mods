@@ -32,7 +32,7 @@ mod.definitions.grenade.bright_wizard = {
         bw_scholar = { node = default_node, position = {-0.1, -0.18, 0.1}, rotation = {60, 120, 0}, },                          -- V2 pyromancer
         bw_unchained = { node = default_node, position = {-0.1, -0.18, 0.1}, rotation = {60, 120, 0}, },                        -- V2 unchained
     },
-    left = { node = default_node, position = {0, -0.13, 0.08}, rotation = {60, 120, 30},
+    left = { node = default_node, position = {0, -0.13, 0.08}, rotation = {60, 120, 30},                                        -- Default / V1
         bw_adept = {
             node = default_node, position = {-0.1, -0.18, 0.1}, rotation = {60, 120, 30},                                       -- V2 battle wizard
             skin_bw_default = { node = default_node, position = {-0.1, -0.18, 0.1}, rotation = {60, 120, 30}, },				-- V2 classic battle wizard skin
