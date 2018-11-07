@@ -204,108 +204,153 @@ mod.definitions = {
 	--- Mage
 	bw_flame_sword = {
 		right = {
-			belt = {
-				node = hip_node,
-				position = {0.2, 0.05, -0.14},
-				rotation = {130, -70, 110},
+			belt = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110},								-- Default / V1						2.1.0
+				bw_adept = { 
+					node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, 								-- V2 battle wizard
+					skin_bw_default = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },			-- V2 classic battle wizard skin	2.1.0
+				},
+				bw_unchained = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },					-- V2 unchained
+				bw_scholar = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },					-- V2 pyromancer
 			},
-			back = {
-				node = default_node_2,
-				position = {0.25, -0.14, 0.1},
-				rotation = {0, -110, 90},
+			back = { node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90},							-- Default / V1						2.1.0
+				bw_adept = { 
+					node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90}, 							-- V2 battle wizard
+					skin_bw_default = { node = default_node_2, position = {0.25, -0.1, 0.1}, rotation = {-60, -110, 30}, },		-- V2 classic battle wizard skin	2.1.0
+				},
+				bw_unchained = { node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90}, },				-- V2 unchained
+				bw_scholar = { node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90}, },				-- V2 pyromancer
 			},
 		},
 	},
 	bw_1h_sword = {
 		right = {
-			belt = {
-				node = hip_node,
-				position = {0.2, 0.05, -0.14},
-				rotation = {130, -70, 110},
+			belt = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110},								-- Default / V1						2.1.0
+				bw_adept = { 
+					node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, 								-- V2 battle wizard
+					skin_bw_default = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },			-- V2 classic battle wizard skin	2.1.0
+				},
+				bw_unchained = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },					-- V2 unchained
+				bw_scholar = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },					-- V2 pyromancer
 			},
-			back = {
-				node = default_node_2,
-				position = {0.25, -0.14, 0.1},
-				rotation = {0, -110, 90},
+			back = { node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90},							-- Default / V1						2.1.0
+				bw_adept = { 
+					node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90}, 							-- V2 battle wizard
+					skin_bw_default = { node = default_node_2, position = {0.25, -0.1, 0.1}, rotation = {-60, -110, 30}, },		-- V2 classic battle wizard skin	2.1.0
+				},
+				bw_unchained = { node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90}, },				-- V2 unchained
+				bw_scholar = { node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90}, },				-- V2 pyromancer
 			},
 		},
 	},
 	bw_morningstar = {
 		right = {
-			belt = {
-				node = hip_node,
-				position = {0.3, 0, -0.1},
-				rotation = {130, -70, 110},
+			belt = { node = hip_node, position = {0.3, 0, -0.1}, rotation = {130, -70, 110},									-- Default / V1						2.1.0
+				bw_adept = { 	
+					node = hip_node, position = {0.3, 0, -0.1}, rotation = {130, -70, 110}, 									-- V2 battle wizard
+					skin_bw_default = { node = default_node_2, position = {0.25, -0.1, 0.1}, rotation = {-40, -110, 30}, },				-- V2 classic battle wizard skin	2.1.0
+				},
+				bw_unchained = { node = hip_node, position = {0.3, 0, -0.1}, rotation = {130, -70, 110}, },						-- V2 unchained
+				bw_scholar = { node = hip_node, position = {0.3, 0, -0.1}, rotation = {130, -70, 110}, },						-- V2 pyromancer
 			},
-			back = {
-				node = default_node_2,
-				position = {0.3, -0.15, 0.1},
-				rotation = {0, -110, 90},
+			back = { node = default_node_2, position = {0.3, -0.15, 0.1}, rotation = {0, -110, 90},								-- Default / V1						2.1.0
+				bw_adept = { 
+					node = default_node_2, position = {0.3, -0.15, 0.1}, rotation = {0, -110, 90}, 								-- V2 battle wizard
+					skin_bw_default = { node = default_node_2, position = {0.25, -0.1, 0.1}, rotation = {-40, -110, 30}, },		-- V2 classic battle wizard skin	2.1.0
+				},
+				bw_unchained = { node = default_node_2, position = {0.3, -0.15, 0.1}, rotation = {0, -110, 90}, },				-- V2 unchained
+				bw_scholar = { node = default_node_2, position = {0.3, -0.15, 0.1}, rotation = {0, -110, 90}, },				-- V2 pyromancer
 			},
 		},
 	},
 	bw_staff_beam = {
-		right = {
-			node = default_node_2,
-			position = {0, -0.15, 0},
-			rotation = {0, 110, 180},
+		right = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180},								-- Default / V1						2.1.0
+			bw_adept = { 	
+				node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, 									-- V2 battle wizard
+				skin_bw_default = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },			-- V2 classic battle wizard skin	2.1.0
+			},
+			bw_unchained = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },					-- V2 unchained
+			bw_scholar = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },					-- V2 pyromancer
 		},
 	},
 	bw_staff_firball = {
-		right = {
-			node = default_node_2,
-			position = {0, -0.15, 0},
-			rotation = {0, 110, 180},
+		right = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180},								-- Default / V1						2.1.0
+			bw_adept = { 	
+				node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, 									-- V2 battle wizard
+				skin_bw_default = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },			-- V2 classic battle wizard skin	2.1.0
+			},
+			bw_unchained = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },					-- V2 unchained
+			bw_scholar = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },					-- V2 pyromancer
 		},
 	},
 	bw_staff_geiser = {
-		right = {
-			node = default_node_2,
-			position = {0, -0.15, 0},
-			rotation = {0, 110, 180},
+		right = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180},								-- Default / V1						2.1.0
+			bw_adept = { 	
+				node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, 									-- V2 battle wizard
+				skin_bw_default = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },			-- V2 classic battle wizard skin	2.1.0
+			},
+			bw_unchained = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },					-- V2 unchained
+			bw_scholar = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },					-- V2 pyromancer
 		},
 	},
 	bw_staff_spear = {
-		right = {
-			node = default_node_2,
-			position = {0, -0.15, 0},
-			rotation = {0, 110, 180},
+		right = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180},								-- Default / V1						2.1.0
+			bw_adept = { 	
+				node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, 									-- V2 battle wizard
+				skin_bw_default = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },			-- V2 classic battle wizard skin	2.1.0
+			},
+			bw_unchained = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },					-- V2 unchained
+			bw_scholar = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },					-- V2 pyromancer
 		},
 	},
 	bw_dagger = {
 		right = {
-			belt = {
-				node = hip_node,
-				position = {0.2, 0.05, -0.14},
-				rotation = {130, -70, 110},
+			belt = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110},								-- Default / V1						2.1.0
+				bw_adept = { 	
+					node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, 								-- V2 battle wizard
+					skin_bw_default = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },			-- V2 classic battle wizard skin	2.1.0
+				},
+				bw_unchained = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },					-- V2 unchained
+				bw_scholar = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },					-- V2 pyromancer
 			},
-			back = {
-				node = default_node_2,
-				position = {0.25, -0.14, 0.1},
-				rotation = {0, -110, 90},
+			back = { node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90},							-- Default / V1						2.1.0
+				bw_adept = { 
+					node = default_node_2, position = {0.3, -0.15, 0.1}, rotation = {0, -110, 90}, 								-- V2 battle wizard
+					skin_bw_default = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },		-- V2 classic battle wizard skin	2.1.0
+				},
+				bw_unchained = { node = default_node_2, position = {0.3, -0.15, 0.1}, rotation = {0, -110, 90}, },				-- V2 unchained
+				bw_scholar = { node = default_node_2, position = {0.3, -0.15, 0.1}, rotation = {0, -110, 90}, },				-- V2 pyromancer
 			},
 		},
 	},
 	-- VT2
 	bw_1h_dagger = {
 		right = {
-			belt = {
-				node = hip_node,
-				position = {0.2, 0.05, -0.14},
-				rotation = {130, -70, 110},
+			belt = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110},								-- Default / V1						2.1.0
+				bw_adept = { 	
+					node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, 								-- V2 battle wizard
+					skin_bw_default = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },			-- V2 classic battle wizard skin	2.1.0
+				},
+				bw_unchained = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },					-- V2 unchained
+				bw_scholar = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },					-- V2 pyromancer
 			},
-			back = {
-				node = default_node_2,
-				position = {0.25, -0.14, 0.1},
-				rotation = {0, -110, 90},
+			back = { node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90},							-- Default / V1						2.1.0
+				bw_adept = { 
+					node = default_node_2, position = {0.3, -0.15, 0.1}, rotation = {0, -110, 90}, 								-- V2 battle wizard
+					skin_bw_default = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },			-- V2 classic battle wizard skin	2.1.0
+				},
+				bw_unchained = { node = default_node_2, position = {0.3, -0.15, 0.1}, rotation = {0, -110, 90}, },				-- V2 unchained
+				bw_scholar = { node = default_node_2, position = {0.3, -0.15, 0.1}, rotation = {0, -110, 90}, },				-- V2 pyromancer
 			},
 		},
 	},
 	bw_staff_flamethrower = {
-		right = {
-			node = default_node_2,
-			position = {0, -0.15, 0},
-			rotation = {0, 110, 180},
+		right = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180},								-- Default / V1						2.1.0
+			bw_adept = { 	
+				node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, 									-- V2 battle wizard
+				skin_bw_default = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },			-- V2 classic battle wizard skin	2.1.0
+			},
+			bw_unchained = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },					-- V2 unchained
+			bw_scholar = { node = default_node_2, position = {0, -0.15, 0}, rotation = {0, 110, 180}, },					-- V2 pyromancer
 		},
 	},
 	
@@ -313,59 +358,59 @@ mod.definitions = {
 	wh_2h_sword = {
 		right = { node = default_node_2, position = {0.4, -0.17, 0.2}, rotation = {0, -110, 90},						-- Default / V1					2.1.0
 			wh_captain = {
-				node = default_node_2, position = {0.4, -0.17, 0.2}, rotation = {0, -110, 90},							-- V2 captain
-				skin_wh_default = { node = default_node_2, position = {0.3, -0.1, 0.2}, rotation = {-30, -130, 70}, },	-- V2 classic captain skin		2.1.0
+				node = default_node_2, position = {0.4, -0.16, 0.2}, rotation = {-10, -110, 90},						-- V2 captain					2.1.0
+				skin_wh_default = { node = default_node_2, position = {0.3, -0.1, 0.2}, rotation = {-20, -130, 70}, },	-- V2 classic captain skin		2.1.0
 			},
-			wh_bountyhunter = { node = default_node_2, position = {0.4, -0.17, 0.2}, rotation = {0, -110, 90}, },		-- V2 bountyhunter
-			wh_zealot = { node = default_node_2, position = {0.4, -0.17, 0.2}, rotation = {0, -110, 90}, },				-- V2 zealot
+			wh_bountyhunter = { node = default_node_2, position = {0.4, -0.18, 0.2}, rotation = {-10, -110, 90}, },		-- V2 bountyhunter				2.1.0
+			wh_zealot = { node = default_node_2, position = {0.4, -0.14, 0.2}, rotation = {-20, -110, 90}, },			-- V2 zealot					2.1.0
 		},
 	},
 	wh_repeating_crossbow = {
 		left = { node = default_node_2, position = {0.1, -0.2, -0.1}, rotation = {270, 0, 110},								-- Default / V1					2.1.0
 			wh_captain = {
-				node = default_node_2, position = {0.1, -0.2, -0.1}, rotation = {270, 0, 110},								-- V2 captain
+				node = default_node_2, position = {0.1, -0.23, -0.1}, rotation = {270, 0, 110},								-- V2 captain					2.1.0
 				skin_wh_default = { node = default_node_2, position = {0.1, -0.2, -0.1}, rotation = {270, 0, 110}, },		-- V2 classic captain skin		2.1.0
 			},
-			wh_bountyhunter = { node = default_node_2, position = {0.1, -0.2, -0.1}, rotation = {270, 0, 110}, },			-- V2 bountyhunter
-			wh_zealot = { node = default_node_2, position = {0.1, -0.2, -0.1}, rotation = {270, 0, 110}, },					-- V2 zealot
-			we_shade = { attachment = 2, attachment_node = 5, position = {0, 0.05, 0.05}, rotation = {-90, -10, -125}, },	-- V2 shade
+			wh_bountyhunter = { node = default_node_2, position = {0.1, -0.24, -0.1}, rotation = {270, 0, 110}, },			-- V2 bountyhunter				2.1.0
+			wh_zealot = { node = default_node_2, position = {0.1, -0.23, -0.1}, rotation = {270, 0, 110}, },				-- V2 zealot					2.1.0
+			we_shade = { attachment = 2, attachment_node = 5, position = {0, 0.05, 0.05}, rotation = {-90, -10, -125}, },	-- V2 shade						2.1.0
 		},
 	},
 	wh_fencing_sword = {
 		right = {
 			belt = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},									-- Default / V1					2.1.0
 				wh_captain = {
-					node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},									-- V2 captain
+					attachment = 5, attachment_node = 2, position = {0, 0.04, 0}, rotation = {90, 90, 0},						-- V2 captain					2.1.0
 					skin_wh_default = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },				-- V2 classic captain skin		2.1.0
 				},
-				wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },					-- V2 bountyhunter
-				wh_zealot = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },						-- V2 zealot
+				wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },					-- V2 bountyhunter				2.1.0
+				wh_zealot = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },						-- V2 zealot					2.1.0
 			},
 			back = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90},								-- Default / V1					2.1.0
 				wh_captain = {
-					node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90},								-- V2 captain
-					skin_wh_default = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90}, },		-- V2 classic captain skin		2.1.0
+					node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {-10, -110, 90},							-- V2 captain					2.1.0
+					skin_wh_default = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {-10, -110, 90}, },		-- V2 classic captain skin		2.1.0
 				},
-				wh_bountyhunter = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90}, },			-- V2 bountyhunter
-				wh_zealot = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90}, },					-- V2 zealot
+				wh_bountyhunter = { node = default_node_2, position = {0.3, -0.18, 0.1}, rotation = {-20, -110, 90}, },			-- V2 bountyhunter				2.1.0
+				wh_zealot = { node = default_node_2, position = {0.3, -0.16, 0.1}, rotation = {-20, -110, 90}, },				-- V2 zealot					2.1.0
 			},
 		},
 		left = {
 			belt = { node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100},									-- Default / V1					2.1.0
 				wh_captain = {
-					node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100},									-- V2 captain
+					attachment = 2, attachment_node = 4, position = {0.04, 0.05, 0}, rotation = {-50, -120, 50},		-- V2 captain					2.1.0
 					skin_wh_default = { node = hip_node, position = {0.1, 0, 0.17}, rotation = {70, 50, 100}, },		-- V2 classic captain skin		2.1.0
 				},
-				wh_bountyhunter = { node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100}, },				-- V2 bountyhunter
-				wh_zealot = { node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100}, },						-- V2 zealot
+				wh_bountyhunter = { node = hip_node, position = {0.1, 0, 0.2}, rotation = {60, 45, 100}, },				-- V2 bountyhunter				2.1.0
+				wh_zealot = { attachment = 1, attachment_node = 2, position = {0.15, 0.06, -0.05}, rotation = {210, -50, -50}, },						-- V2 zealot					2.1.0
 			},
 			back = { node = hip_node, position = {0, 0, -0.2}, rotation = {70, 50, -240},								-- Default / V1					2.1.0
 				wh_captain = {
-					node = hip_node, position = {0, 0, -0.2}, rotation = {70, 50, -240},								-- V2 captain
+					attachment = 2, attachment_node = 4, position = {0.04, 0.05, 0}, rotation = {-50, -120, 50},		-- V2 captain					2.1.0
 					skin_wh_default = { node = hip_node, position = {0.1, 0, -0.17}, rotation = {70, 50, -240}, },		-- V2 classic captain skin		2.1.0
 				},
-				wh_bountyhunter = { node = hip_node, position = {0, 0, -0.2}, rotation = {70, 50, -240}, },				-- V2 bountyhunter
-				wh_zealot = { node = hip_node, position = {0, 0, -0.2}, rotation = {70, 50, -240}, },					-- V2 zealot
+				wh_bountyhunter = { node = hip_node, position = {0.1, 0, 0.2}, rotation = {60, 45, 100}, },				-- V2 bountyhunter				2.1.0
+				wh_zealot = { attachment = 1, attachment_node = 2, position = {0.15, 0.06, -0.05}, rotation = {210, -50, -50}, },					-- V2 zealot					2.1.0
 			},
 		},
 	},
@@ -373,19 +418,19 @@ mod.definitions = {
 		right = {
 			belt = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},									-- Default / V1					2.1.0
 				wh_captain = {
-					node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},									-- V2 captain
+					attachment = 5, attachment_node = 2, position = {0, 0.04, 0}, rotation = {90, 90, 0},						-- V2 captain					2.1.0
 					skin_wh_default = { node = hip_node, position = {0.2, 0, -0.15}, rotation = {150, -70, 150}, },				-- V2 classic captain skin		2.1.0
 				},
-				wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },					-- V2 bountyhunter
-				wh_zealot = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },						-- V2 zealot
+				wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },					-- V2 bountyhunter				2.1.0
+				wh_zealot = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },						-- V2 zealot					2.1.0
 			},
 			back = { node = default_node_2, position = {0.3, -0.16, 0.1}, rotation = {0, -110, 90},								-- Default / V1					2.1.0
 				wh_captain = {
-					node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90},								-- V2 captain
-					skin_wh_default = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90}, },		-- V2 classic captain skin		2.1.0
+					node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {-10, -110, 90},							-- V2 captain					2.1.0
+					skin_wh_default = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {-10, -110, 90}, },		-- V2 classic captain skin		2.1.0
 				},
-				wh_bountyhunter = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90}, },			-- V2 bountyhunter
-				wh_zealot = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90}, },					-- V2 zealot
+				wh_bountyhunter = { node = default_node_2, position = {0.3, -0.18, 0.1}, rotation = {-20, -110, 90}, },			-- V2 bountyhunter				2.1.0
+				wh_zealot = { node = default_node_2, position = {0.3, -0.16, 0.1}, rotation = {-20, -110, 90}, },				-- V2 zealot					2.1.0
 			},
 		},
 	},
@@ -393,77 +438,77 @@ mod.definitions = {
 		right = {
 			belt = { node = hip_node, position = {0.1, 0.1, -0.17}, rotation = {120, -50, 140},									-- Default / V1					2.1.0
 				wh_captain = {
-					node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},									-- V2 captain
+					attachment = 5, attachment_node = 2, position = {0, 0.04, 0}, rotation = {90, 90, 0},						-- V2 captain					2.1.0
 					skin_wh_default = { node = hip_node, position = {0.2, 0, -0.15}, rotation = {150, -70, 150}, },				-- V2 classic captain skin		2.1.0
 				},
-				wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },					-- V2 bountyhunter
-				wh_zealot = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },						-- V2 zealot
+				wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },					-- V2 bountyhunter				2.1.0
+				wh_zealot = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },						-- V2 zealot					2.1.0
 			},
 			back = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90},								-- Default / V1					2.1.0
 				wh_captain = {
-					node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90},								-- V2 captain
+					node = default_node_2, position = {0.3, -0.18, 0.1}, rotation = {0, -110, 90},								-- V2 captain					2.1.0
 					skin_wh_default = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90}, },		-- V2 classic captain skin		2.1.0
 				},
-				wh_bountyhunter = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90}, },			-- V2 bountyhunter
-				wh_zealot = { node = default_node_2, position = {0.3, -0.17, 0.1}, rotation = {0, -110, 90}, },					-- V2 zealot
+				wh_bountyhunter = { node = default_node_2, position = {0.3, -0.2, 0.1}, rotation = {0, -110, 90}, },			-- V2 bountyhunter				2.1.0
+				wh_zealot = { node = default_node_2, position = {0.3, -0.18, 0.1}, rotation = {0, -110, 90}, },					-- V2 zealot					2.1.0
 			},
 		},
 	},
 	wh_brace_of_pisols = {
-		right = { node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100},							-- Default / V1					2.1.0
+		right = { node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100},										-- Default / V1					2.1.0
 			wh_captain = {
-				node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100},								-- V2 captain
-				skin_wh_default = { node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100}, },		-- V2 classic captain skin		2.1.0
+				attachment = 5, attachment_node = 2, position = {0.26, 0.01, 0}, rotation = {50, -50, -50},					-- V2 captain					2.1.0
+				skin_wh_default = { node = hip_node, position = {0.1, 0, 0.17}, rotation = {70, 50, 100}, },				-- V2 classic captain skin		2.1.0
 			},
-			wh_bountyhunter = { node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100}, },			-- V2 bountyhunter
-			wh_zealot = { node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100}, },					-- V2 zealot
+			wh_bountyhunter = { node = hip_node, position = {0.1, 0, -0.2}, rotation = {70, 50, -240}, },					-- V2 bountyhunter				2.1.0
+			wh_zealot = { node = hip_node, position = {0, 0, 0.2}, rotation = {70, 50, 100}, },								-- V2 zealot					2.1.0
 		},
-		left = { node = hip_node, position = {0, 0, -0.2}, rotation = {70, 50, -240},							-- Default / V1					2.1.0
+		left = { node = hip_node, position = {0, 0, -0.2}, rotation = {70, 50, -240},										-- Default / V1					2.1.0
 			wh_captain = {
-				node = hip_node, position = {0, 0, -0.2}, rotation = {70, 50, -240},							-- V2 captain
-				skin_wh_default = { node = hip_node, position = {0, 0, -0.2}, rotation = {70, 50, -240}, },		-- V2 classic captain skin		2.1.0
+				node = hip_node, position = {0.15, 0, 0.2}, rotation = {110, 50, 100},										-- V2 captain					2.1.0
+				skin_wh_default = { node = hip_node, position = {0.1, 0, -0.17}, rotation = {70, 50, -240}, },				-- V2 classic captain skin		2.1.0
 			},
-			wh_bountyhunter = { node = hip_node, position = {0, 0, -0.2}, rotation = {70, 50, -240}, },			-- V2 bountyhunter
-			wh_zealot = { node = hip_node, position = {0, 0, -0.2}, rotation = {70, 50, -240}, },				-- V2 zealot
+			wh_bountyhunter = { node = hip_node, position = {0, 0, 0.23}, rotation = {70, 50, 100}, },						-- V2 bountyhunter				2.1.0
+			wh_zealot = { node = hip_node, position = {0, 0, -0.23}, rotation = {70, 50, -240}, },							-- V2 zealot					2.1.0
 		},
 	},
 	wh_crossbow = {
 		left = { node = default_node_2, position = {0.15, -0.18, -0.1}, rotation = {270, 0, 110},							-- Default / V1					2.1.0
 			wh_captain = {
-				node = default_node_2, position = {0.15, -0.18, -0.1}, rotation = {270, 0, 110},							-- V2 captain
+				node = default_node_2, position = {0.15, -0.22, -0.1}, rotation = {270, 0, 110},							-- V2 captain					2.1.0
 				skin_wh_default = { node = default_node_2, position = {0.15, -0.2, -0.1}, rotation = {270, 0, 110}, },		-- V2 classic captain skin		2.1.0
 			},
-			wh_bountyhunter = { node = default_node_2, position = {0.15, -0.18, -0.1}, rotation = {270, 0, 110}, },			-- V2 bountyhunter
-			wh_zealot = { node = default_node_2, position = {0.15, -0.18, -0.1}, rotation = {270, 0, 110}, },				-- V2 zealot
+			wh_bountyhunter = { node = default_node_2, position = {0.15, -0.24, -0.1}, rotation = {270, 0, 110}, },			-- V2 bountyhunter				2.1.0
+			wh_zealot = { node = default_node_2, position = {0.15, -0.22, -0.1}, rotation = {270, 0, 110}, },				-- V2 zealot					2.1.0
 		},
 	},
 	wh_repeating_pistol = {
 		right = { node = default_node_2, position = {0.1, -0.17, -0.1}, rotation = {0, 30, 90},							-- Default / V1					2.1.0
 			wh_captain = {
-				node = default_node_2, position = {0.1, -0.17, -0.1}, rotation = {0, 30, 90},							-- V2 captain
+				node = default_node_2, position = {0.1, -0.22, -0.1}, rotation = {0, 30, 90},							-- V2 captain
 				skin_wh_default = { node = default_node_2, position = {0.1, -0.17, -0.1}, rotation = {0, 30, 90}, },	-- V2 classic captain skin		2.1.0
 			},
-			wh_bountyhunter = { node = default_node_2, position = {0.1, -0.17, -0.1}, rotation = {0, 30, 90}, },		-- V2 bountyhunter
-			wh_zealot = { node = default_node_2, position = {0.1, -0.17, -0.1}, rotation = {0, 30, 90}, },				-- V2 zealot
+			wh_bountyhunter = { node = default_node_2, position = {0.1, -0.24, -0.1}, rotation = {0, 30, 90}, },		-- V2 bountyhunter				2.1.0
+			wh_zealot = { node = default_node_2, position = {0.1, -0.23, -0.1}, rotation = {0, 30, 90}, },				-- V2 zealot					2.1.0
 		},
 	},
 	-- VT2
 	es_flail = {
 		right = {
-			belt = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},								-- Default / V1					2.1.0
+			belt = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},							-- Default / V1					2.1.0
 				wh_captain = {
-					node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},							-- V2 captain
-					skin_wh_default = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },	-- V2 classic captain skin		2.1.0
+					node = hip_node, position = {0.2, 0, -0.22}, rotation = {150, -70, 150},							-- V2 captain					2.1.0
+					skin_wh_default = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },		-- V2 classic captain skin		2.1.0
 				},
-				wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },		-- V2 bountyhunter
+				wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },			-- V2 bountyhunter				2.1.0
 				wh_zealot = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },				-- V2 zealot
 			},
-			back = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},								-- Default / V1					2.1.0
+			back = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},							-- Default / V1					2.1.0
 				wh_captain = {
-					node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},							-- V2 captain
-					skin_wh_default = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },	-- V2 classic captain skin		2.1.0
+					node = hip_node, position = {0.2, 0, -0.22}, rotation = {150, -70, 150},							-- V2 captain					2.1.0
+					skin_wh_default = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },		-- V2 classic captain skin		2.1.0
 				},
-				wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },		-- V2 bountyhunter
+				wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },			-- V2 bountyhunter				2.1.0
 				wh_zealot = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },				-- V2 zealot
 			},
 		},
@@ -471,7 +516,7 @@ mod.definitions = {
 	
 	-- Waywatcher
 	ww_2h_axe = {
-		right = { node = default_node_2, position = {0.4, -0.1, 0.1}, rotation = {0, -110, 90}, 									-- Default / V1
+		right = { node = default_node_2, position = {0.4, -0.1, 0.1}, rotation = {0, -110, 90}, 									-- Default / V1					2.1.0
 			we_waywatcher = {
 				attachment = 2, attachment_node = 19, position = {-0.2, -0.05, 0}, rotation = {-30, 138, 75}, 						-- V2 waystalker				2.1.0
 				skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.1, 0.07, 0.1}, rotation = {0, 120, 75}, }, -- V2 classic waywatcher skin	2.1.0
