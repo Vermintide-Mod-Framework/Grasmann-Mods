@@ -13,83 +13,127 @@ local right_leg_node = "j_rightupleg"
 
 -- ##### Potion #######################################################################################################
 mod.definitions.potion.wood_elf = {
-    left = { node = default_node, position = {-0.1, -0.15, -0.1}, rotation = {120, 110, 90},                                            -- Default / V1
+    left = { node = default_node, position = {-0.1, -0.15, -0.1}, rotation = {120, 110, 90},                                            -- Default / V1                 2.1.1
         we_waywatcher = { 
-            node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0},                                            -- V2 waystalker
-            skin_ww_default = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },                     -- V2 classic waywatcher skin
+            node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0},                                            -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.1, -0.06, 0.22}, rotation = {-30, -130, -90}, },   -- V2 classic waywatcher skin   2.1.1
         },
-        we_maidenguard = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },                          -- V2 handmaiden
-        we_shade = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },                                -- V2 shade
+        we_maidenguard = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },                          -- V2 handmaiden                2.1.1
+        we_shade = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },                                -- V2 shade                     2.1.1
     },
 }
 mod.definitions.potion.way_watcher = {
-    left = { node = default_node, position = {-0.1, -0.15, -0.1}, rotation = {120, 110, 90},                                            -- Default / V1
+    left = { node = default_node, position = {-0.1, -0.15, -0.1}, rotation = {120, 110, 90},                                            -- Default / V1                 2.1.1
         we_waywatcher = { 
-            node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0},                                            -- V2 waystalker
-            skin_ww_default = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },                     -- V2 classic waywatcher skin
+            node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0},                                            -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.1, -0.06, 0.22}, rotation = {-30, -130, -90}, },   -- V2 classic waywatcher skin   2.1.1
         },
-        we_maidenguard = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },                          -- V2 handmaiden
-        we_shade = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },                                -- V2 shade
+        we_maidenguard = { node = right_leg_node, position = {-0.1, -0.05, 0.12}, rotation = {-55, 110, 0}, },                          -- V2 handmaiden                2.1.1
+        we_shade = { node = right_leg_node, position = {-0.07, -0.05, 0.12}, rotation = {-55, 110, 0}, },                               -- V2 shade                     2.1.1
     },
 }
 
 -- ##### Grenade ######################################################################################################
 mod.definitions.grenade.wood_elf = {
-    right = { node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 0},                                             -- Default / V1
-        we_waywatcher = {   
-            node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0},                                                   -- V2 waystalker
-            skin_ww_default = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },                            -- V2 classic waywatcher skin
-        },
-        we_maidenguard = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },                                 -- V2 handmaiden
-        we_shade = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },                                       -- V2 shade
-    },
-    left = { node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 30},                                             -- Default / V1
+    right = { node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 0},                                                 -- Default / V1                 2.1.1
         we_waywatcher = { 
-            node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60},                                                -- V2 waystalker
-            skin_ww_default = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },                         -- V2 classic waywatcher skin
+            node = hip_node, position = {0.05, -0.1, -0.16}, rotation = {-45, 70, 0},                                                       -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.08, 0.012, -0.08}, rotation = {-120, -130, -90}, },    -- V2 classic waywatcher skin   2.1.1
         },
-        we_maidenguard = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },                              -- V2 handmaiden
-        we_shade = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },                                    -- V2 shade
+        we_maidenguard = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },                                     -- V2 handmaiden                2.1.1
+        we_shade = { node = hip_node, position = {0.1, -0.1, -0.15}, rotation = {-45, 70, 0}, },                                            -- V2 shade                     2.1.1
+    },
+    left = { node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 30},                                                 -- Default / V1                 2.1.1
+        we_waywatcher = { 
+            node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60},                                                    -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.08, -0.05, -0.1}, rotation = {-160, -110, -90}, },     -- V2 classic waywatcher skin   2.1.1
+        },
+        we_maidenguard = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },                                  -- V2 handmaiden                2.1.1
+        we_shade = { node = hip_node, position = {0.08, -0.02, -0.18}, rotation = {-50, 70, -60}, },                                        -- V2 shade                     2.1.1
     },
 }
 mod.definitions.grenade.way_watcher = {
-    right = { node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 0},                                             -- Default / V1
+    right = { node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 0},                                                 -- Default / V1                 2.1.1
         we_waywatcher = { 
-            node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0},                                                   -- V2 waystalker
-            skin_ww_default = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },                            -- V2 classic waywatcher skin
+            node = hip_node, position = {0.05, -0.1, -0.16}, rotation = {-45, 70, 0},                                                       -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.08, 0.012, -0.08}, rotation = {-120, -130, -90}, },    -- V2 classic waywatcher skin   2.1.1
         },
-        we_maidenguard = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },                                 -- V2 handmaiden
-        we_shade = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },                                       -- V2 shade
+        we_maidenguard = { node = hip_node, position = {0.05, -0.1, -0.15}, rotation = {-45, 70, 0}, },                                     -- V2 handmaiden                2.1.1
+        we_shade = { node = hip_node, position = {0.1, -0.1, -0.15}, rotation = {-45, 70, 0}, },                                            -- V2 shade                     2.1.1
     },
-    left = { node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 30},                                             -- Default / V1
+    left = { node = default_node, position = {-0.1, -0.18, 0.08}, rotation = {60, 120, 30},                                                 -- Default / V1                 2.1.1
         we_waywatcher = { 
-            node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60},                                                -- V2 waystalker
-            skin_ww_default = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },                         -- V2 classic waywatcher skin
+            node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60},                                                    -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.08, -0.05, -0.1}, rotation = {-160, -110, -90}, },     -- V2 classic waywatcher skin   2.1.1
         },
-        we_maidenguard = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },                              -- V2 handmaiden
-        we_shade = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },                                    -- V2 shade
+        we_maidenguard = { node = hip_node, position = {0.05, -0.02, -0.18}, rotation = {-50, 70, -60}, },                                  -- V2 handmaiden                2.1.1
+        we_shade = { node = hip_node, position = {0.08, -0.02, -0.18}, rotation = {-50, 70, -60}, },                                        -- V2 shade                     2.1.1
     },
 }
 
 -- ##### Healthkit ####################################################################################################
-mod.definitions.healthkit.wood_elf = {
-    left = { node = default_node, position = {0, 0.15, 0.05}, rotation = {0, 90, 20},                                                   -- Default / V1
+mod.definitions.healthkit_first_aid_kit_01.wood_elf = {
+    left = { node = default_node, position = {0, 0.15, 0.05}, rotation = {0, 90, 20},                                                       -- Default / V1                 2.1.1
         we_waywatcher = { 
-            node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90},                                                    -- V2 waystalker
-            skin_ww_default = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                             -- V2 classic waywatcher skin
+            node = hip_node, position = {0.1, -0.12, -0.03}, rotation = {260, 60, -90},                                                     -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.075, 0.01, 0.075}, rotation = {-50, -130, -90}, },     -- V2 classic waywatcher skin   2.1.1
         },
-        we_maidenguard = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                                  -- V2 handmaiden
-        we_shade = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                                        -- V2 shade
+        we_maidenguard = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                                      -- V2 handmaiden                2.1.1
+        we_shade = { node = hip_node, position = {0.1, -0.12, -0.03}, rotation = {260, 60, -90}, },                                         -- V2 shade                     2.1.1
     },
 }
-mod.definitions.healthkit.way_watcher = {
-    left = { node = default_node, position = {0, 0.15, 0.05}, rotation = {0, 90, 20},                                                   -- Default / V1
+mod.definitions.healthkit_first_aid_kit_01.way_watcher = {
+    left = { node = default_node, position = {0, 0.15, 0.05}, rotation = {0, 90, 20},                                                       -- Default / V1                 2.1.1
         we_waywatcher = { 
-            node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90},                                                    -- V2 waystalker
-            skin_ww_default = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                             -- V2 classic waywatcher skin
+            node = hip_node, position = {0.1, -0.12, -0.03}, rotation = {260, 60, -90},                                                     -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.075, 0.01, 0.075}, rotation = {-50, -130, -90}, },     -- V2 classic waywatcher skin   2.1.1
         },
-        we_maidenguard = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                                  -- V2 handmaiden
-        we_shade = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                                        -- V2 shade
+        we_maidenguard = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                                      -- V2 handmaiden                2.1.1
+        we_shade = { node = hip_node, position = {0.1, -0.12, -0.03}, rotation = {260, 60, -90}, },                                         -- V2 shade                     2.1.1
+    },
+}
+
+-- ##### Healing Draught ##############################################################################################
+mod.definitions.potion_healing_draught_01.wood_elf = {
+    left = { node = default_node, position = {0, 0.15, 0.05}, rotation = {0, 90, 20},                                                       -- Default / V1                 2.1.1
+        we_waywatcher = { 
+            node = hip_node, position = {0.05, -0.12, -0.08}, rotation = {270, 75, -90},                                                    -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.08, 0.012, 0.025}, rotation = {-80, -130, -90}, },     -- V2 classic waywatcher skin   2.1.1
+        },
+        we_maidenguard = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                                      -- V2 handmaiden                2.1.1
+        we_shade = { node = hip_node, position = {0.05, -0.12, -0.08}, rotation = {270, 75, -90}, },                                        -- V2 shade                     2.1.1
+    },
+}
+mod.definitions.potion_healing_draught_01.way_watcher = {
+    left = { node = default_node, position = {0, 0.15, 0.05}, rotation = {0, 90, 20},                                                       -- Default / V1                 2.1.1
+        we_waywatcher = { 
+            node = hip_node, position = {0.05, -0.12, -0.08}, rotation = {270, 75, -90},                                                    -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.08, 0.012, 0.025}, rotation = {-80, -130, -90}, },     -- V2 classic waywatcher skin   2.1.1
+        },
+        we_maidenguard = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                                      -- V2 handmaiden                2.1.1
+        we_shade = { node = hip_node, position = {0.05, -0.12, -0.08}, rotation = {270, 75, -90}, },                                        -- V2 shade                     2.1.1
+    },
+}
+
+-- ##### Tome #########################################################################################################
+mod.definitions.wpn_side_objective_tome_01.wood_elf = {
+    left = { node = default_node, position = {0, 0.15, 0.05}, rotation = {0, 90, 20},                                                   -- Default / V1                 2.1.1
+        we_waywatcher = { 
+            node = hip_node, position = {0.1, -0.12, 0}, rotation = {270, 75, -90},                                                     -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.1, 0.01, 0.1}, rotation = {-70, -100, -90}, },     -- V2 classic waywatcher skin   2.1.1
+        },
+        we_maidenguard = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                                  -- V2 handmaiden                2.1.1
+        we_shade = { node = hip_node, position = {0.1, -0.12, 0}, rotation = {270, 75, -90}, },                                         -- V2 shade                     2.1.1
+    },
+}
+mod.definitions.wpn_side_objective_tome_01.way_watcher = {
+    left = { node = default_node, position = {0, 0.15, 0.05}, rotation = {0, 90, 20},                                                   -- Default / V1                 2.1.1
+        we_waywatcher = { 
+            node = hip_node, position = {0.1, -0.12, 0}, rotation = {270, 75, -90},                                                     -- V2 waystalker                2.1.1
+            skin_ww_default = { attachment = 3, attachment_node = 16, position = {-0.1, 0.01, 0.1}, rotation = {-70, -100, -90}, },     -- V2 classic waywatcher skin   2.1.1
+        },
+        we_maidenguard = { node = hip_node, position = {0.08, -0.12, 0}, rotation = {260, 75, -90}, },                                  -- V2 handmaiden                2.1.1
+        we_shade = { node = hip_node, position = {0.1, -0.12, 0}, rotation = {270, 75, -90}, },                                         -- V2 shade                     2.1.1
     },
 }
 

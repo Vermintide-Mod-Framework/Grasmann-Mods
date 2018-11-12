@@ -76,6 +76,18 @@ mod.definitions = {
 	},
 
 	-- Pickups
+	wpn_side_objective_tome_01 = {
+		left = { node = default_node, position = {0, -0.15, 0.03}, rotation = {0, 90, 0},
+		},
+	},
+	potion_healing_draught_01 = {
+		left = { node = default_node, position = {0, -0.15, 0.03}, rotation = {0, 90, 0},
+		},
+	},
+	healthkit_first_aid_kit_01 = {
+		left = { node = default_node, position = {0, -0.15, 0.03}, rotation = {0, 90, 0},
+		},
+	},
 	potion = {
 		left = { node = default_node, position = {-0.1, -0.3, -0.15}, rotation = {40, 90, 0},
 		},

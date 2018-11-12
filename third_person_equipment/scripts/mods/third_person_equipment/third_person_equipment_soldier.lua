@@ -13,8 +13,8 @@ local hip_node = "j_hips"
 mod.definitions.potion.empire_soldier = {
     left = { node = default_node, position = {-0.05, -0.12, -0.15}, rotation = {-60, 70, -90},                              -- Default / V1
         es_mercenary = {
-            node = default_node, position = {-0.05, -0.12, -0.15}, rotation = {-60, 70, -90},								-- V2 mercenary
-            skin_es_default = { node = default_node, position = {-0.05, -0.12, -0.15}, rotation = {-60, 70, -90}, },		-- V2 classic mercenary skin
+            node = default_node, position = {0.1, -0.06, -0.2}, rotation = {-30, 100, -90},								-- V2 mercenary
+            skin_es_default = { node = default_node, position = {0.1, -0.06, -0.2}, rotation = {-30, 100, -90}, },		    -- V2 classic mercenary skin    2.1.0
         },
         es_knight = { node = default_node, position = {-0.05, -0.12, -0.15}, rotation = {-60, 70, -90}, },	                -- V2 knight
         es_huntsman = { node = default_node, position = {-0.05, -0.12, -0.15}, rotation = {-60, 70, -90}, },				-- V2 huntsman
@@ -25,16 +25,16 @@ mod.definitions.potion.empire_soldier = {
 mod.definitions.grenade.empire_soldier = {
     right = { node = default_node, position = {0, -0.1, 0.2}, rotation = {40, 90, 0},                                       -- Default / V1
         es_mercenary = {
-            node = default_node, position = {0, -0.1, 0.2}, rotation = {40, 90, 0},								            -- V2 mercenary
-            skin_es_default = { node = default_node, position = {0, -0.1, 0.2}, rotation = {40, 90, 0}, },		            -- V2 classic mercenary skin
+            node = default_node, position = {0.05, -0.1, 0.2}, rotation = {40, 90, 0},								            -- V2 mercenary
+            skin_es_default = { node = default_node, position = {0.05, -0.1, 0.2}, rotation = {40, 90, 0}, },		        -- V2 classic mercenary skin    2.1.0
         },
         es_knight = { node = default_node, position = {0, -0.1, 0.2}, rotation = {40, 90, 0}, },	                        -- V2 knight
         es_huntsman = { node = default_node, position = {0, -0.1, 0.2}, rotation = {40, 90, 0}, },				            -- V2 huntsman
     },
     left = { node = default_node, position = {0, -0.1, 0.2}, rotation = {40, 90, 0},                                        -- Default / V1
         es_mercenary = {
-            node = default_node, position = {0, -0.1, 0.2}, rotation = {40, 90, 0},								            -- V2 mercenary
-            skin_es_default = { node = default_node, position = {0, -0.1, 0.2}, rotation = {40, 90, 0}, },		            -- V2 classic mercenary skin
+            node = default_node, position = {0.05, -0.1, 0.2}, rotation = {40, 90, 0},								            -- V2 mercenary
+            skin_es_default = { node = default_node, position = {0.05, -0.1, 0.2}, rotation = {40, 90, 0}, },		        -- V2 classic mercenary skin    2.1.0
         },
         es_knight = { node = default_node, position = {0, -0.1, 0.2}, rotation = {40, 90, 0}, },	                        -- V2 knight
         es_huntsman = { node = default_node, position = {0, -0.1, 0.2}, rotation = {40, 90, 0}, },				            -- V2 huntsman
@@ -42,11 +42,37 @@ mod.definitions.grenade.empire_soldier = {
 }
 
 -- ##### Healthkit ####################################################################################################
-mod.definitions.healthkit.empire_soldier = {
+mod.definitions.healthkit_first_aid_kit_01.empire_soldier = {
     left = { node = default_node, position = {0, -0.15, 0.03}, rotation = {0, 90, 0},                                       -- Default / V1
         es_mercenary = {
-            node = default_node, position = {0, -0.15, 0.03}, rotation = {10, 100, 150},                                    -- V2 mercenary
-            skin_es_default = { node = default_node, position = {0, -0.15, 0.03}, rotation = {10, 100, 150}, },		        -- V2 classic mercenary skin
+            node = hip_node, position = {0.1, -0.12, -0.03}, rotation = {260, 60, -90},                                    -- V2 mercenary
+            skin_es_default = { node = hip_node, position = {0.1, -0.12, -0.03}, rotation = {260, 60, -90}, },		        -- V2 classic mercenary skin    2.1.0
+        },
+        es_huntsman = { node = default_node, position = {0, -0.15, 0.03}, rotation = {10, 100, 150}, },                     -- V2 huntsman
+        es_knight = { node = default_node, position = {0, -0.15, 0.03}, rotation = {10, 100, 150}, },                       -- V2 knight
+        empire_soldier_tutorial = { node = default_node, position = {0, -0.15, 0.03}, rotation = {10, 100, 150}, },         -- V2 tutorial
+    },
+}
+
+-- ##### Healing Draught ##############################################################################################
+mod.definitions.potion_healing_draught_01.empire_soldier = {
+    left = { node = default_node, position = {0, -0.15, 0.03}, rotation = {0, 90, 0},                                       -- Default / V1
+        es_mercenary = {
+            node = default_node, position = {0.1, -0.13, -0.16}, rotation = {-30, 100, -90},                                    -- V2 mercenary
+            skin_es_default = { node = default_node, position = {0.1, -0.13, -0.16}, rotation = {-30, 100, -90}, },		    -- V2 classic mercenary skin    2.1.0
+        },
+        es_huntsman = { node = default_node, position = {0, -0.15, 0.03}, rotation = {10, 100, 150}, },                     -- V2 huntsman
+        es_knight = { node = default_node, position = {0, -0.15, 0.03}, rotation = {10, 100, 150}, },                       -- V2 knight
+        empire_soldier_tutorial = { node = default_node, position = {0, -0.15, 0.03}, rotation = {10, 100, 150}, },         -- V2 tutorial
+    },
+}
+
+-- ##### Tome #########################################################################################################
+mod.definitions.wpn_side_objective_tome_01.empire_soldier = {
+    left = { node = default_node, position = {0, -0.15, 0.03}, rotation = {0, 90, 0},                                       -- Default / V1
+        es_mercenary = {
+            node = hip_node, position = {0.1, -0.16, 0}, rotation = {270, 75, -90},                                    -- V2 mercenary
+            skin_es_default = { node = hip_node, position = {0.1, -0.16, 0}, rotation = {270, 75, -90}, },		            -- V2 classic mercenary skin    2.1.0
         },
         es_huntsman = { node = default_node, position = {0, -0.15, 0.03}, rotation = {10, 100, 150}, },                     -- V2 huntsman
         es_knight = { node = default_node, position = {0, -0.15, 0.03}, rotation = {10, 100, 150}, },                       -- V2 knight

@@ -25,12 +25,12 @@ mod.current = {
 	--packs = {},
 }
 
--- mod.used_index = 1
--- mod.change_index = function()
--- 	mod.used_index = mod.used_index + 1
--- 	mod:echo("used index = "..tostring(mod.used_index))
--- 	mod:delete_all_units()
--- end
+mod.used_index = 1
+mod.change_index = function()
+	mod.used_index = mod.used_index + 1
+	mod:echo("used index = "..tostring(mod.used_index))
+	mod:delete_all_units()
+end
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
 -- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
@@ -168,15 +168,19 @@ mod.link_unit = function(self, unit, s_unit, item_setting)
 	if attachment then
 
 		local unit_attachments = Unit.get_data(unit, "flow_unit_attachments")
-		--mod:echo("unit_attachments: "..tostring(#unit_attachments))
+		if item_setting.test then mod:echo("unit_attachments: "..tostring(#unit_attachments)) end
 		local attachment_unit = attachment and unit_attachments[attachment]
 		local bones = attachment_unit and Unit.bones(attachment_unit)
 		if bones then
-			--mod:echo("bones: "..tostring(#bones))
+			if item_setting.test then mod:echo("bones: "..tostring(#bones)) end
 		end
 
-		World.link_unit(world, s_unit, attachment_unit, item_setting.attachment_node)
-		--World.link_unit(world, s_unit, attachment_unit, mod.used_index)
+		if item_setting.test then
+			World.link_unit(world, s_unit, attachment_unit, mod.used_index)
+		else
+			World.link_unit(world, s_unit, attachment_unit, item_setting.attachment_node)
+		end
+		
 
 	elseif Unit.has_node(unit, item_setting.node) then
 
@@ -282,12 +286,15 @@ mod.get_item_setting = function(self, unit, slot_name, item_data, left, skin)
 	else
 		local profile_name = self.current.profile[unit] or nil
 		if profile_name then
+			local key = def[item_data.key] and item_data.key or def[item_data.item_type] and item_data.item_type
+			mod:echo(tostring(key))
+			mod:dump(item_data, "item_data", 1)
 			if not left then
-				item_setting = profile_name and def[item_data.item_type][profile_name] and def[item_data.item_type][profile_name].right
-				item_setting = item_setting or def[item_data.item_type] and def[item_data.item_type].right
+				item_setting = profile_name and def[key][profile_name] and def[key][profile_name].right
+				item_setting = item_setting or def[key] and def[key].right
 			else
-				item_setting = profile_name and def[item_data.item_type][profile_name] and def[item_data.item_type][profile_name].left
-				item_setting = item_setting or def[item_data.item_type] and def[item_data.item_type].left
+				item_setting = profile_name and def[key][profile_name] and def[key][profile_name].left
+				item_setting = item_setting or def[key] and def[key].left
 			end
 		end
 	end
