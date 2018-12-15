@@ -1,8 +1,8 @@
 local mod = get_mod("ChatBlock")
---[[ 
+--[[
 	Chat Block
 		- When you are typing in the chat the charter will automaticly block
-	
+
 	Author: IamLupo
 	Ported: Grasmann
 	Improvements: bi
@@ -34,13 +34,13 @@ mod.block_state = block_state.NOT_BLOCKING
 --]]
 mod:hook(CharacterStateHelper, "update_weapon_actions", function(func, t, unit, input_extension, inventory_extension, ...)
 	local player_unit = Managers.player and Managers.player:local_player().player_unit
-	
+
 	-- Check if local player
 	if player_unit ~= unit then
 		func(t, unit, input_extension, inventory_extension, ...)
 		return
 	end
-	
+
 	-- Check not in inn
 	if LevelHelper:current_level_settings().level_id == "inn_level" then
 		func(t, unit, input_extension, inventory_extension, ...)
@@ -73,19 +73,19 @@ mod:hook(CharacterStateHelper, "update_weapon_actions", function(func, t, unit, 
 	new_action = "action_two"
 	new_sub_action = "default"
 	local new_action_template = item_template.actions[new_action]
-	local new_sub_action_template = new_action_template and item_template.actions[new_action][new_sub_action] 
+	local new_sub_action_template = new_action_template and item_template.actions[new_action][new_sub_action]
 	if not(new_sub_action_template) or (not right_hand_weapon_extension and not left_hand_weapon_extension) or (new_sub_action_template.kind ~= "block") then
 		func(t, unit, input_extension, inventory_extension, ...)
 		return
 	end
-	
+
 	--Block
 	if (mod.block_state == block_state.SHOULD_BLOCK) then
 		mod.block_state = block_state.BLOCKING
 		if(right_hand_weapon_extension) then
 			right_hand_weapon_extension.start_action(right_hand_weapon_extension, new_action, new_sub_action, item_template.actions, t)
 		elseif(left_hand_weapon_extension) then
-			left_hand_weapon_extension.start_action(left_hand_weapon_extension, new_action, new_sub_action, item_template.actions, t)				
+			left_hand_weapon_extension.start_action(left_hand_weapon_extension, new_action, new_sub_action, item_template.actions, t)
 		end
 		return
 
@@ -97,7 +97,7 @@ mod:hook(CharacterStateHelper, "update_weapon_actions", function(func, t, unit, 
 			if(right_hand_weapon_extension) then
 				right_hand_weapon_extension.start_action(right_hand_weapon_extension, new_action, new_sub_action, item_template.actions, t)
 			elseif(left_hand_weapon_extension) then
-				left_hand_weapon_extension.start_action(left_hand_weapon_extension, new_action, new_sub_action, item_template.actions, t)				
+				left_hand_weapon_extension.start_action(left_hand_weapon_extension, new_action, new_sub_action, item_template.actions, t)
 			end
 		end
 
@@ -131,25 +131,25 @@ end
 --]]
 mod.update = function(dt)
   -- geting VMF input service for keybindings
-  local input_service = Managers.input:get_service("VMFMods")
+  local input_service = Managers.input:get_service("Player")
   if input_service then
 
     local should_block = input_service:is_blocked()
-	
-    if should_block and mod.block_state == block_state.NOT_BLOCKING then	
-		
+
+    if should_block and mod.block_state == block_state.NOT_BLOCKING then
+
       mod.block_state = block_state.SHOULD_BLOCK
-      
+
     elseif not should_block and mod.block_state == block_state.BLOCKING then
-    
+
       if mod:get("mode") == "animation_push" then
         mod.block_state = block_state.SHOULD_PUSH
       else
         mod.block_state = block_state.NOT_BLOCKING
       end
-      
+
     elseif not should_block and mod.block_state ~= block_state.NOT_BLOCKING then
-    
+
       mod.block_state = block_state.NOT_BLOCKING
     end
   end
