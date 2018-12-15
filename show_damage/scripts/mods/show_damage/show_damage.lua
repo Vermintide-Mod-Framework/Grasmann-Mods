@@ -22,13 +22,18 @@ end
 --[[
 	Update player names when option menu is open
 --]]
-mod:hook(VMFOptionsView, "update", function(func, self, ...)
-	if mod:get_time() > mod.players.updated + mod.players.interval then
-		mod.players.updated = mod:get_time()
-		mod.players.set_names()
+mod.on_game_state_changed = function (status, state_name)
+	if not mod.mod_options_hooked and status == "enter" and state_name == "StateIngame" then
+		mod:hook(VMFOptionsView, "update", function(func, self, ...)
+			if mod:get_time() > mod.players.updated + mod.players.interval then
+				mod.players.updated = mod:get_time()
+				mod.players.set_names()
+			end
+			func(self, ...)
+		end)
+		mod.mod_options_hooked = true
 	end
-	func(self, ...)
-end)
+end
 --[[
 	Replace the text of an initialized option widget
 --]]
