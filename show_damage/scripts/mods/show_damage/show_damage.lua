@@ -180,7 +180,7 @@ mod.enemies = {
 		neck = "Neck",
 	},
 	offsets = {
-		default = 1,
+		default = 1.5,
 		skaven_slave = 1,
 		skaven_clan_rat = 1,
 		skaven_storm_vermin = 1,
@@ -233,6 +233,7 @@ mod.enemies = {
 		chaos_plague_wave_spawner = 1,
 		chaos_spawn = 2,
 		chaos_spawn_exalted_champion_norsca = 2,
+		player = 1.5,
 	},
 }
 mod.console = {}
@@ -250,7 +251,8 @@ mod.add_unit = function(self, unit)
 	if not self.chat:has_unit(unit) then
 		self.chat.units[unit] = unit
 	end
-	if not self.floating:has_unit(unit) then
+	local health_extension = ScriptUnit.has_extension(unit, "health_system")
+	if not self.floating:has_unit(unit) and health_extension:is_alive(health_extension) then
 		self.floating.units[unit] = {}
 	end
 end
@@ -388,11 +390,13 @@ mod.players = {
 	Check if attacker in backstab relation
 --]]
 mod.check_backstab = function(self, attacker, target)
-	local ax, ay, az = Quaternion.to_euler_angles_xyz(Unit.world_rotation(attacker, 0))
-	local tx, ty, tz = Quaternion.to_euler_angles_xyz(Unit.world_rotation(target, 0))
-	local diff = tz - az
-	if diff > -120 and diff < 120 then
-		return true
+	if Unit.alive(attacker) and Unit.alive(target) then
+		local ax, ay, az = Quaternion.to_euler_angles_xyz(Unit.world_rotation(attacker, 0))
+		local tx, ty, tz = Quaternion.to_euler_angles_xyz(Unit.world_rotation(target, 0))
+		local diff = tz - az
+		if diff > -120 and diff < 120 then
+			return true
+		end
 	end
 	return false
 end
@@ -400,20 +404,22 @@ end
 	Check if a hit was blocked by a shield
 --]]
 mod.blocked_hit = function(self, attacker_unit, unit, hit_zone)
-	local hit_zones = {"left_arm", "torso", "left_leg"}
-	local more_rat_weapons = get_mod("MoreRatWeapons")
-	if more_rat_weapons then
-		hit_zones = more_rat_weapons.shield_data.hit_zones
-		self.check_backstab = more_rat_weapons.check_backstab
-	end
+	if attacker_unit then
+		local hit_zones = {"left_arm", "torso", "left_leg"}
+		local more_rat_weapons = get_mod("MoreRatWeapons")
+		if more_rat_weapons then
+			hit_zones = more_rat_weapons.shield_data.hit_zones
+			self.check_backstab = more_rat_weapons.check_backstab
+		end
 
-	if unit and Unit.has_data(unit, "breed") and ScriptUnit.has_extension(unit, "ai_inventory_system") then
-		local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
-		local inv_template = inventory_extension.inventory_configuration_name
+		if unit and Unit.has_data(unit, "breed") and ScriptUnit.has_extension(unit, "ai_inventory_system") then
+			local inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
+			local inv_template = inventory_extension.inventory_configuration_name
 
-		if inv_template == "sword_and_shield" and not inventory_extension.already_dropped_shield then
-			if table.contains(hit_zones, hit_zone) and not self:check_backstab(attacker_unit, unit) then
-				return true
+			if inv_template == "sword_and_shield" and not inventory_extension.already_dropped_shield then
+				if table.contains(hit_zones, hit_zone) and not self:check_backstab(attacker_unit, unit) then
+					return true
+				end
 			end
 		end
 	end
@@ -470,10 +476,18 @@ mod.floating = {
 	--]]
 	fonts = function(self, size)
 		if size == nil then size = 20 end
-		if size >= 32 then
-			return "gw_head_32", "materials/fonts/gw_head_32", size
+		if mod:get("floating_numbers_render") == 1 then		
+			if size >= 32 then
+				return "gw_head_32", "materials/fonts/gw_head_32", size
+			else
+				return "gw_head_20", "materials/fonts/gw_head_32", size
+			end
 		else
-			return "gw_head_20", "materials/fonts/gw_head_32", size
+			if size > 32 then
+				return "gw_body_20", "materials/fonts/gw_body_64", size
+			else
+				return "gw_body_20", "materials/fonts/gw_body_32", size
+			end
 		end
 	end,
 	--[[
@@ -641,6 +655,10 @@ mod.floating = {
 		Post message for player in filter file
 	--]]
 	handle = function(self, unit, biggest_hit, parameters)
+	
+		if self and unit and Unit.alive(unit) and not self:has_unit(unit) then
+			mod:add_unit(unit)
+		end
 
 		if mod:get("floating_numbers") and self:has_unit(unit) then
 			--local breed_data = Unit.get_data(unit, "breed")
@@ -685,7 +703,7 @@ mod.floating = {
 			end
 
 			if dead then
-				--self.corpses[unit] = true
+				self.corpses[unit] = true
 				self.delete[unit] = unit
 			end
 		end
@@ -804,6 +822,80 @@ mod.floating = {
 			else
 				if table.contains(self.delete, unit) then
 					self.units[unit] = nil
+					self.corpses[unit] = nil
+					self.delete[unit] = nil
+				end
+			end
+		end
+	end,
+	legacy_render = function(self, unit)
+		if self.units[unit] ~= nil then
+			if #self.units[unit] > 0 then
+				local breed = Unit.get_data(unit, "breed") or { name = "player" } -- no breed means player
+				local offset = breed and breed.name and mod.enemies.offsets[breed.name] or mod.enemies.offsets.default
+				local player = Managers.player:local_player()
+				local world = Managers.world:world("level_world")
+				local viewport = ScriptWorld.viewport(world, player.viewport_name)
+				local camera = ScriptViewport.camera(viewport)
+
+				--local color = Color(255, 255, 255, 255)
+				local font, font_material, font_size = self:fonts(30)
+				local scale = UIResolutionScale()
+
+				-- local enemy_pos = Unit.world_position(unit, 0)
+				-- local dmg_pos = Vector3(enemy_pos[1], enemy_pos[2], enemy_pos[3] + offset)
+				-- local hp_bar_pos_2d = Camera.world_to_screen(camera, dmg_pos)
+
+				--EchoConsole(string.format("x=%i;y=%i", hp_bar_pos_2d[1], hp_bar_pos_2d[2]))
+				local index = 1
+				local visibility_offset = 0
+				for _, unit_dmg in pairs(self.units[unit]) do
+					if mod:get_time() - unit_dmg.timer < self.fade_time then
+						if unit_dmg.damage > 0 then
+							local damage = tostring(unit_dmg.damage)
+							local life = (mod:get_time() - unit_dmg.timer) / self.fade_time
+							local alpha = life*2
+							if alpha > 1 then alpha = 2 - alpha end
+
+							local color = Color(unit_dmg.color[1] * alpha, unit_dmg.color[2], unit_dmg.color[3], unit_dmg.color[4])
+							local black = Color(255 * alpha, 0, 0, 0)
+							--local position = Vector3Aux.unbox(unit_dmg.position)
+							local position = Unit.world_position(unit, 0)
+							position[3] = position[3] + offset
+							local position2d, depth = Camera.world_to_screen(camera, position)
+							local offset_height = (100 * scale) * life
+							local offset_vis = {0, 0}
+							if visibility_offset == 1 then
+								offset_vis[2] = -50 * scale
+							elseif visibility_offset == 2 then
+								offset_vis[1] = -50 * scale
+							elseif visibility_offset == 3 then
+								offset_vis[2] = 50 * scale
+							elseif visibility_offset == 4 then
+								offset_vis[1] = 50 * scale
+							end
+							local font_size = unit_dmg.font_size < 30 and 20 or 30
+							local scaled_font_size = (unit_dmg.healed or unit_dmg.ammo) and font_size*1.3 or (unit_dmg.ff or unit_dmg.received_dmg) and font_size*1.4 or font_size
+							if depth < 1 then	
+								Gui.text(mod.gui, damage, font_material, scaled_font_size, font, Vector2(position2d[1]+2 + offset_vis[1], position2d[2]-2 + offset_vis[2] + offset_height), black)
+								Gui.text(mod.gui, damage, font_material, scaled_font_size, font, Vector2(position2d[1]+2 + offset_vis[1], position2d[2]+2 + offset_vis[2] + offset_height), black)
+								Gui.text(mod.gui, damage, font_material, scaled_font_size, font, Vector2(position2d[1]-2 + offset_vis[1], position2d[2]-2 + offset_vis[2] + offset_height), black)
+								Gui.text(mod.gui, damage, font_material, scaled_font_size, font, Vector2(position2d[1]-2 + offset_vis[1], position2d[2]+2 + offset_vis[2] + offset_height), black)
+								Gui.text(mod.gui, damage, font_material, scaled_font_size, font, Vector2(position2d[1] + offset_vis[1], position2d[2] + offset_vis[2] + offset_height), color)
+
+								visibility_offset = visibility_offset + 1
+								if visibility_offset > 4 then visibility_offset = 0 end
+							end
+						end
+					else
+						table.remove(self.units[unit], index)
+					end
+					index = index + 1
+				end
+			else
+				if table.contains(self.delete, unit) then
+					self.units[unit] = nil
+					self.corpses[unit] = nil
 					self.delete[unit] = nil
 				end
 			end
@@ -1109,12 +1201,17 @@ end
 mod:hook(GenericHitReactionExtension, "update", function(func, self, unit, input, dt, context, t, ...)
 
 	-- Add new units to process
-	if mod:is_enabled() and self.health_extension:is_alive() then
+	--if mod:is_enabled() and self.health_extension:is_alive() then
+	if not mod.floating:has_unit(unit) then
 		mod:add_unit(unit)
 	end
 
 	-- Render damages
-	mod.floating:render(unit)
+	if mod:get("floating_numbers_render") == 1 then
+		mod.floating:render(unit)
+	else
+		mod.floating:legacy_render(unit)
+	end
 
 	-- Original function
 	func(self, unit, input, dt, context, t, ...)
@@ -1136,6 +1233,17 @@ mod:hook_safe(GenericHitReactionExtension, "_execute_effect", function(self, uni
 
 	-- Floating numbers
 	if mod:is_enabled() then
+		local health_extension = self.health_extension
+		local damages, num_damages = health_extension.recent_damages(health_extension)
+
+		local damage_total = 0
+		local stride = DamageDataIndex.STRIDE
+
+		for i = 1, num_damages, stride do
+			damage_total = damage_total + damages[(i + DamageDataIndex.DAMAGE_AMOUNT) - 1]
+		end
+
+		biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = damage_total
 		mod.floating:handle(unit, biggest_hit, parameters)
 	else
 		if parameters.death then

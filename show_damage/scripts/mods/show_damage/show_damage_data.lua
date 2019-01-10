@@ -219,6 +219,19 @@ local mod_data = {
 			["default_value"] = false,
 			["sub_widgets"] = {
 				{
+					["setting_name"] = "floating_numbers_render",
+					["widget_type"] = "dropdown",
+					["text"] = "Rendering Style",
+					["tooltip"] = "Rendering style for floating numbers.\n\n" ..
+						"-- NORMAL --\nNormal rendering style.\n\n" ..
+						"-- LEGACY --\nOld rendering style used before Vermintide 2. May not support all features.\n",
+					["options"] = {
+						{text = "Normal", value = 1},
+						{text = "Legacy", value = 2},
+					},
+					["default_value"] = 1,
+				},
+				{
 					["setting_name"] = "floating_numbers_size",
 					["widget_type"] = "numeric",
 					["text"] = "Size",
