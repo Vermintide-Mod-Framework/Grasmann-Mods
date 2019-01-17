@@ -452,7 +452,7 @@ mod.create_window = function(self)
 					local frame_y = frame_scenegraph.world_position[2]
 					local button_size = {frame_width/3, frame_height/6}
 					for j = 1, 9 do
-						if self:loadout_exists(hero_name, i) then
+						if self:loadout_exists(hero_name, j) then
 
 							-- ##### Get position #####################################################################
 							local position = {}
