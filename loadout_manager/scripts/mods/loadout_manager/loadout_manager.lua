@@ -238,8 +238,10 @@ mod.get_loadout_icons = function(self, loadout_number, profile_name)
 			local item = BackendUtils.get_item_from_masterlist(item_backend_id)
 			if item then
 				local color_name = rarity_colors[item.rarity] or "white"
+				local show_forge_icon = (slot.name == "slot_melee" or slot.name == "slot_ranged") and item.item_type ~= "bw_staff_firefly_flamewave"
+				local icon = show_forge_icon and ("forge_icon_" .. item.item_type) or item.inventory_icon
 				results[#results+1] = {
-					icon = item.inventory_icon,
+					icon = icon,
 					color_name = color_name,
 					name = item.localized_name,
 					traits = item.traits,
