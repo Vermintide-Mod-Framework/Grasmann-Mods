@@ -165,6 +165,56 @@ mod.definitions.dr_2h_hammer = {
     },
 }
 
+-- ##### Dual Hammer ##################################################################################################
+mod.definitions.dr_dual_wield_hammers = {
+    right = {
+        back = { node = default_node_2, position = {0.4, -0.2, 0.1}, rotation = {0, -110, 90},												-- Default / V1				2.1.0
+            dr_ranger = { copy = "backpack", },																								-- V2 ranger				2.1.0
+            dr_ironbreaker = { copy = "backpack", },																						-- V2 ironbreaker			2.1.0
+            dr_slayer = { node = default_node_2, position = {0.2, -0.2, 0.1}, rotation = {0, -110, 90}, replace = "belt", },
+        },
+        backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},											-- Default / V1				2.1.0
+            dr_ranger = { 
+                attachment = 1, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.1.0
+                skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.26, -0.5, 0.1}, rotation = {40, 150, 20}, },		-- V2 classic ranger skin	2.1.0
+            },
+            dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.25}, rotation = {0, 180, 90}, },			-- V2 ironbreaker			2.1.0
+            dr_slayer = { copy = "back", replace = "belt", },
+        },
+        belt = { node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110},												-- Default / V1				2.1.0
+            dr_ranger = {
+                node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110},													-- V2 ranger				2.1.0
+                skin_dr_default = { node = hip_node, position = {0.13, 0.1, -0.26}, rotation = {130, -70, 110}, },							-- V2 classic ranger skin	2.1.0
+            },
+            dr_ironbreaker = { node = hip_node, position = {0.13, 0.1, -0.27}, rotation = {130, -70, 110}, },								-- V2 ironbreaker			2.1.0
+            dr_slayer = { node = hip_node, position = {0.2, 0.1, -0.25}, rotation = {110, -70, -70}, replace = "back", },
+        },
+    },
+    left = {
+        back = { node = default_node_2, position = {0.4, -0.2, 0.1}, rotation = {0, -110, 90},												-- Default / V1				2.1.0
+            dr_ranger = { copy = "backpack", },																								-- V2 ranger				2.1.0
+            dr_ironbreaker = { copy = "backpack", },																						-- V2 ironbreaker			2.1.0
+            dr_slayer = { node = default_node_2, position = {0.2, -0.2, -0.2}, rotation = {12, -50, -78}, replace = "belt", },
+        },
+        backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},											-- Default / V1				2.1.0
+            dr_ranger = { 
+                attachment = 1, attachment_node = 9, position = {-0.02, -0.1, -0.18}, rotation = {0, 0, 90},								-- V2 ranger				2.1.0
+                skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.16, -0.3, 0.2}, rotation = {60, 150, 120}, },		-- V2 classic ranger skin	2.1.0
+            },
+            dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0, -0.13, 0.35}, rotation = {-10, 190, 90}, },			-- V2 ironbreaker			2.1.0
+            dr_slayer = { copy = "back", replace = "belt", },
+        },
+        belt = { node = hip_node, position = {0.2, 0.1, 0.25}, rotation = {20, -80, 200}, replace = "back",												-- Default / V1				2.1.0
+            dr_ranger = {
+                node = hip_node, position = {0.2, 0.1, 0.25}, rotation = {20, -80, 200}, replace = "back",													-- V2 ranger				2.1.0
+                skin_dr_default = { node = hip_node, position = {0.2, 0.1, 0.25}, rotation = {20, -80, 200}, replace = "back", },							-- V2 classic ranger skin	2.1.0
+            },
+            dr_ironbreaker = { node = hip_node, position = {0.2, 0.1, 0.25}, rotation = {20, -80, 200}, replace = "back", },								-- V2 ironbreaker			2.1.0
+            dr_slayer = { node = hip_node, position = {0.2, 0.1, 0.25}, rotation = {20, -80, 200}, replace = "back", },
+        },
+    },
+}
+
 -- ##### 2H Axes ######################################################################################################
 mod.definitions.dr_1h_axes = {
     right = {

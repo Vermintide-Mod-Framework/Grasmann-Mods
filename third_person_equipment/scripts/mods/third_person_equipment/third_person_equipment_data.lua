@@ -9,6 +9,7 @@ return {
   name = "Third Person Equipment",
   description = mod:localize("mod_description"),
   is_togglable = true,
+  allow_rehooking = true,
   options_widgets = {
     {
       ["setting_name"] = "dwarf_weapon_position",

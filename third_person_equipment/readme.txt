@@ -6,6 +6,10 @@ Melee- and ranged weapon as well as tomes, grims, potions, bombs and heal items.
 Works for yourself, other players and bots.
 
 Changelog:
+2.2.0
+	- Reworked system
+	- Added extension
+	- Added elf 1h axe, kruber mace and sword, dwarf dual hammers
 2.1.0
 	- Restructured definitions
 2.0.9

@@ -1,12 +1,11 @@
 local mod = get_mod("ThirdPersonEquipment")
 --[[
-	Third person equipment extension
+    Third person equipment extension
+
+    Extends simple_inventory_extension and simple_husk_inventory_extension with additional features
 
 	Author: grasmann
 --]]
-
-third_person_equipment_spawned_units = third_person_equipment_spawned_units or {}
-local loaded_units = third_person_equipment_spawned_units
 
 -- ##### ███████╗██╗  ██╗████████╗███████╗███╗   ██╗███████╗██╗ ██████╗ ███╗   ██╗ ####################################
 -- ##### ██╔════╝╚██╗██╔╝╚══██╔══╝██╔════╝████╗  ██║██╔════╝██║██╔═══██╗████╗  ██║ ####################################
@@ -22,7 +21,7 @@ ThirdPersonEquipmentExtension = class(ThirdPersonEquipmentExtension)
 --]]
 ThirdPersonEquipmentExtension.init = function(self, inventory_extension)
     local player = inventory_extension.player
-    mod:echo("Creating extension for player '"..tostring(player:name()).."' ...")
+    --mod:echo("Creating extension for player '"..tostring(player:name()).."' ...")
     
     -- Values
     self.inventory_extension = inventory_extension
@@ -38,34 +37,47 @@ ThirdPersonEquipmentExtension.init = function(self, inventory_extension)
     mod.current.profile[self.unit] = SPProfiles[profile_index].unit_name
 
     -- Create hooks
+    self:create_hooks()
+    
+end
+
+ThirdPersonEquipmentExtension.create_hooks = function(self)
     -- Destroy
-    mod:hook(inventory_extension, "destroy", function(func, self, ...)
+    mod:hook(self.inventory_extension, "destroy", function(func, self, ...)
         self.tpe_extension:destroy()
         return func(self, ...)
     end)
     -- Wield
-    mod:hook_safe(inventory_extension, "wield", function(self, slot_name)
+    mod:hook_safe(self.inventory_extension, "wield", function(self, slot_name)
         if table.contains(self.tpe_extension.slots, slot_name) then
             self.tpe_extension:wield(slot_name)
         end
     end)
     -- Add Equipment
-    mod:hook_safe(inventory_extension, "add_equipment", function(self, slot_name, item_data)
+    mod:hook_safe(self.inventory_extension, "add_equipment", function(self, slot_name, item_data)
         if table.contains(self.tpe_extension.slots, slot_name) then
             self.tpe_extension:add(slot_name, item_data)
         end
     end)
     -- Destroy Slot
-    mod:hook(inventory_extension, "destroy_slot", function(func, self, slot_name, ...)
+    mod:hook(self.inventory_extension, "destroy_slot", function(func, self, slot_name, ...)
         if table.contains(self.tpe_extension.slots, slot_name) then
             self.tpe_extension:remove(slot_name)
         end
         return func(self, slot_name, ...)
     end)
     -- Update
-    mod:hook_safe(inventory_extension, "update", function(self)
+    mod:hook_safe(self.inventory_extension, "update", function(self)
         self.tpe_extension:update()
     end)
+end
+
+ThirdPersonEquipmentExtension.destroy_hooks = function(self)
+    mod:hook_disable(self.inventory_extension, "destroy")
+    mod:hook_disable(self.inventory_extension, "wield")
+    mod:hook_disable(self.inventory_extension, "add_equipment")
+    mod:hook_disable(self.inventory_extension, "destroy_slot")
+    mod:hook_disable(self.inventory_extension, "update")
 end
 
 --[[
@@ -78,47 +90,60 @@ end
     Destroy extension
 --]]
 ThirdPersonEquipmentExtension.destroy = function(self)
-    --mod:echo("Destroying ext player: '"..tostring(self.player:name()).."' ...")
-    mod:delete_units(self.unit)
+    self:destroy_hooks()
+    mod:delete_units(self)
 end
 
 --[[
     Wield equipment
 --]]
 ThirdPersonEquipmentExtension.wield = function(self, slot_name)
-    --mod:echo("Wield slot '"..slot_name.."'")
     self.slot = slot_name
-    mod:wield_equipment(self.unit, slot_name)
+    mod:wield_equipment(self, slot_name)
 end
 
 --[[
     Add equipment
 --]]
 ThirdPersonEquipmentExtension.add = function(self, slot_name, item_data)
-    --mod:echo("Creating '"..slot_name.."' player: '"..tostring(self.player:name()).."' ...")
-    --self:load_equipment(slot_name, item_data)
-    mod:add_item(self.unit, slot_name, item_data, skin)
-    -- lol
-    mod.current.slot[self.unit] = mod.current.slot[self.unit] or self.inventory_extension:equipment().wielded_slot or "slot_melee"
-    --mod:dump(self.equipment, "self.equipment", 4)
-    --mod:set_equipment_visibility(self.unit)
+    mod:add_item(self, slot_name, item_data)
+    mod:set_equipment_visibility(self.unit)
 end
 
 --[[
     Remove equipment
 --]]
 ThirdPersonEquipmentExtension.remove = function(self, slot_name)
-    --mod:echo("Destroy '"..slot_name.."' player: '"..tostring(self.player:name()).."' ...")
-    mod:delete_slot(self.unit, slot_name)
-    --mod:dump(mod.current.equipment, "mod.current.equipment", 4)
+    mod:delete_slot(self, slot_name)
+end
+
+ThirdPersonEquipmentExtension.reload = function(self)
+    mod:delete_units(self)
+	self:add_all()
 end
 
 --[[
     Add all equipment
 --]]
 ThirdPersonEquipmentExtension.add_all = function(self)
-    --mod:echo("Add all items for player: '"..tostring(self.player:name()).."' ...")
-    mod:add_all_items(self.unit)
-    --mod:dump(mod.current.equipment, "mod.current.equipment", 4)
+    mod:add_all_items(self)
     mod:set_equipment_visibility(self.unit)
+end
+
+--[[
+    Get career name
+--]]
+ThirdPersonEquipmentExtension.career_name = function(self)
+    local career_extension = ScriptUnit.extension(self.unit, "career_system")
+    local career_name = career_extension._career_data.name
+    return career_name
+end
+
+--[[
+    Get skin name
+--]]
+ThirdPersonEquipmentExtension.character_skin = function(self)
+    local cosmetic_extension = ScriptUnit.extension(self.unit, "cosmetic_system")
+    local skin = cosmetic_extension:get_equipped_skin().name
+    return skin
 end

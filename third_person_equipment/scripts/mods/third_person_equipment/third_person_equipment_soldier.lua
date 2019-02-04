@@ -104,6 +104,46 @@ mod.definitions.es_2h_sword_exec = {
     },
 }
 
+-- ##### Hammer and Sword #############################################################################################
+mod.definitions.es_dual_wield_hammer_sword = {
+    right = {
+        belt = { node = hip_node, position = {0.2, 0.1, -0.21}, rotation = {130, -70, 110},									-- Default / V1					2.1.0
+            es_mercenary = {
+                node = hip_node, position = {0.2, 0.1, -0.18}, rotation = {130, -70, 110},									-- V2 mercenary					2.1.0
+                skin_es_default = { node = hip_node, position = {0.2, 0.1, -0.18}, rotation = {130, -70, 110}, },			-- V2 classic mercenary skin	2.1.0
+            },
+            es_knight = { node = hip_node, position = {0.2, 0.1, -0.18}, rotation = {130, -60, 110}, },						-- V2 knight
+            es_huntsman = { node = hip_node, position = {0.2, 0.1, -0.18}, rotation = {130, -60, 110}, },					-- V2 huntsman					2.1.0
+        },
+        back = { node = default_node, position = {0.5, -0.22, 0.1}, rotation = {0, -110, 90},								-- Default / V1					2.1.0
+            es_mercenary = {
+                node = default_node, position = {0.5, -0.22, 0.1}, rotation = {0, -110, 90},								-- V2 mercenary					2.1.0
+                skin_es_default = { node = default_node, position = {0.5, -0.22, 0.1}, rotation = {0, -110, 90}, },			-- V2 classic mercenary skin	2.1.0
+            },
+            es_knight = { attachment = 1, attachment_node = 10, position = {-0.1, 0.02, 0.1}, rotation = {0, 120, -90}, },	-- V2 knight					2.1.0
+            es_huntsman = { node = default_node, position = {0.5, -0.22, 0.1}, rotation = {0, -110, 90}, },					-- V2 huntsman					2.1.0
+        },
+    },
+    left = {
+        belt = { node = hip_node, position = {0.2, 0.1, 0.21}, rotation = {50, -70, 220},									-- Default / V1					2.1.0
+            es_mercenary = {
+                node = hip_node, position = {0.2, 0.1, 0.18}, rotation = {50, -70, 220},									-- V2 mercenary					2.1.0
+                skin_es_default = { node = hip_node, position = {0.2, 0.1, 0.18}, rotation = {50, -70, 220}, },			-- V2 classic mercenary skin	2.1.0
+            },
+            es_knight = { node = hip_node, position = {0.2, 0.1, 0.18}, rotation = {50, -60, 220}, },						-- V2 knight
+            es_huntsman = { node = hip_node, position = {0.2, 0.1, 0.18}, rotation = {50, -60, 220}, },					-- V2 huntsman					2.1.0
+        },
+        back = { node = default_node, position = {0.4, -0.22, -0.1}, rotation = {0, -50, 90},								-- Default / V1					2.1.0
+            es_mercenary = {
+                node = default_node, position = {0.4, -0.22, -0.2}, rotation = {0, -50, 90},								-- V2 mercenary					2.1.0
+                skin_es_default = { node = default_node, position = {0.4, -0.22, -0.2}, rotation = {0, -50, 90}, },			-- V2 classic mercenary skin	2.1.0
+            },
+            es_knight = { attachment = 1, attachment_node = 10, position = {-0.15, 0.02, -0.25}, rotation = {0, 50, -90}, },	-- V2 knight					2.1.0
+            es_huntsman = { node = default_node, position = {0.4, -0.22, -0.2}, rotation = {0, -50, 90}, },					-- V2 huntsman					2.1.0
+        },
+    },
+}
+
 -- ##### 1H Sword #####################################################################################################
 mod.definitions.es_1h_sword = {
     right = {

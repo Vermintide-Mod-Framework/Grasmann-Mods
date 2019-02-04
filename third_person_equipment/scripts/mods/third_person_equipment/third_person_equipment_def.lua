@@ -28,6 +28,7 @@ mod.definitions = {
 		"dr_dual_axes",
 		"dr_drakegun",
 		"dr_drakefire_pistols",
+		"dr_dual_wield_hammers",
 	},
 	dwarf_two_handed = {
 		"dr_2h_hammer",
@@ -57,6 +58,9 @@ mod.definitions = {
 		"dr_1h_axes",
 		"dr_1h_hammer_shield",
 		"dr_dual_axes",
+		"we_1h_axe",
+		"es_dual_wield_hammer_sword",
+		"dr_dual_wield_hammers",
 	},
 	waywatcher_dual = {
 		"ww_dual_swords",

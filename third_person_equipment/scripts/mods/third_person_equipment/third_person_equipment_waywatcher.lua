@@ -154,6 +154,28 @@ mod.definitions.ww_trueflight = {
     left = { node = default_node_2, position = {0.1, -0.15, 0}, rotation = {0, -45, -90}, },                                            -- Default / V1
 }
 
+-- ##### 1H Axe #######################################################################################################
+mod.definitions.we_1h_axe = {
+    right = {
+        belt = { node = hip_node, position = {0.2, 0.1, -0.17}, rotation = {130, -70, 110}, 											-- Default / V1
+            we_waywatcher = { 
+                node = hip_node, position = {0.16, 0, 0.15}, rotation = {40, -70, 220}, 												-- V2 waystalker				2.1.0
+                skin_ww_default = { node = hip_node, position = {0.2, 0, 0.14}, rotation = {40, -70, 220}, },							-- V2 classic waywatcher skin 	2.1.0
+            },
+            we_maidenguard = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },								-- V2 handmaiden				2.1.0
+            we_shade = { node = hip_node, position = {0.16, 0, 0.16}, rotation = {40, -70, 220}, },										-- V2 shade						2.1.0
+        },
+        back = { node = default_node_2, position = {0.2, -0.1, 0.1}, rotation = {0, -110, 90},											-- Default / V1
+            we_waywatcher = { 
+                attachment = 2, attachment_node = 19, position = {-0.15, -0.05, -0.03}, rotation = {0, 120, 40},						-- V2 waystalker				2.1.0
+                skin_ww_default = { attachment = 2, attachment_node = 10, position = {-0.1, 0.07, 0.1}, rotation = {0, 120, 75}, },		-- V2 classic waywatcher skin	2.1.0
+            },
+            we_maidenguard = { attachment = 2, attachment_node = 19, position = {-0.1, 0.02, -0.05}, rotation = {0, 120, 75}, },		-- V2 handmaiden				2.1.0
+            we_shade = { attachment = 2, attachment_node = 18, position = {0, 0, 0}, rotation = {25, 120, 75}, },				-- V2 shade						2.1.0
+        },
+    },
+}
+
 -- ##### 1H Sword #####################################################################################################
 mod.definitions.ww_1h_sword = {
     right = {
