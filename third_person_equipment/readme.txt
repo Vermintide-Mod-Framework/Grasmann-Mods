@@ -10,6 +10,7 @@ Changelog:
 	- Reworked system
 	- Added extension
 	- Added elf 1h axe, kruber mace and sword, dwarf dual hammers
+	- Added sienna crowbill, witchhunter axe and falchion
 2.1.0
 	- Restructured definitions
 2.0.9

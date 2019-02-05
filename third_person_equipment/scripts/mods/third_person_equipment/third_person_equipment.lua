@@ -45,7 +45,7 @@ end
 	Delete all spawned units
 --]]
 mod.delete_all_units = function(self)
-	if spawned_units then
+	if spawned_units and Managers.world then
 		local world = Managers.world:world("level_world")
 		-- Iterate through spawned units and delete them directly
 		for _, unit in pairs(spawned_units) do
