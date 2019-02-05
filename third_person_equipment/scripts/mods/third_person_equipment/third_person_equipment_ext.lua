@@ -92,6 +92,8 @@ end
 ThirdPersonEquipmentExtension.destroy = function(self)
     self:destroy_hooks()
     mod:delete_units(self)
+    mod.current.profile[self.unit] = nil
+    mod.current.slot[self.unit] = nil
 end
 
 --[[

@@ -119,6 +119,46 @@ mod.definitions.wh_fencing_sword = {
     },
 }
 
+-- ##### Axe and Falchion #############################################################################################
+mod.definitions.wh_dual_wield_axe_falchion = {
+    right = {
+        belt = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},								    	-- Default / V1					2.2.0
+            wh_captain = {
+                attachment = 5, attachment_node = 2, position = {0, 0.04, 0}, rotation = {90, 90, 0},					    	-- V2 captain					2.2.0
+                skin_wh_default = { node = hip_node, position = {0.2, 0, -0.15}, rotation = {150, -70, 150}, },			    	-- V2 classic captain skin		2.2.0
+            },
+            wh_bountyhunter = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },				    	-- V2 bountyhunter				2.2.0
+            wh_zealot = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150}, },					    	-- V2 zealot					2.2.0
+        },
+        back = { node = default_node_2, position = {0.3, -0.16, 0.1}, rotation = {0, -110, 90},							    	-- Default / V1					2.2.0
+            wh_captain = {
+                node = default_node_2, position = {0.3, -0.17, 0.15}, rotation = {-10, -110, 90},						    	-- V2 captain					2.2.0
+                skin_wh_default = { node = default_node_2, position = {0.3, -0.17, 0.15}, rotation = {-10, -110, 90}, },	    -- V2 classic captain skin		2.2.0
+            },
+            wh_bountyhunter = { node = default_node_2, position = {0.3, -0.17, 0.15}, rotation = {-20, -110, 90}, },		    -- V2 bountyhunter				2.2.0
+            wh_zealot = { node = default_node_2, position = {0.3, -0.17, 0.15}, rotation = {-10, -110, 90}, },			    	-- V2 zealot					2.2.0
+        },
+    },
+    left = {
+        belt = { node = hip_node, position = {0.2, 0, -0.17}, rotation = {150, -70, 150},								    	-- Default / V1					2.2.0
+            wh_captain = {
+                node = hip_node, position = {0.3, 0, 0.15}, rotation = {20, -70, 20},					    	                -- V2 captain					2.2.0
+                skin_wh_default = { node = hip_node, position = {0.3, 0, 0.12}, rotation = {20, -70, 20}, },			    	-- V2 classic captain skin		2.2.0
+            },
+            wh_bountyhunter = { node = hip_node, position = {0.3, 0, 0.15}, rotation = {20, -70, 20}, },				    	-- V2 bountyhunter				2.2.0
+            wh_zealot = { attachment = 1, attachment_node = 2, position = {0, 0.06, 0}, rotation = {20, 110, 70}, },			-- V2 zealot					2.2.0
+        },
+        back = { node = default_node_2, position = {0.3, -0.16, 0.1}, rotation = {0, -110, 90},							    	-- Default / V1					2.2.0
+            wh_captain = {
+                node = default_node_2, position = {0.3, -0.2, -0.15}, rotation = {0, -60, 90},						    	    -- V2 captain					2.2.0
+                skin_wh_default = { node = default_node_2, position = {0.3, -0.2, -0.15}, rotation = {0, -60, 90}, },	    	-- V2 classic captain skin		2.2.0
+            },
+            wh_bountyhunter = { node = default_node_2, position = {0.3, -0.2, -0.15}, rotation = {10, -60, 90}, },		    	-- V2 bountyhunter				2.2.0
+            wh_zealot = { node = default_node_2, position = {0.3, -0.2, -0.15}, rotation = {0, -60, 90}, },			    	    -- V2 zealot					2.2.0
+        },
+    },
+}
+
 -- ##### Falchion #####################################################################################################
 mod.definitions.wh_1h_falchions = {
     right = {

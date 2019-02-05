@@ -61,6 +61,8 @@ mod.definitions = {
 		"we_1h_axe",
 		"es_dual_wield_hammer_sword",
 		"dr_dual_wield_hammers",
+		"wh_dual_wield_axe_falchion",
+		"bw_1h_crowbill",
 	},
 	waywatcher_dual = {
 		"ww_dual_swords",

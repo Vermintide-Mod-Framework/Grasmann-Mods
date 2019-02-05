@@ -288,7 +288,7 @@ mod.get_item_setting = function(self, tpe, slot_name, item_data, left)
 		if career_name == "dr_slayer" then
 
 			-- Dual axes
-			if item_data.item_type == "dr_dual_axes" then
+			if item_data.item_type == "dr_dual_axes" or item_data.item_type == "dr_dual_wield_hammers" then
 				local something_replaced = false
 				if self.current.equipment[tpe.unit] then
 					for _, i_unit in pairs(self.current.equipment[tpe.unit]) do

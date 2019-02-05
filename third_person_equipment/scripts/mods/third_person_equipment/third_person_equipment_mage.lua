@@ -98,6 +98,28 @@ mod.definitions.bw_1h_sword = {
     },
 }
 
+-- ##### Crowbill #####################################################################################################
+mod.definitions.bw_1h_crowbill = {
+    right = {
+        belt = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110},									-- Default / V1						2.2.0
+            bw_adept = { 
+                node = hip_node, position = {0.2, 0.05, -0.17}, rotation = {90, -60, 110}, 										-- V2 battle wizard					2.2.0
+                skin_bw_default = { node = hip_node, position = {0.2, 0.05, -0.14}, rotation = {130, -70, 110}, },				-- V2 classic battle wizard skin	2.2.0
+            },
+            bw_unchained = { attachment = 1, attachment_node = 4, position = {-0.1, 0.05, -0.05}, rotation = {20, 60, -90}, },	-- V2 unchained						2.2.0
+            bw_scholar = { attachment = 1, attachment_node = 4, position = {-0.1, 0.05, -0.05}, rotation = {20, 60, -90}, },	-- V2 pyromancer					2.2.0
+        },
+        back = { node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {0, -110, 90},								-- Default / V1						2.2.0
+            bw_adept = { 
+                node = default_node_2, position = {0.25, -0.14, 0.1}, rotation = {-30, -110, 60}, 								-- V2 battle wizard					2.2.0
+                skin_bw_default = { node = default_node_2, position = {0.25, -0.1, 0.1}, rotation = {-60, -110, 30}, },			-- V2 classic battle wizard skin	2.2.0
+            },
+            bw_unchained = { node = default_node_2, position = {0.25, -0.09, 0.12}, rotation = {-60, -110, 30}, },				-- V2 unchained						2.2.0
+            bw_scholar = { attachment = 2, attachment_node = 39, position = {-0.1, 0, 0.1}, rotation = {20, 130, -90}, },		-- V2 pyromancer					2.2.0
+        },
+    },
+}
+
 -- ##### Morning Star #################################################################################################
 mod.definitions.bw_morningstar = {
     right = {
