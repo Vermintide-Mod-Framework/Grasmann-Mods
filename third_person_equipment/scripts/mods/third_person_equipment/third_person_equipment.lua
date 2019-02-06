@@ -431,12 +431,6 @@ mod.add_all_items = function(self, tpe)
 	end
 end
 --[[
-	Check if packages are loaded
---]]
--- mod.is_not_loading = function(self)
--- 	return (#Managers.package._queued_async_packages == 0 and #Managers.package._queue_order == 0)
--- end
---[[
 	Set unit visibility
 --]]
 mod.set_equipment_visibility = function(self, unit, hide)
@@ -483,29 +477,6 @@ mod.wield_equipment = function(self, tpe, slot_name)
 	self.current.slot[tpe.unit] = slot_name
 	self:set_equipment_visibility(tpe.unit)
 end
---[[
-	Check if first person is blocked
---]]
--- mod.is_first_person_blocked = function(self, unit)
--- 	local blocked = nil
--- 	local state_system = ScriptUnit.extension(unit, "character_state_machine_system")
--- 	if state_system ~= nil then
--- 		local state = state_system.state_machine.state_current
--- 		blocked = blocked or state.name == "dead"
--- 		blocked = blocked or state.name == "grabbed_by_pack_master"
--- 		blocked = blocked or state.name == "inspecting"
--- 		blocked = blocked or state.name == "interacting"
--- 		blocked = blocked or state.name == "knocked_down"
--- 		blocked = blocked or state.name == "leave_ledge_hanging_falling"
--- 		blocked = blocked or state.name == "leave_ledge_hanging_pull_up"
--- 		blocked = blocked or state.name == "ledge_hanging"
--- 		blocked = blocked or state.name == "pounced_down"
--- 		blocked = blocked or state.name == "waiting_for_assisted_respawn"
--- 		blocked = blocked or state.name == "catapulted"
--- 		blocked = blocked or state.name == "overcharge_exploding"
--- 	end
--- 	return blocked
--- end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################

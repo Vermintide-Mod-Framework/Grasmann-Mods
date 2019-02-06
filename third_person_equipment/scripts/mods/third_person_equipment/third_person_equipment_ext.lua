@@ -40,7 +40,9 @@ ThirdPersonEquipmentExtension.init = function(self, inventory_extension)
     self:create_hooks()
     
 end
-
+--[[
+    Create inventory hooks
+--]]
 ThirdPersonEquipmentExtension.create_hooks = function(self)
     -- Destroy
     mod:hook(self.inventory_extension, "destroy", function(func, self, ...)
@@ -71,7 +73,9 @@ ThirdPersonEquipmentExtension.create_hooks = function(self)
         self.tpe_extension:update()
     end)
 end
-
+--[[
+    Disable inventory hooks
+--]]
 ThirdPersonEquipmentExtension.destroy_hooks = function(self)
     mod:hook_disable(self.inventory_extension, "destroy")
     mod:hook_disable(self.inventory_extension, "wield")
@@ -79,13 +83,11 @@ ThirdPersonEquipmentExtension.destroy_hooks = function(self)
     mod:hook_disable(self.inventory_extension, "destroy_slot")
     mod:hook_disable(self.inventory_extension, "update")
 end
-
 --[[
     Update extension
 --]]
 ThirdPersonEquipmentExtension.update = function(self)
 end
-
 --[[
     Destroy extension
 --]]
@@ -95,7 +97,6 @@ ThirdPersonEquipmentExtension.destroy = function(self)
     mod.current.profile[self.unit] = nil
     mod.current.slot[self.unit] = nil
 end
-
 --[[
     Wield equipment
 --]]
@@ -103,7 +104,6 @@ ThirdPersonEquipmentExtension.wield = function(self, slot_name)
     self.slot = slot_name
     mod:wield_equipment(self, slot_name)
 end
-
 --[[
     Add equipment
 --]]
@@ -111,19 +111,19 @@ ThirdPersonEquipmentExtension.add = function(self, slot_name, item_data)
     mod:add_item(self, slot_name, item_data)
     mod:set_equipment_visibility(self.unit)
 end
-
 --[[
     Remove equipment
 --]]
 ThirdPersonEquipmentExtension.remove = function(self, slot_name)
     mod:delete_slot(self, slot_name)
 end
-
+--[[
+    Reload equipment
+--]]
 ThirdPersonEquipmentExtension.reload = function(self)
     mod:delete_units(self)
 	self:add_all()
 end
-
 --[[
     Add all equipment
 --]]
@@ -131,7 +131,6 @@ ThirdPersonEquipmentExtension.add_all = function(self)
     mod:add_all_items(self)
     mod:set_equipment_visibility(self.unit)
 end
-
 --[[
     Get career name
 --]]
@@ -140,7 +139,6 @@ ThirdPersonEquipmentExtension.career_name = function(self)
     local career_name = career_extension._career_data.name
     return career_name
 end
-
 --[[
     Get skin name
 --]]
