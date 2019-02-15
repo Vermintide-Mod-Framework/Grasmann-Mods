@@ -41,8 +41,19 @@ end
 	Delete all spawned units
 --]]
 mod.delete_all_units = function(self)
+	-- Let the extenstion delete units
 	for _, extension in pairs(self.extensions) do
 		extension:remove_all()
+	end
+	-- If units left over delete them here
+	if #mod.spawned_units > 0 then
+		local world = Managers.world:world("level_world")
+		for _, unit in pairs(self.spawned_units) do
+			if Unit.alive(unit) then
+				World.destroy_unit(world, unit)
+			end
+		end
+		mod.spawned_units = {}
 	end
 end
 --[[
@@ -59,28 +70,10 @@ mod.hook_all_inventories = function(self)
     end
 end
 --[[
-    Get all inventory extensions in the game
---]]
-mod.all_third_person_extensions = function(self)
-	local extensions = {}
-	if Managers and Managers.state and Managers.state.network then
-        local players = Managers.player:players()
-		for _, player in pairs(players) do
-			if player.player_unit and ScriptUnit.has_extension(player.player_unit, "health_system") then
-				local inventory_extension = ScriptUnit.extension(player.player_unit, "inventory_system")
-				if inventory_extension.tpe_extension then
-					extensions[#extensions+1] = inventory_extension.tpe_extension
-				end
-			end
-		end
-	end
-	return extensions
-end
---[[
     Get inventory extension of local player
 --]]
 mod.local_third_person_extension = function(self)
-	for _, extension in pairs(self:all_third_person_extensions()) do
+	for _, extension in pairs(self.extensions) do
 		if extension:is_local_player() then
 			return extension
 		end

@@ -488,12 +488,6 @@ end
     Remove equipment
 --]]
 ThirdPersonEquipmentExtension.remove = function(self, slot_name)
-    self:remove_slot(slot_name)
-end
---[[
-    Remove equipment slot
---]]
-ThirdPersonEquipmentExtension.remove_slot = function(self, slot_name)
     if self.equipment then
         -- Iterate through equipment
         for i = #self.equipment, 1, -1 do
@@ -501,7 +495,8 @@ ThirdPersonEquipmentExtension.remove_slot = function(self, slot_name)
             -- Check if slot fits
             if item_unit and item_unit.slot == slot_name then
 			    -- Delete unit
-				self:delete_item_unit(item_unit)
+                self:delete_item_unit(item_unit, "right")
+                self:delete_item_unit(item_unit, "left")
 				-- Set equipment nil
 				self.equipment[i] = nil
             end

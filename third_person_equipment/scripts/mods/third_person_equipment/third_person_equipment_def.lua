@@ -79,6 +79,7 @@ mod.definitions = {
 		"bw_staff_firball",
 		"bw_staff_flamethrower",
 		"es_2h_halberd",
+		"we_2h_spear",
 	},
 
 	-- Pickups
