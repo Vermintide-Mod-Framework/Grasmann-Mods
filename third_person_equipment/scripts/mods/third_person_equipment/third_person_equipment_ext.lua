@@ -18,12 +18,13 @@ ThirdPersonEquipmentExtension = class(ThirdPersonEquipmentExtension)
 --[[
     Initialize extension
 --]]
-ThirdPersonEquipmentExtension.init = function(self, inventory_extension)
-    local player = inventory_extension.player
+ThirdPersonEquipmentExtension.init = function(self, inventory_extension, player)
+    -- local player = inventory_extension.player
     -- Values
     self.inventory_extension = inventory_extension
     self.unit = inventory_extension._unit
     self.player = player
+    self.link_queue = {}
     self.slots = {"slot_melee", "slot_ranged", "slot_healthkit", "slot_potion", "slot_grenade"}
     self.slot = self.inventory_extension:equipment().wielded_slot or "slot_melee"
     self.equipment = {}
@@ -93,14 +94,23 @@ end
 --[[
     Update extension
 --]]
-ThirdPersonEquipmentExtension.update = function(self, dt)
+ThirdPersonEquipmentExtension.update = function(self)
+    self:update_link_queue()
+end
+--[[
+    Update link queue
+--]]
+ThirdPersonEquipmentExtension.update_link_queue = function(self)
+    for _, entry in pairs(self.link_queue) do
+        self:link_unit(entry.item_unit, entry.item_setting, true)
+    end
 end
 --[[
     Wield equipment
 --]]
 ThirdPersonEquipmentExtension.wield = function(self, slot_name)
     self.slot = slot_name
-	self:set_equipment_visibility()
+    self:set_equipment_visibility()
 end
 --[[
     Set equipment visibility
@@ -428,25 +438,35 @@ end
 --[[
 	Link equipment unit
 --]]
-ThirdPersonEquipmentExtension.link_unit = function(self, item_unit, item_setting)
+ThirdPersonEquipmentExtension.link_unit = function(self, item_unit, item_setting, queue)
 
 	local attachment = item_setting.attachment or nil
 	local world = Managers.world:world("level_world")
 
 	if attachment then
 		-- Attach unit to attachment unit
-		local unit_attachments = Unit.get_data(self.unit, "flow_unit_attachments")
-		if item_setting.test then mod:echo("unit_attachments: "..tostring(#unit_attachments)) end
-		local attachment_unit = attachment and unit_attachments[attachment]
-		local bones = attachment_unit and Unit.bones(attachment_unit)
-		if bones then
-			if item_setting.test then mod:echo("bones: "..tostring(#bones)) end
-		end
-		if item_setting.test then
-			World.link_unit(world, item_unit, attachment_unit, mod.used_index)
-		else
-			World.link_unit(world, item_unit, attachment_unit, item_setting.attachment_node)
-		end
+        local unit_attachments = Unit.get_data(self.unit, "flow_unit_attachments")
+        if unit_attachments and #unit_attachments > 0 then
+            if item_setting.test then mod:echo("unit_attachments: "..tostring(#unit_attachments)) end
+            local attachment_unit = attachment and unit_attachments[attachment]
+            local bones = attachment_unit and Unit.bones(attachment_unit)
+            if bones then
+                if item_setting.test then mod:echo("bones: "..tostring(#bones)) end
+            end
+            if item_setting.test then
+                World.link_unit(world, item_unit, attachment_unit, mod.used_index)
+            else
+                World.link_unit(world, item_unit, attachment_unit, item_setting.attachment_node)
+            end
+        elseif not queue then
+            -- In case attachement flow units are missing
+            -- Send to link queue
+            self.link_queue[item_unit] = {
+                item_unit = item_unit,
+                item_setting = item_setting,
+            }
+            return
+        end
 	elseif Unit.has_node(self.unit, item_setting.node) then
 		-- Attach unit to node
 		local node = Unit.node(self.unit, item_setting.node)
@@ -463,6 +483,11 @@ ThirdPersonEquipmentExtension.link_unit = function(self, item_unit, item_setting
 	local rotation_offset = item_rotation ~= nil and Vector3(item_rotation[1], item_rotation[2], item_rotation[3]) or Vector3(0,0,0)
 	local rotation = Quaternion.from_euler_angles_xyz(rotation_offset[1], rotation_offset[2], rotation_offset[3])
 	Unit.set_local_rotation(item_unit, 0, rotation)
+
+    -- In case of link queue remove from queue
+    if queue and self.link_queue[item_unit] then
+        self.link_queue[item_unit] = nil
+    end
 
 end
 --[[

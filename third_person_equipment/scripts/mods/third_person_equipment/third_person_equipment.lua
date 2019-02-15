@@ -64,7 +64,7 @@ mod.hook_all_inventories = function(self)
         local players = Managers.player:players()
         for _, player in pairs(players) do
             local inventory_extension = ScriptUnit.extension(player.player_unit, "inventory_system")
-            inventory_extension.tpe_extension = ThirdPersonEquipmentExtension:new(inventory_extension)
+            inventory_extension.tpe_extension = ThirdPersonEquipmentExtension:new(inventory_extension, player)
             inventory_extension.tpe_extension:add_all()
         end
     end
@@ -100,8 +100,8 @@ end)
 --[[
     Hook inventory extensions on init
 --]]
-local init_inventory_extension = function(self)
-	self.tpe_extension = ThirdPersonEquipmentExtension:new(self)
+local init_inventory_extension = function(self, extension_init_context, unit, extension_init_data)
+	self.tpe_extension = ThirdPersonEquipmentExtension:new(self, extension_init_data.player)
 end
 mod:hook_safe(SimpleInventoryExtension, "init", init_inventory_extension)
 mod:hook_safe(SimpleHuskInventoryExtension, "init", init_inventory_extension)
