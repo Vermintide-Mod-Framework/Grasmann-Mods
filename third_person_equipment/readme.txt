@@ -6,6 +6,9 @@ Melee- and ranged weapon as well as tomes, grims, potions, bombs and heal items.
 Works for yourself, other players and bots.
 
 Changelog:
+2.3.0
+	- Finished reworking system and extension
+	- Code optimizations
 2.2.0
 	- Reworked system
 	- Added extension
