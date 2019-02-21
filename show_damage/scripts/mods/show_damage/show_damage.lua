@@ -7,6 +7,16 @@ local mod = get_mod("ShowDamage")
 	Version: 2.1.0
 --]]
 
+local UIResolutionScale = UIResolutionScale or UIResolutionScale_pow2
+local StatBuffIndex = {
+	HEAL_PROC = "heal_proc",
+	LIGHT_HEAL_PROC = "light_heal_proc",
+	HEAVY_HEAL_PROC = "heavy_heal_proc",
+	HEAL_ON_KILL = "heal_on_kill",
+	HEALING_RECEIVED = "healing_received",
+	HEAL_SELF_ON_HEAL_OTHER = "heal_self_on_heal_other",
+}
+
 -- ##### ███████╗██╗  ██╗████████╗███████╗███╗   ██╗███████╗██╗ ██████╗ ███╗   ██╗ ####################################
 -- ##### ██╔════╝╚██╗██╔╝╚══██╔══╝██╔════╝████╗  ██║██╔════╝██║██╔═══██╗████╗  ██║ ####################################
 -- ##### █████╗   ╚███╔╝    ██║   █████╗  ██╔██╗ ██║███████╗██║██║   ██║██╔██╗ ██║ ####################################
@@ -1114,7 +1124,8 @@ mod:hook(BuffExtension, "apply_buffs_to_value", function(func, self, value, stat
 					stat_buff == StatBuffIndex.LIGHT_HEAL_PROC or
 					stat_buff == StatBuffIndex.HEAVY_HEAL_PROC or
 					stat_buff == StatBuffIndex.HEAL_ON_KILL) or
-					(stat_buff == StatBuffIndex.HEALING_RECEIVED and always_proc) then
+					(stat_buff == StatBuffIndex.HEALING_RECEIVED and always_proc) or
+					(not VT1 and stat_buff == StatBuffIndex.HEAL_SELF_ON_HEAL_OTHER) then
 		local biggest_hit = {}
 		biggest_hit[DamageDataIndex.ATTACKER] = (VT1 and mod.attacker_hook_data) or self._unit
 		biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = amount
