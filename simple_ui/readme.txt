@@ -5,6 +5,7 @@ Description :
 Adds the ability to display damage dealt by players in chat and in game world.
 
 Changelog
+2.0.3 - Fixed error message on start in vt1
 2.0.2 - Implemented hover events for controls
 2.0.1 - Update for UIImprovements
 2.0.0 - Update for latest framework

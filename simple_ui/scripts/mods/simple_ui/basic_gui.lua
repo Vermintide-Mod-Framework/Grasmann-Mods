@@ -37,15 +37,18 @@ end
 	Create screen gui
 --]]
 mod.create_screen_ui = function(self)
-	local world = Managers.world:world(self.default_world)
-	if VT1 then
-		self.gui = World.create_screen_gui(world, "immediate", "material", "materials/fonts/gw_fonts", 
-			"material", "materials/ui/ui_1080p_ingame_common")
-	else
-		self.gui = World.create_screen_gui(world, "immediate",
-			"material", "materials/fonts/gw_fonts",
-			"material", "materials/ui/ui_1080p_hud_atlas_textures",
-			"material", "materials/ui/ui_1080p_common")
+	local manager = Managers.world
+	if manager:has_world(self.default_world) then
+		local world = manager:world(self.default_world)
+		if VT1 then
+			self.gui = World.create_screen_gui(world, "immediate", "material", "materials/fonts/gw_fonts", 
+				"material", "materials/ui/ui_1080p_ingame_common")
+		else
+			self.gui = World.create_screen_gui(world, "immediate",
+				"material", "materials/fonts/gw_fonts",
+				"material", "materials/ui/ui_1080p_hud_atlas_textures",
+				"material", "materials/ui/ui_1080p_common")
+		end
 	end
 end
 --[[
