@@ -18,20 +18,21 @@ ThirdPersonEquipmentExtension = class(ThirdPersonEquipmentExtension)
 --[[
     Initialize extension
 --]]
-ThirdPersonEquipmentExtension.init = function(self, inventory_extension, player)
+ThirdPersonEquipmentExtension.init = function(self, inventory_extension) --, player)
     -- local player = inventory_extension.player
     -- Values
     self.inventory_extension = inventory_extension
     self.unit = inventory_extension._unit
-    self.player = player
+    --self.player = player
     self.link_queue = {}
     self.slots = {"slot_melee", "slot_ranged", "slot_healthkit", "slot_potion", "slot_grenade"}
     self.slot = self.inventory_extension:equipment().wielded_slot or "slot_melee"
     self.equipment = {}
     -- Profile
-    local profile_synchronizer = Managers.state.network.profile_synchronizer
-    local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
-    self.profile = SPProfiles[profile_index].unit_name
+    -- local profile_synchronizer = Managers.state.network.profile_synchronizer
+    -- local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
+	-- self.profile = SPProfiles[profile_index].unit_name
+	self.profile = self:get_profile()
     -- Create hooks
     self:create_hooks()
     -- Add to list
@@ -153,6 +154,9 @@ end
     Add equipment
 --]]
 ThirdPersonEquipmentExtension.add = function(self, slot_name, item_data)
+	if not self.profile then
+		mod:echo("Profile not found")
+	end
     local equipment_info = {
         slot_name = slot_name,
         item_data = item_data,
@@ -220,6 +224,8 @@ end
 --[[
 	Get item settings for equipment unit
 --]]
+ThirdPersonEquipmentExtension.get_sub_item_setting = function(self)
+end
 ThirdPersonEquipmentExtension.get_item_setting = function(self, equipment_info, left)
 	local def = mod.definitions
     local item_setting = nil
@@ -302,6 +308,7 @@ ThirdPersonEquipmentExtension.get_item_setting = function(self, equipment_info, 
 
 	else
 		local profile_name = self.profile or nil
+		--local profile_name = self:get_profile() or nil
 		if profile_name then
 			local key = def[item_data.key] and item_data.key or def[item_data.item_type] and item_data.item_type
 			-- mod:echo(tostring(key))
@@ -399,11 +406,13 @@ ThirdPersonEquipmentExtension.get_item_setting = function(self, equipment_info, 
 		end
 	end
 
-	-- Skin
-	local skin = self:character_skin()
-	if skin then
-		item_setting = item_setting[skin] or item_setting
-	end
+    -- Skin
+    if not VT1 then
+        local skin = self:character_skin()
+        if skin then
+            item_setting = item_setting[skin] or item_setting
+        end
+    end
 
 	return item_setting, replaced
 end
@@ -552,6 +561,25 @@ ThirdPersonEquipmentExtension.delete_item_unit = function(self, item_unit, sub_u
             World.destroy_unit(world, item_unit[sub_unit])
         end
     end
+end
+--[[
+	Spawn equipment unit
+--]]
+ThirdPersonEquipmentExtension.get_profile = function(self)
+	if Managers and Managers.state and Managers.state.network then
+        local players = Managers.player:players()
+		for _, player in pairs(players) do
+			if player.player_unit == self.unit then
+				local profile_synchronizer = Managers.state.network.profile_synchronizer
+				local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
+				local profile = SPProfiles[profile_index].unit_name
+				mod:echo("player '"..profile.."' found")
+				return profile
+			end
+		end
+	end
+	mod:echo("player NOT found")
+	return nil
 end
 --[[
     Get career name

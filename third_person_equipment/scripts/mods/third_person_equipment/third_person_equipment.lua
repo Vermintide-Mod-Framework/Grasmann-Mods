@@ -62,10 +62,10 @@ end
 mod.hook_all_inventories = function(self)
     if Managers and Managers.state and Managers.state.network then
         local players = Managers.player:players()
-        for _, player in pairs(players) do
-            local inventory_extension = ScriptUnit.extension(player.player_unit, "inventory_system")
-            inventory_extension.tpe_extension = ThirdPersonEquipmentExtension:new(inventory_extension, player)
-            inventory_extension.tpe_extension:add_all()
+		for _, player in pairs(players) do
+			local inventory_extension = ScriptUnit.extension(player.player_unit, "inventory_system")
+			inventory_extension.tpe_extension = ThirdPersonEquipmentExtension:new(inventory_extension) --, player)
+			inventory_extension.tpe_extension:add_all()
         end
     end
 end
@@ -76,6 +76,17 @@ mod.local_third_person_extension = function(self)
 	for _, extension in pairs(self.extensions) do
 		if extension:is_local_player() then
 			return extension
+		end
+	end
+end
+--[[
+    Reload extensions
+--]]
+mod.reload_extensions = function(self, profile)
+	for _, extension in pairs(self.extensions) do
+		if not profile or extension.profile == profile then
+			local inventory_extension = ScriptUnit.extension(extension.unit, "inventory_system")
+			inventory_extension.tpe_extension:reload()
 		end
 	end
 end
@@ -101,7 +112,7 @@ end)
     Hook inventory extensions on init
 --]]
 local init_inventory_extension = function(self, extension_init_context, unit, extension_init_data)
-	self.tpe_extension = ThirdPersonEquipmentExtension:new(self, extension_init_data.player)
+	self.tpe_extension = ThirdPersonEquipmentExtension:new(self) --, extension_init_data.player)
 end
 mod:hook_safe(SimpleInventoryExtension, "init", init_inventory_extension)
 mod:hook_safe(SimpleHuskInventoryExtension, "init", init_inventory_extension)
@@ -118,44 +129,23 @@ mod:hook_safe(SimpleHuskInventoryExtension, "init", init_inventory_extension)
 mod.on_setting_changed = function(setting_name)
 	-- Dwarf weapons
 	if setting_name == "dwarf_weapon_position" then
-		for unit, name in pairs(mod.current.profile) do
-			if name == "dwarf_ranger" then
-				local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
-				inventory_extension.tpe_extension:reload()
-			end
-		end
+		mod:reload_extensions("dwarf_ranger")
 	end
 	-- Dwarf one-handed weapons
 	if setting_name == "dwarf_onehand_weapon_position" then
-		for unit, name in pairs(mod.current.profile) do
-			if name == "dwarf_ranger" then
-				local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
-				inventory_extension.tpe_extension:reload()
-			end
-		end
+		mod:reload_extensions("dwarf_ranger")
 	end
 	-- Waywatcher dual weapons
 	if setting_name == "waywatcher_dualweapon_position" then
-		for unit, name in pairs(mod.current.profile) do
-			if name == "way_watcher" then
-				local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
-				inventory_extension.tpe_extension:reload()
-			end
-		end
+		mod:reload_extensions("way_watcher")
 	end
 	-- One-handed weapons
 	if setting_name == "onehand_weapon_position" then
-		for unit, name in pairs(mod.current.profile) do
-			local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
-			inventory_extension.tpe_extension:reload()
-		end
+		mod:reload_extensions()
 	end
 	-- Downscale big weapons
 	if setting_name == "downscale_big_weapons" then
-		for unit, name in pairs(mod.current.profile) do
-			local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
-			inventory_extension.tpe_extension:reload()
-		end
+		mod:reload_extensions()
 	end
 end
 --[[
