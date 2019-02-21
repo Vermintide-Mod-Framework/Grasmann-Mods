@@ -5,6 +5,7 @@ local mod_data = {
 	description = mod:localize("mod_description"), -- Readable mod description
 	is_togglable = true, -- If the mod can be enabled/disabled
 	is_mutator = false, -- If the mod is mutator
+	allow_rehooking = true,
 	options_widgets = {
 		{
 			["setting_name"] = "chat_output",

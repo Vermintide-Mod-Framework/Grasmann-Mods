@@ -22,8 +22,8 @@ end
 --[[
 	Update player names when option menu is open
 --]]
-mod.on_game_state_changed = function (status, state_name)
-	if not mod.mod_options_hooked and status == "enter" and state_name == "StateIngame" then
+mod.on_all_mods_loaded = function()
+	if not mod.mod_options_hooked then --and status == "enter" and state_name == "StateIngame" then
 		mod:hook(VMFOptionsView, "update", function(func, self, ...)
 			if mod:get_time() > mod.players.updated + mod.players.interval then
 				mod.players.updated = mod:get_time()
@@ -39,15 +39,18 @@ end
 --]]
 mod.update_setting_text = function(self, setting_name, text)
 	local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
+	
 	if ingame_ui_exists then
+		
 		local vmf_options_view = ingame_ui.views["vmf_options_view"]
 		if vmf_options_view then
 			local searched_widget = nil
-
+			
 			for _, mod_widgets in ipairs(vmf_options_view.settings_list_widgets) do
-				if mod_widgets[1].content.mod_name == self._name then
+				if mod_widgets[1].content.mod_name == self:get_name() then
+					
 					for _, widget in ipairs(mod_widgets) do
-						if widget.content.setting_name == setting_name then
+						if widget.content.setting_id == setting_name then
 							-- do your thing
 							searched_widget = widget
 						end
@@ -1238,18 +1241,24 @@ mod:hook_safe(GenericHitReactionExtension, "_execute_effect", function(self, uni
 
 	-- Floating numbers
 	if mod:is_enabled() then
-		local health_extension = self.health_extension
-		local damages, num_damages = health_extension.recent_damages(health_extension)
+		if VT1 then
+			mod.floating:handle(unit, biggest_hit, parameters)
+		else
+			local health_extension = self.health_extension
+			local damages, num_damages = health_extension.recent_damages(health_extension)
 
-		local damage_total = 0
-		local stride = DamageDataIndex.STRIDE
+			local damage_total = 0
+			local stride = DamageDataIndex.STRIDE
 
-		for i = 1, num_damages, stride do
-			damage_total = damage_total + damages[(i + DamageDataIndex.DAMAGE_AMOUNT) - 1]
+			for i = 1, num_damages, stride do
+				damage_total = damage_total + damages[(i + DamageDataIndex.DAMAGE_AMOUNT) - 1]
+			end
+
+			local original_damage = biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
+			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = damage_total
+			mod.floating:handle(unit, biggest_hit, parameters)
+			biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = original_damage
 		end
-
-		biggest_hit[DamageDataIndex.DAMAGE_AMOUNT] = damage_total
-		mod.floating:handle(unit, biggest_hit, parameters)
 	else
 		if parameters.death then
 			mod.floating.corpses[unit] = true
