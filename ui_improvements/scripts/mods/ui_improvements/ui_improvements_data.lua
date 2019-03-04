@@ -7,7 +7,7 @@ local mod = get_mod("ui_improvements")
 
 return {
 	name = "UI Improvements",
-	description = mod:localize("mod_description"),
+	description = "mod_description",
 	is_togglable = true,
 	is_mutator = false,
 	mutator_settings = {},
@@ -25,34 +25,36 @@ return {
 			},
 		},
 	},
-	options_widgets = {
-		{
-			["setting_name"] = "crafting_buttons",
-			["widget_type"] = "checkbox",
-			["text"] = mod:localize("crafting_buttons_text"),
-			["tooltip"] = mod:localize("crafting_buttons_tip"),
-			["default_value"] = true,
+	options = {
+		widgets = {
+			{
+				setting_id = "crafting_buttons",
+				type = "checkbox",
+				title = "crafting_buttons_text",
+				["tooltip"] = "crafting_buttons_tip",
+				["default_value"] = true,
+			},
+			{
+				setting_id = "remember_categories",
+				type = "checkbox",
+				title = "remember_opened_text",
+				["tooltip"] = "remember_opened_tip",
+				["default_value"] = true,
+			},
+			{
+				setting_id = "alternative_exotic_background",
+				type = "checkbox",
+				title = "alternative_exotic_background_text",
+				["tooltip"] = "alternative_exotic_background_tip",
+				["default_value"] = true,
+			},
+			-- {
+			-- 	setting_id = "salvage_pages",
+			-- 	type = "checkbox",
+			-- 	["text"] = "salvage_pages_text",
+			-- 	["tooltip"] = "salvage_pages_tip",
+			-- 	["default_value"] = true,
+			-- },
 		},
-		{
-			["setting_name"] = "remember_categories",
-			["widget_type"] = "checkbox",
-			["text"] = mod:localize("remember_opened_text"),
-			["tooltip"] = mod:localize("remember_opened_tip"),
-			["default_value"] = true,
-		},
-		{
-			["setting_name"] = "alternative_exotic_background",
-			["widget_type"] = "checkbox",
-			["text"] = mod:localize("alternative_exotic_background_text"),
-			["tooltip"] = mod:localize("alternative_exotic_background_tip"),
-			["default_value"] = true,
-		},
-		-- {
-		-- 	["setting_name"] = "salvage_pages",
-		-- 	["widget_type"] = "checkbox",
-		-- 	["text"] = mod:localize("salvage_pages_text"),
-		-- 	["tooltip"] = mod:localize("salvage_pages_tip"),
-		-- 	["default_value"] = true,
-		-- },
-	},
+	}
 }
