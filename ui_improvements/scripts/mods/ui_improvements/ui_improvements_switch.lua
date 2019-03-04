@@ -400,8 +400,8 @@ mod:hook_safe(HeroWindowOptions, "create_ui_elements", function(self, ...)
 	end
 
 	-- Debug
-	-- self._widgets_by_name.game_option_3.content.button_hotspot.disable_button = false
-	-- self._widgets_by_name.game_option_5.content.button_hotspot.disable_button = false
+	--self._widgets_by_name.game_option_3.content.button_hotspot.disable_button = false
+	--self._widgets_by_name.game_option_5.content.button_hotspot.disable_button = false
 end)
 --[[
 	Draw button widgets

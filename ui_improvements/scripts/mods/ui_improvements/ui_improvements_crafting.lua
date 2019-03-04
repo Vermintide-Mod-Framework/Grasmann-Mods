@@ -398,9 +398,12 @@ mod:hook_safe(HeroWindowCrafting, "post_update", function(self, ...)
 	for _, widget in pairs(mod.craft_button_widgets) do
 		-- Check if button is pressed
 		if not widget.content.disable_button and self:_is_button_pressed(widget) then
-			-- Open crafting page
-			self:_play_sound("play_gui_craft_recipe_next")
-			self:_change_recipe_page(widget.content.index)
+			-- Check if empty button
+			if widget.content.recipe_name ~= "empty" then
+				-- Open crafting page
+				self:_play_sound("play_gui_craft_recipe_next")
+				self:_change_recipe_page(widget.content.index)
+			end
 		end
 	end
 end)
@@ -412,8 +415,11 @@ mod:hook_safe(HeroWindowCrafting, "update", function(self, ...)
 	for _, widget in pairs(mod.craft_button_widgets) do
 		-- Check if button is hovered
 		if not widget.content.disable_button and widget.content.button_hotspot.on_hover_enter then
-			-- Play hover sound
-			self:_play_sound("play_gui_equipment_button_hover")
+			-- Check if empty button
+			if widget.content.recipe_name ~= "empty" then
+				-- Play hover sound
+				self:_play_sound("play_gui_equipment_button_hover")
+			end
 		end
 	end
 end)

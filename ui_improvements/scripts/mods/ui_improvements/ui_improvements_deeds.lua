@@ -37,6 +37,8 @@ mod.deeds = {
             position = {0, 0},
             width = 0.5,
             height = 36,
+            vertical_divider = true,
+            horizontal_divider = true,
             get_list = function(self)
                 local difficulties = {}
                 for _, name in pairs(DefaultDifficulties) do
@@ -59,7 +61,6 @@ mod.deeds = {
                 local text, icon = self:get_data(difficulty)
                 return mod:create_deed_button("window", text, icon, "difficulty", difficulty, is_selected, root, size, "save_deed_difficulty")
             end,
-            
         },
         rarity = {
             value = "all",
@@ -67,6 +68,7 @@ mod.deeds = {
             position = {0.5, 0},
             width = 0.5,
             height = 36,
+            --horizontal_divider = true,
             icons = {
                 common = "icon_deed_cataclysm_01",
                 rare = "icon_deed_cataclysm_02",
@@ -102,6 +104,7 @@ mod.deeds = {
             position = {0, 1},
             width = 1,
             height = 36,
+            horizontal_divider = true,
             list = {
                 "whiterun",
                 "no_pickups",
@@ -152,6 +155,7 @@ mod.deeds = {
             position = {0, 2},
             width = 1,
             height = 36,
+            horizontal_divider = true,
             list = {
                 "act_1",
                 "act_2",
@@ -204,18 +208,18 @@ mod.deeds = {
     },
     element_height = 36,
     label_width = 160,
-    create_ui_widgets = function(self, group, index, height)
+    create_ui_widgets = function(self, group, index, label_width)
         local window_width = 1060
         local list = group:get_list()
-        group.height = height or mod.deeds.element_height
-        local size = group:get_size(window_width*group.width, group.height)
+        group.height = mod.deeds.element_height
+        local size = group:get_size((window_width*group.width) - label_width, group.height)
         group.short = size[2]
         group.long = size[1]
         group.start = index
         return list, size
     end,
     finish_ui_widgets = function(self, group, index)
-        group.length = group.start - index
+        group.length = index - group.start
     end
 }
 
@@ -882,13 +886,15 @@ end)
     Manipulate default widgets and create mod widgets
 --]]
 mod:hook_safe(StartGameWindowMutatorGrid, "create_ui_elements", function(self, ...)
-    local window_width = 1060
+    local window_width = 1059
     local label_width = mod.deeds.label_width
     local element_height = mod.deeds.element_height
     local pos_y = mod.deeds.element_height+4
     local index = 1
     --local group_index = 1
 
+    local rofl = true
+    if rofl then
     local base_y = mod.deeds.element_height+4
     for name, group in pairs(mod.deeds.groups) do
         local pos_x = window_width*group.position[1]
@@ -900,7 +906,7 @@ mod:hook_safe(StartGameWindowMutatorGrid, "create_ui_elements", function(self, .
         pos_x = pos_x + label_width
 
         -- Start creating widgets
-        local list, size = mod.deeds:create_ui_widgets(group, index)
+        local list, size = mod.deeds:create_ui_widgets(group, index, label_width)
 
         -- All
         mod.deeds.widgets[index] = group:create_button("window", "all", true, {pos_x, pos_y, 2}, size)
@@ -915,121 +921,133 @@ mod:hook_safe(StartGameWindowMutatorGrid, "create_ui_elements", function(self, .
         mod.deeds:finish_ui_widgets(group, index-1)
 
         mod:update_widget_group(group)
+
+        if group.vertical_divider then
+            mod.deeds.widgets[index] = mod:create_vertical_window_divider("window", {0, element_height}, {window_width*group.width, pos_y+2, 12})
+            index = index + 1
+        end
+        if group.horizontal_divider then
+            pos_y = pos_y + element_height
+            mod.deeds.widgets[index] = mod:create_horizontal_window_divider("window", {window_width, 0}, {0, pos_y-4, 12})
+            index = index + 1
+        end
+    end
     end
 
-    if lol then
-    -- ##### Difficulty ###############################################################################################
-    -- Label
-    mod.deeds.widgets[index] = mod:create_label("window", "Difficulty", {0, pos_y, 2})
-    index = index + 1
-    -- List
-    local difficulties = mod.deeds.groups.difficulty:get_list()
-    local size = mod.deeds.groups.difficulty:get_size(window_width/2 - label_width, element_height)
-    local start = index
-    local pos_x = label_width
-    -- All
-    mod.deeds.widgets[index] = mod.deeds.groups.difficulty:create_button("window", "all", true, {pos_x, pos_y, 2}, size)
-    index = index + 1
-    -- Generated
-    for _, name in pairs(DefaultDifficulties) do
-        mod.deeds.widgets[index] = mod.deeds.groups.difficulty:create_button("window", name, false, {pos_x, pos_y, 2}, size)
-        index = index + 1
-    end
-    -- Group
-    mod:create_deed_group("difficulty", start, index-start-1, size)
-    --mod.deeds.groups[group_index] = mod:create_deed_group("difficulty", start, index-start-1, size)
-    --group_index = group_index + 1
+    -- --local lol = true
+    -- if lol then
+    -- -- ##### Difficulty ###############################################################################################
+    -- -- Label
+    -- mod.deeds.widgets[index] = mod:create_label("window", "Difficulty", {0, pos_y, 2})
+    -- index = index + 1
+    -- -- List
+    -- local difficulties = mod.deeds.groups.difficulty:get_list()
+    -- local size = mod.deeds.groups.difficulty:get_size(window_width/2 - label_width, element_height)
+    -- local start = index
+    -- local pos_x = label_width
+    -- -- All
+    -- mod.deeds.widgets[index] = mod.deeds.groups.difficulty:create_button("window", "all", true, {pos_x, pos_y, 2}, size)
+    -- index = index + 1
+    -- -- Generated
+    -- for _, name in pairs(DefaultDifficulties) do
+    --     mod.deeds.widgets[index] = mod.deeds.groups.difficulty:create_button("window", name, false, {pos_x, pos_y, 2}, size)
+    --     index = index + 1
+    -- end
+    -- -- Group
+    -- mod:create_deed_group("difficulty", start, index-start-1, size)
+    -- --mod.deeds.groups[group_index] = mod:create_deed_group("difficulty", start, index-start-1, size)
+    -- --group_index = group_index + 1
 
-    -- Vertical Divider
-    mod.deeds.widgets[index] = mod:create_vertical_window_divider("window", {0, element_height}, {window_width/2, pos_y+2, 12})
-    index = index + 1
+    -- -- Vertical Divider
+    -- mod.deeds.widgets[index] = mod:create_vertical_window_divider("window", {0, element_height}, {window_width/2, pos_y+2, 12})
+    -- index = index + 1
 
-    -- ##### Rarity ###################################################################################################
-    -- Label
-    mod.deeds.widgets[index] = mod:create_label("window", "Rarity", {window_width/2, pos_y, 2})
-    index = index + 1
-    -- List
-    local rarities = mod.deeds.groups.rarity:get_list()
-    local size = mod.deeds.groups.rarity:get_size(window_width/2 - label_width, element_height)
-    local start = index
-    local pos_x = window_width/2 + label_width
-    -- All
-    mod.deeds.widgets[index] = mod.deeds.groups.rarity:create_button("window", "all", true, {pos_x, pos_y, 2}, size)
-    index = index + 1
-    -- Generated
-    for _, name in pairs(rarities) do
-        mod.deeds.widgets[index] = mod.deeds.groups.rarity:create_button("window", name, nil, {pos_x, pos_y, 2}, size)
-        index = index + 1
-    end
-    -- Group
-    mod:create_deed_group("rarity", start, index-start-1, size)
-    -- mod.deeds.groups[group_index] = mod:create_deed_group("rarity", start, index-start-1, size)
-    -- group_index = group_index + 1
+    -- -- ##### Rarity ###################################################################################################
+    -- -- Label
+    -- mod.deeds.widgets[index] = mod:create_label("window", "Rarity", {window_width/2, pos_y, 2})
+    -- index = index + 1
+    -- -- List
+    -- local rarities = mod.deeds.groups.rarity:get_list()
+    -- local size = mod.deeds.groups.rarity:get_size(window_width/2 - label_width, element_height)
+    -- local start = index
+    -- local pos_x = window_width/2 + label_width
+    -- -- All
+    -- mod.deeds.widgets[index] = mod.deeds.groups.rarity:create_button("window", "all", true, {pos_x, pos_y, 2}, size)
+    -- index = index + 1
+    -- -- Generated
+    -- for _, name in pairs(rarities) do
+    --     mod.deeds.widgets[index] = mod.deeds.groups.rarity:create_button("window", name, nil, {pos_x, pos_y, 2}, size)
+    --     index = index + 1
+    -- end
+    -- -- Group
+    -- mod:create_deed_group("rarity", start, index-start-1, size)
+    -- -- mod.deeds.groups[group_index] = mod:create_deed_group("rarity", start, index-start-1, size)
+    -- -- group_index = group_index + 1
     
-    -- Line up and divider
-    pos_y = pos_y + element_height
-    mod.deeds.widgets[index] = mod:create_horizontal_window_divider("window", {window_width, 0}, {0, pos_y-4, 12})
-    index = index + 1
+    -- -- Line up and divider
+    -- pos_y = pos_y + element_height
+    -- mod.deeds.widgets[index] = mod:create_horizontal_window_divider("window", {window_width, 0}, {0, pos_y-4, 12})
+    -- index = index + 1
 
-    -- ##### Mutator ##################################################################################################
-    -- Label
-    mod.deeds.widgets[index] = mod:create_label("window", "Mutator", {0, pos_y, 2})
-    index = index + 1
-    -- List
-    local mutators = mod.deeds.groups.mutator:get_list()
-    local size = mod.deeds.groups.mutator:get_size(window_width - label_width, element_height)
-    local start = index
-    local pos_x = label_width
-    -- All
-    mod.deeds.widgets[index] = mod.deeds.groups.mutator:create_button("window", "all", true, {pos_x, pos_y, 2}, size)
-    index = index + 1
-    -- Generated
-    for _, name in pairs(mutators) do
-        mod.deeds.widgets[index] = mod.deeds.groups.mutator:create_button("window", name, nil, {pos_x, pos_y, 2}, size)
-        index = index + 1
-    end
-    -- Group
-    mod:create_deed_group("mutator", start, index-start-1, size)
-    -- mod.deeds.groups[group_index] = mod:create_deed_group("mutator", start, index-start-1, size)
-    -- group_index = group_index + 1
+    -- -- ##### Mutator ##################################################################################################
+    -- -- Label
+    -- mod.deeds.widgets[index] = mod:create_label("window", "Mutator", {0, pos_y, 2})
+    -- index = index + 1
+    -- -- List
+    -- local mutators = mod.deeds.groups.mutator:get_list()
+    -- local size = mod.deeds.groups.mutator:get_size(window_width - label_width, element_height)
+    -- local start = index
+    -- local pos_x = label_width
+    -- -- All
+    -- mod.deeds.widgets[index] = mod.deeds.groups.mutator:create_button("window", "all", true, {pos_x, pos_y, 2}, size)
+    -- index = index + 1
+    -- -- Generated
+    -- for _, name in pairs(mutators) do
+    --     mod.deeds.widgets[index] = mod.deeds.groups.mutator:create_button("window", name, nil, {pos_x, pos_y, 2}, size)
+    --     index = index + 1
+    -- end
+    -- -- Group
+    -- mod:create_deed_group("mutator", start, index-start-1, size)
+    -- -- mod.deeds.groups[group_index] = mod:create_deed_group("mutator", start, index-start-1, size)
+    -- -- group_index = group_index + 1
 
-    -- Line up and divider-
-    pos_y = pos_y + element_height
-    mod.deeds.widgets[index] = mod:create_horizontal_window_divider("window", {window_width, 0}, {0, pos_y-4, 12})
-    index = index + 1
+    -- -- Line up and divider-
+    -- pos_y = pos_y + element_height
+    -- mod.deeds.widgets[index] = mod:create_horizontal_window_divider("window", {window_width, 0}, {0, pos_y-4, 12})
+    -- index = index + 1
     
-    -- ##### Map ######################################################################################################
-    -- Label
-    mod.deeds.widgets[index] = mod:create_label("window", "Mission", {0, pos_y, 2})
-    index = index + 1
-    -- List
-    local missions = mod.deeds.groups.mission:get_list()
-    local size = mod.deeds.groups.mission:get_size(window_width - label_width, element_height)
-    local start = index
-    local pos_x = label_width
-    -- All
-    mod.deeds.widgets[index] = mod.deeds.groups.mission:create_button("window", "all", true, {pos_x, pos_y, 2}, size)
-    index = index + 1
-    -- Generated
-    for _, name in pairs(missions) do
-        mod.deeds.widgets[index] = mod.deeds.groups.mission:create_button("window", name, nil, {pos_x, pos_y, 2}, size)
-        index = index + 1
-    end
-    -- Group
-    mod:create_deed_group("mission", start, index-start-1, size)
-    -- mod.deeds.groups[group_index] = mod:create_deed_group("mission", start, index-start-1, size)
-    -- group_index = group_index + 1
+    -- -- ##### Map ######################################################################################################
+    -- -- Label
+    -- mod.deeds.widgets[index] = mod:create_label("window", "Mission", {0, pos_y, 2})
+    -- index = index + 1
+    -- -- List
+    -- local missions = mod.deeds.groups.mission:get_list()
+    -- local size = mod.deeds.groups.mission:get_size(window_width - label_width, element_height)
+    -- local start = index
+    -- local pos_x = label_width
+    -- -- All
+    -- mod.deeds.widgets[index] = mod.deeds.groups.mission:create_button("window", "all", true, {pos_x, pos_y, 2}, size)
+    -- index = index + 1
+    -- -- Generated
+    -- for _, name in pairs(missions) do
+    --     mod.deeds.widgets[index] = mod.deeds.groups.mission:create_button("window", name, nil, {pos_x, pos_y, 2}, size)
+    --     index = index + 1
+    -- end
+    -- -- Group
+    -- mod:create_deed_group("mission", start, index-start-1, size)
+    -- -- mod.deeds.groups[group_index] = mod:create_deed_group("mission", start, index-start-1, size)
+    -- -- group_index = group_index + 1
 
-    -- Line up and divider-
-    pos_y = pos_y + element_height
-    mod.deeds.widgets[index] = mod:create_horizontal_window_divider("window", {window_width, 0}, {0, pos_y-4, 12})
-    index = index + 1
+    -- -- Line up and divider-
+    -- pos_y = pos_y + element_height
+    -- mod.deeds.widgets[index] = mod:create_horizontal_window_divider("window", {window_width, 0}, {0, pos_y-4, 12})
+    -- index = index + 1
 
-    -- Update groups
-    for _, group in pairs(mod.deeds.groups) do
-        mod:update_widget_group(group)
-    end
-    end
+    -- -- Update groups
+    -- for _, group in pairs(mod.deeds.groups) do
+    --     mod:update_widget_group(group)
+    -- end
+    -- end
 
 end)
 --[[

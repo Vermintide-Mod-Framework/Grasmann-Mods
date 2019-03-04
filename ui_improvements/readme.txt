@@ -4,6 +4,9 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+1.8.0
+	- Added more filter controls to deed filter
+	- Fixed bug with empty button in crafting menu
 1.7.5
 	- Fixed bug with crafting buttons
 1.7.4
