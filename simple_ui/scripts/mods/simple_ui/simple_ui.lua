@@ -5,9 +5,9 @@ local mod = get_mod("SimpleUI")
 		Provides functionalities to create simple ui widgets.
 
 	author: grasmann
-	version: 2.0.2
 --]]
 local basic_gui = get_mod("BasicUI")
+local UIResolutionScale = UIResolutionScale or UIResolutionScale_pow2
 
 -- ##### ██╗   ██╗████████╗███████╗ █████╗  ###########################################################################
 -- ##### ██║   ██║╚══██╔══╝██╔════╝██╔══██╗ ###########################################################################
@@ -1304,10 +1304,12 @@ mod.widgets = {
 		-- ##### Render ###################################################################################################
 		-- ################################################################################################################
 		render = function(self)
-			if not self.visible then return end
-			self:render_shadow()
-			self:render_background()
-			self:render_widgets()
+			if self.initialized then
+				if not self.visible then return end
+				self:render_shadow()
+				self:render_background()
+				self:render_widgets()
+			end
 		end,
 		--[[
 			Render window
@@ -2569,6 +2571,3 @@ mod:hook(MatchmakingManager, "update", function(func, self, dt, ...)
 	mod:update_windows(dt)
 	func(self, dt, ...)
 end)
-
-mod.on_enabled = function(initial_call)
-end
