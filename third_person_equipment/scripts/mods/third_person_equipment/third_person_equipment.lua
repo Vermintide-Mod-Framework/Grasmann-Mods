@@ -19,7 +19,6 @@ mod:dofile("scripts/mods/third_person_equipment/third_person_equipment_ext")
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
 mod.extensions = {}
-mod.firstperson = true
 mod.spawned_units = mod:persistent_table("spawned_units", {})
 
 -- Test stuff
@@ -64,20 +63,10 @@ mod.hook_all_inventories = function(self)
         local players = Managers.player:players()
 		for _, player in pairs(players) do
 			local inventory_extension = ScriptUnit.extension(player.player_unit, "inventory_system")
-			inventory_extension.tpe_extension = ThirdPersonEquipmentExtension:new(inventory_extension) --, player)
+			inventory_extension.tpe_extension = ThirdPersonEquipmentExtension:new(inventory_extension)
 			inventory_extension.tpe_extension:add_all()
         end
     end
-end
---[[
-    Get inventory extension of local player
---]]
-mod.local_third_person_extension = function(self)
-	for _, extension in pairs(self.extensions) do
-		if extension:is_local_player() then
-			return extension
-		end
-	end
 end
 --[[
     Reload extensions
@@ -97,25 +86,27 @@ end
 -- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
-
---[[
-    Changes between 1st and 3rd person
---]]
-mod:hook_safe(PlayerUnitFirstPerson, "set_first_person_mode", function(self, active, override, ...)
-	mod.firstperson = active
-	local extension = mod:local_third_person_extension()
-	if extension then
-		extension:set_equipment_visibility()
-	end
-end)
 --[[
     Hook inventory extensions on init
 --]]
-local init_inventory_extension = function(self, extension_init_context, unit, extension_init_data)
-	self.tpe_extension = ThirdPersonEquipmentExtension:new(self) --, extension_init_data.player)
+local init_inventory_extension = function(self)
+	self.tpe_extension = ThirdPersonEquipmentExtension:new(self)
 end
 mod:hook_safe(SimpleInventoryExtension, "init", init_inventory_extension)
 mod:hook_safe(SimpleHuskInventoryExtension, "init", init_inventory_extension)
+--[[
+	Hide third person weapons when climbing ladder
+	Not for local player
+--]]
+mod:hook_safe(GenericStatusExtension, "set_is_on_ladder", function(self, is_on_ladder)
+	if not mod.extensions[self.unit]:is_local_player() then
+		if is_on_ladder then
+			mod.extensions[self.unit].inventory_extension:show_third_person_inventory(false)
+		else
+			mod.extensions[self.unit].inventory_extension:show_third_person_inventory(true)
+		end
+	end
+end)
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
 -- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
@@ -161,22 +152,8 @@ mod.on_enabled = function(initial_call)
 	mod:hook_all_inventories()
 end
 --[[
-	Mod update
---]]
-mod.update = function(dt)
-end
---[[
 	On unload
 --]]
 mod.on_unload = function(exit_game)
 	mod:delete_all_units()
 end
-
--- ##### ███████╗████████╗ █████╗ ██████╗ ████████╗ ###################################################################
--- ##### ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝ ###################################################################
--- ##### ███████╗   ██║   ███████║██████╔╝   ██║    ###################################################################
--- ##### ╚════██║   ██║   ██╔══██║██╔══██╗   ██║    ###################################################################
--- ##### ███████║   ██║   ██║  ██║██║  ██║   ██║    ###################################################################
--- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ###################################################################
-mod:delete_all_units()
-mod:hook_all_inventories()

@@ -18,21 +18,24 @@ ThirdPersonEquipmentExtension = class(ThirdPersonEquipmentExtension)
 --[[
     Initialize extension
 --]]
-ThirdPersonEquipmentExtension.init = function(self, inventory_extension) --, player)
-    -- local player = inventory_extension.player
-    -- Values
+ThirdPersonEquipmentExtension.init = function(self, inventory_extension)
     self.inventory_extension = inventory_extension
     self.unit = inventory_extension._unit
-    --self.player = player
     self.link_queue = {}
     self.slots = {"slot_melee", "slot_ranged", "slot_healthkit", "slot_potion", "slot_grenade"}
     self.slot = self.inventory_extension:equipment().wielded_slot or "slot_melee"
-    self.equipment = {}
-    -- Profile
-    -- local profile_synchronizer = Managers.state.network.profile_synchronizer
-    -- local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
-	-- self.profile = SPProfiles[profile_index].unit_name
-	self.profile = self:get_profile()
+	self.equipment = {}
+	self.show = false
+	self.delayed_visibility_check = false
+	self.special_states = {
+		"catapulted", "dead", "falling", "grabbed_by_chaos_spawn", "grabbed_by_corruptor", 
+		"grabbed_by_pack_master", "grabbed_by_tentacle", "in_hanging_cage", "in_vortex", "interacting", 
+		"knocked_down", "leave_ledge_hanging_falling", "leave_ledge_hanging_pull_up", "ledge_hanging", 
+		"overcharge_exploding", "overpowered", "pounced_down", "waiting_for_assisted_respawn", 
+	}
+	self.special_states_remote_only = {
+		"climbing_ladder",
+	}
     -- Create hooks
     self:create_hooks()
     -- Add to list
@@ -44,9 +47,6 @@ end
 ThirdPersonEquipmentExtension.destroy = function(self)
     self:destroy_hooks()
     self:remove_all()
-    self.profile = nil
-    self.slot = nil
-    -- Remove from list
     mod.extensions[self.unit] = nil
 end
 --[[
@@ -59,13 +59,16 @@ ThirdPersonEquipmentExtension.create_hooks = function(self)
         return func(self, ...)
     end)
     -- Wield
-    mod:hook_safe(self.inventory_extension, "wield", function(self, slot_name)
+	mod:hook_safe(self.inventory_extension, "wield", function(self, slot_name)
         if table.contains(self.tpe_extension.slots, slot_name) then
             self.tpe_extension:wield(slot_name)
         end
     end)
     -- Add Equipment
-    mod:hook_safe(self.inventory_extension, "add_equipment", function(self, slot_name, item_data)
+	mod:hook_safe(self.inventory_extension, "add_equipment", function(self, slot_name, item_data)
+		if type(item_data) == "string" then
+			item_data = ItemMasterList[item_data]
+		end
         if table.contains(self.tpe_extension.slots, slot_name) then
             self.tpe_extension:add(slot_name, item_data)
         end
@@ -78,9 +81,14 @@ ThirdPersonEquipmentExtension.create_hooks = function(self)
         return func(self, slot_name, ...)
     end)
     -- Update
-    mod:hook_safe(self.inventory_extension, "update", function(self)
+	mod:hook_safe(self.inventory_extension, "update", function(self)
         self.tpe_extension:update()
-    end)
+	end)
+	-- Third Person
+	mod:hook_safe(self.inventory_extension, "show_third_person_inventory", function(self, show)
+		self.tpe_extension.show = show
+		self.tpe_extension.delayed_visibility_check = true
+	end)
 end
 --[[
     Disable inventory hooks
@@ -96,7 +104,11 @@ end
     Update extension
 --]]
 ThirdPersonEquipmentExtension.update = function(self)
-    self:update_link_queue()
+	self:update_link_queue()
+	if self.delayed_visibility_check then
+		self:set_equipment_visibility()
+		self.delayed_visibility_check = false
+	end
 end
 --[[
     Update link queue
@@ -114,19 +126,34 @@ ThirdPersonEquipmentExtension.wield = function(self, slot_name)
     self:set_equipment_visibility()
 end
 --[[
+    Check for special state where melee and ranged weapon are visible
+--]]
+ThirdPersonEquipmentExtension.is_special_state = function(self)
+	local is_special_state = false
+	local state_system = ScriptUnit.extension(self.unit, "character_state_machine_system")
+	if state_system ~= nil then
+		local state = state_system.state_machine.state_current
+		for _, special_state in pairs(self.special_states) do
+			is_special_state = is_special_state or state.name == special_state
+		end
+		if not is_special_state and not self:is_local_player() then
+			for _, special_state in pairs(self.special_states_remote_only) do
+				is_special_state = is_special_state or state.name == special_state
+			end
+		end
+	end
+	return is_special_state
+end
+--[[
     Set equipment visibility
 --]]
 ThirdPersonEquipmentExtension.set_equipment_visibility = function(self)
-    local hide = false
-
+	local hide = not self.show
+	local special_state = self:is_special_state()
+	
 	if self.equipment then
-        
-        if self:is_local_player() then
-            hide = hide or mod.firstperson
-        end
-
 		for _, equip in pairs(self.equipment) do
-			if equip.slot == self.slot or hide then
+			if not special_state and (equip.slot == self.slot or hide) then
                 if equip.visible or equip.visible == nil then
                     for _, sub_unit in pairs({"right", "left"}) do
                         if equip[sub_unit] ~= nil then
@@ -154,9 +181,6 @@ end
     Add equipment
 --]]
 ThirdPersonEquipmentExtension.add = function(self, slot_name, item_data)
-	if not self.profile then
-		mod:echo("Profile not found")
-	end
     local equipment_info = {
         slot_name = slot_name,
         item_data = item_data,
@@ -224,8 +248,6 @@ end
 --[[
 	Get item settings for equipment unit
 --]]
-ThirdPersonEquipmentExtension.get_sub_item_setting = function(self)
-end
 ThirdPersonEquipmentExtension.get_item_setting = function(self, equipment_info, left)
 	local def = mod.definitions
     local item_setting = nil
@@ -307,12 +329,10 @@ ThirdPersonEquipmentExtension.get_item_setting = function(self, equipment_info, 
 		end
 
 	else
-		local profile_name = self.profile or nil
-		--local profile_name = self:get_profile() or nil
+		local career_extension = ScriptUnit.extension(self.unit, "career_system")
+		local profile_name = career_extension._profile_name
 		if profile_name then
 			local key = def[item_data.key] and item_data.key or def[item_data.item_type] and item_data.item_type
-			-- mod:echo(tostring(key))
-			-- mod:dump(item_data, "item_data", 1)
 			if not left then
 				item_setting = profile_name and def[key][profile_name] and def[key][profile_name].right
 				item_setting = item_setting or def[key] and def[key].right
@@ -516,6 +536,9 @@ ThirdPersonEquipmentExtension.add_all = function(self)
         self:add(slot_name, slot.item_data)
     end
 
+	if not self:is_local_player() then
+		self.show = true
+	end
     self:set_equipment_visibility()
 end
 --[[
@@ -561,25 +584,6 @@ ThirdPersonEquipmentExtension.delete_item_unit = function(self, item_unit, sub_u
             World.destroy_unit(world, item_unit[sub_unit])
         end
     end
-end
---[[
-	Spawn equipment unit
---]]
-ThirdPersonEquipmentExtension.get_profile = function(self)
-	if Managers and Managers.state and Managers.state.network then
-        local players = Managers.player:players()
-		for _, player in pairs(players) do
-			if player.player_unit == self.unit then
-				local profile_synchronizer = Managers.state.network.profile_synchronizer
-				local profile_index = profile_synchronizer:profile_by_peer(player:network_id(), player:local_player_id())
-				local profile = SPProfiles[profile_index].unit_name
-				mod:echo("player '"..profile.."' found")
-				return profile
-			end
-		end
-	end
-	mod:echo("player NOT found")
-	return nil
 end
 --[[
     Get career name
