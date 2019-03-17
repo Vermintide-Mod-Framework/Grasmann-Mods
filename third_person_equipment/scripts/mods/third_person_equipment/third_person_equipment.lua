@@ -99,7 +99,7 @@ mod:hook_safe(SimpleHuskInventoryExtension, "init", init_inventory_extension)
 	Not for local player
 --]]
 mod:hook_safe(GenericStatusExtension, "set_is_on_ladder", function(self, is_on_ladder)
-	if not mod.extensions[self.unit]:is_local_player() then
+	if mod.extensions[self.unit] and not mod.extensions[self.unit]:is_local_player() then
 		if is_on_ladder then
 			mod.extensions[self.unit].inventory_extension:show_third_person_inventory(false)
 		else
