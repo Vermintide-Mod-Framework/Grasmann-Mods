@@ -35,7 +35,7 @@ local parts = {
 		de = "-- Gürtel --\n",
 	},
 	belt_2 = {
-		en = "Weapons will be placed on the belt.",
+		en = "Weapons will be placed on the belt.\n\n",
 		de = "Waffen werden am Gürtel platziert.\n\n",
 	},
 }

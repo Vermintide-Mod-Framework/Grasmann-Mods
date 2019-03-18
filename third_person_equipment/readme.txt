@@ -6,6 +6,8 @@ Melee- and ranged weapon as well as tomes, grims, potions, bombs and heal items.
 Works for yourself, other players and bots.
 
 Changelog:
+2.4.1
+	- Updated options menu for latest vmf version
 2.4.0
 	- Fixed bug with visible third person equipment when it shouldn't be visible ( hopefully )
 	- Implemented handling of special states such as hanging on ledge, grabbed by packmaser, picking up player to show both weapons on the character.
