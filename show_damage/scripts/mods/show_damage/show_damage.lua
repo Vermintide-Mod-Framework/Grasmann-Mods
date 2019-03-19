@@ -7,7 +7,9 @@ local mod = get_mod("ShowDamage")
 	Version: 2.1.0
 --]]
 
-local UIResolutionScale = UIResolutionScale or UIResolutionScale_pow2
+local UIResolutionScale = UIResolutionScale or function()
+	return RESOLUTION_LOOKUP.scale
+end
 local StatBuffIndex = {
 	HEAL_PROC = "heal_proc",
 	LIGHT_HEAL_PROC = "light_heal_proc",
