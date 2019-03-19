@@ -7,7 +7,9 @@ local mod = get_mod("SimpleUI")
 	author: grasmann
 --]]
 local basic_gui = get_mod("BasicUI")
-local UIResolutionScale = UIResolutionScale or UIResolutionScale_pow2
+local UIResolutionScale = UIResolutionScale or function()
+	return RESOLUTION_LOOKUP.scale
+end
 
 -- ##### ██╗   ██╗████████╗███████╗ █████╗  ###########################################################################
 -- ##### ██║   ██║╚══██╔══╝██╔════╝██╔══██╗ ###########################################################################
