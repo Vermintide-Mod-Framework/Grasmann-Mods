@@ -10,6 +10,9 @@ Options:
 	- Camera sway ( Camera sways from left to right in third person ).
 	
 Changelog:
+2.1.0
+	- Updated for latest vmf
+	- Localized in english and german
 2.0.3 - Updated for latest vmf
 2.0.2 - Fix for wonky targeting
 2.0.1 - Fix to prevent crashes with incorrect load order
