@@ -10,6 +10,7 @@ Options:
 	- Camera sway ( Camera sways from left to right in third person ).
 	
 Changelog:
+2.1.1 - Removed hooks that spammed errors
 2.1.0
 	- Updated for latest vmf
 	- Localized in english and german

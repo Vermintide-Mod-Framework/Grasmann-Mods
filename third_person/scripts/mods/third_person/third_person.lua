@@ -506,14 +506,16 @@ mod.raycast_hook = function(func, ...)
 	mod:hook_disable(PlayerUnitFirstPerson, "current_position")
 end
 mod:hook(ActionHandgun, "client_owner_post_update", mod.raycast_hook)
-mod:hook(ActionHandgunLock, "client_owner_post_update", mod.raycast_hook)
-mod:hook(ActionHandgunLockTargeting, "client_owner_post_update", mod.raycast_hook)
 mod:hook(ActionShotgun, "client_owner_post_update", mod.raycast_hook)
 mod:hook(ActionBeam, "client_owner_post_update", mod.raycast_hook)
 mod:hook(ActionGeiser, "client_owner_post_update", mod.raycast_hook)
 mod:hook(ActionGeiserTargeting, "client_owner_post_update", mod.raycast_hook)
 mod:hook(ActionBulletSpray, "client_owner_post_update", mod.raycast_hook)
-mod:hook(ActionBulletSprayTargeting, "client_owner_post_update", mod.raycast_hook)
+if VT1 then
+	mod:hook(ActionHandgunLock, "client_owner_post_update", mod.raycast_hook)
+	mod:hook(ActionHandgunLockTargeting, "client_owner_post_update", mod.raycast_hook)
+	mod:hook(ActionBulletSprayTargeting, "client_owner_post_update", mod.raycast_hook)
+end
 
 -- ##### ██████╗ ███████╗███████╗███████╗████████╗ ####################################################################
 -- ##### ██╔══██╗██╔════╝██╔════╝██╔════╝╚══██╔══╝ ####################################################################
