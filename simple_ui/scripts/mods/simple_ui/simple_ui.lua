@@ -851,7 +851,7 @@ mod.widgets = {
 			Create close button
 		--]]
 		create_close_button = function(self, name, params)
-			local widget = self:create_widget(name, {5, 0}, {25, 25}, "close_button", mod.anchor.styles.top_right, params)
+			local widget = self:create_widget(name, {5, 0}, {25, 25}, "close_button", "top_right", params)
 			widget:set("text", "X")
 			self:add_widget(widget)
 			return widget
