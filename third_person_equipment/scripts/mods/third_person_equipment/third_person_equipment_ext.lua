@@ -329,8 +329,13 @@ ThirdPersonEquipmentExtension.get_item_setting = function(self, equipment_info, 
 		end
 
 	else
-		local career_extension = ScriptUnit.extension(self.unit, "career_system")
-		local profile_name = career_extension._profile_name
+		local profile_name = nil
+		if VT1 then
+			profile_name = self:find_profile()
+		else
+			local career_extension = ScriptUnit.extension(self.unit, "career_system")
+			profile_name = career_extension._profile_name
+		end
 		if profile_name then
 			local key = def[item_data.key] and item_data.key or def[item_data.item_type] and item_data.item_type
 			if not left then
@@ -610,4 +615,20 @@ ThirdPersonEquipmentExtension.is_local_player = function(self)
         return true
     end
     return false
+end
+--[[
+	Find profile
+--]]
+ThirdPersonEquipmentExtension.find_profile = function(self)
+	if Managers and Managers.state and Managers.state.network then
+        local players = Managers.player:players()
+		for _, player in pairs(players) do
+			if player.player_unit == self.unit then
+				local index = player.profile_index
+				local name = SPProfiles[index].display_name
+				return name
+			end
+		end
+	end
+	return nil
 end
