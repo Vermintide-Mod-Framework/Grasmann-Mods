@@ -15,6 +15,6 @@ return {
 					{text = "animation_and_push", value = "animation_push"},
 				},
 			},
-		}
-	}
+		},
+	},
 }

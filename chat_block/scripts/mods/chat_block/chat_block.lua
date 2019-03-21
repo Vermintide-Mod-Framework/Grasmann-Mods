@@ -6,7 +6,6 @@ local mod = get_mod("ChatBlock")
 	Author: IamLupo
 	Ported: Grasmann
 	Improvements: bi
-	Version: 2.0.2
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗  ############################################################################
@@ -19,7 +18,7 @@ local block_state = {
 	NOT_BLOCKING = 0,
 	SHOULD_BLOCK = 1,
 	BLOCKING = 2,
-	SHOULD_PUSH = 3
+	SHOULD_PUSH = 3,
 }
 mod.block_state = block_state.NOT_BLOCKING
 

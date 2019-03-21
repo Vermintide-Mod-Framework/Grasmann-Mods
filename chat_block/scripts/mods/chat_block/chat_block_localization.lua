@@ -11,17 +11,17 @@ return {
 	},
 	mode_description = {
 		en = "-- ANIMATION --\n"..
-		"Blocks attacks.\n\n"..
-		"-- ANIMATION AND PUSH --\n"..
-		"Blocks attacks and does a push on exit.",
+			"Blocks attacks.\n\n"..
+			"-- ANIMATION AND PUSH --\n"..
+			"Blocks attacks and does a push on exit.",
 		ru = "-- БЛОК --\n"..
-		"Блокирует удары.\n\n"..
-		"-- БЛОК И ТОЛЧОК --\n"..
-		"Блокирует удары и делает толчок, когда игрок закрывает меню.",
+			"Блокирует удары.\n\n"..
+			"-- БЛОК И ТОЛЧОК --\n"..
+			"Блокирует удары и делает толчок, когда игрок закрывает меню.",
 		de = "-- ANIMATION --\n"..
-		"Blockiert Angriffe\n\n"..
-		"-- ANIMATION UND STOß --\n"..
-		"Blockiert Angriffe und führt am Ende einen Stoß aus.",
+			"Blockiert Angriffe\n\n"..
+			"-- ANIMATION UND STOß --\n"..
+			"Blockiert Angriffe und führt am Ende einen Stoß aus.",
 	},
 	animation = {
 		en = "Animation",
