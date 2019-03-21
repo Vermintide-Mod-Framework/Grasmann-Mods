@@ -1,5 +1,12 @@
 local mod = get_mod("Healthbars")
 
+local game_show_widgets = {
+	vt1 = { all = {1}, specials = {1}, bosses = {1}, custom = {1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13}, },
+	vt2 = { all = {1}, specials = {1}, bosses = {1}, custom = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32}, },
+}
+local show_widgets = game_show_widgets.vt2
+if VT1 then	show_widgets = game_show_widgets.vt1 end
+
 return {
 	name = "Healthbars", -- Readable mod name
 	description = mod:localize("mod_description"), -- Readable mod description
@@ -20,11 +27,10 @@ return {
 				setting_id = "mode",
 				type = "dropdown",
 				["options"] = {
-					{text = "mode_option_all_text", 		value = 2, show_widgets = {1}},
-					{text = "mode_option_specials_text", 	value = 3, show_widgets = {1}},
-					{text = "mode_option_bosses_text", 		value = 4, show_widgets = {1}},
-					{text = "mode_option_custom_text", 		value = 5, show_widgets = {1, 2, 3, 4, 5, 6, 7, 8, 9,
-						10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32}},
+					{text = "mode_option_all_text", 		value = 2, show_widgets = show_widgets.all},
+					{text = "mode_option_specials_text", 	value = 3, show_widgets = show_widgets.specials},
+					{text = "mode_option_bosses_text", 		value = 4, show_widgets = show_widgets.bosses},
+					{text = "mode_option_custom_text", 		value = 5, show_widgets = show_widgets.custom},
 				},
 				["default_value"] = 2,
 				["sub_widgets"] = {

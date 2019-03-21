@@ -7,6 +7,7 @@ Can be modified to show healthbars above and below enemies, show healthbars for 
 show healthbars for damaged enemies.
 
 Changelog
+2.1.1 - Fixed to make work in both vt1 and vt2
 2.1.0
 	- Updated for latest vmf version
 	- Fixed crash due to removed references in vt2 source code

@@ -32,8 +32,16 @@ mod.permanent_units = mod:persistent_table("permanent_units")
 mod.add_health_bar_all = function(self, unit)
 	if not table.contains(mod.permanent_units, unit) then
 		--local tutorial_system = Managers.state.entity:system("tutorial_system")
-		local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
-		local tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
+		-- local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
+		-- local tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
+		local tutorial_ui = nil
+		if VT1 then
+			local tutorial_system = Managers.state.entity:system("tutorial_system")
+			tutorial_ui = tutorial_system and tutorial_system.tutorial_ui
+		else
+			local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
+			tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
+		end
 		if tutorial_ui then
 		--if tutorial_system and tutorial_system.tutorial_ui then
 			tutorial_ui:add_health_bar(unit)
@@ -82,10 +90,14 @@ end
 --]]
 mod.remove_health_bar = function(self, unit)
 	if table.contains(mod.permanent_units, unit) then
-		local tutorial_system = Managers.state.entity:system("tutorial_system")
-		local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
-		local tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
-		--if tutorial_system and tutorial_system.tutorial_ui then
+		local tutorial_ui = nil
+		if VT1 then
+			local tutorial_system = Managers.state.entity:system("tutorial_system")
+			tutorial_ui = tutorial_system and tutorial_system.tutorial_ui
+		else
+			local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
+			tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
+		end
 		if tutorial_ui then
 			tutorial_ui:remove_health_bar(unit)
 			mod.permanent_units[unit] = nil
@@ -402,9 +414,17 @@ mod.obstructed_line_of_sight = function(self, player_unit, target_unit)
 
 	-- local tutorial_system = Managers.state.entity:system("tutorial_system")
 	-- local tutorial_ui = tutorial_system.tutorial_ui
-	local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
-	local tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
-	local world = tutorial_ui.world_manager:world("level_world")
+	-- local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
+	-- local tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
+	-- local tutorial_ui = nil
+	-- if VT1 then
+	-- 	local tutorial_system = Managers.state.entity:system("tutorial_system")
+	-- 	tutorial_ui = tutorial_system and tutorial_system.tutorial_ui
+	-- else
+	-- 	local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
+	-- 	tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
+	-- end
+	local world = Managers.world:world("level_world")
 	local physics_world = World.get_data(world, "physics_world")
 	local max_distance = Vector3.length(target_unit_pos - player_unit_pos)
 
