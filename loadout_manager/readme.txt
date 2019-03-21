@@ -6,6 +6,7 @@ Description :
 This mod adds additional buttons to the inventory screen for saving and restoring character loadouts.
 
 Changelog:
+2.0.3 - Localized in english and german
 2.0.2 - Updated for latest vmf
 2.0.1 - Fix to prevent crash with incorrect load order
 2.0.0 - Ported to latest vmf

@@ -4,7 +4,6 @@ local mod = get_mod("LoadoutManager")
 		- Saves load out settings
 
 	Author: walterr, iamlupo & grasmann
-	Version: 2.0.2
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
