@@ -4,6 +4,10 @@ Description :
 Adds the ability to display damage dealt by players in chat and in game world.
 
 Changelog
+2.2.0
+	- Updated for latest vmf version
+	- Fixed chat output
+	- Localized in english and german
 2.1.3 - Fixed crash in vt2
 2.1.2 - Fixed some rendering issues
 2.1.1

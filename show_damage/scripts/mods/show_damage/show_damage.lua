@@ -50,10 +50,9 @@ end
 	Replace the text of an initialized option widget
 --]]
 mod.update_setting_text = function(self, setting_name, text)
-	local ingame_ui_exists, ingame_ui = pcall(function () return Managers.player.network_manager.matchmaking_manager.matchmaking_ui.ingame_ui end)
-	
-	if ingame_ui_exists then
-		
+	local ingame_ui = Managers.matchmaking._ingame_ui
+
+	if ingame_ui then
 		local vmf_options_view = ingame_ui.views["vmf_options_view"]
 		if vmf_options_view then
 			local searched_widget = nil
@@ -961,10 +960,11 @@ mod.chat = {
 	--]]
 	handle = function(self, unit, biggest_hit, parameters)
 		--if mod:get("chat_mode") > 1 and table.has_item2(mod.chat.units, unit) then
+		
 		if mod:get("chat_output") and self:has_unit(unit) then
-
+			
 			-- Get data
-			local breed_data = Unit.get_data(unit, "breed")
+			--local breed_data = Unit.get_data(unit, "breed")
 			local attacker_unit = biggest_hit[DamageDataIndex.ATTACKER]
 			local damage_amount = biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
 			local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
@@ -984,7 +984,8 @@ mod.chat = {
 				self:trigger_ammo(attacker_unit, ammo)
 			end
 
-			if breed_data and mod:get("chat_damage") then
+			--if breed_data and mod:get("chat_damage") then
+			if mod:get("chat_damage") and not healed and not ammo then
 				if mod:get("chat_damage_source") == 1 and (mod:get("chat_mode") == 2 or unit_is_dead) then
 					self:local_player(attacker_unit, damage_amount, hit_zone_name, unit_is_dead, breed_data.name)
 				elseif mod:get("chat_damage_source") == 2 and (mod:get("chat_mode") == 2 or unit_is_dead) then
