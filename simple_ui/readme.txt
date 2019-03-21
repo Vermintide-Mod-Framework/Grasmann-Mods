@@ -5,7 +5,12 @@ Description :
 Provides functionalities to create simple windows / widgets.
 
 Changelog
-2.0.4 - Updated for latest game version
+2.1.1
+	- Fixed scaling issues in vt2
+2.1.0
+	- Fixed crash due to missing global in latest game version
+	- Fixed crash with uninitialized windows ( window:init() not being called )
+2.0.4 - Updated for latest vt2 game version
     - Fixed crash due to missing globals
     - Fixed crash on render with uninitialized windows
 2.0.3 - Fixed error message on start in vt1
