@@ -13,8 +13,11 @@ local mod = get_mod("HeatIndicator")
 
 	Author: walterr
 	Ported: grasmann
-	Version: 2.0.2
 --]]
+
+local UIResolutionScale = UIResolutionScale or function()
+	return RESOLUTION_LOOKUP.scale
+end
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
 -- ##### ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗ ############################################################################
@@ -22,6 +25,7 @@ local mod = get_mod("HeatIndicator")
 -- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
+local aim_start = nil
 mod.anim_state = {
 	STARTING = 1,
 	ONGOING = 2,
@@ -274,7 +278,6 @@ end)
 	Fix for vt2 bolt staff
 --]]
 if not VT1 then
-	local aim_start = nil
 	--[[
 		Bolt staff update widget
 	--]]
@@ -326,8 +329,11 @@ end
 	Render widget
 --]]
 mod:hook_safe(OverchargeBarUI, "update", function(self, dt, t_, player)
+	
+	local do_update = VT1 and self:_update_overcharge(player, dt) or 
+		mod.current_charge_level.level and mod.current_charge_level.level > 0
 
-	if mod.current_charge_level.color and self:_update_overcharge(player, dt) then
+	if mod.current_charge_level.color and do_update then
 		local widget = self._hudmod_charge_level_indicator
 		if not widget then
 			-- First use of the charge level indicator, create it now.
@@ -387,8 +393,13 @@ mod:hook_safe(OverchargeBarUI, "update", function(self, dt, t_, player)
 				-- Rectangle
 				widget.style.indicator.size[1] = 48
 				widget.style.indicator.size[2] = 48
-				widget.style.indicator.offset[1] = 232
-				widget.style.indicator.offset[2] = -45
+				if VT1 then
+					widget.style.indicator.offset[1] = 232
+					widget.style.indicator.offset[2] = -45
+				else
+					widget.style.indicator.offset[1] = 105
+					widget.style.indicator.offset[2] = -65
+				end
 				widget.style.indicator.corner_radius = 5
 			elseif mod:get("mode") == 2 then
 				-- Line
