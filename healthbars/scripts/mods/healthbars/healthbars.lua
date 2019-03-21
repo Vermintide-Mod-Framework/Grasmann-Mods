@@ -7,341 +7,17 @@ local mod = get_mod("Healthbars")
 	Version: 2.0.2
 --]]
 
+local UIResolutionScale = UIResolutionScale or function()
+	return RESOLUTION_LOOKUP.scale
+end
+mod:dofile("scripts/mods/healthbars/healthbars_def")
+
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
 -- ##### ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗ ############################################################################
 -- ##### ██║  ██║███████║   ██║   ███████║ ############################################################################
 -- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
-mod.VERY_FAR = 50
-local SIZE = {
-	Default = {17*0.9, 7*0.9},
-	Special = {17*1.4, 7*1.4},
-	Ogre = {17*1.8, 7*1.8},
-}
-mod.enemy_settings = {
-	default = {
-		offset = 1.5,
-		size = SIZE.Default,
-		special = false,
-		setting = "NONE",
-	},
-	skaven_slave = {
-		offset = 3,
-		size = SIZE.Default,
-		special = false,
-		setting = "slave_rat",
-	},
-	skaven_clan_rat = {
-		offset = 3,
-		size = SIZE.Default,
-		special = false,
-		setting = "clan_rat",
-	},
-	skaven_storm_vermin = {
-		offset = 4,
-		size = SIZE.Special,
-		special = true,
-		setting = "stormvermin",
-	},
-	skaven_storm_vermin_commander = {
-		offset = 4,
-		size = SIZE.Special,
-		special = true,
-		setting = "stormvermin",
-	},
-	skaven_gutter_runner = {
-		offset = 3,
-		size = SIZE.Special,
-		special = true,
-		setting = "runner",
-	},
-	skaven_ratling_gunner = {
-		offset = 4,
-		size = SIZE.Special,
-		special = true,
-		setting = "gunner",
-	},
-	skaven_pack_master = {
-		offset = 4,
-		size = SIZE.Special,
-		special = true,
-		setting = "packmaster",
-	},
-	skaven_poison_wind_globadier = {
-		offset = 3.5,
-		size = SIZE.Special,
-		special = true,
-		setting = "gas_rat",
-	},
-	skaven_rat_ogre = {
-		offset = 5.5,
-		size = SIZE.Ogre,
-		special = true,
-		boss = true,
-		setting = "ogre",
-	},
-	skaven_loot_rat = {
-		offset = 4,
-		size = SIZE.Ogre,
-		special = true,
-		setting = "sack_rat",
-	},
-	critter_pig = {
-		offset = 2.5,
-		size = SIZE.Special,
-		special = false,
-		setting = "NONE",
-	},
-	critter_rat = {
-		offset = 0.5,
-		size = SIZE.Special,
-		special = false,
-		setting = "NONE",
-	},
-	skaven_grey_seer = {
-		offset = 3.5,
-		size = SIZE.Ogre,
-		special = true,
-		boss = true,
-		setting = "NONE",
-	},
-	skaven_storm_vermin_champion = {
-		offset = 5.5,
-		size = SIZE.Ogre,
-		special = true,
-		boss = true,
-		setting = "champion",
-	},
-	-- VT2
-	-- skaven_dummy_slave = {
-		-- offset = 3,
-		-- size = SIZE.Default,
-		-- special = false,
-		-- setting = "slave_rat",
-	-- },
-	-- skaven_dummy_clan_rat = {
-		-- offset = 3,
-		-- size = SIZE.Default,
-		-- special = false,
-		-- setting = "clan_rat",
-	-- },
-	skaven_clan_rat_tutorial = {
-		offset = 3,
-		size = SIZE.Default,
-		special = false,
-		setting = "clan_rat",
-	},
-	skaven_clan_rat_with_shield = {
-		offset = 3,
-		size = SIZE.Default,
-		special = false,
-		setting = "clan_rat",
-	},
-	skaven_storm_vermin_with_shield = {
-		offset = 4,
-		size = SIZE.Special,
-		special = true,
-		setting = "stormvermin",
-	},
-	skaven_plague_monk = {
-		offset = 4,
-		size = SIZE.Special,
-		special = true,
-		setting = "plague_monk",
-	},
-	skaven_warpfire_thrower = {
-		offset = 4,
-		size = SIZE.Special,
-		special = true,
-		setting = "warpfire_thrower",
-	},
-	skaven_stormfiend = {
-		offset = 5.5,
-		size = SIZE.Ogre,
-		special = true,
-		boss = true,
-		setting = "stormfiend",
-	},
-	skaven_stormfiend_boss = {
-		offset = 5.5,
-		size = SIZE.Ogre,
-		special = true,
-		boss = true,
-		setting = "stormfiend",
-	},
-	skaven_stormfiend_demo = {
-		offset = 5.5,
-		size = SIZE.Ogre,
-		special = true,
-		boss = true,
-		setting = "stormfiend",
-	},
-	skaven_storm_vermin_warlord = {
-		offset = 5.5,
-		size = SIZE.Ogre,
-		special = true,
-		boss = true,
-		setting = "stormfiend_warlord",
-	},
-	-- Chaos
-	chaos_warrior = {
-		offset = 4,
-		size = SIZE.Default,
-		special = true,
-		setting = "chaos_warrior",
-	},
-	chaos_exalted_champion = {
-		offset = 5,
-		size = SIZE.Ogre,
-		special = true,
-		setting = "chaos_exalted_champion",
-	},
-	chaos_exalted_champion_warcamp = {
-		offset = 5,
-		size = SIZE.Ogre,
-		special = true,
-		setting = "chaos_exalted_champion",
-	},
-	chaos_exalted_champion_norsca = {
-		offset = 5,
-		size = SIZE.Ogre,
-		special = true,
-		setting = "chaos_exalted_champion",
-	},
-	chaos_marauder = {
-		offset = 4,
-		size = SIZE.Default,
-		special = true,
-		setting = "chaos_marauder",
-	},
-	chaos_marauder_tutorial = {
-		offset = 4,
-		size = SIZE.Default,
-		special = true,
-		setting = "chaos_marauder",
-	},
-	chaos_marauder_with_shield = {
-		offset = 4,
-		size = SIZE.Default,
-		special = true,
-		setting = "chaos_marauder",
-	},
-	chaos_berzerker = {
-		offset = 4,
-		size = SIZE.Special,
-		special = true,
-		setting = "chaos_berzerker",
-	},
-	chaos_raider = {
-		offset = 4,
-		size = SIZE.Special,
-		special = true,
-		setting = "chaos_raider",
-	},
-	chaos_raider_tutorial = {
-		offset = 4,
-		size = SIZE.Special,
-		special = true,
-		setting = "chaos_raider",
-	},
-	-- chaos_dummy_sorcerer = {
-		-- offset = 5,
-		-- size = SIZE.Special,
-		-- special = true,
-		-- setting = "chaos_vortex_sorcerer",
-	-- },
-	chaos_zombie = {
-		offset = 4,
-		size = SIZE.Default,
-		special = true,
-		setting = "chaos_zombie",
-	},
-	chaos_fanatic = {
-		offset = 4,
-		size = SIZE.Default,
-		special = true,
-		setting = "chaos_fanatic",
-	},
-	chaos_exalted_sorcerer = {
-		offset = 5,
-		size = SIZE.Special,
-		special = true,
-		setting = "chaos_exalted_sorcerer",
-	},
-	chaos_vortex_sorcerer = {
-		offset = 5,
-		size = SIZE.Special,
-		special = true,
-		setting = "chaos_vortex_sorcerer",
-	},
-	-- chaos_vortex = {
-		-- offset = 3,
-		-- size = SIZE.Default,
-		-- special = false,
-		-- setting = "vortex",
-	-- },
-	chaos_plague_sorcerer = {
-		offset = 5,
-		size = SIZE.Special,
-		special = true,
-		setting = "chaos_plague_sorcerer",
-	},
-	-- chaos_plague_wave_spawner = {
-		-- offset = 3,
-		-- size = SIZE.Default,
-		-- special = false,
-		-- setting = "chaos_plague_wave_spawner",
-	-- },
-	chaos_corruptor_sorcerer = {
-		offset = 5,
-		size = SIZE.Special,
-		special = true,
-		setting = "chaos_corruptor_sorcerer",
-	},
-	chaos_spawn = {
-		offset = 5.5,
-		size = SIZE.Ogre,
-		special = true,
-		boss = true,
-		setting = "chaos_spawn",
-	},
-	chaos_spawn_exalted_champion_norsca = {
-		offset = 5.5,
-		size = SIZE.Ogre,
-		special = true,
-		boss = true,
-		setting = "chaos_spawn_exalted_champion_norsca",
-	},
-	-- chaos_dummy_troll = {
-		-- offset = 5.5,
-		-- size = SIZE.Ogre,
-		-- special = true,
-		-- boss = true,
-		-- setting = "stormfiend_warlord",
-	-- },
-	chaos_troll = {
-		offset = 5.5,
-		size = SIZE.Ogre,
-		special = true,
-		boss = true,
-		setting = "chaos_troll",
-	},
-	chaos_tentacle_sorcerer = {
-		offset = 5,
-		size = SIZE.Special,
-		special = true,
-		setting = "chaos_vortex_sorcerer",
-	},
-	-- chaos_tentacle = {
-		-- offset = 3,
-		-- size = SIZE.Default,
-		-- special = false,
-		-- setting = "chaos_tentacle",
-	-- },
-
-
-}
 mod.permanent_units = mod:persistent_table("permanent_units")
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
@@ -355,9 +31,12 @@ mod.permanent_units = mod:persistent_table("permanent_units")
 --]]
 mod.add_health_bar_all = function(self, unit)
 	if not table.contains(mod.permanent_units, unit) then
-		local tutorial_system = Managers.state.entity:system("tutorial_system")
-		if tutorial_system and tutorial_system.tutorial_ui then
-			tutorial_system.tutorial_ui:add_health_bar(unit)
+		--local tutorial_system = Managers.state.entity:system("tutorial_system")
+		local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
+		local tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
+		if tutorial_ui then
+		--if tutorial_system and tutorial_system.tutorial_ui then
+			tutorial_ui:add_health_bar(unit)
 			mod.permanent_units[unit] = unit
 		end
 	end
@@ -404,8 +83,11 @@ end
 mod.remove_health_bar = function(self, unit)
 	if table.contains(mod.permanent_units, unit) then
 		local tutorial_system = Managers.state.entity:system("tutorial_system")
-		if tutorial_system and tutorial_system.tutorial_ui then
-			tutorial_system.tutorial_ui:remove_health_bar(unit)
+		local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
+		local tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
+		--if tutorial_system and tutorial_system.tutorial_ui then
+		if tutorial_ui then
+			tutorial_ui:remove_health_bar(unit)
 			mod.permanent_units[unit] = nil
 		end
 	end
@@ -718,8 +400,10 @@ mod.obstructed_line_of_sight = function(self, player_unit, target_unit)
 	local target_unit_pos = Unit.world_position(target_unit, 0)
 	target_unit_pos.z = target_unit_pos.z + 1.4
 
-	local tutorial_system = Managers.state.entity:system("tutorial_system")
-	local tutorial_ui = tutorial_system.tutorial_ui
+	-- local tutorial_system = Managers.state.entity:system("tutorial_system")
+	-- local tutorial_ui = tutorial_system.tutorial_ui
+	local ingame_hud = Managers.matchmaking._ingame_ui.ingame_hud
+	local tutorial_ui = ingame_hud and ingame_hud:component("TutorialUI")
 	local world = tutorial_ui.world_manager:world("level_world")
 	local physics_world = World.get_data(world, "physics_world")
 	local max_distance = Vector3.length(target_unit_pos - player_unit_pos)
