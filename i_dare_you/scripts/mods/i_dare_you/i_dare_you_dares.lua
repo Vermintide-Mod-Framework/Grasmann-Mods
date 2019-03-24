@@ -31,6 +31,12 @@ local dares = {
 		punishment = "damage",
 	},
 	{
+		id = "dont_jump",
+		text = "dont_jump",
+		fallible = true,
+		punishment = "damage",
+	},
+	{
 		id = "dont_block",
 		text = "dont_block",
 		fallible = true,
@@ -58,7 +64,13 @@ local dares = {
 		id = "reverse_camera",
 		text = "reverse_camera",
 		fallible = false,
-		punishment = nil,
+		punishment = "none",
+	},
+	{
+		id = "dont_quick_switch",
+		text = "dont_quick_switch",
+		fallible = true,
+		punishment = "damage",
 	},
 }
 

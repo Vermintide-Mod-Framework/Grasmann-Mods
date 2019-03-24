@@ -25,8 +25,7 @@ mod.activate_dare_3 = function()
 end
 mod.activate_dare = function(id)
 	if mod.dare_info.is_selecting then
-		mod.dare_info.selected_dare = mod.dare_info.dares[id].id
-		mod:network_send("dare_selected", "all", mod:my_peer_id(), mod.dare_info.victim_peer_id, mod.dare_info.selected_dare)
+		mod:network_send("dare_selected", "all", mod:my_peer_id(), mod.dare_info.victim_peer_id, mod.dare_info.dares[id].id)
 	end
 end
 
@@ -44,6 +43,7 @@ mod.dare_info = {
 	victim_peer_id = nil,
 	dares = {},
 	is_selecting = false,
+	selection = false,
 	selected_dare = nil,
 
 	setup = function(self, selector_peer_id, victim_peer_id, dares)
@@ -69,16 +69,17 @@ mod.dare_info = {
 	Handshake to see if mod is active
 --]]
 mod:network_register("handshake", function(sender)
-	mod:echo("Asking joined user if mod is active...")
-	mod:network_send("handshake_reply", mod:get("active"))
+	mod:network_send("handshake_reply", sender, mod:get("active"))
 end)
 --[[
 	Answer to handshake
 --]]
 mod:network_register("handshake_reply", function(sender, active)
 	if active then
-		mod:echo("Joined user has mod active!")
-		--mod.server.mod_users[sender] = sender
+		if debug then
+			mod:echo("Joined user has mod active!")
+			mod:echo("PeerID:'"..tostring(sender).."'")
+		end
 		mod.server:add_mod_user(sender)
 	end
 end)
@@ -86,11 +87,14 @@ end)
 	Start dare selection
 --]]
 mod:network_register("start_dare_selection", function(sender, selector_peer_id, victim_peer_id, dares)
-	mod:echo("Selector:'"..tostring(selector_peer_id).."'")
-	mod:echo("Victim:'"..tostring(victim_peer_id).."'")
-	for _, dare in pairs(dares) do
-		mod:echo(dare)
+	if debug then
+		mod:echo("Selector:'"..tostring(selector_peer_id).."'")
+		mod:echo("Victim:'"..tostring(victim_peer_id).."'")
+		for _, dare in pairs(dares) do
+			mod:echo(dare)
+		end
 	end
+	mod.dare_info.selection = true
 	mod.dare_info:setup(selector_peer_id, victim_peer_id, dares)
 	mod.ui:start_selection()
 end)
@@ -98,11 +102,31 @@ end)
 	Dare selected
 --]]
 mod:network_register("dare_selected", function(sender, selector_peer_id, victim_peer_id, dare_name)
-	mod:echo("Selector:'"..tostring(selector_peer_id).."'")
-	mod:echo("Victim:'"..tostring(victim_peer_id).."'")
-	mod:echo("Selected dare:'"..dare_name.."'")
+	if debug then
+		mod:echo("Selector:'"..tostring(selector_peer_id).."'")
+		mod:echo("Victim:'"..tostring(victim_peer_id).."'")
+		mod:echo("Selected dare:'"..dare_name.."'")
+	end
 	mod.dare_info.is_selecting = false
+	mod.dare_info.selection = false
+	mod.dare_info.selected_dare = dare_name
 	mod.ui:set_state("show_selection")
+end)
+--[[
+	User deactivated mod
+--]]
+mod:network_register("deactivated", function(sender)
+	if mod:is_server() then
+		mod.server:remove_mod_user(sender)
+	end
+end)
+--[[
+	User activates mod
+--]]
+mod:network_register("activate", function(sender)
+	if mod:is_server() then
+		mod.server:add_mod_user(sender)
+	end
 end)
 
 -- ##### ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗  ############################################################
@@ -121,12 +145,14 @@ mod.server = {
 	--]]
 	add_mod_user = function(self, peer_id)
 		self.mod_users[peer_id] = peer_id
+		mod:dump(self.mod_users, "self.mod_users", 2)
 	end,
 	--[[
 		Remove mod user
 	--]]
 	remove_mod_user = function(self, peer_id)
 		self.mod_users[peer_id] = nil
+		mod:dump(self.mod_users, "self.mod_users", 2)
 	end,
 	--[[
 		Server states
@@ -196,7 +222,7 @@ mod.server = {
 	set_state = function(self, state_name)
 		local state = self.states[state_name]
 		if state then
-			mod:echo("State '"..state_name.."' started!")
+			if debug then mod:echo("State '"..state_name.."' started!") end
 			self.state = state
 			self.timer = 0
 			self.state:start()
@@ -574,7 +600,7 @@ mod.ui = {
 	set_state = function(self, state_name)
 		local state = self.states[state_name]
 		if state then
-			mod:echo("UIState '"..state_name.."' started!")
+			if debug then mod:echo("UIState '"..state_name.."' started!") end
 			self.state = state
 			self.timer = 0
 			self.state:start()
@@ -726,7 +752,7 @@ end
 	Check if selecting or selected dare_id
 --]]
 mod.is_selecting_or_selected = function(content)
-	if mod.dare_info.is_selecting or content.dare_id == mod.dare_info.selected_dare then
+	if mod.dare_info.selection or content.dare_id == mod.dare_info.selected_dare then
 		return true
 	end
 	return false
@@ -781,7 +807,11 @@ end)
 --]]
 mod.on_user_joined = function(player)
 	if mod:is_server() then
-		mod:echo("User joined game!")
+		if debug then
+			mod:echo("User joined game!")
+			mod:echo("Asking joined user if mod is active...")
+			mod:echo("PeerID:'"..tostring(player.peer_id).."'")
+		end
 		mod:network_send("handshake", player.peer_id)
 	end
 end
@@ -790,8 +820,10 @@ end
 --]]
 mod.on_user_left = function(player)
 	if mod:is_server() then
-		mod:echo("User left game!")
-		--mod.server.mod_users[player.peer_id] = nil
+		if debug then
+			mod:echo("User left game!")
+			mod:echo("PeerID:'"..tostring(player.peer_id).."'")
+		end
 		mod.server:remove_mod_user(player.peer_id)
 	end
 end
@@ -810,14 +842,17 @@ end
 	Gamestate change
 --]]
 mod.on_game_state_changed = function(status, state)
-	if state == "StateIngame" and status == "enter" then
-		if mod:is_server() and (not mod:is_in_inn() or debug) then
-			mod.server:set_state("init")
-		else
+	if mod:get("active") and mod:is_server() then
+		mod.server:add_mod_user(mod:my_peer_id())
+		if state == "StateIngame" and status == "enter" then
+			if not mod:is_in_inn() or debug then
+				mod.server:set_state("init")
+			else
+				mod.server:set_state("idle")
+			end
+		elseif state == "StateIngame" and status == "exit" then
 			mod.server:set_state("idle")
 		end
-	elseif state == "StateIngame" and status == "exit" then
-		mod.server:set_state("idle")
 	end
 end
 --[[
@@ -828,12 +863,14 @@ mod.on_setting_changed = function(setting_name)
 		if mod:is_in_inn() then
 			if not mod:get("active") then
 				mod:echo("Deactivate!")
-				mod.server:remove_mod_user(mod:my_peer_id())
-				mod.server:set_state("idle")
+				mod:network_send("deactivate", "all")
+				--mod.server:remove_mod_user(mod:my_peer_id())
+				--mod.server:set_state("idle")
 			else
 				mod:echo("Activate!")
-				mod.server:add_mod_user(mod:my_peer_id())
-				mod.server:set_state("waiting")
+				mod:network_send("activate", "all")
+				--mod.server:add_mod_user(mod:my_peer_id())
+				--mod.server:set_state("waiting")
 			end
 		else
 			if mod:get("active") then
@@ -852,17 +889,30 @@ end
 	Mod enable
 --]]
 mod.on_enabled = function(is_first_call)
-	if mod:get("active") then
-		mod.server:add_mod_user(mod:my_peer_id())
-	end
+	-- if mod:get("active") then
+	-- 	mod.server:add_mod_user(mod:my_peer_id())
+	-- end
+end
+--[[
+	All mods are loaded
+--]]
+mod.on_all_mods_loaded = function()
 end
 
 if debug then
 	mod.ui:create_widgets()
 	if mod:get("active") then
-		mod.server:add_mod_user(mod:my_peer_id())
-		if mod:is_server() then
-			mod.server:set_state("waiting")
+		if Managers and Managers.player then
+			mod.server:add_mod_user(mod:my_peer_id())
+			
+			local players = Managers.player:players()
+			for _, player in pairs(players) do
+				mod:network_send("handshake", player.peer_id)
+			end
+
+			if mod:is_server() then
+				mod.server:set_state("waiting")
+			end
 		end
 	end
 end

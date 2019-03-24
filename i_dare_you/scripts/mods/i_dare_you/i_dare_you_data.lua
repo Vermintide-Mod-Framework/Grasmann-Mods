@@ -20,7 +20,7 @@ return {
 				keybind_trigger = "pressed",
 				keybind_type = "function_call",
 				function_name = "activate_dare_1",
-				default_value = {},
+				default_value = {"f5"},
 			},
 			{
 				setting_id = "activate_dare_2",
@@ -28,7 +28,7 @@ return {
 				keybind_trigger = "pressed",
 				keybind_type = "function_call",
 				function_name = "activate_dare_2",
-				default_value = {},
+				default_value = {"f6"},
 			},
 			{
 				setting_id = "activate_dare_3",
@@ -36,7 +36,7 @@ return {
 				keybind_trigger = "pressed",
 				keybind_type = "function_call",
 				function_name = "activate_dare_3",
-				default_value = {},
+				default_value = {"f7"},
 			},
 		},
 	},
