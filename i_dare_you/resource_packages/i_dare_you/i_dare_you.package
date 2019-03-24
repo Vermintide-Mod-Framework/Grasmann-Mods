@@ -1,0 +1,11 @@
+mod = [
+	"i_dare_you"
+]
+
+package = [
+	"resource_packages/i_dare_you/i_dare_you"
+]
+
+lua = [
+	"scripts/mods/i_dare_you/*"
+]
