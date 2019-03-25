@@ -1044,7 +1044,6 @@ end
 	When all mods are loaded
 --]]
 mod.on_all_mods_loaded = function()
-	mod:echo("ROFL")
 	-- Widgets
 	mod.ui:create_widgets()
 	-- Set settings
