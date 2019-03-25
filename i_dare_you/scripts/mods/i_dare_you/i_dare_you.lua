@@ -12,6 +12,11 @@ local mod = get_mod("i_dare_you")
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
 
+-- Scale
+local UIResolutionScale = UIResolutionScale or function()
+	return RESOLUTION_LOOKUP.scale
+end
+
 -- Debugging
 local debug = true
 
@@ -76,7 +81,9 @@ end
 --]]
 mod.activate_dare = function(id)
 	if mod.data.is_selecting then
-		mod:network_send("dare_selected", "all", mod:my_peer_id(), mod.data.victim_peer_id, mod.data.dares[id].id)
+		mod.data.selected_dare = mod.data.dares[id].id
+		mod.data.is_selecting = false
+		mod:network_send("dare_selected", "all", mod:my_peer_id(), mod.data.victim_peer_id, mod.data.selected_dare)
 	end
 end
 --[[
@@ -141,7 +148,7 @@ mod:network_register("start_dare_selection", function(sender, selector_peer_id, 
 			mod:echo(dare)
 		end
 	end
-	mod.data.selection = true
+	--mod.data.selection = true
 	mod.data:setup(selector_peer_id, victim_peer_id, dares)
 	mod.ui:start_selection()
 end)
@@ -368,21 +375,56 @@ mod.ui = {
 				start_size = 24,
 			},
 			dare_1 = {
-				start_offset = {{800, 0, 0}},
+				start_offset = {800, 0, 0},
 				start_size = 30,
 			},
 			dare_2 = {
-				start_offset = {{800, 0, 0}},
+				start_offset = {800, 0, 0},
 				start_size = 30,
 			},
 			dare_3 = {
-				start_offset = {{800, 0, 0}},
+				start_offset = {800, 0, 0},
 				start_size = 30,
 			},
 			time = 0,
 			start = function(self)
+				mod.ui:init_state()
 			end,
 			finish = function(self)
+			end,
+		},
+		waiting_fade = {
+			render = { "dare_1", "dare_2", "dare_3", "victim_name" },
+			victim_name = {
+				start_offset = {800, -40, 0},
+				start_size = 24,
+				fade_out = true,
+				fade_out_time = 0.5,
+			},
+			dare_1 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+				fade_out = true,
+				fade_out_time = 0.5,
+			},
+			dare_2 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+				fade_out = true,
+				fade_out_time = 0.5,
+			},
+			dare_3 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+				fade_out = true,
+				fade_out_time = 0.5,
+			},
+			time = 0.5,
+			start = function(self)
+				mod.ui:init_state()
+			end,
+			finish = function(self)
+				mod.ui:set_state("selection_grow")
 			end,
 		},
 		selection_grow = {
@@ -392,17 +434,25 @@ mod.ui = {
 				finish_size = 120,
 				update_size = true,
 				start_offset = {0, 0, 0},
+				fade_in = true,
+				fade_in_time = 0.5,
 			},
 			title_choose_dare = {
 				start_size = 0,
 				finish_size = 120,
 				update_size = true,
 				start_offset = {0, 0, 0},
+				fade_in = true,
+				fade_in_time = 0.5,
 			},
 			time = 0.5,
 			start = function(self)
+				mod.data.selection = true
 				mod.ui:init_state()
 			end,
+			-- update = function(self)
+			-- 	mod.ui:update_state()
+			-- end,
 			finish = function(self)
 				mod.ui:set_state("selection_pop")
 			end,
@@ -465,27 +515,37 @@ mod.ui = {
 				start_offset = {0, 350, 0},
 				start_size = 40,
 				text = "victim_name",
+				fade_in = true,
+				fade_in_time = 0.5,
 			},
 			dare_1 = {
 				start_offset = {0, -320, 0},
 				start_size = 30,
 				text = "dare_1",
+				fade_in = true,
+				fade_in_time = 0.5,
 			},
 			dare_2 = {
 				start_offset = {0, -360, 0},
 				start_size = 30,
 				text = "dare_2",
+				fade_in = true,
+				fade_in_time = 0.5,
 			},
 			dare_3 = {
 				start_offset = {0, -400, 0},
 				start_size = 30,
 				text = "dare_3",
+				fade_in = true,
+				fade_in_time = 0.5,
 			},
 			counter = {
 				start_offset = {0, -280, 0},
 				start_size = 30,
 				text = "time",
 				update_text = true,
+				fade_in = true,
+				fade_in_time = 0.5,
 			},
 			time = 10,
 			start = function(self)
@@ -500,7 +560,7 @@ mod.ui = {
 						-- Time's up -> random choice
 						local rnd = math.random(1, 3)
 						mod["activate_dare_"..tostring(rnd)]()
-						mod.data.is_selecting = false
+						--mod.data.is_selecting = false
 					end
 				end
 				mod.ui:set_state("show_selection")
@@ -511,10 +571,14 @@ mod.ui = {
 			title_incoming_dare = {
 				start_offset = {0, 400, 0},
 				start_size = 80,
+				fade_out = true,
+				fade_out_time = 0.5,
 			},
 			title_choose_dare = {
 				start_offset = {0, 400, 0},
 				start_size = 80,
+				fade_out = true,
+				fade_out_time = 0.5,
 			},
 			victim_name = {
 				start_offset = {0, 350, 0},
@@ -531,6 +595,8 @@ mod.ui = {
 				start_size = 30,
 				finish_size = 60,
 				update_size = true,
+				fade_out = true,
+				fade_out_time = 0.5,
 			},
 			dare_2 = {
 				start_offset = {0, -360, 0},
@@ -539,6 +605,8 @@ mod.ui = {
 				start_size = 30,
 				finish_size = 60,
 				update_size = true,
+				fade_out = true,
+				fade_out_time = 0.5,
 			},
 			dare_3 = {
 				start_offset = {0, -400, 0},
@@ -547,9 +615,12 @@ mod.ui = {
 				start_size = 30,
 				finish_size = 60,
 				update_size = true,
+				fade_out = true,
+				fade_out_time = 0.5,
 			},
 			time = 0.5,
 			start = function(self)
+				mod.ui:init_state()
 			end,
 			finish = function(self)
 				mod.ui:set_state("move_selection")
@@ -601,7 +672,7 @@ mod.ui = {
 		Start dare selection
 	--]]
 	start_selection = function(self)
-		self:set_state("selection_grow")
+		self:set_state("waiting_fade")
 	end,
 	--[[
 		Create widgets for UI
@@ -625,7 +696,7 @@ mod.ui = {
 			if animation then
 				widget.style.text.font_size = animation.start_size
 				widget.style.text_shadow.font_size = animation.start_size
-				widget.offset = animation.start_offset
+				widget.offset = self:apply_scale_to_offset(animation.start_offset)
 				if animation.text then
 					if animation.text == "victim_name" then
 						local name = "yourself"
@@ -644,6 +715,22 @@ mod.ui = {
 						widget.content.dare_id = mod.data.dares[3].id
 					elseif animation.text == "time" then
 						widget.content.text = self.state.time
+					end
+				end
+				if animation.fade_in then
+					if UIWidget.has_animation(widget) then UIWidget.stop_animations(widget) end
+					local color = widget.style.text.text_color
+					UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 0, 255, animation.fade_in_time, math.easeInCubic))
+					local color = widget.style.text_shadow.text_color
+					UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 0, 255, animation.fade_in_time, math.easeInCubic))
+				end
+				if animation.fade_out then
+					if not widget.content.dare_id or widget.content.dare_id ~= mod.data.selected_dare then
+						if UIWidget.has_animation(widget) then UIWidget.stop_animations(widget) end
+						local color = widget.style.text.text_color
+						UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 255, 0, animation.fade_out_time, math.easeInCubic))
+						local color = widget.style.text_shadow.text_color
+						UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 255, 0, animation.fade_out_time, math.easeInCubic))
 					end
 				end
 			end
@@ -666,18 +753,21 @@ mod.ui = {
 				for _, widget in pairs(self.widgets) do
 					local animation = self.state[widget.content.id]
 					if animation then
-						if animation.update_size then
-							local time = self.timer / self.state.time
-							local size = math.lerp(animation.start_size, animation.finish_size, time)
-							widget.style.text.font_size = size
-							widget.style.text_shadow.font_size = size
-						end
-						if animation.update_offset then
-							local time = self.timer / self.state.time
-							local x_pos = math.lerp(animation.start_offset[1], animation.finish_offset[1], time)
-							local y_pos = math.lerp(animation.start_offset[2], animation.finish_offset[2], time)
-							local z_pos = math.lerp(animation.start_offset[3], animation.finish_offset[3], time)
-							widget.offset = {x_pos, y_pos, z_pos}
+						if not widget.content.dare_id or widget.content.dare_id == mod.data.selected_dare then
+							if animation.update_size then
+								local time = self.timer / self.state.time
+								local size = math.lerp(animation.start_size, animation.finish_size, time)
+								widget.style.text.font_size = size
+								widget.style.text_shadow.font_size = size
+							end
+							if animation.update_offset then
+								local time = self.timer / self.state.time
+								local x_pos = math.lerp(animation.start_offset[1], animation.finish_offset[1], time)
+								local y_pos = math.lerp(animation.start_offset[2], animation.finish_offset[2], time)
+								local z_pos = math.lerp(animation.start_offset[3], animation.finish_offset[3], time)
+								--widget.offset = {x_pos, y_pos, z_pos}
+								widget.offset = self:apply_scale_to_offset({x_pos, y_pos, z_pos})
+							end
 						end
 						if animation.update_text then
 							if animation.text == "time" then
@@ -688,6 +778,17 @@ mod.ui = {
 				end
 			end
 		end
+	end,
+	--[[
+		Apply hud scaling
+	--]]
+	apply_scale_to_offset = function(self, offset)
+		-- local ui_scale = RESOLUTION_LOOKUP.scale
+		-- -- mod:echo("Scale:'"..tostring(ui_scale).."'")
+		-- local c_x = (offset[1] * (1-ui_scale)) / 2
+		-- local c_y = (offset[2] * (1-ui_scale)) / 2
+		-- local new_offset = {offset[1] + c_x, offset[2] + c_y, offset[3]}
+		return offset
 	end,
 	--[[
 		Set a state
@@ -715,7 +816,7 @@ mod.ui = {
 	Create a simple text widget
 --]]
 mod.create_simple_text_widget = function(self, id, text, size, offset, content_check, scenegraph_id)
-	local scenegraph_id = scenegraph_id or "root"
+	local scenegraph_id = scenegraph_id or "screen"
 	local offset = offset or {0, 0, 0}
 	local size = size or 80
 	local widget = {
@@ -746,7 +847,7 @@ mod.create_simple_text_widget = function(self, id, text, size, offset, content_c
 		style = {
 			text = {
 				font_size = size,
-				word_wrap = true,
+				--word_wrap = true,
 				pixel_perfect = true,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
@@ -757,7 +858,7 @@ mod.create_simple_text_widget = function(self, id, text, size, offset, content_c
 			},
 			text_shadow = {
 				font_size = size,
-				word_wrap = true,
+				--word_wrap = true,
 				pixel_perfect = true,
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
@@ -889,19 +990,19 @@ end
 --[[
 	Create widgets
 --]]
-mod:hook_safe(BuffUI, "_create_ui_elements", function(self)
+mod:hook_safe(AbilityUI, "_create_ui_elements", function(self)
 	mod.ui:create_widgets()
 end)
 --[[
 	Update widgets
 --]]
-mod:hook_safe(BuffUI, "update", function(self, dt, t)
+mod:hook_safe(AbilityUI, "update", function(self, dt, t)
 	mod.ui:update(dt)
 end)
 --[[
 	Draw widgets
 --]]
-mod:hook_safe(BuffUI, "draw", function(self, dt)
+mod:hook_safe(AbilityUI, "draw", function(self, dt)
 	if mod.ui.state then
 		local ui_renderer = self.ui_renderer
 		local ui_scenegraph = self.ui_scenegraph
