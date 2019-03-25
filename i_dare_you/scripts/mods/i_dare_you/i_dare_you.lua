@@ -195,7 +195,7 @@ end)
 mod.server = {
 	state = nil,
 	timer = 0,
-	mod_users = {},
+	--mod_users = {},
 	--[[
 		Start server system
 	--]]
@@ -941,10 +941,16 @@ mod.player_name_from_peer_id = function(self, peer_id)
 	local player = Managers.player:player_from_peer_id(peer_id)
 	return player:name()
 end
+--[[
+	Get player unit from peer_id
+--]]
 mod.player_unit_from_peer_id = function(self, peer_id)
 	local player = Managers.player:player_from_peer_id(peer_id)
 	return player.player_unit
 end
+--[[
+	Check if peer_id is alive
+--]]
 mod.is_peer_id_alive = function(self, peer_id)
 	local unit = mod:player_unit_from_peer_id(peer_id)
 	if unit then
