@@ -816,7 +816,7 @@ mod.ui = {
 	Create a simple text widget
 --]]
 mod.create_simple_text_widget = function(self, id, text, size, offset, content_check, scenegraph_id)
-	local scenegraph_id = scenegraph_id or "screen"
+	local scenegraph_id = scenegraph_id or "root"
 	local offset = offset or {0, 0, 0}
 	local size = size or 80
 	local widget = {
@@ -887,8 +887,12 @@ mod.random_player = function(self, except_peer_id)
 		-- 	end
 		-- end
 		for _, peer_id in pairs(mod.data.mod_users) do
+			-- Make sure peer_id is usable
 			if not except_peer_id or peer_id ~= except_peer_id then
-				possible_peer_ids[#possible_peer_ids+1] = peer_id
+				-- Make sure player is alive
+				if mod:is_peer_id_alive() then
+					possible_peer_ids[#possible_peer_ids+1] = peer_id
+				end
 			end
 		end
 		-- Choose random player
@@ -936,6 +940,20 @@ end
 mod.player_name_from_peer_id = function(self, peer_id)
 	local player = Managers.player:player_from_peer_id(peer_id)
 	return player:name()
+end
+mod.player_unit_from_peer_id = function(self, peer_id)
+	local player = Managers.player:player_from_peer_id(peer_id)
+	return player.player_unit
+end
+mod.is_peer_id_alive = function(self, peer_id)
+	local unit = mod:player_unit_from_peer_id(peer_id)
+	if unit then
+		local health_extension = ScriptUnit.extension(unit, "health_system")
+		if health_extension and health_extension:is_alive() then
+			return true
+		end
+	end
+	return false
 end
 --[[
 	Get local peer_id
@@ -990,19 +1008,21 @@ end
 --[[
 	Create widgets
 --]]
-mod:hook_safe(AbilityUI, "_create_ui_elements", function(self)
-	mod.ui:create_widgets()
+mod:hook_safe(BuffUI, "_create_ui_elements", function(self)
+	--mod.ui:create_widgets()
 end)
 --[[
 	Update widgets
 --]]
-mod:hook_safe(AbilityUI, "update", function(self, dt, t)
+local update_widgets = function(self, dt, t)
 	mod.ui:update(dt)
-end)
+end
+mod:hook_safe(BuffUI, "update", update_widgets)
+mod:hook_safe(ObserverUI, "update", update_widgets)
 --[[
 	Draw widgets
 --]]
-mod:hook_safe(AbilityUI, "draw", function(self, dt)
+local draw_widgets = function(self, dt)
 	if mod.ui.state then
 		local ui_renderer = self.ui_renderer
 		local ui_scenegraph = self.ui_scenegraph
@@ -1017,7 +1037,9 @@ mod:hook_safe(AbilityUI, "draw", function(self, dt)
 		end
 		UIRenderer.end_pass(ui_renderer)
 	end
-end)
+end
+mod:hook_safe(BuffUI, "draw", draw_widgets)
+mod:hook_safe(ObserverUI, "draw", draw_widgets)
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
 -- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
