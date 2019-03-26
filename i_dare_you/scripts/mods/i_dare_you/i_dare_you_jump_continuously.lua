@@ -27,6 +27,7 @@ return {
     is_finishing = false,
     start = function(self)
         self.timer = 0
+        self.reminder_timer = 0
     end,
     update = function(self, dt)
         if not self.is_finishing then
