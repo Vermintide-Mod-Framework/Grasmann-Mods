@@ -24,12 +24,7 @@ mod.template_dare = {
 }
 
 local dares = {
-	{
-		id = "jump_continuously",
-		text = "jump_continuously",
-		fallible = true,
-		punishment = "damage",
-	},
+	mod:dofile("scripts/mods/i_dare_you/i_dare_you_jump_continuously"),
 	{
 		id = "dont_jump",
 		text = "dont_jump",

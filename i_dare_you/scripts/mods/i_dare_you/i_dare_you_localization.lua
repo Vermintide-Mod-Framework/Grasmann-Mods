@@ -61,12 +61,33 @@ return {
 		en = "Alone",
 		de = "Alleine",
 	},
-	allow_inn = {
-		en = "Dare in the keep!",
-		de = "Fordere im Versteck heraus!",
+	debug = {
+		en = "Debugging",
 	},
-	allow_inn_description = {
-		en = "Mod works in the keep.",
-		de = "Die Mod funktioniert im Versteck.",
+	error_not_enough_players = {
+		en = "Not enough players to play I dare you!",
+		de = "Nicht genügend Spieler für Untersteh dich!",
+	},
+	error_in_inn = {
+		en = "I dare you! can't be played in the keep.",
+		de = "Untersteh dich! kann nicht im Versteck gespielt werden.",
+	},
+	-- allow_inn = {
+	-- 	en = "Dare in the keep!",
+	-- 	de = "Fordere im Versteck heraus!",
+	-- },
+	-- allow_inn_description = {
+	-- 	en = "Mod works in the keep.",
+	-- 	de = "Die Mod funktioniert im Versteck.",
+	-- },
+
+	-- Dares
+	jump_continuously_text = {
+		en = "Jump Continuously!",
+		de = "Spring ununterbrochen!",
+	},
+	jump_continuously_reminder = {
+		en = "Jump!",
+		de = "Spring!",
 	},
 }

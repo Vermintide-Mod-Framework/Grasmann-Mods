@@ -2,7 +2,7 @@ local mod = get_mod("i_dare_you")
 --[[
 	I dare you!
 
-
+	Lets you and your friends dare each other with insidious concequences.
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗  ############################################################################
@@ -18,7 +18,8 @@ local UIResolutionScale = UIResolutionScale or function()
 end
 
 -- Debugging
-local debug = true
+local debug = mod:get("debug")
+local test_dare = "jump_continuously"
 
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
@@ -34,6 +35,7 @@ mod:persistent_table("data", {
 	selection = false,
 	-- Selected dare
 	selected_dare = nil,
+	active_dare = nil,
 	-- Settings
 	active = nil,
 	mode = 1,
@@ -57,6 +59,9 @@ mod:persistent_table("data", {
 	end,
 })
 mod.data = mod:persistent_table("data")
+if debug then
+	mod.data.active_dare = nil
+end
 
 -- ##### ██╗███╗   ██╗██████╗ ██╗   ██╗████████╗ ######################################################################
 -- ##### ██║████╗  ██║██╔══██╗██║   ██║╚══██╔══╝ ######################################################################
@@ -67,28 +72,39 @@ mod.data = mod:persistent_table("data")
 --[[
 	Input functions used by chat commands and hotkeys
 --]]
-mod.activate_dare_1 = function()
-	mod.activate_dare(1)
+mod.activate_dare_1 = function(automatic)
+	mod:activate_dare(1, automatic)
 end
-mod.activate_dare_2 = function()
-	mod.activate_dare(2)
+mod.activate_dare_2 = function(automatic)
+	mod:activate_dare(2, automatic)
 end
-mod.activate_dare_3 = function()
-	mod.activate_dare(3)
+mod.activate_dare_3 = function(automatic)
+	mod:activate_dare(3, automatic)
 end
 --[[
 	Evaluating input functions
 --]]
-mod.activate_dare = function(id)
-	if mod.data.is_selecting then
-		mod.data.selected_dare = mod.data.dares[id].id
-		mod.data.is_selecting = false
-		mod:network_send("dare_selected", "all", mod:my_peer_id(), mod.data.victim_peer_id, mod.data.selected_dare)
+mod.activate_dare = function(self, id, automatic)
+	if self.data.is_selecting or automatic then
+		self.data.selected_dare = self.data.dares[id].id
+		self.data.is_selecting = false
+		local server_peer_id = self:server_peer_id()
+		self:echo("Server:'"..server_peer_id.."'")
+		self:network_send("dare_selected_server", server_peer_id, self.data.selected_dare)
+	end
+end
+--[[
+	Start server
+--]]
+mod.start_server = function()
+	if mod:is_server() then
+		mod.server:start()
 	end
 end
 --[[
 	Chat commands
 --]]
+mod:command("start_server", "Start I dare You! server.", mod.start_server)
 mod:command("dare1", "Choose dare 1.", mod.activate_dare_1)
 mod:command("dare2", "Choose dare 2.", mod.activate_dare_2)
 mod:command("dare3", "Choose dare 3.", mod.activate_dare_3)
@@ -101,70 +117,117 @@ mod:command("dare3", "Choose dare 3.", mod.activate_dare_3)
 -- ##### ╚═╝  ╚═╝╚═╝      ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ############################################
 --[[
 	Handshake to see if mod is active
-	Clients receive this from the server
+	Clients receive this from server
 --]]
-mod:network_register("handshake", function(sender)
-	mod:network_send("handshake_reply", sender, mod.data.active)
+mod:network_register("handshake_client", function(sender)
+	-- "sender" is server
+	mod:network_send("handshake_server", sender, mod.data.active)
 end)
 --[[
 	Handshake reply
-	Server receives this from the clients
+	Server receives this from clients
 --]]
-mod:network_register("handshake_reply", function(sender, active)
+mod:network_register("handshake_server", function(sender, active)
+	if debug then
+		if active then mod:echo("Joined user '"..tostring(sender).."' has mod active!")
+		else mod:echo("Joined user '"..tostring(sender).."' has mod NOT active!") end
+	end
 	if active then
-		if debug then
-			mod:echo("Joined user has mod active!")
-			mod:echo("PeerID:'"..tostring(sender).."'")
-		end
 		mod.server:add_mod_user(sender)
 	end
 end)
 --[[
 	Reset UI
+	Everyone receives this from server
 --]]
-mod:network_register("reset_ui", function(sender)
-	mod.ui:set_state("idle")
-end)
---[[
-	Deactivate everything and reset ui to idle
-	Clients receive this from the server
---]]
-mod:network_register("deactivate", function(sender)
-	if mod:is_server() then 
-		--mod.server:set_state("idle")
-		mod.server:stop()
-	end
-	mod.ui:set_state("idle")
+mod:network_register("reset_ui_client", function(sender, state_name)
+	state_name = state_name or "idle"
+	mod.ui:set_state(state_name)
 end)
 --[[
 	Start dare selection
-	Clients receive this from the server
+	Everyone receives this from server
 --]]
-mod:network_register("start_dare_selection", function(sender, selector_peer_id, victim_peer_id, dares)
+mod:network_register("start_dare_selection_client", function(sender, selector_peer_id, victim_peer_id, dares)
 	if debug then
 		mod:echo("Selector:'"..tostring(selector_peer_id).."'")
 		mod:echo("Victim:'"..tostring(victim_peer_id).."'")
-		for _, dare in pairs(dares) do
-			mod:echo(dare)
+		local dare_list = ""
+		for i, dare in pairs(dares) do
+			dare_list = dare_list..dare
+			if i < 3 then dare_list = dare_list..", " end
 		end
+		mod:echo("Dares:'"..dare_list.."'")
 	end
 	--mod.data.selection = true
 	mod.data:setup(selector_peer_id, victim_peer_id, dares)
 	mod.ui:start_selection()
 end)
 --[[
-	Dare selected
+	Dare was selected by selector
+	Server receives this from clients
 --]]
-mod:network_register("dare_selected", function(sender, selector_peer_id, victim_peer_id, dare_name)
+mod:network_register("dare_selected_server", function(sender, dare_name)
+	local check_dare = mod:get_dare(dare_name)
+	if check_dare then
+		if debug then
+			mod:echo("Dare '"..dare_name.."' valid!")
+		end
+		mod:network_send("dare_selected_client", "all", mod.data.selector_peer_id, mod.data.victim_peer_id, dare_name)
+		mod.server:set_state("waiting")
+	else
+		if debug then
+			mod:echo("Dare '"..dare_name.."' invalid!")
+		end
+	end
+end)
+--[[
+	Dare was selected
+	Clients receive this from server
+--]]
+mod:network_register("dare_selected_client", function(sender, selector_peer_id, victim_peer_id, dare_name)
 	if debug then
 		mod:echo("Selector:'"..tostring(selector_peer_id).."'")
 		mod:echo("Victim:'"..tostring(victim_peer_id).."'")
 		mod:echo("Selected dare:'"..dare_name.."'")
 	end
+	mod.data.selector_peer_id = selector_peer_id
+	mod.data.victim_peer_id = victim_peer_id
 	mod.data.is_selecting = false
 	mod.data.selection = false
 	mod.data.selected_dare = dare_name
+	if mod:is_victim() then
+		mod:set_dare(dare_name)
+	end
 	mod.ui:set_state("show_selection")
+end)
+--[[
+	Dare finished
+	Server receives this from clients
+--]]
+mod:network_register("dare_finished_server", function(sender, reason)
+	if debug then
+		mod:echo("Dare finished! Reason:'"..reason.."'")
+	end
+	mod:network_send("dare_finished_client", "all", reason)
+end)
+--[[
+	Dare finished
+	Clients receive this from server
+--]]
+mod:network_register("dare_finished_client", function(sender, reason)
+	if debug then
+		mod:echo("Dare finished! Reason:'"..reason.."'")
+	end
+	mod:finish_dare()
+end)
+
+mod:network_register("request_punishment_server", function(sender, value)
+	if debug then
+		mod:echo("Player '"..sender.."' requested punishment of '"..tostring(value).."'!")
+	end
+	local unit = mod:player_unit_from_peer_id(sender)
+	DamageUtils.add_damage_network(unit, unit, value, "torso", "buff") --, nil, damage_direction, damage_source, nil, nil, nil, action.hit_react_type)
 end)
 --[[
 	User deactivated mod
@@ -183,6 +246,70 @@ mod:network_register("user_activated_mod", function(sender)
 	end
 end)
 
+-- #####  █████╗  ██████╗████████╗██╗██╗   ██╗███████╗    ██████╗  █████╗ ██████╗ ███████╗ ############################
+-- ##### ██╔══██╗██╔════╝╚══██╔══╝██║██║   ██║██╔════╝    ██╔══██╗██╔══██╗██╔══██╗██╔════╝ ############################
+-- ##### ███████║██║        ██║   ██║██║   ██║█████╗      ██║  ██║███████║██████╔╝█████╗   ############################
+-- ##### ██╔══██║██║        ██║   ██║╚██╗ ██╔╝██╔══╝      ██║  ██║██╔══██║██╔══██╗██╔══╝   ############################
+-- ##### ██║  ██║╚██████╗   ██║   ██║ ╚████╔╝ ███████╗    ██████╔╝██║  ██║██║  ██║███████╗ ############################
+-- ##### ╚═╝  ╚═╝ ╚═════╝   ╚═╝   ╚═╝  ╚═══╝  ╚══════╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝ ############################
+--[[
+	Get dare from table by name
+--]]
+mod.get_dare = function(self, dare_name)
+	for _, dare in pairs(mod.dares) do
+		if dare.id == dare_name then
+			return dare
+		end
+	end
+	return nil
+end
+--[[
+	Set active dare and start it
+--]]
+mod.set_dare = function(self, dare_name)
+	mod.data.active_dare = mod:get_dare(dare_name)
+	mod:start_dare()
+end
+--[[
+	Start active dare
+--]]
+mod.start_dare = function(self)
+	if mod.data.active_dare then
+		if mod.data.active_dare.start then mod.data.active_dare:start() end
+	end
+end
+--[[
+	Update active dare
+--]]
+mod.update_dare = function(self, dt)
+	if mod.data.active_dare then
+		if mod.data.active_dare.update then mod.data.active_dare:update(dt) end
+	end
+end
+--[[
+	Abort active dare with a reason
+--]]
+mod.abort_dare = function(self, reason)
+	mod:network_send("dare_finished_server", self:server_peer_id(), reason)
+end
+--[[
+	Finish active dare
+--]]
+mod.finish_dare = function(self)
+	if self.data.active_dare then
+		if self.data.active_dare.finish then self.data.active_dare:finish() end
+		self.data.active_dare = nil
+	end
+end
+
+mod.remind_dare = function(self)
+	self.ui:remind()
+end
+
+mod.add_damage = function(self, value)
+	mod:network_send("request_punishment_server", mod:server_peer_id(), value)
+end
+
 -- ##### ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗  ############################################################
 -- ##### ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗ ############################################################
 -- ##### ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝ ############################################################
@@ -200,8 +327,8 @@ mod.server = {
 		Start server system
 	--]]
 	start = function(self)
-		mod:network_send("reset_ui", "all")
-		if mod:has_enough_players() then
+		mod:network_send("reset_ui_client", "all")
+		if mod:has_enough_players() and not mod:is_in_inn() then
 			self:set_state("init")
 		else
 			self:stop()
@@ -211,9 +338,12 @@ mod.server = {
 		Stop server
 	--]]
 	stop = function(self)
-		mod:network_send("reset_ui", "all")
+		mod:network_send("reset_ui_client", "all")
 		if not mod:has_enough_players() then
-			mod:echo("I dare you! can't be played alone!")
+			mod:echo(mod:localize("error_not_enough_players"))
+		end
+		if mod:is_in_inn() then
+			mod:echo(mod:localize("error_in_inn"))
 		end
 		self:set_state("idle")
 	end,
@@ -272,6 +402,7 @@ mod.server = {
 			start = function(self)
 			end,
 			finish = function(self)
+				mod:network_send("dare_finished_client", "all", "time")
 				mod.server:set_state("selection")
 			end,
 		},
@@ -286,12 +417,15 @@ mod.server = {
 				end
 				if selector_peer_id and victim_peer_id then
 					local dares = mod.server:get_random_dares()
-					mod:network_send("start_dare_selection", "all", selector_peer_id, victim_peer_id, dares)
+					mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares)
 				else
 					mod.server:stop()
 				end
 			end,
 			finish = function(self)
+				mod:echo("automatic selection!")
+				local rnd = math.random(1, 3)
+				mod["activate_dare_"..tostring(rnd)](true)
 				mod.server:set_state("waiting")
 			end,
 		},
@@ -306,6 +440,18 @@ mod.server = {
 			local rnd = math.random(1, #available_dares)
 			dares[#dares+1] = available_dares[rnd].id --table.clone(available_dares[rnd])
 			table.remove(available_dares, rnd)
+		end
+		if debug and test_dare then
+			local found = false
+			for _, dare in pairs(dares) do
+				if dare == test_dare then
+					found = true
+				end
+			end
+			if not found then
+				local rnd = math.random(1, 3)
+				dares[rnd] = test_dare
+			end
 		end
 		return dares
 	end,
@@ -391,6 +537,105 @@ mod.ui = {
 				mod.ui:init_state()
 			end,
 			finish = function(self)
+			end,
+		},
+		reminder_grow = {
+			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder" },
+			victim_name = {
+				start_offset = {800, -40, 0},
+				start_size = 24,
+			},
+			dare_1 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+			},
+			dare_2 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+			},
+			dare_3 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+			},
+			reminder = {
+				start_size = 0,
+				finish_size = 120,
+				update_size = true,
+				start_offset = {0, 0, 0},
+				fade_in = true,
+				fade_in_time = 0.5,
+				text = "reminder",
+			},
+			time = 0.5,
+			start = function(self)
+				mod.ui:init_state()
+			end,
+			finish = function(self)
+				mod.ui:set_state("reminder_pop")
+			end,
+		},
+		reminder_pop = {
+			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder" },
+			victim_name = {
+				start_offset = {800, -40, 0},
+				start_size = 24,
+			},
+			dare_1 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+			},
+			dare_2 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+			},
+			dare_3 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+			},
+			reminder = {
+				start_size = 120,
+				finish_size = 80,
+				update_size = true,
+				start_offset = {0, 0, 0},
+			},
+			time = 0.5,
+			start = function(self)
+				mod.ui:init_state()
+			end,
+			finish = function(self)
+				mod.ui:set_state("reminder_fade")
+			end,
+		},
+		reminder_fade = {
+			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder" },
+			victim_name = {
+				start_offset = {800, -40, 0},
+				start_size = 24,
+			},
+			dare_1 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+			},
+			dare_2 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+			},
+			dare_3 = {
+				start_offset = {800, 0, 0},
+				start_size = 30,
+			},
+			reminder = {
+				start_size = 80,
+				start_offset = {0, 0, 0},
+				fade_out = true,
+				fade_out_time = 2,
+			},
+			time = 2,
+			start = function(self)
+				mod.ui:init_state()
+			end,
+			finish = function(self)
+				mod.ui:set_state("waiting")
 			end,
 		},
 		waiting_fade = {
@@ -555,15 +800,15 @@ mod.ui = {
 				mod.ui:init_state()
 			end,
 			finish = function(self)
-				if mod:is_selector() then
-					if mod.data.is_selecting then
-						-- Time's up -> random choice
-						local rnd = math.random(1, 3)
-						mod["activate_dare_"..tostring(rnd)]()
-						--mod.data.is_selecting = false
-					end
-				end
-				mod.ui:set_state("show_selection")
+				-- if mod:is_selector() then
+				-- 	if mod.data.is_selecting then
+				-- 		-- Time's up -> random choice
+				-- 		local rnd = math.random(1, 3)
+				-- 		mod["activate_dare_"..tostring(rnd)]()
+				-- 		--mod.data.is_selecting = false
+				-- 	end
+				-- end
+				-- mod.ui:set_state("show_selection")
 			end,
 		},
 		show_selection = {
@@ -674,6 +919,10 @@ mod.ui = {
 	start_selection = function(self)
 		self:set_state("waiting_fade")
 	end,
+
+	remind = function(self)
+		self:set_state("reminder_grow")
+	end,
 	--[[
 		Create widgets for UI
 	--]]
@@ -681,6 +930,7 @@ mod.ui = {
 		self.widgets = {}
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("title_incoming_dare", "Incoming Dare!", nil, nil, mod.is_not_selector)
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("title_choose_dare", "Choose Dare!", nil, nil, mod.is_selector)
+		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("reminder", "N/A")
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("victim_name", "N/A", 60, {0, 350, 0})
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("counter", "N/A", 30, {0, -280, 0})
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("dare_1", "N/A", 30, {0, -320, 0}, mod.is_selecting_or_selected)
@@ -715,6 +965,8 @@ mod.ui = {
 						widget.content.dare_id = mod.data.dares[3].id
 					elseif animation.text == "time" then
 						widget.content.text = self.state.time
+					elseif animation.text == "reminder" then
+						widget.content.text = mod.data.active_dare.reminder or "N/A"
 					end
 				end
 				if animation.fade_in then
@@ -890,7 +1142,7 @@ mod.random_player = function(self, except_peer_id)
 			-- Make sure peer_id is usable
 			if not except_peer_id or peer_id ~= except_peer_id then
 				-- Make sure player is alive
-				if mod:is_peer_id_alive() then
+				if mod:is_peer_id_alive(peer_id) then
 					possible_peer_ids[#possible_peer_ids+1] = peer_id
 				end
 			end
@@ -905,7 +1157,7 @@ end
 	Check if in inn / keep
 --]]
 mod.is_in_inn = function(self)
-	return LevelHelper:current_level_settings().level_id == "inn_level" or mod.data.allow_inn
+	return LevelHelper:current_level_settings().level_id == "inn_level" --or mod.data.allow_inn
 end
 --[[
 	Check if server
@@ -972,6 +1224,7 @@ end
 	Get server peer_id
 --]]
 mod.server_peer_id = function(self)
+	if self:is_server() then return self:my_peer_id() end
 	return Managers.state.network.network_transmit.server_peer_id
 end
 --[[
@@ -988,10 +1241,10 @@ end
 --]]
 mod.has_enough_players = function(self)
 	local player_count = #Managers.player:players()
-	local party = #mod.data.mod_users == player_count
+	local party = #mod.data.mod_users == player_count and #mod.data.mod_users > 1
 	local minimum = #mod.data.mod_users >= 2
 	local alone = #mod.data.mod_users >= 1
-	return party or minimum or alone
+	return (mod.data.mode == 1 and party) or (mod.data.mode == 2 and minimum) or (mod.data.mode == 3 and alone)
 end
 --[[
 	Get hotkey string representation
@@ -1024,7 +1277,7 @@ local update_widgets = function(self, dt, t)
 	mod.ui:update(dt)
 end
 mod:hook_safe(BuffUI, "update", update_widgets)
-mod:hook_safe(ObserverUI, "update", update_widgets)
+--mod:hook_safe(ObserverUI, "update", update_widgets)
 --[[
 	Draw widgets
 --]]
@@ -1045,7 +1298,7 @@ local draw_widgets = function(self, dt)
 	end
 end
 mod:hook_safe(BuffUI, "draw", draw_widgets)
-mod:hook_safe(ObserverUI, "draw", draw_widgets)
+--mod:hook_safe(ObserverUI, "draw", draw_widgets)
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
 -- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
@@ -1063,7 +1316,7 @@ mod.on_user_joined = function(player)
 			mod:echo("Asking joined user if mod is active...")
 			mod:echo("PeerID:'"..tostring(player.peer_id).."'")
 		end
-		mod:network_send("handshake", player.peer_id)
+		mod:network_send("handshake_client", player.peer_id)
 	end
 end
 --[[
@@ -1083,6 +1336,7 @@ end
 --]]
 mod.update = function(dt)
 	mod.server:update(dt)
+	mod:update_dare(dt)
 end
 --[[
 	Mod unload
@@ -1134,11 +1388,11 @@ mod.on_setting_changed = function(setting_name)
 				mod:set("active", true)
 			end
 		end
-	elseif setting_name == "allow_inn" then
-		-- Save setting to variable
-		mod.data.allow_inn = mod:get("allow_inn")
-		-- Restart server
-		if mod:is_server() then mod.server:start() end
+	-- elseif setting_name == "allow_inn" then
+	-- 	-- Save setting to variable
+	-- 	mod.data.allow_inn = mod:get("allow_inn")
+	-- 	-- Restart server
+	-- 	if mod:is_server() then mod.server:start() end
 
 	elseif setting_name == "mode" then
 		-- Save setting to variable
@@ -1178,7 +1432,7 @@ mod.on_all_mods_loaded = function()
 	-- Set settings
 	mod.data.active = mod:get("active")
 	mod.data.mode = mod:get("mode")
-	mod.data.allow_inn = mod:get("allow_inn")
+	--mod.data.allow_inn = mod:get("allow_inn")
 	mod:dump(mod:get("activate_dare_1"), "activate_dare_1", 2)
 	mod.data.activate_dare_1 = mod:hotkey_string(mod:get("activate_dare_1"))
 	mod.data.activate_dare_2 = mod:hotkey_string(mod:get("activate_dare_2"))

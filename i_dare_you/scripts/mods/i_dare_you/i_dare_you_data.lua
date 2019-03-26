@@ -29,8 +29,13 @@ return {
 						},
 						default_value = 1,
 					},
+					-- {
+					-- 	setting_id = "allow_inn",
+					-- 	type = "checkbox",
+					-- 	default_value = false,
+					-- },
 					{
-						setting_id = "allow_inn",
+						setting_id = "debug",
 						type = "checkbox",
 						default_value = false,
 					},
