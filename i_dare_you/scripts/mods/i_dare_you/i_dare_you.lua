@@ -417,7 +417,7 @@ mod.server = {
 		},
 		init = {
 			id = 1,
-			time = 120,
+			time = 20,
 			start = function(self)
 			end,
 			finish = function(self)
