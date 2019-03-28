@@ -62,13 +62,13 @@ end
 --[[
 	Input functions used by chat commands and hotkeys
 --]]
-mod.activate_dare_1 = function(automatic)
+mod.activate_dare_1 = function(held, automatic)
 	mod:activate_dare(1, automatic)
 end
-mod.activate_dare_2 = function(automatic)
+mod.activate_dare_2 = function(held, automatic)
 	mod:activate_dare(2, automatic)
 end
-mod.activate_dare_3 = function(automatic)
+mod.activate_dare_3 = function(held, automatic)
 	mod:activate_dare(3, automatic)
 end
 --[[
@@ -472,7 +472,7 @@ mod.server = {
 			finish = function(self)
 				mod:echo("automatic selection!")
 				local rnd = math.random(1, 3)
-				mod["activate_dare_"..tostring(rnd)](true)
+				mod["activate_dare_"..tostring(rnd)](nil, true)
 				mod.server:set_state("countdown")
 			end,
 		},
@@ -1363,14 +1363,14 @@ end
 --[[
 	Check if selector
 --]]
-mod.is_selector = function(self)
-	return self.data.selector_peer_id == self:my_peer_id()
+mod.is_selector = function()
+	return mod.data.selector_peer_id == mod:my_peer_id()
 end
 --[[
 	Check if not selector
 --]]
-mod.is_not_selector = function(self)
-	return self.data.selector_peer_id ~= self:my_peer_id()
+mod.is_not_selector = function()
+	return mod.data.selector_peer_id ~= mod:my_peer_id()
 end
 --[[
 	Get player name from peer_id
