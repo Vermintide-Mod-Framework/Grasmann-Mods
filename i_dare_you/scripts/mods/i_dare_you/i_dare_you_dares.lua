@@ -44,6 +44,7 @@ mod.template_dare = {
 	-- Data
 	id = "template_dare",
 	text = "template_dare",
+	text_color = {255, 255, 255, 255},
 	reminder = "template_dare_reminder",
 	fallible = true,
 	type = mod.dare_types.state,

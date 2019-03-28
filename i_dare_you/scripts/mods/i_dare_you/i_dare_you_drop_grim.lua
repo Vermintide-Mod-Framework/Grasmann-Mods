@@ -14,6 +14,7 @@ mod:hook_disable(ActionThrowGrimoire, "finish")
 local drop_grim = mod:get_template()
 drop_grim.id = "drop_grim"
 drop_grim.text = mod:localize("drop_grim_text")
+drop_grim.text_color = {255, 255, 0, 0}
 drop_grim.reminder = mod:localize("drop_grim_reminder")
 drop_grim.time = 1
 drop_grim.punishments = {"damage"}

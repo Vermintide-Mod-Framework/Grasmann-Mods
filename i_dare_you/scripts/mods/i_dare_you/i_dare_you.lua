@@ -1117,12 +1117,15 @@ mod.ui = {
 						widget.content.text = string.format("for %s!", name)
 					elseif animation.text == "dare_1" then
 						widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].text)
+						widget.style.text.text_color = mod.data.dares[1].text_color
 						widget.content.dare_id = mod.data.dares[1].id
 					elseif animation.text == "dare_2" then
 						widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
+						widget.style.text.text_color = mod.data.dares[2].text_color
 						widget.content.dare_id = mod.data.dares[2].id
 					elseif animation.text == "dare_3" then
 						widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
+						widget.style.text.text_color = mod.data.dares[3].text_color
 						widget.content.dare_id = mod.data.dares[3].id
 					elseif animation.text == "time" then
 						widget.content.text = self.state.time
@@ -1326,7 +1329,7 @@ end
 	Check if in inn / keep
 --]]
 mod.is_in_inn = function(self)
-	return LevelHelper:current_level_settings().level_id == "inn_level" and not debug --or mod.data.allow_inn
+	return LevelHelper:current_level_settings().level_id == "inn_level" --and not debug --or mod.data.allow_inn
 end
 --[[
 	Check if server
