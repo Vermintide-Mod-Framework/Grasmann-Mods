@@ -19,7 +19,7 @@ end
 
 -- Debugging
 local debug = mod:get("debug")
-local test_dare = "jump_continuously"
+local test_dare = "dont_use_item"
 
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
@@ -45,18 +45,6 @@ mod:persistent_table("data", {
 	activate_dare_3 = nil,
 	-- Users
 	mod_users = {},
-	-- Setup selection
-	setup = function(self, selector_peer_id, victim_peer_id, dares)
-		self.selector_peer_id = selector_peer_id
-		self.victim_peer_id = victim_peer_id
-		local active_dares = {}
-		for _, dare in pairs(mod.dares) do
-			if table.contains(dares, dare.id) then
-				active_dares[#active_dares+1] = dare
-			end
-		end
-		self.dares = active_dares
-	end,
 })
 mod.data = mod:persistent_table("data")
 mod.data.mod_users = {}
@@ -101,10 +89,16 @@ mod.start_server = function()
 		mod.server:start()
 	end
 end
+mod.stop_server = function()
+	if mod:is_server() then
+		mod.server:stop()
+	end
+end
 --[[
 	Chat commands
 --]]
 mod:command("start_server", "Start I dare You! server.", mod.start_server)
+mod:command("stop_server", "Stop I dare You! server.", mod.stop_server)
 mod:command("dare1", "Choose dare 1.", mod.activate_dare_1)
 mod:command("dare2", "Choose dare 2.", mod.activate_dare_2)
 mod:command("dare3", "Choose dare 3.", mod.activate_dare_3)
@@ -159,8 +153,13 @@ mod:network_register("start_dare_selection_client", function(sender, selector_pe
 		end
 		mod:echo("Dares:'"..dare_list.."'")
 	end
-	--mod.data.selection = true
-	mod.data:setup(selector_peer_id, victim_peer_id, dares)
+	mod.data.selector_peer_id = selector_peer_id
+	mod.data.victim_peer_id = victim_peer_id
+	local active_dares = {}
+	for _, dare in pairs(dares) do
+		active_dares[#active_dares+1] = mod:get_dare(dare)
+	end
+	mod.data.dares = active_dares
 	mod.ui:start_selection()
 end)
 --[[
@@ -219,6 +218,7 @@ mod:network_register("dare_finished_server", function(sender, reason)
 		mod:echo("Dare finished! Reason:'"..reason.."'")
 	end
 	mod:network_send("dare_finished_client", "all", reason)
+	mod.server:set_state("selection")
 end)
 --[[
 	Dare finished
@@ -443,7 +443,7 @@ mod.server = {
 					victim_peer_id = mod:random_player(selector_peer_id)
 				end
 				if selector_peer_id and victim_peer_id then
-					local dares = mod.server:get_random_dares()
+					local dares = mod.server:get_random_dares(selector_peer_id, victim_peer_id)
 					mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares)
 				else
 					mod.server:stop()
@@ -467,27 +467,44 @@ mod.server = {
 			end,
 		},
 	},
+	get_available_dares = function(self, selector_peer_id, victim_peer_id)
+		local available_dares = {}
+		for _, dare in pairs(mod.dares) do
+			if not dare.check_condition or dare:check_condition(selector_peer_id, victim_peer_id) then
+				available_dares[#available_dares+1] = dare.id
+			end
+		end
+		return available_dares
+	end,
 	--[[
 		Get set of random dares
 	--]]
-	get_random_dares = function(self)
-		local available_dares = table.clone(mod.dares)
+	get_random_dares = function(self, selector_peer_id, victim_peer_id)
+		--local available_dares = table.clone(mod.dares)
+		local available_dares = self:get_available_dares(selector_peer_id, victim_peer_id)
 		local dares = {}
 		for i = 1, 3 do
 			local rnd = math.random(1, #available_dares)
-			dares[#dares+1] = available_dares[rnd].id --table.clone(available_dares[rnd])
+			--dares[#dares+1] = available_dares[rnd].id --table.clone(available_dares[rnd])
+			dares[#dares+1] = available_dares[rnd]
 			table.remove(available_dares, rnd)
 		end
+		--mod:dump(dares, "dares", 1)
 		if debug and test_dare then
 			local found = false
 			for _, dare in pairs(dares) do
 				if dare == test_dare then
 					found = true
+					break
 				end
 			end
-			if not found then
-				local rnd = math.random(1, 3)
-				dares[rnd] = test_dare
+			if found == false then
+				local dare = mod:get_dare(test_dare)
+				if not dare.check_condition or dare:check_condition(selector_peer_id, victim_peer_id) then
+					mod:echo("Added test dare!")
+					local rnd = math.random(1, 3)
+					dares[rnd] = test_dare
+				end
 			end
 		end
 		return dares
@@ -546,6 +563,7 @@ mod.ui = {
 	states = {
 		idle = {
 			render = {},
+			name = "idle",
 			time = 0,
 			start = function(self)
 			end,
@@ -554,6 +572,7 @@ mod.ui = {
 		},
 		waiting = {
 			render = { "dare_1", "dare_2", "dare_3", "victim_name" },
+			name = "waiting",
 			victim_name = {
 				start_offset = {800, -40, 0},
 				start_size = 24,
@@ -579,6 +598,7 @@ mod.ui = {
 		},
 		reminder_grow = {
 			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder" },
+			name = "reminder_grow",
 			victim_name = {
 				start_offset = {800, -40, 0},
 				start_size = 24,
@@ -614,6 +634,7 @@ mod.ui = {
 		},
 		reminder_pop = {
 			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder" },
+			name = "reminder_pop",
 			victim_name = {
 				start_offset = {800, -40, 0},
 				start_size = 24,
@@ -646,6 +667,7 @@ mod.ui = {
 		},
 		reminder_fade = {
 			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder" },
+			name = "reminder_fade",
 			victim_name = {
 				start_offset = {800, -40, 0},
 				start_size = 24,
@@ -678,6 +700,7 @@ mod.ui = {
 		},
 		waiting_fade = {
 			render = { "dare_1", "dare_2", "dare_3", "victim_name" },
+			name = "waiting_fade",
 			victim_name = {
 				start_offset = {800, -40, 0},
 				start_size = 24,
@@ -712,6 +735,7 @@ mod.ui = {
 		},
 		selection_grow = {
 			render = { "title_incoming_dare", "title_choose_dare" },
+			name = "selection_grow",
 			title_incoming_dare = {
 				start_size = 0,
 				finish_size = 120,
@@ -742,6 +766,7 @@ mod.ui = {
 		},
 		selection_pop = {
 			render = { "title_incoming_dare", "title_choose_dare" },
+			name = "selection_pop",
 			title_incoming_dare = {
 				start_size = 120,
 				finish_size = 80,
@@ -764,6 +789,7 @@ mod.ui = {
 		},
 		selection_move_up = {
 			render = { "title_incoming_dare", "title_choose_dare" },
+			name = "selection_move_up",
 			title_incoming_dare = {
 				start_offset = {0, 0, 0},
 				finish_offset = {0, 400, 0},
@@ -786,6 +812,7 @@ mod.ui = {
 		},
 		waiting_for_input = {
 			render = { "title_incoming_dare", "title_choose_dare", "victim_name", "dare_1", "dare_2", "dare_3", "counter" },
+			name = "waiting_for_input",
 			title_incoming_dare = {
 				start_offset = {0, 400, 0},
 				start_size = 80,
@@ -851,6 +878,7 @@ mod.ui = {
 		},
 		show_selection = {
 			render = { "title_incoming_dare", "title_choose_dare", "victim_name", "dare_1", "dare_2", "dare_3" },
+			name = "show_selection",
 			title_incoming_dare = {
 				start_offset = {0, 400, 0},
 				start_size = 80,
@@ -911,6 +939,7 @@ mod.ui = {
 		},
 		move_selection = {
 			render = { "dare_1", "dare_2", "dare_3", "victim_name" },
+			name = "move_selection",
 			victim_name = {
 				start_offset = {0, -40, 0},
 				finish_offset = {800, -40, 0},
@@ -953,6 +982,7 @@ mod.ui = {
 		},
 		countdown_1 = {
 			render = { "dare_1", "dare_2", "dare_3", "victim_name", "countdown" },
+			name = "countdown_1",
 			victim_name = {
 				start_offset = {800, -40, 0},
 				start_size = 24,
@@ -988,6 +1018,7 @@ mod.ui = {
 		},
 		countdown_1_pop = {
 			render = { "dare_1", "dare_2", "dare_3", "victim_name", "countdown" },
+			name = "countdown_1_pop",
 			victim_name = {
 				start_offset = {800, -40, 0},
 				start_size = 24,
@@ -1042,8 +1073,15 @@ mod.ui = {
 	--[[
 		Show dare reminder
 	--]]
+	is_reminding = function(self)
+		return self.state.name == "reminder_grow"
+			or self.state.name == "reminder_pop"
+			or self.state.name == "reminder_fade"
+	end,
 	remind = function(self)
-		self:set_state("reminder_grow")
+		if not self:is_reminding() then
+			self:set_state("reminder_grow")
+		end
 	end,
 	--[[
 		Create widgets for UI
@@ -1078,13 +1116,13 @@ mod.ui = {
 						end
 						widget.content.text = string.format("for %s!", name)
 					elseif animation.text == "dare_1" then
-						widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].id)
+						widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].text)
 						widget.content.dare_id = mod.data.dares[1].id
 					elseif animation.text == "dare_2" then
-						widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].id)
+						widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
 						widget.content.dare_id = mod.data.dares[2].id
 					elseif animation.text == "dare_3" then
-						widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].id)
+						widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
 						widget.content.dare_id = mod.data.dares[3].id
 					elseif animation.text == "time" then
 						widget.content.text = self.state.time
@@ -1166,12 +1204,12 @@ mod.ui = {
 		Apply hud scaling
 	--]]
 	apply_scale_to_offset = function(self, offset)
-		-- local ui_scale = RESOLUTION_LOOKUP.scale
-		-- -- mod:echo("Scale:'"..tostring(ui_scale).."'")
-		-- local c_x = (offset[1] * (1-ui_scale)) / 2
-		-- local c_y = (offset[2] * (1-ui_scale)) / 2
-		-- local new_offset = {offset[1] + c_x, offset[2] + c_y, offset[3]}
-		return offset
+		local new_offset = offset
+		if UISettings.use_custom_hud_scale then
+			local mult = 2 - (UISettings.hud_scale * 0.01)
+			new_offset = {offset[1] * mult, offset[2] * mult, offset[3]}
+		end
+		return new_offset
 	end,
 	--[[
 		Set a state
@@ -1199,7 +1237,7 @@ mod.ui = {
 	Create a simple text widget
 --]]
 mod.create_simple_text_widget = function(self, id, text, size, offset, content_check, scenegraph_id)
-	local scenegraph_id = scenegraph_id or "root"
+	local scenegraph_id = scenegraph_id or "i_dare_you"
 	local offset = offset or {0, 0, 0}
 	local size = size or 80
 	local widget = {
@@ -1288,7 +1326,7 @@ end
 	Check if in inn / keep
 --]]
 mod.is_in_inn = function(self)
-	return LevelHelper:current_level_settings().level_id == "inn_level" --and not debug --or mod.data.allow_inn
+	return LevelHelper:current_level_settings().level_id == "inn_level" and not debug --or mod.data.allow_inn
 end
 --[[
 	Check if server
@@ -1397,15 +1435,37 @@ end
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
 --[[
-	Create widgets
+	Inject scenegraph element
 --]]
-mod:hook_safe(BuffUI, "_create_ui_elements", function(self)
-	--mod.ui:create_widgets()
+mod:hook(UISceneGraph, "init_scenegraph", function(func, scenegraph, ...)
+	scenegraph.i_dare_you = {
+		vertical_alignment = "center",
+		horizontal_alignment = "center",
+		scale = "hud_scale_fit",
+		parent = "root",
+		size = { 1920, 1080 },
+        position = { 0, 0, 0 },
+	}
+
+	return func(scenegraph, ...)
 end)
+mod:hook_disable(UISceneGraph, "init_scenegraph")
+--[[
+	Inject scenegraph into buff_ui and observer_ui
+--]]
+local create_ui_elements = function(func, self, ...)
+	mod:hook_enable(UISceneGraph, "init_scenegraph")
+	local result = func(self, ...)
+	--mod.ui:create_widgets()
+	mod:hook_disable(UISceneGraph, "init_scenegraph")
+	return result
+end
+mod:hook(BuffUI, "_create_ui_elements", create_ui_elements)
+--mod:hook(ObserverUI, "create_ui_elements", create_ui_elements)
 --[[
 	Update widgets
 --]]
-local update_widgets = function(self, dt, t)
+local update_widgets = function(self, dt)
 	mod.ui:update(dt)
 end
 mod:hook_safe(BuffUI, "update", update_widgets)

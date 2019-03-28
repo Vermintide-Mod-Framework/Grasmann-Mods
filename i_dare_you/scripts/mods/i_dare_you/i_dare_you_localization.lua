@@ -83,11 +83,99 @@ return {
 
 	-- Dares
 	jump_continuously_text = {
-		en = "Jump Continuously!",
+		en = "Jump continuously!",
 		de = "Spring ununterbrochen!",
 	},
 	jump_continuously_reminder = {
 		en = "Jump!",
 		de = "Spring!",
+	},
+	stay_on_ground_text = {
+		en = "Stay on the ground!",
+		de = "Bleib auf dem Boden!",
+	},
+	stay_on_ground_reminder_jump = {
+		en = "Don't jump!",
+		de = "Spring nicht!",
+	},
+	stay_on_ground_reminder_fall = {
+		en = "Don't fall!",
+		de = "Falle nicht!",
+	},
+	dont_block_text = {
+		en = "Don't defend yourself!",
+		de = "Verteidige dich nicht!",
+	},
+	dont_block_reminder = {
+		en = "Don't block!",
+		de = "Nicht blocken!",
+	},
+	dont_dodge_text = {
+		en = "Don't evade damage!",
+		de = "Weiche nicht aus!",
+	},
+	dont_dodge_reminder = {
+		en = "Don't dodge!",
+		de = "Nicht ausweichen!",
+	},
+	dont_use_melee_text = {
+		en = "Don't use melee attacks!",
+		de = "Benutze keinen Nahkampfangriffe!",
+	},
+	dont_use_melee_reminder = {
+		en = "No melee attacks!",
+		de = "Keine Nahkampfangriffe!",
+	},
+	dont_use_ranged_text = {
+		en = "Don't use ranged!",
+		de = "Benutze keinen Fernkampf!",
+	},
+	dont_use_ranged_reminder = {
+		en = "No ranged!",
+		de = "Kein Fernkampf!",
+	},
+	reverse_camera_text = {
+		en = "Reverse camera!",
+		de = "Umgedrehte Kamera!",
+	},
+	dont_quick_switch_text = {
+		en = "Don't switch weapons quickly!",
+		de = "Wechsel die Waffen nicht schnell!",
+	},
+	dont_quick_switch_reminder = {
+		en = "No quick-switch!",
+		de = "Kein Schnellwechsel!",
+	},
+	dont_use_skill_text = {
+		en = "Don't use skill!",
+		de = "Benutze keine Fähigkeit!",
+	},
+	dont_use_skill_reminder = {
+		en = "No skill!",
+		de = "Keine Fähigkeit!",
+	},
+	dont_push_text = {
+		en = "Don't use pushes!",
+		de = "Benutze keine Stöße!",
+	},
+	dont_push_reminder = {
+		en = "Don't push!",
+		de = "Keine Stöße!",
+	},
+	drop_grim_text = {
+		en = "Drop the grimoire!",
+		de = "Wirf das Grimoire weg!",
+	},
+	drop_grim_reminder = {
+		en = ";P",
+		de = ";P",
+	},
+	dont_use_item_text = {
+		en = "Don't use items!",
+		de = "Benutze keine Gegenstände!",
+	},
+	dont_use_item_reminder = {
+		en = "No Items!",
+		de = "Keine Gegenstände!",
 	},
 }
