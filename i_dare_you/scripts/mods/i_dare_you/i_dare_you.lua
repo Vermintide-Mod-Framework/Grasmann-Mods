@@ -43,6 +43,7 @@ mod:persistent_table("data", {
 	activate_dare_1 = nil,
 	activate_dare_2 = nil,
 	activate_dare_3 = nil,
+	in_mission = false,
 	-- Users
 	mod_users = {},
 })
@@ -352,7 +353,9 @@ mod.server = {
 	start = function(self)
 		mod:network_send("reset_ui_client", "all")
 		if mod:has_enough_players() and not mod:is_in_inn() then
-			self:set_state("init")
+			if mod.data.in_mission then
+				self:set_state("init")
+			end
 		else
 			self:stop()
 		end
@@ -1454,6 +1457,7 @@ end
 mod:hook_safe(CutsceneUI, "set_player_input_enabled", function(self, enabled)
 	if enabled and mod:is_server() then
 		mod:echo("START!")
+		mod.data.in_mission = true
 		mod.server:start()
 	end
 end)
@@ -1577,6 +1581,7 @@ mod.on_game_state_changed = function(status, state)
 			-- end
 		elseif state == "StateIngame" and status == "exit" then
 			--mod.server:set_state("idle")
+			mod.data.in_mission = false
 			mod.server:stop()
 		end
 	end
