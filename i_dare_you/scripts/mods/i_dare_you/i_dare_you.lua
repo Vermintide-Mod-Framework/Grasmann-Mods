@@ -417,7 +417,7 @@ mod.server = {
 		},
 		init = {
 			id = 1,
-			time = 5,
+			time = 120,
 			start = function(self)
 			end,
 			finish = function(self)
@@ -426,7 +426,7 @@ mod.server = {
 		},
 		waiting = {
 			id = 2,
-			time = 10,
+			time = 60,
 			timer_sent = false,
 			start = function(self)
 				self.timer_sent = false
