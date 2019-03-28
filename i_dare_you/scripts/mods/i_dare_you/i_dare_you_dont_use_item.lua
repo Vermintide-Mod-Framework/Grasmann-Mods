@@ -23,7 +23,10 @@ mod:hook(WeaponUnitExtension, "_finish_action", function(func, self, reason, dat
     end
     local action = self.current_action_settings
     if action and action.lookup_data and action.lookup_data.item_template_name == "first_aid_kit_02" then
-        item = item + 1
+        mod:echo(reason)
+        if reason == "action_complete" then
+            item = item + 1
+        end
     end
     return func(self, reason, data)
 end)

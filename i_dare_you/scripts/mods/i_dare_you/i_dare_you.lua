@@ -19,7 +19,7 @@ end
 
 -- Debugging
 local debug = mod:get("debug")
-local test_dare = "dont_use_item"
+--local test_dare = "dont_use_item"
 
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
@@ -236,7 +236,8 @@ mod:network_register("request_punishment_server", function(sender, value)
 		mod:echo("Player '"..sender.."' requested punishment of '"..tostring(value).."'!")
 	end
 	local unit = mod:player_unit_from_peer_id(sender)
-	DamageUtils.add_damage_network(unit, unit, value, "torso", "buff") --, nil, damage_direction, damage_source, nil, nil, nil, action.hit_react_type)
+	DamageUtils.add_damage_network(unit, unit, value, "full", "forced", nil, Vector3(0, 0, 1), "debug")
+	--DamageUtils.add_damage_network(target_unit, attacker_unit, damage, "torso", action.damage_type, nil, damage_direction, damage_source, nil, nil, nil, action.hit_react_type)
 end)
 --[[
 	User deactivated mod
@@ -369,7 +370,9 @@ mod.server = {
 	--]]
 	add_mod_user = function(self, peer_id)
 		--mod.data.mod_users[#mod.data.mod_users+1] = peer_id
-		table.insert(mod.data.mod_users, peer_id)
+		if not self:get_user_index(peer_id) then
+			table.insert(mod.data.mod_users, peer_id)
+		end
 		if debug then
 			mod:dump(mod.data.mod_users, "mod.data.mod_users", 2)
 		end
@@ -439,7 +442,7 @@ mod.server = {
 			start = function(self)
 				local selector_peer_id = mod:random_player()
 				local victim_peer_id = mod:random_player()
-				if mod.data.mode < 3 then
+				if mod.data.mode < 3 or #mod.data.mod_users > 1 then
 					victim_peer_id = mod:random_player(selector_peer_id)
 				end
 				if selector_peer_id and victim_peer_id then
@@ -1437,6 +1440,14 @@ end
 -- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
+
+mod:hook_safe(CutsceneUI, "set_player_input_enabled", function(self, enabled)
+	if enabled and mod:is_server() then
+		mod:echo("START!")
+		mod.server:start()
+	end
+end)
+
 --[[
 	Inject scenegraph element
 --]]
@@ -1530,7 +1541,9 @@ end
 	Update cycle
 --]]
 mod.update = function(dt)
-	mod.server:update(dt)
+	if mod:is_server() then
+		mod.server:update(dt)
+	end
 	mod:update_dare(dt)
 end
 --[[
@@ -1546,13 +1559,13 @@ mod.on_game_state_changed = function(status, state)
 		-- Add self to mod users
 		mod.server:add_mod_user(mod:my_peer_id())
 		if state == "StateIngame" and status == "enter" then
-			if not mod:is_in_inn() or debug then
-				--mod.server:set_state("init")
-				mod.server:start()
-			else
-				--mod.server:set_state("idle")
-				mod.server:stop()
-			end
+			-- if not mod:is_in_inn() or debug then
+			-- 	--mod.server:set_state("init")
+			-- 	mod.server:start()
+			-- else
+			-- 	--mod.server:set_state("idle")
+			-- 	mod.server:stop()
+			-- end
 		elseif state == "StateIngame" and status == "exit" then
 			--mod.server:set_state("idle")
 			mod.server:stop()
