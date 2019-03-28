@@ -279,7 +279,7 @@ end)
 	Get dare from table by name
 --]]
 mod.get_dare = function(self, dare_name)
-	for _, dare in pairs(mod.dares) do
+	for _, dare in pairs(self.dares) do
 		if dare.id == dare_name then
 			return dare
 		end
@@ -290,30 +290,30 @@ end
 	Set active dare and start it
 --]]
 mod.set_dare = function(self, dare_name)
-	mod.data.active_dare = mod:get_dare(dare_name)
-	mod:start_dare()
+	self.data.active_dare = self:get_dare(dare_name)
+	self:start_dare()
 end
 --[[
 	Start active dare
 --]]
 mod.start_dare = function(self)
-	if mod.data.active_dare then
-		if mod.data.active_dare.start then mod.data.active_dare:start() end
+	if self.data.active_dare then
+		if self.data.active_dare.start then self.data.active_dare:start() end
 	end
 end
 --[[
 	Update active dare
 --]]
 mod.update_dare = function(self, dt)
-	if mod.data.active_dare then
-		if mod.data.active_dare.update then mod.data.active_dare:update(dt) end
+	if self.data.active_dare then
+		if self.data.active_dare.update then self.data.active_dare:update(dt) end
 	end
 end
 --[[
 	Abort active dare with a reason
 --]]
 mod.abort_dare = function(self, reason)
-	mod:network_send("dare_finished_server", self:server_peer_id(), reason)
+	self:network_send("dare_finished_server", self:server_peer_id(), reason)
 end
 --[[
 	Finish active dare
@@ -330,7 +330,7 @@ mod.remind_dare = function(self)
 end
 
 mod.add_damage = function(self, value)
-	mod:network_send("request_punishment_server", mod:server_peer_id(), value)
+	self:network_send("request_punishment_server", self:server_peer_id(), value)
 end
 
 -- ##### ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗  ############################################################
@@ -1321,17 +1321,11 @@ mod.random_player = function(self, except_peer_id)
 	if Managers and Managers.state and Managers.state.network then
 		-- Compile list of possible players
 		local possible_peer_ids = {}
-		-- local players = Managers.player:players()
-		-- for _, player in pairs(players) do
-		-- 	if not except_peer_id or player.peer_id ~= except_peer_id then
-		-- 		possible_peer_ids[#possible_peer_ids+1] = player.peer_id
-		-- 	end
-		-- end
-		for _, peer_id in pairs(mod.data.mod_users) do
+		for _, peer_id in pairs(self.data.mod_users) do
 			-- Make sure peer_id is usable
 			if not except_peer_id or peer_id ~= except_peer_id then
 				-- Make sure player is alive
-				if mod:is_peer_id_alive(peer_id) then
+				if self:is_peer_id_alive(peer_id) then
 					possible_peer_ids[#possible_peer_ids+1] = peer_id
 				end
 			end
@@ -1346,7 +1340,7 @@ end
 	Check if in inn / keep
 --]]
 mod.is_in_inn = function(self)
-	return LevelHelper:current_level_settings().level_id == "inn_level" --and not debug --or mod.data.allow_inn
+	return LevelHelper:current_level_settings().level_id == "inn_level" --and not debug
 end
 --[[
 	Check if server
@@ -1361,19 +1355,19 @@ end
 	Check if victim
 --]]
 mod.is_victim = function(self)
-	return mod.data.victim_peer_id == mod:my_peer_id()
+	return self.data.victim_peer_id == self:my_peer_id()
 end
 --[[
 	Check if selector
 --]]
 mod.is_selector = function(self)
-	return mod.data.selector_peer_id == mod:my_peer_id()
+	return self.data.selector_peer_id == self:my_peer_id()
 end
 --[[
 	Check if not selector
 --]]
 mod.is_not_selector = function(self)
-	return mod.data.selector_peer_id ~= mod:my_peer_id()
+	return self.data.selector_peer_id ~= self:my_peer_id()
 end
 --[[
 	Get player name from peer_id
@@ -1393,7 +1387,7 @@ end
 	Check if peer_id is alive
 --]]
 mod.is_peer_id_alive = function(self, peer_id)
-	local unit = mod:player_unit_from_peer_id(peer_id)
+	local unit = self:player_unit_from_peer_id(peer_id)
 	if unit then
 		local health_extension = ScriptUnit.extension(unit, "health_system")
 		if health_extension and health_extension:is_alive() then
@@ -1430,11 +1424,11 @@ end
 --]]
 mod.has_enough_players = function(self)
 	local player_count = #Managers.player:players()
-	local users = mod.data.mod_users
-	local party = #mod.data.mod_users == player_count and #mod.data.mod_users > 1
-	local minimum = #mod.data.mod_users >= 2
-	local alone = #mod.data.mod_users >= 1
-	return (mod.data.mode == 1 and party) or (mod.data.mode == 2 and minimum) or (mod.data.mode == 3 and alone)
+	local users = self.data.mod_users
+	local party = #self.data.mod_users == player_count and #self.data.mod_users > 1
+	local minimum = #self.data.mod_users >= 2
+	local alone = #self.data.mod_users >= 1
+	return (self.data.mode == 1 and party) or (self.data.mode == 2 and minimum) or (self.data.mode == 3 and alone)
 end
 --[[
 	Get hotkey string representation
@@ -1454,14 +1448,15 @@ end
 -- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
-
+--[[
+	Catch moment when cutscene is over to start server
+--]]
 mod:hook_safe(CutsceneUI, "set_player_input_enabled", function(self, enabled)
 	if enabled and mod:is_server() then
 		mod:echo("START!")
 		mod.server:start()
 	end
 end)
-
 --[[
 	Inject scenegraph element
 --]]

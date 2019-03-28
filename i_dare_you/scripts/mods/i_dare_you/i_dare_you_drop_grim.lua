@@ -25,7 +25,6 @@ drop_grim.check_condition = function(self, selector_peer_id, victim_peer_id)
     local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
     local slot_data = inventory_extension:get_slot_data("slot_potion")
     if slot_data and slot_data.item_template.is_grimoire then
-        mod:echo("grim!")
         return true
     end
 end

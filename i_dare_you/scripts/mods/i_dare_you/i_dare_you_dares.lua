@@ -12,7 +12,7 @@ local test_keys_skip = {"look", "move", "move_controller"}
 mod.registered_key_checks = {}
 mod.register_key_check = function(self, key_names, callback)
 	for _, key_name in pairs(key_names) do
-		mod.registered_key_checks[#mod.registered_key_checks+1] = {
+		self.registered_key_checks[#self.registered_key_checks+1] = {
 			key_name = key_name,
 			callback = callback,
 		}
