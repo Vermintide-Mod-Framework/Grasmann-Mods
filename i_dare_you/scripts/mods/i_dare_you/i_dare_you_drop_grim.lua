@@ -28,7 +28,6 @@ drop_grim.check_condition = function(self, selector_peer_id, victim_peer_id)
         mod:echo("grim!")
         return true
     end
-    mod:dump(slot_data, "slot_data", 2)
 end
 drop_grim.on_start = function(self)
     dropped = false

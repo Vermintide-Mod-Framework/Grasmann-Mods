@@ -230,7 +230,20 @@ mod:network_register("dare_finished_client", function(sender, reason)
 	end
 	mod:finish_dare()
 end)
-
+--[[
+	Abort all dares
+	Clients receive this from server
+--]]
+mod:network_register("abort_all_dares_client", function(sender)
+	if mod:is_victim() and mod.data.active_dare then
+		mod:abort_dare("server_shutdown")
+	end
+	mod.data.active_dare = nil
+end)
+--[[
+	Request punishment
+	Server receives this from clients
+--]]
 mod:network_register("request_punishment_server", function(sender, value)
 	if debug then
 		mod:echo("Player '"..sender.."' requested punishment of '"..tostring(value).."'!")
@@ -349,6 +362,7 @@ mod.server = {
 	--]]
 	stop = function(self)
 		mod:network_send("reset_ui_client", "all")
+		mod:network_send("abort_all_dares_client", "all")
 		if not mod:has_enough_players() then
 			mod:echo(mod:localize("error_not_enough_players"))
 		end
@@ -426,7 +440,7 @@ mod.server = {
 		},
 		waiting = {
 			id = 2,
-			time = 60,
+			time = 30,
 			timer_sent = false,
 			start = function(self)
 				self.timer_sent = false
@@ -1619,6 +1633,9 @@ mod.on_setting_changed = function(setting_name)
 	elseif setting_name == "activate_dare_3" then
 		-- Save setting to variable
 		mod.data.activate_dare_3 = mod:hotkey_string(mod:get("activate_dare_3"))
+	
+	elseif setting_name == "debug" then
+		debug = mod:get("debug")
 	end
 end
 --[[
