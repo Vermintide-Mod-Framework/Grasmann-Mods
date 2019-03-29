@@ -1286,7 +1286,7 @@ mod.ui = {
 							end
 							widget.content.text = string.format("for %s!", name)
 						elseif animation.text == "title" then
-							if mod.is_selector() then
+							if not mod.is_selector() then
 								widget.style.text.text_color = {255, 255, 255, 255}
 							else
 								widget.style.text.text_color = {255, 255, 0, 0}
