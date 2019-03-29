@@ -20,6 +20,7 @@ dont_use_melee.punishments = {"damage"}
 dont_use_melee.values = {damage = 15}
 dont_use_melee.reminder_time = 0
 dont_use_melee.on_start = function(self)
+    melee_attacks = 0
     mod:hook_enable(ActionMeleeStart, "client_owner_start_action")
 end
 dont_use_melee.check_state_function = function(self)

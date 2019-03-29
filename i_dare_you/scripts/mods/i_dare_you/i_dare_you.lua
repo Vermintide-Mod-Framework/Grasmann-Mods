@@ -211,7 +211,7 @@ end)
 	Start dare on client
 	Clients receive this from server
 --]]
-mod:network_register("start_dare_client", function(sender, dare_name)
+mod:network_register("start_dare_client", function(sender, dare_name, time)
 	if mod:is_victim() then
 		if debug then
 			mod:echo("Dare '"..dare_name.."' started.")
@@ -219,7 +219,7 @@ mod:network_register("start_dare_client", function(sender, dare_name)
 		--mod:set_dare(dare_name, time)
 		mod:start_dare()
 	end
-	mod.ui:set_state("waiting")
+	mod.ui:set_state("waiting", time)
 end)
 --[[
 	Dare finished
@@ -311,8 +311,8 @@ end
 --]]
 mod.update_dare = function(self, dt)
 	if self.data.active_dare and self.data.active_dare.started then
-		if self.data.active_dare.update then self.data.active_dare:update(dt) end
 		self.data.active_dare.length = self.data.active_dare.length - dt
+		if self.data.active_dare.update then self.data.active_dare:update(dt) end
 	end
 end
 --[[
@@ -498,8 +498,8 @@ mod.server = {
 			start = function(self)
 			end,
 			finish = function(self)
-				mod:network_send("start_dare_client", mod.data.victim_peer_id, mod.data.selected_dare)
 				local time = mod:get(mod.data.selected_dare.."_dare_length")
+				mod:network_send("start_dare_client", mod.data.victim_peer_id, mod.data.selected_dare, time)
 				mod.server:set_state("waiting", time)
 			end,
 		},
@@ -859,6 +859,7 @@ mod.ui = {
 				start_offset = {0, 0, 0},
 				fade_in = true,
 				fade_in_time = 0.5,
+				text = "title",
 			},
 			title_choose_dare = {
 				start_size = 0,
@@ -867,6 +868,7 @@ mod.ui = {
 				start_offset = {0, 0, 0},
 				fade_in = true,
 				fade_in_time = 0.5,
+				text = "title",
 			},
 			time = 0.5,
 			start = function(self)
@@ -888,12 +890,14 @@ mod.ui = {
 				finish_size = 80,
 				update_size = true,
 				start_offset = {0, 0, 0},
+				text = "title",
 			},
 			title_choose_dare = {
 				start_size = 120,
 				finish_size = 80,
 				update_size = true,
 				start_offset = {0, 0, 0},
+				text = "title",
 			},
 			time = 0.25,
 			start = function(self)
@@ -911,12 +915,14 @@ mod.ui = {
 				finish_offset = {0, 400, 0},
 				update_offset = true,
 				start_size = 80,
+				text = "title",
 			},
 			title_choose_dare = {
 				start_offset = {0, 0, 0},
 				finish_offset = {0, 400, 0},
 				update_offset = true,
 				start_size = 80,
+				text = "title",
 			},
 			time = 0.25,
 			start = function(self)
@@ -932,10 +938,12 @@ mod.ui = {
 			title_incoming_dare = {
 				start_offset = {0, 400, 0},
 				start_size = 80,
+				text = "title",
 			},
 			title_choose_dare = {
 				start_offset = {0, 400, 0},
 				start_size = 80,
+				text = "title",
 			},
 			victim_name = {
 				start_offset = {0, 350, 0},
@@ -1004,12 +1012,14 @@ mod.ui = {
 				start_size = 80,
 				fade_out = true,
 				fade_out_time = 0.5,
+				text = "title",
 			},
 			title_choose_dare = {
 				start_offset = {0, 400, 0},
 				start_size = 80,
 				fade_out = true,
 				fade_out_time = 0.5,
+				text = "title",
 			},
 			victim_name = {
 				start_offset = {0, 350, 0},
@@ -1270,31 +1280,38 @@ mod.ui = {
 							local name = "yourself"
 							if not mod:is_victim() then
 								name = mod:player_name_from_peer_id(mod.data.victim_peer_id)
+								widget.style.text.text_color = {255, 255, 255, 255}
 							else
 								widget.style.text.text_color = {255, 0, 255, 0}
 							end
 							widget.content.text = string.format("for %s!", name)
-						elseif animation.text == "dare_1" then
+						elseif animation.text == "title" then
+							if mod.is_selector() then
+								widget.style.text.text_color = {255, 255, 255, 255}
+							else
+								widget.style.text.text_color = {255, 255, 0, 0}
+							end
+						elseif animation.text == "dare_1" or (animation.text == "dare_1" and not mod.is_selector()) then
 							widget.content.text = mod.data.dares[1].text
 							widget.style.text.text_color = mod.data.dares[1].text_color
 							widget.content.dare_id = mod.data.dares[1].id
-						elseif animation.text == "dare_1_hotkey" then
+						elseif animation.text == "dare_1_hotkey" and mod.is_selector() then
 							widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].text)
 							widget.style.text.text_color = mod.data.dares[1].text_color
 							widget.content.dare_id = mod.data.dares[1].id
-						elseif animation.text == "dare_2" then
+						elseif animation.text == "dare_2" or (animation.text == "dare_2" and not mod.is_selector()) then
 							widget.content.text = mod.data.dares[2].text
 							widget.style.text.text_color = mod.data.dares[2].text_color
 							widget.content.dare_id = mod.data.dares[2].id
-						elseif animation.text == "dare_2_hotkey" then
+						elseif animation.text == "dare_2_hotkey" and mod.is_selector() then
 							widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
 							widget.style.text.text_color = mod.data.dares[2].text_color
 							widget.content.dare_id = mod.data.dares[2].id
-						elseif animation.text == "dare_3" then
+						elseif animation.text == "dare_3" or (animation.text == "dare_3" and not mod.is_selector()) then
 							widget.content.text = mod.data.dares[3].text
 							widget.style.text.text_color = mod.data.dares[3].text_color
 							widget.content.dare_id = mod.data.dares[3].id
-						elseif animation.text == "dare_3_hotkey" then
+						elseif animation.text == "dare_3_hotkey" and mod.is_selector() then
 							widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
 							widget.style.text.text_color = mod.data.dares[3].text_color
 							widget.content.dare_id = mod.data.dares[3].id
@@ -1309,7 +1326,7 @@ mod.ui = {
 								widget.content.text = "Go!"
 							end
 						elseif animation.text == "active_countdown" then
-							widget.content.text = string.format("%i", mod.data.active_dare.length + 1)
+							widget.content.text = string.format("%i", self.state.time + 1)
 						else
 							widget.content.text = animation.text
 						end
@@ -1385,7 +1402,7 @@ mod.ui = {
 							if animation.text == "time" then
 								widget.content.text = string.format("%i", self.state.time - self.timer + 1)
 							elseif animation.text == "active_countdown" then
-								widget.content.text = string.format("%i", mod.data.active_dare.length + 1)
+								widget.content.text = string.format("%i", self.state.time - self.timer + 1)
 							end
 						end
 						if animation.apply_text_size and (animation.update_offset or animation.update_text) then
