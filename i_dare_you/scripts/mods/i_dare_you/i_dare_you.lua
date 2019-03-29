@@ -19,7 +19,7 @@ end
 
 -- Debugging
 local debug = mod:get("debug")
---local test_dare = "dont_use_item"
+local test_dare = "dont_quick_switch"
 
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
@@ -143,7 +143,7 @@ end)
 	Start dare selection
 	Everyone receives this from server
 --]]
-mod:network_register("start_dare_selection_client", function(sender, selector_peer_id, victim_peer_id, dares)
+mod:network_register("start_dare_selection_client", function(sender, selector_peer_id, victim_peer_id, dares, time)
 	if debug then
 		mod:echo("Selector:'"..tostring(selector_peer_id).."'")
 		mod:echo("Victim:'"..tostring(victim_peer_id).."'")
@@ -161,7 +161,7 @@ mod:network_register("start_dare_selection_client", function(sender, selector_pe
 		active_dares[#active_dares+1] = mod:get_dare(dare)
 	end
 	mod.data.dares = active_dares
-	mod.ui:start_selection()
+	mod.ui:start_selection(time)
 end)
 --[[
 	Dare was selected by selector
@@ -173,7 +173,8 @@ mod:network_register("dare_selected_server", function(sender, dare_name)
 		if debug then
 			mod:echo("Dare '"..dare_name.."' valid!")
 		end
-		mod:network_send("dare_selected_client", "all", mod.data.selector_peer_id, mod.data.victim_peer_id, dare_name)
+		local time = mod:get(mod.data.selected_dare.."_dare_length") or 30
+		mod:network_send("dare_selected_client", "all", mod.data.selector_peer_id, mod.data.victim_peer_id, dare_name, time)
 		mod.server:set_state("countdown")
 	else
 		if debug then
@@ -185,17 +186,21 @@ end)
 	Dare was selected
 	Clients receive this from server
 --]]
-mod:network_register("dare_selected_client", function(sender, selector_peer_id, victim_peer_id, dare_name)
+mod:network_register("dare_selected_client", function(sender, selector_peer_id, victim_peer_id, dare_name, time)
 	if debug then
 		mod:echo("Selector:'"..tostring(selector_peer_id).."'")
 		mod:echo("Victim:'"..tostring(victim_peer_id).."'")
 		mod:echo("Selected dare:'"..dare_name.."'")
+		mod:echo("Time of dare: '"..tostring(time).."'")
 	end
 	mod.data.selector_peer_id = selector_peer_id
 	mod.data.victim_peer_id = victim_peer_id
 	mod.data.is_selecting = false
 	mod.data.selection = false
 	mod.data.selected_dare = dare_name
+	if mod:is_victim() then
+		mod:set_dare(dare_name, time)
+	end
 	mod.ui:set_state("show_selection")
 end)
 --[[
@@ -207,8 +212,10 @@ mod:network_register("start_dare_client", function(sender, dare_name)
 		if debug then
 			mod:echo("Dare '"..dare_name.."' started.")
 		end
-		mod:set_dare(dare_name)
+		--mod:set_dare(dare_name, time)
+		mod:start_dare()
 	end
+	mod.ui:set_state("waiting")
 end)
 --[[
 	Dare finished
@@ -230,16 +237,6 @@ mod:network_register("dare_finished_client", function(sender, reason)
 		mod:echo("Dare finished! Reason:'"..reason.."'")
 	end
 	mod:finish_dare()
-end)
---[[
-	Abort all dares
-	Clients receive this from server
---]]
-mod:network_register("abort_all_dares_client", function(sender)
-	if mod:is_victim() and mod.data.active_dare then
-		mod:abort_dare("server_shutdown")
-	end
-	mod.data.active_dare = nil
 end)
 --[[
 	Request punishment
@@ -290,9 +287,12 @@ end
 --[[
 	Set active dare and start it
 --]]
-mod.set_dare = function(self, dare_name)
-	self.data.active_dare = self:get_dare(dare_name)
-	self:start_dare()
+mod.set_dare = function(self, dare_name, time)
+	local dare = self:get_dare(dare_name)
+	dare.started = false
+	dare.length = time or 30
+	self.data.active_dare = dare
+	--self:start_dare()
 end
 --[[
 	Start active dare
@@ -306,8 +306,9 @@ end
 	Update active dare
 --]]
 mod.update_dare = function(self, dt)
-	if self.data.active_dare then
+	if self.data.active_dare and self.data.active_dare.started then
 		if self.data.active_dare.update then self.data.active_dare:update(dt) end
+		self.data.active_dare.length = self.data.active_dare.length - dt
 	end
 end
 --[[
@@ -325,11 +326,15 @@ mod.finish_dare = function(self)
 		self.data.active_dare = nil
 	end
 end
-
+--[[
+	Trigger dare reminder in UI
+--]]
 mod.remind_dare = function(self)
 	self.ui:remind()
 end
-
+--[[
+	Add damage as punishment
+--]]
 mod.add_damage = function(self, value)
 	self:network_send("request_punishment_server", self:server_peer_id(), value)
 end
@@ -365,7 +370,7 @@ mod.server = {
 	--]]
 	stop = function(self)
 		mod:network_send("reset_ui_client", "all")
-		mod:network_send("abort_all_dares_client", "all")
+		mod:network_send("dare_finished_client", "all", "server_shutdown")
 		if not mod:has_enough_players() then
 			mod:echo(mod:localize("error_not_enough_players"))
 		end
@@ -434,7 +439,7 @@ mod.server = {
 		},
 		init = {
 			id = 1,
-			time = 20,
+			time = 5,
 			start = function(self)
 			end,
 			finish = function(self)
@@ -464,7 +469,8 @@ mod.server = {
 				end
 				if selector_peer_id and victim_peer_id then
 					local dares = mod.server:get_random_dares(selector_peer_id, victim_peer_id)
-					mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares)
+					local time = mod:get("selection_time")
+					mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares, time)
 				else
 					mod.server:stop()
 				end
@@ -483,10 +489,13 @@ mod.server = {
 			end,
 			finish = function(self)
 				mod:network_send("start_dare_client", mod.data.victim_peer_id, mod.data.selected_dare)
-				mod.server:set_state("waiting")
+				mod.server:set_state("waiting", time)
 			end,
 		},
 	},
+	--[[
+		Get list of available dares
+	--]]
 	get_available_dares = function(self, selector_peer_id, victim_peer_id)
 		local available_dares = {}
 		for _, dare in pairs(mod.dares) do
@@ -532,11 +541,16 @@ mod.server = {
 	--[[
 		Set server state
 	--]]
-	set_state = function(self, state_name)
+	set_state = function(self, state_name, time)
 		local state = self.states[state_name]
 		if state then
 			if debug then mod:echo("State '"..state_name.."' started!") end
 			self.state = state
+			if self.state.id == 2 then
+				self.state.time = time or 30
+			elseif self.state.id == 3 then
+				self.state.time = mod:get("selection_time") + 1 or 11
+			end
 			self.timer = 0
 			self.state:start()
 		else
@@ -577,6 +591,8 @@ mod.ui = {
 	timer = 0,
 	widgets = {},
 	countdown = 0,
+	selection_time = 10,
+	ui_renderer = nil,
 	--[[
 		UI states
 	--]]
@@ -591,25 +607,36 @@ mod.ui = {
 			end,
 		},
 		waiting = {
-			render = { "dare_1", "dare_2", "dare_3", "victim_name" },
+			render = { "dare_1", "dare_2", "dare_3", "victim_name", "active_countdown" },
 			name = "waiting",
 			victim_name = {
-				start_offset = {800, -40, 0},
+				start_offset = {950, -40, 0},
 				start_size = 24,
+				apply_text_size = "left",
 			},
 			dare_1 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_2 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_3 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
-			time = 0,
+			active_countdown = {
+				start_offset = {950, 40, 0},
+				start_size = 24,
+				text = "active_countdown",
+				update_text = true,
+				apply_text_size = "left",
+			},
+			time = 30,
 			start = function(self)
 				mod.ui:init_state()
 			end,
@@ -617,23 +644,27 @@ mod.ui = {
 			end,
 		},
 		reminder_grow = {
-			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder" },
+			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder", "active_countdown" },
 			name = "reminder_grow",
 			victim_name = {
-				start_offset = {800, -40, 0},
+				start_offset = {950, -40, 0},
 				start_size = 24,
+				apply_text_size = "left",
 			},
 			dare_1 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_2 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_3 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			reminder = {
 				start_size = 0,
@@ -644,6 +675,13 @@ mod.ui = {
 				fade_in_time = 0.5,
 				text = "reminder",
 			},
+			active_countdown = {
+				start_offset = {950, 40, 0},
+				start_size = 24,
+				text = "active_countdown",
+				update_text = true,
+				apply_text_size = "left",
+			},
 			time = 0.5,
 			start = function(self)
 				mod.ui:init_state()
@@ -653,29 +691,40 @@ mod.ui = {
 			end,
 		},
 		reminder_pop = {
-			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder" },
+			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder", "active_countdown" },
 			name = "reminder_pop",
 			victim_name = {
-				start_offset = {800, -40, 0},
+				start_offset = {950, -40, 0},
 				start_size = 24,
+				apply_text_size = "left",
 			},
 			dare_1 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_2 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_3 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			reminder = {
 				start_size = 120,
 				finish_size = 80,
 				update_size = true,
 				start_offset = {0, 0, 0},
+			},
+			active_countdown = {
+				start_offset = {950, 40, 0},
+				start_size = 24,
+				text = "active_countdown",
+				update_text = true,
+				apply_text_size = "left",
 			},
 			time = 0.5,
 			start = function(self)
@@ -686,29 +735,40 @@ mod.ui = {
 			end,
 		},
 		reminder_fade = {
-			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder" },
+			render = { "dare_1", "dare_2", "dare_3", "victim_name", "reminder", "active_countdown" },
 			name = "reminder_fade",
 			victim_name = {
-				start_offset = {800, -40, 0},
+				start_offset = {950, -40, 0},
 				start_size = 24,
+				apply_text_size = "left",
 			},
 			dare_1 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_2 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_3 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			reminder = {
 				start_size = 80,
 				start_offset = {0, 0, 0},
 				fade_out = true,
 				fade_out_time = 2,
+			},
+			active_countdown = {
+				start_offset = {950, 40, 0},
+				start_size = 24,
+				text = "active_countdown",
+				update_text = true,
+				apply_text_size = "left",
 			},
 			time = 2,
 			start = function(self)
@@ -719,31 +779,43 @@ mod.ui = {
 			end,
 		},
 		waiting_fade = {
-			render = { "dare_1", "dare_2", "dare_3", "victim_name" },
+			render = { "dare_1", "dare_2", "dare_3", "victim_name", "active_countdown" },
 			name = "waiting_fade",
 			victim_name = {
-				start_offset = {800, -40, 0},
+				start_offset = {950, -40, 0},
 				start_size = 24,
 				fade_out = true,
 				fade_out_time = 0.5,
+				apply_text_size = "left",
 			},
 			dare_1 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
 				fade_out = true,
 				fade_out_time = 0.5,
+				apply_text_size = "left",
 			},
 			dare_2 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
 				fade_out = true,
 				fade_out_time = 0.5,
+				apply_text_size = "left",
 			},
 			dare_3 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
 				fade_out = true,
 				fade_out_time = 0.5,
+				apply_text_size = "left",
+			},
+			active_countdown = {
+				start_offset = {950, 40, 0},
+				start_size = 24,
+				text = "0",
+				fade_out = true,
+				fade_out_time = 0.5,
+				apply_text_size = "left",
 			},
 			time = 0.5,
 			start = function(self)
@@ -962,38 +1034,43 @@ mod.ui = {
 			name = "move_selection",
 			victim_name = {
 				start_offset = {0, -40, 0},
-				finish_offset = {800, -40, 0},
+				finish_offset = {950, -40, 0},
 				update_offset = true,
 				start_size = 40,
 				finish_size = 24,
 				update_size = true,
+				apply_text_size = "left",
 			},
 			dare_1 = {
 				start_offset = {0, 0, 0},
-				finish_offset = {800, 0, 0},
+				finish_offset = {950, 0, 0},
 				update_offset = true,
 				start_size = 60,
 				finish_size = 30,
 				update_size = true,
+				apply_text_size = "left",
 			},
 			dare_2 = {
 				start_offset = {0, 0, 0},
-				finish_offset = {800, 0, 0},
+				finish_offset = {950, 0, 0},
 				update_offset = true,
 				start_size = 60,
 				finish_size = 30,
 				update_size = true,
+				apply_text_size = "left",
 			},
 			dare_3 = {
 				start_offset = {0, 0, 0},
-				finish_offset = {800, 0, 0},
+				finish_offset = {950, 0, 0},
 				update_offset = true,
 				start_size = 60,
 				finish_size = 30,
 				update_size = true,
+				apply_text_size = "left",
 			},
 			time = 0.5,
 			start = function(self)
+				mod.ui:init_state()
 			end,
 			finish = function(self)
 				--mod.ui:set_state("countdown_1")
@@ -1004,20 +1081,24 @@ mod.ui = {
 			render = { "dare_1", "dare_2", "dare_3", "victim_name", "countdown" },
 			name = "countdown_1",
 			victim_name = {
-				start_offset = {800, -40, 0},
+				start_offset = {950, -40, 0},
 				start_size = 24,
+				apply_text_size = "left",
 			},
 			dare_1 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_2 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_3 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			countdown = {
 				start_offset = {0, 0, 0},
@@ -1037,23 +1118,27 @@ mod.ui = {
 			end,
 		},
 		countdown_1_pop = {
-			render = { "dare_1", "dare_2", "dare_3", "victim_name", "countdown" },
+			render = { "dare_1", "dare_2", "dare_3", "victim_name", "countdown", "active_countdown" },
 			name = "countdown_1_pop",
 			victim_name = {
-				start_offset = {800, -40, 0},
+				start_offset = {950, -40, 0},
 				start_size = 24,
+				apply_text_size = "left",
 			},
 			dare_1 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_2 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			dare_3 = {
-				start_offset = {800, 0, 0},
+				start_offset = {950, 0, 0},
 				start_size = 30,
+				apply_text_size = "left",
 			},
 			countdown = {
 				start_offset = {0, 0, 0},
@@ -1062,6 +1147,15 @@ mod.ui = {
 				update_size = true,
 				fade_out = true,
 				fade_out_time = 0.25,
+			},
+			active_countdown = {
+				start_offset = {950, 40, 0},
+				start_size = 24,
+				text = "active_countdown",
+				update_text = true,
+				fade_in = true,
+				fade_in_time = 0.5,
+				apply_text_size = "left",
 			},
 			time = 0.25,
 			start = function(self)
@@ -1072,7 +1166,7 @@ mod.ui = {
 					mod.ui.countdown = mod.ui.countdown - 1
 					mod.ui:set_state("countdown_1")
 				else
-					mod.ui:set_state("waiting")
+					--mod.ui:set_state("waiting")
 				end
 			end,
 		},
@@ -1080,8 +1174,15 @@ mod.ui = {
 	--[[
 		Start dare selection
 	--]]
-	start_selection = function(self)
-		self:set_state("waiting_fade")
+	start_selection = function(self, time)
+		local name = self.state.name
+		self.selection_time = time or 10
+		if name == "waiting" or name == "reminder_grow" 
+			or name == "reminder_pop" or name == "reminder_fade" then
+			self:set_state("waiting_fade")
+		else
+			self:set_state("selection_grow")
+		end
 	end,
 	--[[
 		Start dare countdown
@@ -1091,13 +1192,16 @@ mod.ui = {
 		self:set_state("countdown_1")
 	end,
 	--[[
-		Show dare reminder
+		Check if dare reminder is visible
 	--]]
 	is_reminding = function(self)
 		return self.state.name == "reminder_grow"
 			or self.state.name == "reminder_pop"
 			or self.state.name == "reminder_fade"
 	end,
+	--[[
+		Show dare reminder
+	--]]
 	remind = function(self)
 		if not self:is_reminding() then
 			self:set_state("reminder_grow")
@@ -1112,6 +1216,7 @@ mod.ui = {
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("title_choose_dare", "Choose Dare!", nil, nil, mod.is_selector)
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("reminder", "N/A")
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("countdown", "N/A")
+		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("active_countdown", "N/A")
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("victim_name", "N/A", 60, {0, 350, 0})
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("counter", "N/A", 30, {0, -280, 0})
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("dare_1", "N/A", 30, {0, -320, 0}, mod.is_selecting_or_selected)
@@ -1122,59 +1227,78 @@ mod.ui = {
 		Init state with defined start values
 	--]]
 	init_state = function(self)
-		for _, widget in pairs(self.widgets) do
-			local animation = self.state[widget.content.id]
-			if animation then
-				widget.style.text.font_size = animation.start_size
-				widget.style.text_shadow.font_size = animation.start_size
-				widget.offset = self:apply_scale_to_offset(animation.start_offset)
-				if animation.text then
-					if animation.text == "victim_name" then
-						local name = "yourself"
-						if not mod:is_victim() then
-							name = mod:player_name_from_peer_id(mod.data.victim_peer_id)
+		if self.state then
+			for _, widget in pairs(self.widgets) do
+				local animation = self.state[widget.content.id]
+				if animation then
+					widget.style.text.font_size = animation.start_size
+					widget.style.text_shadow.font_size = animation.start_size
+					widget.offset = self:apply_scale_to_offset(animation.start_offset)
+					if animation.text then
+						if animation.text == "victim_name" then
+							local name = "yourself"
+							if not mod:is_victim() then
+								name = mod:player_name_from_peer_id(mod.data.victim_peer_id)
+							else
+								widget.style.text.text_color = {255, 0, 255, 0}
+							end
+							widget.content.text = string.format("for %s!", name)
+						elseif animation.text == "dare_1" then
+							widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].text)
+							widget.style.text.text_color = mod.data.dares[1].text_color
+							widget.content.dare_id = mod.data.dares[1].id
+						elseif animation.text == "dare_2" then
+							widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
+							widget.style.text.text_color = mod.data.dares[2].text_color
+							widget.content.dare_id = mod.data.dares[2].id
+						elseif animation.text == "dare_3" then
+							widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
+							widget.style.text.text_color = mod.data.dares[3].text_color
+							widget.content.dare_id = mod.data.dares[3].id
+						elseif animation.text == "time" then
+							widget.content.text = self.state.time
+						elseif animation.text == "reminder" then
+							widget.content.text = mod.data.active_dare.reminder or "N/A"
+						elseif animation.text == "countdown" then
+							if self.countdown > 1 then
+								widget.content.text = self.countdown
+							elseif self.countdown <= 1 then
+								widget.content.text = "Go!"
+							end
+						elseif animation.text == "active_countdown" then
+							widget.content.text = string.format("%i", mod.data.active_dare.length + 1)
+						else
+							widget.content.text = animation.text
 						end
-						widget.content.text = string.format("for %s!", name)
-					elseif animation.text == "dare_1" then
-						widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].text)
-						widget.style.text.text_color = mod.data.dares[1].text_color
-						widget.content.dare_id = mod.data.dares[1].id
-					elseif animation.text == "dare_2" then
-						widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
-						widget.style.text.text_color = mod.data.dares[2].text_color
-						widget.content.dare_id = mod.data.dares[2].id
-					elseif animation.text == "dare_3" then
-						widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
-						widget.style.text.text_color = mod.data.dares[3].text_color
-						widget.content.dare_id = mod.data.dares[3].id
-					elseif animation.text == "time" then
-						widget.content.text = self.state.time
-					elseif animation.text == "reminder" then
-						widget.content.text = mod.data.active_dare.reminder or "N/A"
-					elseif animation.text == "countdown" then
-						if self.countdown > 0 then
-							widget.content.text = self.countdown
-						elseif self.countdown == 0 then
-							widget.content.text = "Go!"
-						end
-					else
-						widget.content.text = animation.text
 					end
-				end
-				if animation.fade_in then
-					if UIWidget.has_animation(widget) then UIWidget.stop_animations(widget) end
-					local color = widget.style.text.text_color
-					UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 0, 255, animation.fade_in_time, math.easeInCubic))
-					local color = widget.style.text_shadow.text_color
-					UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 0, 255, animation.fade_in_time, math.easeInCubic))
-				end
-				if animation.fade_out then
-					if not widget.content.dare_id or widget.content.dare_id ~= mod.data.selected_dare then
+					if animation.fade_in then
 						if UIWidget.has_animation(widget) then UIWidget.stop_animations(widget) end
 						local color = widget.style.text.text_color
-						UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 255, 0, animation.fade_out_time, math.easeInCubic))
+						UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 0, 255, animation.fade_in_time, math.easeInCubic))
 						local color = widget.style.text_shadow.text_color
-						UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 255, 0, animation.fade_out_time, math.easeInCubic))
+						UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 0, 255, animation.fade_in_time, math.easeInCubic))
+					end
+					if animation.fade_out then
+						if not widget.content.dare_id or widget.content.dare_id ~= mod.data.selected_dare then
+							if UIWidget.has_animation(widget) then UIWidget.stop_animations(widget) end
+							local color = widget.style.text.text_color
+							UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 255, 0, animation.fade_out_time, math.easeInCubic))
+							local color = widget.style.text_shadow.text_color
+							UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, color, 1, 255, 0, animation.fade_out_time, math.easeInCubic))
+						end
+					end
+					if animation.apply_text_size and not animation.update_offset then
+						if self.ui_renderer then
+							local add_offset = {0, 0, 0}
+							local font, scaled_font_size = UIFontByResolution(widget.style.text)
+							local text_width, text_height, min = UIRenderer.text_size(self.ui_renderer, widget.content.text, font[1], scaled_font_size)
+							if animation.apply_text_size == "left" then
+								add_offset[1] =  -(text_width / 2)
+							elseif animation.apply_text_size == "right" then
+								add_offset[1] = text_width / 2
+							end
+							widget.offset = self:apply_scale_to_offset(animation.start_offset, add_offset)
+						end
 					end
 				end
 			end
@@ -1183,7 +1307,8 @@ mod.ui = {
 	--[[
 		Update UI
 	--]]
-	update = function(self, dt)
+	update = function(self, dt, ui_renderer)
+		self.ui_renderer = ui_renderer
 		if self.state then
 			self.timer = self.timer + dt
 			if self.timer >= self.state.time then
@@ -1215,7 +1340,28 @@ mod.ui = {
 						end
 						if animation.update_text then
 							if animation.text == "time" then
-								widget.content.text = string.format ("%i", self.state.time - self.timer + 1)
+								widget.content.text = string.format("%i", self.state.time - self.timer + 1)
+							elseif animation.text == "active_countdown" then
+								widget.content.text = string.format("%i", mod.data.active_dare.length + 1)
+							end
+						end
+						if animation.apply_text_size and (animation.update_offset or animation.update_text) then
+							if self.ui_renderer then
+								local add_offset = {0, 0, 0}
+								local font, scaled_font_size = UIFontByResolution(widget.style.text)
+								local text_width, text_height, min = UIRenderer.text_size(self.ui_renderer, widget.content.text, font[1], scaled_font_size)
+								local time = self.timer / self.state.time
+								local apply = math.lerp(0, text_width / 2, time)
+								if animation.update_text then
+									widget.offset = self:apply_scale_to_offset(animation.start_offset)
+									apply = text_width / 2
+								end
+								if animation.apply_text_size == "left" then
+									add_offset[1] = -apply
+								elseif animation.apply_text_size == "right" then
+									add_offset[1] = apply
+								end
+								widget.offset = self:apply_scale_to_offset(widget.offset, add_offset)
 							end
 						end
 					end
@@ -1226,8 +1372,9 @@ mod.ui = {
 	--[[
 		Apply hud scaling
 	--]]
-	apply_scale_to_offset = function(self, offset)
-		local new_offset = offset
+	apply_scale_to_offset = function(self, offset, add_offset)
+		local add_offset = add_offset or {0, 0, 0}
+		local new_offset = {offset[1] + add_offset[1], offset[2] + add_offset[2], offset[3]}
 		if UISettings.use_custom_hud_scale then
 			local mult = 2 - (UISettings.hud_scale * 0.01)
 			new_offset = {offset[1] * mult, offset[2] * mult, offset[3]}
@@ -1237,11 +1384,16 @@ mod.ui = {
 	--[[
 		Set a state
 	--]]
-	set_state = function(self, state_name)
+	set_state = function(self, state_name, time)
 		local state = self.states[state_name]
 		if state then
 			if debug then mod:echo("UIState '"..state_name.."' started!") end
 			self.state = state
+			if self.state.name == "waiting" then
+				self.state.time = time or 30
+			elseif self.state.name == "waiting_for_input" then
+				self.state.time = self.selection_time
+			end
 			self.timer = 0
 			self.state:start()
 		else
@@ -1391,11 +1543,23 @@ end
 --]]
 mod.is_peer_id_alive = function(self, peer_id)
 	local unit = self:player_unit_from_peer_id(peer_id)
-	if unit then
+	if unit and Unit.alive(unit) then
 		local health_extension = ScriptUnit.extension(unit, "health_system")
 		if health_extension and health_extension:is_alive() then
-			return true
+			local status_extension = ScriptUnit.extension(unit, "status_system")
+			if status_extension then
+				local respawned = status_extension:is_ready_for_assisted_respawn() or status_extension:is_assisted_respawning()
+				if not respawned then
+					return true
+				else
+					if debug then mod:echo("Player '"..peer_id.."' skipped because of respawn.") end
+				end
+			end
+		else
+			if debug then mod:echo("Player '"..peer_id.."' skipped because dead.") end
 		end
+	else
+		if debug then mod:echo("Player '"..peer_id.."' skipped because unit doesn't exist.") end
 	end
 	return false
 end
@@ -1493,7 +1657,7 @@ mod:hook(BuffUI, "_create_ui_elements", create_ui_elements)
 	Update widgets
 --]]
 local update_widgets = function(self, dt)
-	mod.ui:update(dt)
+	mod.ui:update(dt, self.ui_renderer)
 end
 mod:hook_safe(BuffUI, "update", update_widgets)
 --mod:hook_safe(ObserverUI, "update", update_widgets)
@@ -1604,17 +1768,23 @@ mod.on_setting_changed = function(setting_name)
 				mod:network_send("user_activated_mod", mod:server_peer_id())
 			end
 		else
-			-- We're in a mission, so it's punishment time
-			if mod.data.active then
-				if debug then mod:echo("Die!") end
-				mod:set("active", true)
+			-- Check if server
+			if not mod:is_server() then
+				if not mod.data.active then
+					-- We're in a mission, so it's punishment time
+					if debug then mod:echo("Die!") end
+					mod:network_send("request_punishment_server", mod:server_peer_id(), 9999)
+					mod:set("active", true)
+					mod.data.active = true
+				end
+			else
+				if not mod.data.active then
+					mod.server:stop()
+				else
+					mod.server:start()
+				end
 			end
 		end
-	-- elseif setting_name == "allow_inn" then
-	-- 	-- Save setting to variable
-	-- 	mod.data.allow_inn = mod:get("allow_inn")
-	-- 	-- Restart server
-	-- 	if mod:is_server() then mod.server:start() end
 
 	elseif setting_name == "mode" then
 		-- Save setting to variable

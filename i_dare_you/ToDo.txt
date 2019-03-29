@@ -1,6 +1,1 @@
-- Display names of victim in different color for the victim
-- Add settings to set selection timer
-- Individual dare times
-- Check for player alive, unit despawned, waiting for assisted respawn
-- Check quick switch
-- Countdown for active dare
+- Check for player alive, unit despawned, waiting for assisted respawn ???

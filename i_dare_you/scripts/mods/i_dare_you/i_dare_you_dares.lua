@@ -55,9 +55,11 @@ mod.template_dare = {
 	values = {
         damage = 5,
 	},
+	started = false,
 	-- Timers
 	timer = 0,
 	time = 1,
+	length = 30,
 	reminder_timer = 0,
     reminder_time = 2,
 	-- Functions
@@ -65,6 +67,7 @@ mod.template_dare = {
 		return true
 	end,
 	start = function(self)
+		self.started = true
 		self.timer = 0
 		self.reminder_timer = 0
 		self:on_start()

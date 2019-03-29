@@ -12,7 +12,7 @@ dont_use_ranged.reminder = mod:localize("dont_use_ranged_reminder")
 dont_use_ranged.time = 0.5
 dont_use_ranged.punishments = {"damage"}
 dont_use_ranged.values = {damage = 5}
-dont_use_ranged.reminder_time = 2
+dont_use_ranged.reminder_time = 1
 dont_use_ranged.check_state_function = function(self)
     local peer_id = mod:my_peer_id()
     local unit = mod:player_unit_from_peer_id(peer_id)

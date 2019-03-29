@@ -24,6 +24,9 @@ dont_quick_switch.time = 0
 dont_quick_switch.punishments = {"damage"}
 dont_quick_switch.values = {damage = 15}
 dont_quick_switch.reminder_time = 0
+dont_quick_switch.on_start = function(self)
+    quick_switch = 0
+end
 dont_quick_switch.check_state_function = function(self)
     if quick_switch > 0 then
         quick_switch = quick_switch - 1

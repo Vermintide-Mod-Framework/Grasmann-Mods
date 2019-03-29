@@ -21,14 +21,6 @@ return {
 		en = "Choose dare 3",
 		de = "Wähle Herausforderung 3",
 	},
-	-- allow_self = {
-	-- 	en = "Dare yourself!",
-	-- 	de = "Fordere dich heraus!",
-	-- },
-	-- allow_self_description = {
-	-- 	en = "Players might have to dare themselves.",
-	-- 	de = "Spieler könnten sich selbst herausfordern müssen.",
-	-- },
 	mode = {
 		en = "Mode",
 		de = "Modus",
@@ -72,14 +64,53 @@ return {
 		en = "I dare you! can't be played in the keep.",
 		de = "Untersteh dich! kann nicht im Versteck gespielt werden.",
 	},
-	-- allow_inn = {
-	-- 	en = "Dare in the keep!",
-	-- 	de = "Fordere im Versteck heraus!",
-	-- },
-	-- allow_inn_description = {
-	-- 	en = "Mod works in the keep.",
-	-- 	de = "Die Mod funktioniert im Versteck.",
-	-- },
+	configure_dares = {
+		en = "Configure Dares",
+		de = "Herausforderungen Konfigurieren",
+	},
+	configure_dares_description = {
+		en = "Set custom settings for specific dares.",
+		de = "Benutzerdefinierte Einstellungen zu spezifischen Herausforderungen.",
+	},
+	unit_text_seconds = {
+		en = "sec",
+		de = "sek",
+	},
+	unit_text_empty = {
+		en = "",
+	},
+	dare_length = {
+		en = "Length",
+		de = "Länge",
+	},
+	dare_length_description = {
+		en = "Defines how long the specific dare is in seconds.",
+		de = "Definiert wie lange die Herausforderung is in Sekunden.",
+	},
+	selection_time = {
+		en = "Selection Time",
+		de = "Auswahlzeit",
+	},
+	selection_time_description = {
+		en = "Defines the time players have to choose a dare in seconds.",
+		de = "Definiert die Zeit die Spieler haben um eine Herausforderung zu wählen in Sekunden.",
+	},
+	dare_punishment = {
+		en = "Punishments",
+		de = "Bestrafungen",
+	},
+	dare_punishment_description = {
+		en = "Possible punishments for this dare.",
+		de = "Mögliche Bestrafungen für diese Herausforderung.",
+	},
+	dare_punishment_damage = {
+		en = "Damage",
+		de = "Schaden",
+	},
+	dare_punishment_damage_amount = {
+		en = "Amount",
+		de = "Höhe",
+	},
 
 	-- Dares
 	jump_continuously_text = {
