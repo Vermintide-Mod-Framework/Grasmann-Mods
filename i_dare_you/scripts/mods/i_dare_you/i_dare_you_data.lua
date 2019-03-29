@@ -10,29 +10,105 @@ local customize_dares = {
 		setting_id = "jump_continuously",
 		title = "jump_continuously_text",
 		type = "checkbox",
-		default_value = false,
+		default_value = true,
 		length_default = 20,
 		length_range = {10, 60},
-		punishments_default = {
-			damage = {
-				default = 2,
-				range = {1, 10},
-			},
-		},
+		-- punishments_default = {
+		-- 	damage = {
+		-- 		value_default = 2,
+		-- 		value_range = {1, 10},
+		-- 		frequency_default = 0.25,
+		-- 		frequency_range = {0.1, 1},
+		-- 	},
+		-- },
 	},
 	{
 		setting_id = "stay_on_ground",
 		title = "stay_on_ground_text",
 		type = "checkbox",
-		default_value = false,
-		length_default = 60,
+		default_value = true,
+		length_default = 30,
 		length_range = {10, 60},
-		punishments_default = {
-			damage = {
-				default = 1,
-				range = {1, 200},
-			},
-		},
+		-- punishments_default = {
+		-- 	damage = {
+		-- 		value_default = 1,
+		-- 		value_range = {1, 200},
+		-- 		frequency_default = 0.1,
+		-- 		frequency_range = {0.1, 1},
+		-- 	},
+		-- },
+	},
+	{
+		setting_id = "dont_block",
+		title = "dont_block_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 40,
+		length_range = {10, 60},
+	},
+	{
+		setting_id = "dont_dodge",
+		title = "dont_dodge_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 30,
+		length_range = {10, 60},
+	},
+	{
+		setting_id = "dont_push",
+		title = "dont_push_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 40,
+		length_range = {10, 60},
+	},
+	{
+		setting_id = "dont_quick_switch",
+		title = "dont_quick_switch_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 30,
+		length_range = {10, 60},
+	},
+	{
+		setting_id = "dont_use_item",
+		title = "dont_use_item_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 40,
+		length_range = {10, 60},
+	},
+	{
+		setting_id = "dont_use_melee",
+		title = "dont_use_melee_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 20,
+		length_range = {10, 60},
+	},
+	{
+		setting_id = "dont_use_ranged",
+		title = "dont_use_ranged_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 30,
+		length_range = {10, 60},
+	},
+	{
+		setting_id = "dont_use_skill",
+		title = "dont_use_skill_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 40,
+		length_range = {10, 60},
+	},
+	{
+		setting_id = "drop_grim",
+		title = "drop_grim_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 30,
+		length_range = {10, 60},
 	},
 }
 
@@ -40,6 +116,7 @@ local customize_dares_table = {}
 
 for _, custom in pairs(customize_dares) do
 	local custom_entry = table.clone(custom)
+	local index = 2
 	custom_entry.sub_widgets = {
 		{
 			setting_id = custom_entry.setting_id.."_dare_length",
@@ -51,32 +128,44 @@ for _, custom in pairs(customize_dares) do
 			unit_text = "unit_text_seconds",
 			decimals_number = 0,
 		},
-		{
-			setting_id = custom_entry.setting_id.."_dare_punishment",
-			title = "dare_punishment",
-			tooltip = "dare_punishment_description",
-			type = "group",
-			sub_widgets = {
-				{
-					setting_id = custom_entry.setting_id.."_damage_active",
-					title = "dare_punishment_damage",
-					type = "checkbox",
-					default_value = custom_entry.punishments_default.damage ~= nil,
-					sub_widgets = {
-						{
-							setting_id = custom_entry.setting_id.."_damage_amount",
-							title = "dare_punishment_damage_amount",
-							type = "numeric",
-							range = custom_entry.punishments_default.damage.range,
-							default_value = custom_entry.punishments_default.damage.default,
-							unit_text = "unit_text_empty",
-							decimals_number = 0,
-						}
-					},
-				},
-			},
-		},
+		-- {
+		-- 	setting_id = custom_entry.setting_id.."_dare_punishment",
+		-- 	title = "dare_punishment",
+		-- 	tooltip = "dare_punishment_description",
+		-- 	type = "group",
+		-- 	sub_widgets = {
+		-- 		{
+		-- 			setting_id = custom_entry.setting_id.."_damage_active",
+		-- 			title = "dare_punishment_damage",
+		-- 			type = "checkbox",
+		-- 			default_value = custom_entry.punishments_default.damage ~= nil,
+		-- 			sub_widgets = {
+		-- 				{
+		-- 					setting_id = custom_entry.setting_id.."_damage_amount",
+		-- 					title = "dare_punishment_damage_amount",
+		-- 					type = "numeric",
+		-- 					range = custom_entry.punishments_default.damage.value_range,
+		-- 					default_value = custom_entry.punishments_default.damage.value_default,
+		-- 					unit_text = "unit_text_empty",
+		-- 					decimals_number = 0,
+		-- 				},
+		-- 			},
+		-- 		},
+		-- 	},
+		-- },
 	}
+	-- if custom_entry.punishments_default.damage.frequency_default then	
+	-- 	custom_entry.sub_widgets[2].sub_widgets[1].sub_widgets[index] = {
+	-- 		setting_id = custom_entry.setting_id.."_frequency",
+	-- 		title = "dare_punishment_damage_frequency",
+	-- 		type = "numeric",
+	-- 		range = custom_entry.punishments_default.damage.frequency_range,
+	-- 		default_value = custom_entry.punishments_default.damage.frequency_default,
+	-- 		unit_text = "unit_text_seconds",
+	-- 		decimals_number = 2,
+	-- 	}
+	-- end
+	-- index = index + 1
 	customize_dares_table[#customize_dares_table+1] = custom_entry
 end
 

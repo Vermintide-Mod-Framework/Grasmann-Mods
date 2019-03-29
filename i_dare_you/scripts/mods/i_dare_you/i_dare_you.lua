@@ -19,7 +19,7 @@ end
 
 -- Debugging
 local debug = mod:get("debug")
-local test_dare = "dont_quick_switch"
+local test_dare = "stay_on_ground"
 
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
@@ -469,8 +469,10 @@ mod.server = {
 				end
 				if selector_peer_id and victim_peer_id then
 					local dares = mod.server:get_random_dares(selector_peer_id, victim_peer_id)
-					local time = mod:get("selection_time")
-					mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares, time)
+					if dares then
+						local time = mod:get("selection_time")
+						mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares, time)
+					end
 				else
 					mod.server:stop()
 				end
@@ -489,6 +491,8 @@ mod.server = {
 			end,
 			finish = function(self)
 				mod:network_send("start_dare_client", mod.data.victim_peer_id, mod.data.selected_dare)
+				local time = mod:get(mod.data.selected_dare.."_dare_length")
+				mod:echo(tostring(time))
 				mod.server:set_state("waiting", time)
 			end,
 		},
@@ -499,8 +503,12 @@ mod.server = {
 	get_available_dares = function(self, selector_peer_id, victim_peer_id)
 		local available_dares = {}
 		for _, dare in pairs(mod.dares) do
-			if not dare.check_condition or dare:check_condition(selector_peer_id, victim_peer_id) then
-				available_dares[#available_dares+1] = dare.id
+			if mod:get(dare.id) then
+				if not dare.check_condition or dare:check_condition(selector_peer_id, victim_peer_id) then
+					available_dares[#available_dares+1] = dare.id
+				end
+			else
+				if debug then mod:echo("Dare '"..dare.id.."' is deactivated") end
 			end
 		end
 		return available_dares
@@ -511,6 +519,12 @@ mod.server = {
 	get_random_dares = function(self, selector_peer_id, victim_peer_id)
 		--local available_dares = table.clone(mod.dares)
 		local available_dares = self:get_available_dares(selector_peer_id, victim_peer_id)
+		if #available_dares < 3 then
+			mod:echo("Not enough dares activated!")
+			mod:echo("Please activate at least 3 dares!")
+			self:stop()
+			return
+		end
 		local dares = {}
 		for i = 1, 3 do
 			local rnd = math.random(1, #available_dares)
@@ -529,10 +543,14 @@ mod.server = {
 			end
 			if found == false then
 				local dare = mod:get_dare(test_dare)
-				if not dare.check_condition or dare:check_condition(selector_peer_id, victim_peer_id) then
-					mod:echo("Added test dare!")
-					local rnd = math.random(1, 3)
-					dares[rnd] = test_dare
+				if not mod:get(test_dare) then
+					if not dare.check_condition or dare:check_condition(selector_peer_id, victim_peer_id) then
+						mod:echo("Added test dare!")
+						local rnd = math.random(1, 3)
+						dares[rnd] = test_dare
+					end
+				else
+					if debug then mod:echo("Dare '"..dare.id.."' is deactivated") end
 				end
 			end
 		end

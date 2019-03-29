@@ -79,6 +79,14 @@ return {
 	unit_text_empty = {
 		en = "",
 	},
+	dare_deactivate = {
+		en = "Deactivate",
+		de = "Deaktivieren",
+	},
+	dare_deactivate_description = {
+		en = "Deactivates the dare from being executed.",
+		de = "Deaktiviert diese Herausforderung.",
+	},
 	dare_length = {
 		en = "Length",
 		de = "Länge",
@@ -110,6 +118,10 @@ return {
 	dare_punishment_damage_amount = {
 		en = "Amount",
 		de = "Höhe",
+	},
+	dare_punishment_damage_frequency = {
+		en = "Frequency",
+		de = "Frequenz",
 	},
 
 	-- Dares

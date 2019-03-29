@@ -13,7 +13,7 @@ stay_on_ground.reminder_fall = mod:localize("stay_on_ground_reminder_fall")
 stay_on_ground.reminder = stay_on_ground.reminder_jump
 stay_on_ground.time = 0.1
 stay_on_ground.punishments = {"damage"}
-stay_on_ground.values = {damage = 1}
+stay_on_ground.values = {damage = 4}
 stay_on_ground.reminder_time = 0
 stay_on_ground.states = {"jumping", "falling"}
 stay_on_ground.check_state_function = function(self)
