@@ -190,13 +190,13 @@ return {
 							{text = "mode_option_at_least_2_text", 	value = 2},
 							{text = "mode_option_alone_text", 		value = 3},
 						},
-						default_value = 1,
+						default_value = 2,
 					},
 					{
 						setting_id = "selection_time",
 						type = "numeric",
 						range = {5, 30},
-						default_value = 10,
+						default_value = 20,
 						decimals_number = 0,
 						unit_text = "unit_text_seconds",
 					},
@@ -207,8 +207,7 @@ return {
 					},
 					{
 						setting_id = "configure_dares",
-						type = "checkbox",
-						default_value = false,
+						type = "group",
 						sub_widgets = customize_dares_table,
 					},
 					{
