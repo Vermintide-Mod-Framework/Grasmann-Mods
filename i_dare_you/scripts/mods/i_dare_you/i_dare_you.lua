@@ -71,6 +71,10 @@ end
 mod.activate_dare_3 = function(held, automatic)
 	mod:activate_dare(3, automatic)
 end
+mod.activate_random_dare = function(held, automatic)
+	local rnd = math.random(1, 3)
+	mod:activate_dare(rnd, automatic)
+end
 --[[
 	Evaluating input functions
 --]]
@@ -359,6 +363,7 @@ mod.server = {
 		mod:network_send("reset_ui_client", "all")
 		if mod:has_enough_players() and not mod:is_in_inn() then
 			if mod.data.in_mission then
+				mod:echo(mod:localize("start_i_dare_you"))
 				self:set_state("init")
 			end
 		else
@@ -372,10 +377,10 @@ mod.server = {
 		mod:network_send("reset_ui_client", "all")
 		mod:network_send("dare_finished_client", "all", "server_shutdown")
 		if not mod:has_enough_players() then
-			mod:echo(mod:localize("error_not_enough_players"))
+			if debug then mod:echo(mod:localize("error_not_enough_players")) end
 		end
 		if mod:is_in_inn() then
-			mod:echo(mod:localize("error_in_inn"))
+			if debug then mod:echo(mod:localize("error_in_inn")) end
 		end
 		self:set_state("idle")
 	end,
@@ -478,9 +483,12 @@ mod.server = {
 				end
 			end,
 			finish = function(self)
-				mod:echo("automatic selection!")
-				local rnd = math.random(1, 3)
-				mod["activate_dare_"..tostring(rnd)](nil, true)
+				if debug then
+					mod:echo("automatic selection!")
+				end
+				-- local rnd = math.random(1, 3)
+				-- mod["activate_dare_"..tostring(rnd)](nil, true)
+				mod.activate_random_dare(nil, true)
 				mod.server:set_state("countdown")
 			end,
 		},
@@ -492,7 +500,6 @@ mod.server = {
 			finish = function(self)
 				mod:network_send("start_dare_client", mod.data.victim_peer_id, mod.data.selected_dare)
 				local time = mod:get(mod.data.selected_dare.."_dare_length")
-				mod:echo(tostring(time))
 				mod.server:set_state("waiting", time)
 			end,
 		},
@@ -520,8 +527,7 @@ mod.server = {
 		--local available_dares = table.clone(mod.dares)
 		local available_dares = self:get_available_dares(selector_peer_id, victim_peer_id)
 		if #available_dares < 3 then
-			mod:echo("Not enough dares activated!")
-			mod:echo("Please activate at least 3 dares!")
+			mod:echo(mod:localize("error_not_enough_dares"))
 			self:stop()
 			return
 		end
@@ -543,7 +549,7 @@ mod.server = {
 			end
 			if found == false then
 				local dare = mod:get_dare(test_dare)
-				if not mod:get(test_dare) then
+				if mod:get(test_dare) then
 					if not dare.check_condition or dare:check_condition(selector_peer_id, victim_peer_id) then
 						mod:echo("Added test dare!")
 						local rnd = math.random(1, 3)
@@ -941,21 +947,21 @@ mod.ui = {
 			dare_1 = {
 				start_offset = {0, -320, 0},
 				start_size = 30,
-				text = "dare_1",
+				text = "dare_1_hotkey",
 				fade_in = true,
 				fade_in_time = 0.5,
 			},
 			dare_2 = {
 				start_offset = {0, -360, 0},
 				start_size = 30,
-				text = "dare_2",
+				text = "dare_2_hotkey",
 				fade_in = true,
 				fade_in_time = 0.5,
 			},
 			dare_3 = {
 				start_offset = {0, -400, 0},
 				start_size = 30,
-				text = "dare_3",
+				text = "dare_3_hotkey",
 				fade_in = true,
 				fade_in_time = 0.5,
 			},
@@ -969,10 +975,14 @@ mod.ui = {
 			},
 			time = 10,
 			start = function(self)
+				mod.ui:init_state()
 				if mod:is_selector() then
 					mod.data.is_selecting = true
+					-- Random choice
+					if mod:get("random_choice") then
+						mod.activate_random_dare(nil)
+					end
 				end
-				mod.ui:init_state()
 			end,
 			finish = function(self)
 				-- if mod:is_selector() then
@@ -1016,6 +1026,7 @@ mod.ui = {
 				start_size = 30,
 				finish_size = 60,
 				update_size = true,
+				text = "dare_1",
 				fade_out = true,
 				fade_out_time = 0.5,
 			},
@@ -1026,6 +1037,7 @@ mod.ui = {
 				start_size = 30,
 				finish_size = 60,
 				update_size = true,
+				text = "dare_2",
 				fade_out = true,
 				fade_out_time = 0.5,
 			},
@@ -1036,6 +1048,7 @@ mod.ui = {
 				start_size = 30,
 				finish_size = 60,
 				update_size = true,
+				text = "dare_3",
 				fade_out = true,
 				fade_out_time = 0.5,
 			},
@@ -1262,14 +1275,26 @@ mod.ui = {
 							end
 							widget.content.text = string.format("for %s!", name)
 						elseif animation.text == "dare_1" then
+							widget.content.text = mod.data.dares[1].text
+							widget.style.text.text_color = mod.data.dares[1].text_color
+							widget.content.dare_id = mod.data.dares[1].id
+						elseif animation.text == "dare_1_hotkey" then
 							widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].text)
 							widget.style.text.text_color = mod.data.dares[1].text_color
 							widget.content.dare_id = mod.data.dares[1].id
 						elseif animation.text == "dare_2" then
+							widget.content.text = mod.data.dares[2].text
+							widget.style.text.text_color = mod.data.dares[2].text_color
+							widget.content.dare_id = mod.data.dares[2].id
+						elseif animation.text == "dare_2_hotkey" then
 							widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
 							widget.style.text.text_color = mod.data.dares[2].text_color
 							widget.content.dare_id = mod.data.dares[2].id
 						elseif animation.text == "dare_3" then
+							widget.content.text = mod.data.dares[3].text
+							widget.style.text.text_color = mod.data.dares[3].text_color
+							widget.content.dare_id = mod.data.dares[3].id
+						elseif animation.text == "dare_3_hotkey" then
 							widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
 							widget.style.text.text_color = mod.data.dares[3].text_color
 							widget.content.dare_id = mod.data.dares[3].id
@@ -1638,7 +1663,6 @@ end
 --]]
 mod:hook_safe(CutsceneUI, "set_player_input_enabled", function(self, enabled)
 	if enabled and mod:is_server() then
-		mod:echo("START!")
 		mod.data.in_mission = true
 		mod.server:start()
 	end

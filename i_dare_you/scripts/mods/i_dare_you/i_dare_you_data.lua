@@ -201,6 +201,11 @@ return {
 						unit_text = "unit_text_seconds",
 					},
 					{
+						setting_id = "random_choice",
+						type = "checkbox",
+						default_value = false,
+					},
+					{
 						setting_id = "debug",
 						type = "checkbox",
 						default_value = false,
@@ -233,6 +238,14 @@ return {
 						keybind_type = "function_call",
 						function_name = "activate_dare_3",
 						default_value = {"f7"},
+					},
+					{
+						setting_id = "activate_random_dare",
+						type = "keybind",
+						keybind_trigger = "pressed",
+						keybind_type = "function_call",
+						function_name = "activate_random_dare",
+						default_value = {"f8"},
 					},
 				},
 			},

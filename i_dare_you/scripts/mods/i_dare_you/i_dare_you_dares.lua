@@ -160,6 +160,12 @@ local dares = {
 	-- 	fallible = true,
 	-- 	punishment = "damage",
 	-- },
+	-- {
+	-- 	id = "fight_invisible_enemies",
+	-- 	text = "dont_do_headshots",
+	-- 	fallible = false,
+	-- 	punishment = "damage",
+	-- },
 }
 
 return dares

@@ -56,6 +56,10 @@ return {
 	debug = {
 		en = "Debugging",
 	},
+	start_i_dare_you = {
+		en = "I dare you!",
+		de = "Untersteh dich!",
+	},
 	error_not_enough_players = {
 		en = "Not enough players to play I dare you!",
 		de = "Nicht genügend Spieler für Untersteh dich!",
@@ -63,6 +67,10 @@ return {
 	error_in_inn = {
 		en = "I dare you! can't be played in the keep.",
 		de = "Untersteh dich! kann nicht im Versteck gespielt werden.",
+	},
+	error_not_enough_dares = {
+		en = "Not enough dares activated! Please activate at least 3 dares!",
+		de = "Nicht genug Herausforderungen aktiviert! Aktiviere mindestens 3 Herausforderungen!",
 	},
 	configure_dares = {
 		en = "Configure Dares",
@@ -122,6 +130,22 @@ return {
 	dare_punishment_damage_frequency = {
 		en = "Frequency",
 		de = "Frequenz",
+	},
+	random_choice = {
+		en = "Random Choice",
+		de = "Zufällige Auswahl",
+	},
+	random_choice_description = {
+		en = "If you're choosing a dare it automatically chooses a random dare.",
+		de = "Wenn du eine Herausforderung wählen musst wird automatisch eine zufällige Auswahl getroffen.",
+	},
+	activate_random_dare = {
+		en = "Random Dare",
+		de = "Zufällige Herausforderung",
+	},
+	activate_random_dare_description = {
+		en = "Choose a random dare.",
+		de = "Wähle eine zufällige Herausforderung.",
 	},
 
 	-- Dares
