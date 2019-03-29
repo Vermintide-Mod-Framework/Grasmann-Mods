@@ -7,7 +7,10 @@ local mod = get_mod("i_dare_you")
 
 local melee_attacks = 0
 mod:hook_safe(ActionMeleeStart, "client_owner_start_action", function(self, new_action, t, chain_action_data, power_level, action_init_data)
-    melee_attacks = melee_attacks + 1
+    local player = Managers.player:player_from_peer_id(mod:my_peer_id())
+    if self.owner_player and self.owner_player == player then
+        melee_attacks = melee_attacks + 1
+    end
 end)
 mod:hook_disable(ActionMeleeStart, "client_owner_start_action")
 

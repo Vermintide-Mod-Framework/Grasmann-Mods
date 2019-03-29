@@ -19,7 +19,7 @@ end
 
 -- Debugging
 local debug = mod:get("debug")
-local test_dare = "stay_on_ground"
+local test_dare = "dont_use_melee"
 
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
@@ -36,6 +36,8 @@ mod:persistent_table("data", {
 	-- Selected dare
 	selected_dare = nil,
 	active_dare = nil,
+	dare_time = 30,
+	dare_running = false,
 	-- Settings
 	active = nil,
 	mode = 1,
@@ -202,6 +204,7 @@ mod:network_register("dare_selected_client", function(sender, selector_peer_id, 
 	mod.data.is_selecting = false
 	mod.data.selection = false
 	mod.data.selected_dare = dare_name
+	mod.data.dare_time = time
 	if mod:is_victim() then
 		mod:set_dare(dare_name, time)
 	end
@@ -211,7 +214,7 @@ end)
 	Start dare on client
 	Clients receive this from server
 --]]
-mod:network_register("start_dare_client", function(sender, dare_name, time)
+mod:network_register("start_dare_client", function(sender, dare_name)
 	if mod:is_victim() then
 		if debug then
 			mod:echo("Dare '"..dare_name.."' started.")
@@ -219,7 +222,8 @@ mod:network_register("start_dare_client", function(sender, dare_name, time)
 		--mod:set_dare(dare_name, time)
 		mod:start_dare()
 	end
-	mod.ui:set_state("waiting", time)
+	mod.data.dare_running = true
+	mod.ui:set_state("waiting")
 end)
 --[[
 	Dare finished
@@ -240,7 +244,10 @@ mod:network_register("dare_finished_client", function(sender, reason)
 	if debug then
 		mod:echo("Dare finished! Reason:'"..reason.."'")
 	end
-	mod:finish_dare()
+	if mod:is_victim() then
+		mod:finish_dare()
+	end
+	mod.data.dare_running = false
 end)
 --[[
 	Request punishment
@@ -499,7 +506,7 @@ mod.server = {
 			end,
 			finish = function(self)
 				local time = mod:get(mod.data.selected_dare.."_dare_length")
-				mod:network_send("start_dare_client", mod.data.victim_peer_id, mod.data.selected_dare, time)
+				mod:network_send("start_dare_client", mod.data.victim_peer_id, mod.data.selected_dare)
 				mod.server:set_state("waiting", time)
 			end,
 		},
@@ -1320,13 +1327,13 @@ mod.ui = {
 						elseif animation.text == "reminder" then
 							widget.content.text = mod.data.active_dare.reminder or "N/A"
 						elseif animation.text == "countdown" then
-							if self.countdown > 1 then
+							if self.countdown > 0 then
 								widget.content.text = self.countdown
-							elseif self.countdown <= 1 then
+							elseif self.countdown <= 0 then
 								widget.content.text = "Go!"
 							end
 						elseif animation.text == "active_countdown" then
-							widget.content.text = string.format("%i", self.state.time + 1)
+							widget.content.text = string.format("%i", mod.data.dare_time + 1)
 						else
 							widget.content.text = animation.text
 						end
@@ -1370,6 +1377,9 @@ mod.ui = {
 	update = function(self, dt, ui_renderer)
 		self.ui_renderer = ui_renderer
 		if self.state then
+			if mod.data.dare_running then
+				mod.data.dare_time = mod.data.dare_time - dt
+			end
 			self.timer = self.timer + dt
 			if self.timer >= self.state.time then
 				self.state:finish()
@@ -1402,7 +1412,7 @@ mod.ui = {
 							if animation.text == "time" then
 								widget.content.text = string.format("%i", self.state.time - self.timer + 1)
 							elseif animation.text == "active_countdown" then
-								widget.content.text = string.format("%i", self.state.time - self.timer + 1)
+								widget.content.text = string.format("%i", mod.data.dare_time + 1)
 							end
 						end
 						if animation.apply_text_size and (animation.update_offset or animation.update_text) then
