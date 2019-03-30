@@ -6,8 +6,11 @@ local mod = get_mod("i_dare_you")
 --]]
 
 local push = 0
-mod:hook_safe(ActionPushStagger, "client_owner_start_action", function(...)
-    push = push + 1
+mod:hook_safe(ActionPushStagger, "client_owner_start_action", function(self, ...)
+    local player = Managers.player:player_from_peer_id(mod:my_peer_id())
+    if self.owner_player and self.owner_player == player then
+        push = push + 1
+    end
 end)
 mod:hook_disable(ActionPushStagger, "client_owner_start_action")
 

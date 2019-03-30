@@ -6,8 +6,11 @@ local mod = get_mod("i_dare_you")
 --]]
 
 local dropped = false
-mod:hook_safe(ActionThrowGrimoire, "finish", function(...)
-    dropped = true
+mod:hook_safe(ActionThrowGrimoire, "finish", function(self, ...)
+    local player = Managers.player:player_from_peer_id(mod:my_peer_id())
+    if self.owner_player and self.owner_player == player then
+        dropped = true
+    end
 end)
 mod:hook_disable(ActionThrowGrimoire, "finish")
 

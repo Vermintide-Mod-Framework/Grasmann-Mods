@@ -7,8 +7,11 @@ local mod = get_mod("i_dare_you")
 
 local career_skill = 0
 mod:hook(CareerExtension, "start_activated_ability_cooldown", function(func, self, ...)
-    if not self._initial_cooldown then
-        career_skill = career_skill + 1
+    local player = Managers.player:player_from_peer_id(mod:my_peer_id())
+    if self.player and self.player == player then
+        if not self._initial_cooldown then
+            career_skill = career_skill + 1
+        end
     end
     return func(self, ...)
 end)

@@ -614,7 +614,6 @@ mod.server = {
 			self.state = state
 			if self.state.id == 1 then
 				self.state.time = mod:get("initial_time") or 10
-				mod:echo("init time :'"..tostring(self.state.time).."'")
 			elseif self.state.id == 2 then
 				self.state.time = time or 30
 			elseif self.state.id == 3 then
