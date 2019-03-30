@@ -19,7 +19,7 @@ end
 
 -- Debugging
 local debug = mod:get("debug")
---local test_dare = "dont_use_melee"
+--local test_dare = "dont_block"
 
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
@@ -581,7 +581,7 @@ mod.server = {
 			table.remove(available_dares, rnd)
 		end
 		--mod:dump(dares, "dares", 1)
-		if debug and test_dare then
+		if test_dare then
 			local found = false
 			for _, dare in pairs(dares) do
 				if dare == test_dare then

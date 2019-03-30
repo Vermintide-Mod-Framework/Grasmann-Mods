@@ -9,10 +9,10 @@ local dont_block = mod:get_template()
 dont_block.id = "dont_block"
 dont_block.text = mod:localize("dont_block_text")
 dont_block.reminder = mod:localize("dont_block_reminder")
-dont_block.time = 0.5
+dont_block.time = 0.2
 dont_block.punishments = {"damage"}
 dont_block.values = {damage = 15}
-dont_block.reminder_time = 2
+dont_block.reminder_time = 0.75
 dont_block.check_state_function = function(self)
     local peer_id = mod:my_peer_id()
     local unit = mod:player_unit_from_peer_id(peer_id)
