@@ -214,6 +214,11 @@ return {
 						default_value = false,
 					},
 					{
+						setting_id = "sound_effects",
+						type = "checkbox",
+						default_value = true,
+					},
+					{
 						setting_id = "debug",
 						type = "checkbox",
 						default_value = false,

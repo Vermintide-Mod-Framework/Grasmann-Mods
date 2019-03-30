@@ -183,6 +183,14 @@ return {
 		en = "Time before the first dare selection in a mission.",
 		de = "Zeit vor der ersten Pflichtauswahl in einer Mission.",
 	},
+	sound_effects = {
+		en = "Sound Effects",
+		de = "Soundeffekte",
+	},
+	sound_effects_description = {
+		en = "Plays sound effects for I dare you! UI.",
+		de = "Spielt Soundeffekte für Untersteh dich! UI.",
+	},
 
 	-- Dares
 	jump_continuously_text = {

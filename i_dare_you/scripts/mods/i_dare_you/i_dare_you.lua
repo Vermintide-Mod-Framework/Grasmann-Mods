@@ -146,11 +146,13 @@ mod:network_register("reset_ui_client", function(sender, state_name)
 	state_name = state_name or "idle"
 	mod.ui:set_state(state_name)
 end)
-
+--[[
+	Server was started
+	Clients receive this from server
+--]]
 mod:network_register("start_server_client", function(sender)
 	mod.ui:set_state("start_server_grow")
 end)
-
 --[[
 	Start dare selection
 	Everyone receives this from server
@@ -536,7 +538,7 @@ mod.server = {
 		},
 		countdown = {
 			id = 4,
-			time = 4,
+			time = 5,
 			start = function(self)
 			end,
 			finish = function(self)
@@ -691,6 +693,7 @@ mod.ui = {
 			time = 0.5,
 			start = function(self)
 				mod.ui:init_state()
+				mod:play_sound_effect("Play_career_ability_bardin_ranger_enter")
 			end,
 			finish = function(self)
 				mod.ui:set_state("start_server_pop")
@@ -709,6 +712,7 @@ mod.ui = {
 			time = 0.5,
 			start = function(self)
 				mod.ui:init_state()
+				mod:play_sound_effect("Play_career_ability_kerillian_shade_enter")
 			end,
 			finish = function(self)
 				mod.ui:set_state("start_server_fade")
@@ -855,6 +859,7 @@ mod.ui = {
 			time = 0.5,
 			start = function(self)
 				mod.ui:init_state()
+				mod:play_sound_effect("Play_hud_headshot")
 			end,
 			finish = function(self)
 				mod.ui:set_state("reminder_fade")
@@ -1004,6 +1009,7 @@ mod.ui = {
 			time = 0.25,
 			start = function(self)
 				mod.ui:init_state()
+				mod:play_sound_effect("Play_hud_headshot")
 			end,
 			finish = function(self)
 				mod.ui:set_state("selection_move_up")
@@ -1167,6 +1173,7 @@ mod.ui = {
 			time = 0.5,
 			start = function(self)
 				mod.ui:init_state()
+				mod:play_sound_effect("Play_hud_headshot")
 			end,
 			finish = function(self)
 				mod.ui:set_state("move_selection")
@@ -1303,13 +1310,18 @@ mod.ui = {
 			time = 0.25,
 			start = function(self)
 				mod.ui:init_state()
+				if mod.ui.countdown > 0 then
+					mod:play_sound_effect("Play_career_ability_kerillian_shade_enter")
+				else
+					mod:play_sound_effect("Play_career_ability_kruber_charge_hit_player")
+				end
 			end,
 			finish = function(self)
 				if mod.ui.countdown > 0 then
 					mod.ui.countdown = mod.ui.countdown - 1
 					mod.ui:set_state("countdown_1")
 				else
-					--mod.ui:set_state("waiting")
+					mod.ui:set_state("waiting")
 				end
 			end,
 		},
@@ -1777,6 +1789,16 @@ mod.hotkey_string = function(self, hotkey_table)
 	return hotkey_string
 end
 
+mod.play_sound_effect = function(self, sound_event)
+	local player_unit = mod:player_unit_from_peer_id(mod:my_peer_id())
+	if player_unit and mod:get("sound_effects") then
+		local first_person_extension = ScriptUnit.extension(player_unit, "first_person_system")
+		if first_person_extension then
+			first_person_extension:play_hud_sound_event(sound_event)
+		end
+	end
+end
+
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
 -- ##### ███████║██║   ██║██║   ██║█████╔╝ ███████╗ ###################################################################
@@ -1819,7 +1841,7 @@ local create_ui_elements = function(func, self, ...)
 	return result
 end
 mod:hook(BuffUI, "_create_ui_elements", create_ui_elements)
---mod:hook(ObserverUI, "create_ui_elements", create_ui_elements)
+--mod:hook(UnitFrameUI, "_create_ui_elements", create_ui_elements)
 --[[
 	Update widgets
 --]]
@@ -1827,7 +1849,7 @@ local update_widgets = function(self, dt)
 	mod.ui:update(dt, self.ui_renderer)
 end
 mod:hook_safe(BuffUI, "update", update_widgets)
---mod:hook_safe(ObserverUI, "update", update_widgets)
+--mod:hook_safe(UnitFrameUI, "update", update_widgets)
 --[[
 	Draw widgets
 --]]
@@ -1848,7 +1870,7 @@ local draw_widgets = function(self, dt)
 	end
 end
 mod:hook_safe(BuffUI, "draw", draw_widgets)
---mod:hook_safe(ObserverUI, "draw", draw_widgets)
+--mod:hook_safe(UnitFrameUI, "draw", draw_widgets)
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
 -- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################
