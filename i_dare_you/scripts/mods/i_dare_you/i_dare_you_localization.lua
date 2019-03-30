@@ -11,15 +11,15 @@ return {
 	},
 	activate_dare_1 = {
 		en = "Choose dare 1",
-		de = "Wähle Herausforderung 1",
+		de = "Wähle Pflicht 1",
 	},
 	activate_dare_2 = {
 		en = "Choose dare 2",
-		de = "Wähle Herausforderung 2",
+		de = "Wähle Pflicht 2",
 	},
 	activate_dare_3 = {
 		en = "Choose dare 3",
-		de = "Wähle Herausforderung 3",
+		de = "Wähle Pflicht 3",
 	},
 	mode = {
 		en = "Mode",
@@ -60,6 +60,14 @@ return {
 		en = "I dare you!",
 		de = "Untersteh dich!",
 	},
+	incoming_dare = {
+		en = "Incoming dare!",
+		de = "Nahende Pflicht!",
+	},
+	choose_dare = {
+		en = "Choose dare!",
+		de = "Wähle Pflicht!",
+	},
 	error_not_enough_players = {
 		en = "Not enough players to play I dare you!",
 		de = "Nicht genügend Spieler für Untersteh dich!",
@@ -70,15 +78,15 @@ return {
 	},
 	error_not_enough_dares = {
 		en = "Not enough dares activated! Please activate at least 3 dares!",
-		de = "Nicht genug Herausforderungen aktiviert! Aktiviere mindestens 3 Herausforderungen!",
+		de = "Nicht genug Pflichten aktiviert! Aktiviere mindestens 3 Pflichten!",
 	},
 	configure_dares = {
 		en = "Configure Dares",
-		de = "Herausforderungen Konfigurieren",
+		de = "Pflichten Konfigurieren",
 	},
 	configure_dares_description = {
 		en = "Set custom settings for specific dares.",
-		de = "Benutzerdefinierte Einstellungen zu spezifischen Herausforderungen.",
+		de = "Benutzerdefinierte Einstellungen zu spezifischen Pflichten.",
 	},
 	unit_text_seconds = {
 		en = "sec",
@@ -93,7 +101,7 @@ return {
 	},
 	dare_deactivate_description = {
 		en = "Deactivates the dare from being executed.",
-		de = "Deaktiviert diese Herausforderung.",
+		de = "Deaktiviert diese Pflicht.",
 	},
 	dare_length = {
 		en = "Length",
@@ -101,7 +109,7 @@ return {
 	},
 	dare_length_description = {
 		en = "Defines how long the specific dare is in seconds.",
-		de = "Definiert wie lange die Herausforderung is in Sekunden.",
+		de = "Definiert wie lange die Pflicht is in Sekunden.",
 	},
 	selection_time = {
 		en = "Selection Time",
@@ -109,7 +117,7 @@ return {
 	},
 	selection_time_description = {
 		en = "Defines the time players have to choose a dare in seconds.",
-		de = "Definiert die Zeit die Spieler haben um eine Herausforderung zu wählen in Sekunden.",
+		de = "Definiert die Zeit die Spieler haben um eine Pflicht zu wählen in Sekunden.",
 	},
 	dare_punishment = {
 		en = "Punishments",
@@ -117,7 +125,7 @@ return {
 	},
 	dare_punishment_description = {
 		en = "Possible punishments for this dare.",
-		de = "Mögliche Bestrafungen für diese Herausforderung.",
+		de = "Mögliche Bestrafungen für diese Pflicht.",
 	},
 	dare_punishment_damage = {
 		en = "Damage",
@@ -137,19 +145,43 @@ return {
 	},
 	random_choice_description = {
 		en = "If you're choosing a dare it automatically chooses a random dare.",
-		de = "Wenn du eine Herausforderung wählen musst wird automatisch eine zufällige Auswahl getroffen.",
+		de = "Wenn du eine Pflicht wählen musst wird automatisch eine zufällige Auswahl getroffen.",
 	},
 	activate_random_dare = {
 		en = "Random Dare",
-		de = "Zufällige Herausforderung",
+		de = "Zufällige Pflicht",
 	},
 	activate_random_dare_description = {
 		en = "Choose a random dare.",
-		de = "Wähle eine zufällige Herausforderung.",
+		de = "Wähle eine zufällige Pflicht.",
 	},
 	yourself = {
 		en = "Yourself",
 		de = "Dich",
+	},
+	start_server = {
+		en = "Start Server",
+		de = "Server Starten",
+	},
+	start_server_description = {
+		en = "Starts / restarts I dare you! server.",
+		de = "Startet / Restartet Untersteh dich! Server.",
+	},
+	stop_server = {
+		en = "Stop Server",
+		de = "Server Stoppen",
+	},
+	stop_server_description = {
+		en = "Stops I dare you! server.",
+		de = "Stoppt Untersteh dich! Server.",
+	},
+	initial_time = {
+		en = "Initial Time",
+		de = "Anfangszeit",
+	},
+	initial_time_description = {
+		en = "Time before the first dare selection in a mission.",
+		de = "Zeit vor der ersten Pflichtauswahl in einer Mission.",
 	},
 
 	-- Dares

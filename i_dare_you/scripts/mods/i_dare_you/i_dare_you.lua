@@ -93,6 +93,7 @@ end
 --]]
 mod.start_server = function()
 	if mod:is_server() then
+		mod.server:stop()
 		mod.server:start()
 	end
 end
@@ -145,6 +146,11 @@ mod:network_register("reset_ui_client", function(sender, state_name)
 	state_name = state_name or "idle"
 	mod.ui:set_state(state_name)
 end)
+
+mod:network_register("start_server_client", function(sender)
+	mod.ui:set_state("start_server_grow")
+end)
+
 --[[
 	Start dare selection
 	Everyone receives this from server
@@ -225,6 +231,16 @@ mod:network_register("start_dare_client", function(sender, dare_name, time)
 	mod.data.dare_time = time
 	mod.data.dare_running = true
 	mod.ui:set_state("waiting", time)
+end)
+--[[
+	Sync active dare running time
+	Clients receive this from server
+--]]
+mod:network_register("sync_time_client", function(sender, time)
+	if debug then
+		mod:echo("Dare time synced to '"..tostring(time).."'.")
+	end
+	mod.data.dare_time = time
 end)
 --[[
 	Dare finished
@@ -363,6 +379,7 @@ end
 mod.server = {
 	state = nil,
 	timer = 0,
+	show_title = false,
 	--mod_users = {},
 	--[[
 		Start server system
@@ -371,7 +388,8 @@ mod.server = {
 		mod:network_send("reset_ui_client", "all")
 		if mod:has_enough_players() and not mod:is_in_inn() then
 			if mod.data.in_mission then
-				mod:echo(mod:localize("start_i_dare_you"))
+				--mod:echo(mod:localize("start_i_dare_you"))
+				self.show_title = true,
 				self:set_state("init")
 			end
 		else
@@ -452,8 +470,15 @@ mod.server = {
 		},
 		init = {
 			id = 1,
-			time = 5,
+			time = 10,
+			title_in = 5,
 			start = function(self)
+			end,
+			update = function(self, dt)
+				if mod.server.show_title and mod.server.timer >= self.title_in then
+					mod.server.show_title = false
+					mod:network_send("start_server_client", "all")
+				end
 			end,
 			finish = function(self)
 				mod.server:set_state("selection")
@@ -462,9 +487,18 @@ mod.server = {
 		waiting = {
 			id = 2,
 			time = 30,
-			timer_sent = false,
+			sync_in = 5,
+			sync_timer = 0,
 			start = function(self)
-				self.timer_sent = false
+				self.sync_timer = 0
+			end,
+			update = function(self, dt)
+				self.sync_timer = self.sync_timer + dt
+				if self.sync_timer >= self.sync_in then
+					local time_left = self.time - mod.server.timer
+					mod:network_send("sync_time_client", "all", time_left)
+					self.sync_timer = 0
+				end
 			end,
 			finish = function(self)
 				mod:network_send("dare_finished_client", "all", "time")
@@ -578,7 +612,10 @@ mod.server = {
 		if state then
 			if debug then mod:echo("State '"..state_name.."' started!") end
 			self.state = state
-			if self.state.id == 2 then
+			if self.state.id == 1 then
+				self.state.time = mod:get("initial_time") or 10
+				mod:echo("init time :'"..tostring(self.state.time).."'")
+			elseif self.state.id == 2 then
 				self.state.time = time or 30
 			elseif self.state.id == 3 then
 				self.state.time = mod:get("selection_time") + 1 or 11
@@ -604,6 +641,8 @@ mod.server = {
 			self.timer = self.timer + dt
 			if self.timer >= self.state.time then
 				self.state:finish()
+			elseif self.state.update then
+				self.state:update(dt)
 			end
 		end
 	end,
@@ -636,6 +675,62 @@ mod.ui = {
 			start = function(self)
 			end,
 			finish = function(self)
+			end,
+		},
+		start_server_grow = {
+			render = { "mod_title" },
+			name = "start_server_grow",
+			mod_title = {
+				start_size = 0,
+				finish_size = 120,
+				update_size = true,
+				start_offset = {0, 0, 0},
+				fade_in = true,
+				fade_in_time = 0.5,
+				text = "mod_title",
+			},
+			time = 0.5,
+			start = function(self)
+				mod.ui:init_state()
+			end,
+			finish = function(self)
+				mod.ui:set_state("start_server_pop")
+			end,
+		},
+		start_server_pop = {
+			render = { "mod_title" },
+			name = "start_server_pop",
+			mod_title = {
+				start_size = 120,
+				finish_size = 80,
+				update_size = true,
+				start_offset = {0, 0, 0},
+				text = "mod_title",
+			},
+			time = 0.5,
+			start = function(self)
+				mod.ui:init_state()
+			end,
+			finish = function(self)
+				mod.ui:set_state("start_server_fade")
+			end,
+		},
+		start_server_fade = {
+			render = { "mod_title" },
+			name = "start_server_fade",
+			mod_title = {
+				start_size = 80,
+				start_offset = {0, 0, 0},
+				fade_out = true,
+				fade_out_time = 3,
+				text = "mod_title",
+			},
+			time = 3,
+			start = function(self)
+				mod.ui:init_state()
+			end,
+			finish = function(self)
+				mod.ui:set_state("idle")
 			end,
 		},
 		waiting = {
@@ -1261,8 +1356,9 @@ mod.ui = {
 	--]]
 	create_widgets = function(self)
 		self.widgets = {}
-		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("title_incoming_dare", "Incoming Dare!", nil, nil, mod.is_not_selector)
-		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("title_choose_dare", "Choose Dare!", nil, nil, mod.is_selector)
+		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("title_incoming_dare", mod:localize("incoming_dare"), nil, nil, mod.is_not_selector)
+		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("title_choose_dare", mod:localize("choose_dare"), nil, nil, mod.is_selector)
+		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("mod_title", mod:localize("start_i_dare_you"))
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("reminder", "N/A")
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("countdown", "N/A")
 		self.widgets[#self.widgets+1] = mod:create_simple_text_widget("active_countdown", "N/A")
@@ -1290,7 +1386,7 @@ mod.ui = {
 								name = mod:player_name_from_peer_id(mod.data.victim_peer_id)
 								widget.style.text.text_color = {255, 255, 255, 255}
 							else
-								widget.style.text.text_color = {255, 0, 255, 0}
+								widget.style.text.text_color = {255, 255, 0, 0}
 							end
 							widget.content.text = string.format("For %s!", name)
 						elseif animation.text == "title" then
@@ -1299,6 +1395,8 @@ mod.ui = {
 							else
 								widget.style.text.text_color = {255, 255, 0, 0}
 							end
+						elseif animation.text == "mod_title" then
+							widget.content.text = mod:localize("start_i_dare_you")
 						elseif animation.text == "dare_1" or (animation.text == "dare_1_hotkey" and not mod.is_selector()) then
 							widget.content.text = mod.data.dares[1].text
 							widget.style.text.text_color = mod.data.dares[1].text_color
