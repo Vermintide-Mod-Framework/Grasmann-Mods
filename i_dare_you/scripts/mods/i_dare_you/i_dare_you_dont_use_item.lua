@@ -7,24 +7,34 @@ local mod = get_mod("i_dare_you")
 
 local item = 0
 mod:hook_safe(ActionHealingDraught, "finish", function(self, reason)
-    item = item + 1
+    local player = Managers.player:player_from_peer_id(mod:my_peer_id())
+    if self.owner_player and self.owner_player == player then
+        item = item + 1
+    end
 end)
 mod:hook_disable(ActionHealingDraught, "finish")
 
 mod:hook_safe(ActionPotion, "client_owner_start_action", function(self, new_action, t)
-    item = item + 1
+    local player = Managers.player:player_from_peer_id(mod:my_peer_id())
+    if self.owner_player and self.owner_player == player then
+        item = item + 1
+    end
 end)
 mod:hook_disable(ActionPotion, "client_owner_start_action")
 
 mod:hook(WeaponUnitExtension, "_finish_action", function(func, self, reason, data)
-    -- Grenade
-    if data and data.action and data.action.impact_data and data.action.impact_data.grenade then
-        item = item + 1
-    end
-    local action = self.current_action_settings
-    if action and action.lookup_data and action.lookup_data.item_template_name == "first_aid_kit_02" then
-        if reason == "action_complete" then
+    local owner_player = Managers.player:unit_owner(self.owner_unit)
+    local player = Managers.player:player_from_peer_id(mod:my_peer_id())
+    if owner_player and owner_player == player then
+        -- Grenade
+        if data and data.action and data.action.impact_data and data.action.impact_data.grenade then
             item = item + 1
+        end
+        local action = self.current_action_settings
+        if action and action.lookup_data and action.lookup_data.item_template_name == "first_aid_kit_02" then
+            if reason == "action_complete" then
+                item = item + 1
+            end
         end
     end
     return func(self, reason, data)
