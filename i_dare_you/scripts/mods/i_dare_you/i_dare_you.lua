@@ -265,6 +265,8 @@ mod:network_register("dare_finished_client", function(sender, reason)
 	end
 	if mod:is_victim() then
 		mod:finish_dare()
+	elseif mod.data.active_dare then
+		mod:finish_dare()
 	end
 	mod.data.dare_running = false
 end)
@@ -388,6 +390,7 @@ mod.server = {
 	--]]
 	start = function(self)
 		mod:network_send("reset_ui_client", "all")
+		mod:network_send("dare_finished_client", "all", "server_start")
 		if mod:has_enough_players() and not mod:is_in_inn() then
 			if mod.data.in_mission then
 				--mod:echo(mod:localize("start_i_dare_you"))
@@ -431,7 +434,9 @@ mod.server = {
 		if debug then
 			mod:dump(mod.data.mod_users, "mod.data.mod_users", 2)
 		end
-		self:start()
+		if self.state and self.state.id == 0 then
+			self:start()
+		end
 	end,
 	--[[
 		Get user index
@@ -1092,7 +1097,7 @@ mod.ui = {
 			time = 10,
 			start = function(self)
 				mod.ui:init_state()
-				if mod:is_selector() then
+				if mod.is_selector() then
 					mod.data.is_selecting = true
 					-- Random choice
 					if mod:get("random_choice") then
@@ -1788,7 +1793,9 @@ mod.hotkey_string = function(self, hotkey_table)
 	end
 	return hotkey_string
 end
-
+--[[
+	Play sound effect
+--]]
 mod.play_sound_effect = function(self, sound_event)
 	local player_unit = mod:player_unit_from_peer_id(mod:my_peer_id())
 	if player_unit and mod:get("sound_effects") then
@@ -1923,7 +1930,7 @@ end
 mod.on_game_state_changed = function(status, state)
 	if mod.data.active and mod:is_server() then
 		-- Add self to mod users
-		mod.server:add_mod_user(mod:my_peer_id())
+		--mod.server:add_mod_user(mod:my_peer_id())
 		if state == "StateIngame" and status == "enter" then
 			-- if not mod:is_in_inn() or debug then
 			-- 	--mod.server:set_state("init")
