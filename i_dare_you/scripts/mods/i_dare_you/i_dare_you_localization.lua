@@ -147,6 +147,10 @@ return {
 		en = "Choose a random dare.",
 		de = "Wähle eine zufällige Herausforderung.",
 	},
+	yourself = {
+		en = "Yourself",
+		de = "Dich",
+	},
 
 	-- Dares
 	jump_continuously_text = {
