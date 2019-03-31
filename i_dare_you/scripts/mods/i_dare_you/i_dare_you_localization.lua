@@ -238,8 +238,8 @@ return {
 		de = "Keine Nahkampfangriffe!",
 	},
 	dont_use_ranged_text = {
-		en = "Don't use ranged!",
-		de = "Benutze keinen Fernkampf!",
+		en = "Don't equip ranged weapon!",
+		de = "Rüste keine Fernkampfwaffe aus!",
 	},
 	dont_use_ranged_reminder = {
 		en = "No ranged!",

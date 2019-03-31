@@ -56,6 +56,7 @@ mod.template_dare = {
         damage = 5,
 	},
 	started = false,
+	testing = false,
 	-- Timers
 	timer = 0,
 	time = 1,
@@ -86,19 +87,24 @@ mod.template_dare = {
             local unit = mod:player_unit_from_peer_id(peer_id)
 			if mod:is_peer_id_alive(peer_id) then
 				if not self:check_state_function() then
-					-- State timer
-					self.timer = self.timer + dt
-					if self.timer >= self.time then
-						-- Punish!
-						self.timer = 0
-						self:punish()
-					end
-					-- Reminder timer
-					self.reminder_timer = self.reminder_timer + dt
-					if self.reminder_timer >= self.reminder_time then
-						-- Remind!
-						self.reminder_timer = 0
-						mod:remind_dare()
+					-- Testing
+					if self.testing then
+						mod:echo("Dare '"..self.id.."' triggered.")
+					else
+						-- State timer
+						self.timer = self.timer + dt
+						if self.timer >= self.time then
+							-- Punish!
+							self.timer = 0
+							self:punish()
+						end
+						-- Reminder timer
+						self.reminder_timer = self.reminder_timer + dt
+						if self.reminder_timer >= self.reminder_time then
+							-- Remind!
+							self.reminder_timer = 0
+							mod:remind_dare()
+						end
 					end
 				else
 					-- Good

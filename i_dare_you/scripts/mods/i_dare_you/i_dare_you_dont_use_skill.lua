@@ -26,6 +26,7 @@ dont_use_skill.punishments = {"damage"}
 dont_use_skill.values = {damage = 25}
 dont_use_skill.reminder_time = 0
 dont_use_skill.on_start = function(self)
+    career_skill = 0
     mod:hook_enable(CareerExtension, "start_activated_ability_cooldown")
 end
 dont_use_skill.check_state_function = function(self)

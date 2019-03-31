@@ -50,6 +50,7 @@ dont_use_item.punishments = {"damage"}
 dont_use_item.values = {damage = 30}
 dont_use_item.reminder_time = 0
 dont_use_item.on_start = function(self)
+    item = 0
     mod:hook_enable(ActionHealingDraught, "finish")
     mod:hook_enable(ActionPotion, "client_owner_start_action")
     mod:hook_enable(WeaponUnitExtension, "_finish_action")

@@ -5,26 +5,36 @@ local mod = get_mod("i_dare_you")
     Forces victim to not dodge.
 --]]
 
+local dodge = 0
+mod:hook_safe(PlayerCharacterStateDodging, "start_dodge", function(self)
+    local player_unit = mod:player_unit_from_peer_id(mod:my_peer_id())
+    if player_unit == self.unit then
+        dodge = dodge + 1
+    end
+end)
+mod:hook_disable(PlayerCharacterStateDodging, "start_dodge")
+
 local dont_dodge = mod:get_template()
 dont_dodge.id = "dont_dodge"
 dont_dodge.text = mod:localize("dont_dodge_text")
 dont_dodge.reminder = mod:localize("dont_dodge_reminder")
-dont_dodge.time = 0.25
+dont_dodge.time = 0
 dont_dodge.punishments = {"damage"}
 dont_dodge.values = {damage = 15}
 dont_dodge.reminder_time = 0
+dont_dodge.on_start = function(self)
+    dodge = 0
+    mod:hook_enable(PlayerCharacterStateDodging, "start_dodge")
+end
 dont_dodge.check_state_function = function(self)
-    local peer_id = mod:my_peer_id()
-    local unit = mod:player_unit_from_peer_id(peer_id)
-    local status_extension = ScriptUnit.has_extension(unit, "status_system")
-    if status_extension then
-        local is_dodging = status_extension:get_is_dodging()
-        if is_dodging then
-            return false
-        else
-            return true
-        end
+    if dodge > 0 then
+        dodge = dodge - 1
+        return false
     end
+    return true
+end
+dont_dodge.on_finish = function(self)
+    mod:hook_disable(PlayerCharacterStateDodging, "start_dodge")
 end
 
 return dont_dodge

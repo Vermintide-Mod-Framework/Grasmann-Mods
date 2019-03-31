@@ -24,6 +24,9 @@ local debug = mod:get("debug")
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
 
+--local test_dares = table.clone(mod.dares)
+
+
 -- Persistent Data
 mod:persistent_table("data", {
 	-- Peer IDs
@@ -74,7 +77,7 @@ mod.activate_dare_3 = function(held, automatic)
 	mod:activate_dare(3, automatic)
 end
 mod.activate_random_dare = function(held, automatic)
-	local rnd = math.random(1, 3)
+	local rnd = math.random(1, #mod.data.dares)
 	mod:activate_dare(rnd, automatic)
 end
 --[[
@@ -82,10 +85,12 @@ end
 --]]
 mod.activate_dare = function(self, id, automatic)
 	if self.data.is_selecting or automatic then
-		self.data.selected_dare = self.data.dares[id].id
-		self.data.is_selecting = false
-		local server_peer_id = self:server_peer_id()
-		self:network_send("dare_selected_server", server_peer_id, self.data.selected_dare)
+		if self.data.dares[id] then
+			self.data.selected_dare = self.data.dares[id].id
+			self.data.is_selecting = false
+			local server_peer_id = self:server_peer_id()
+			self:network_send("dare_selected_server", server_peer_id, self.data.selected_dare)
+		end
 	end
 end
 --[[
@@ -392,7 +397,7 @@ mod.server = {
 		mod:network_send("reset_ui_client", "all")
 		mod:network_send("dare_finished_client", "all", "server_start")
 		if mod:has_enough_players() and not mod:is_in_inn() then
-			if mod.data.in_mission then
+			if mod.data.in_mission and not test_dares then
 				--mod:echo(mod:localize("start_i_dare_you"))
 				self.show_title = true,
 				self:set_state("init")
@@ -575,7 +580,7 @@ mod.server = {
 	get_random_dares = function(self, selector_peer_id, victim_peer_id)
 		--local available_dares = table.clone(mod.dares)
 		local available_dares = self:get_available_dares(selector_peer_id, victim_peer_id)
-		if #available_dares < 3 then
+		if #available_dares < 1 then
 			mod:echo(mod:localize("error_not_enough_dares"))
 			self:stop()
 			return
@@ -1414,29 +1419,53 @@ mod.ui = {
 						elseif animation.text == "mod_title" then
 							widget.content.text = mod:localize("start_i_dare_you")
 						elseif animation.text == "dare_1" or (animation.text == "dare_1_hotkey" and not mod.is_selector()) then
-							widget.content.text = mod.data.dares[1].text
-							widget.style.text.text_color = mod.data.dares[1].text_color
-							widget.content.dare_id = mod.data.dares[1].id
+							if mod.data.dares[1] then
+								widget.content.text = mod.data.dares[1].text
+								widget.style.text.text_color = mod.data.dares[1].text_color
+								widget.content.dare_id = mod.data.dares[1].id
+							else
+								widget.content.text = ""
+							end
 						elseif animation.text == "dare_1_hotkey" and mod.is_selector() then
-							widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].text)
-							widget.style.text.text_color = mod.data.dares[1].text_color
-							widget.content.dare_id = mod.data.dares[1].id
+							if mod.data.dares[1] then
+								widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].text)
+								widget.style.text.text_color = mod.data.dares[1].text_color
+								widget.content.dare_id = mod.data.dares[1].id
+							else
+								widget.content.text = ""
+							end
 						elseif animation.text == "dare_2" or (animation.text == "dare_2_hotkey" and not mod.is_selector()) then
-							widget.content.text = mod.data.dares[2].text
-							widget.style.text.text_color = mod.data.dares[2].text_color
-							widget.content.dare_id = mod.data.dares[2].id
+							if mod.data.dares[2] then
+								widget.content.text = mod.data.dares[2].text
+								widget.style.text.text_color = mod.data.dares[2].text_color
+								widget.content.dare_id = mod.data.dares[2].id
+							else
+								widget.content.text = ""
+							end
 						elseif animation.text == "dare_2_hotkey" and mod.is_selector() then
-							widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
-							widget.style.text.text_color = mod.data.dares[2].text_color
-							widget.content.dare_id = mod.data.dares[2].id
+							if mod.data.dares[2] then
+								widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
+								widget.style.text.text_color = mod.data.dares[2].text_color
+								widget.content.dare_id = mod.data.dares[2].id
+							else
+								widget.content.text = ""
+							end
 						elseif animation.text == "dare_3" or (animation.text == "dare_3_hotkey" and not mod.is_selector()) then
-							widget.content.text = mod.data.dares[3].text
-							widget.style.text.text_color = mod.data.dares[3].text_color
-							widget.content.dare_id = mod.data.dares[3].id
+							if mod.data.dares[3] then
+								widget.content.text = mod.data.dares[3].text
+								widget.style.text.text_color = mod.data.dares[3].text_color
+								widget.content.dare_id = mod.data.dares[3].id
+							else
+								widget.content.text = ""
+							end
 						elseif animation.text == "dare_3_hotkey" and mod.is_selector() then
-							widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
-							widget.style.text.text_color = mod.data.dares[3].text_color
-							widget.content.dare_id = mod.data.dares[3].id
+							if mod.data.dares[3] then
+								widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
+								widget.style.text.text_color = mod.data.dares[3].text_color
+								widget.content.dare_id = mod.data.dares[3].id
+							else
+								widget.content.text = ""
+							end
 						elseif animation.text == "time" then
 							widget.content.text = self.state.time
 						elseif animation.text == "reminder" then
@@ -1918,6 +1947,9 @@ mod.update = function(dt)
 		mod.server:update(dt)
 	end
 	mod:update_dare(dt)
+	if test_dares then
+		mod:update_test_dares(dt)
+	end
 end
 --[[
 	Mod unload
@@ -1930,7 +1962,6 @@ end
 mod.on_game_state_changed = function(status, state)
 	if mod.data.active and mod:is_server() then
 		-- Add self to mod users
-		--mod.server:add_mod_user(mod:my_peer_id())
 		if state == "StateIngame" and status == "enter" then
 			-- if not mod:is_in_inn() or debug then
 			-- 	--mod.server:set_state("init")
@@ -1944,6 +1975,7 @@ mod.on_game_state_changed = function(status, state)
 			mod.data.in_mission = false
 			mod.server:stop()
 		end
+		mod.server:add_mod_user(mod:my_peer_id())
 	end
 end
 --[[
@@ -2032,4 +2064,45 @@ mod.on_all_mods_loaded = function()
 	if mod:is_server() then
 		mod.server:add_mod_user(mod:my_peer_id())
 	end
+end
+
+-- ##### ████████╗███████╗███████╗████████╗    ██████╗  █████╗ ██████╗ ███████╗███████╗ ###############################
+-- ##### ╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝    ██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝ ###############################
+-- #####    ██║   █████╗  ███████╗   ██║       ██║  ██║███████║██████╔╝█████╗  ███████╗ ###############################
+-- #####    ██║   ██╔══╝  ╚════██║   ██║       ██║  ██║██╔══██║██╔══██╗██╔══╝  ╚════██║ ###############################
+-- #####    ██║   ███████╗███████║   ██║       ██████╔╝██║  ██║██║  ██║███████╗███████║ ###############################
+-- #####    ╚═╝   ╚══════╝╚══════╝   ╚═╝       ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝ ###############################
+--[[
+	Start test dares
+--]]
+mod.start_test_dares = function(self)
+	for _, dare in pairs(test_dares) do
+		if mod:get(dare.id) then
+			dare.active = true
+			dare.testing = true
+			dare:start()
+		end
+	end
+end
+--[[
+	Update test dares
+--]]
+mod.update_test_dares = function(self, dt)
+	for _, dare in pairs(test_dares) do
+		if dare.active then
+			dare:update(dt)
+		end
+	end
+end
+--[[
+	Init test dares
+	Reset skill cooldown
+--]]
+if test_dares then
+	local unit = mod:player_unit_from_peer_id(mod:my_peer_id())
+	local career_extension = ScriptUnit.extension(unit, "career_system")
+	if career_extension then
+		career_extension:reduce_activated_ability_cooldown_percent(100)
+	end
+	mod:start_test_dares()
 end

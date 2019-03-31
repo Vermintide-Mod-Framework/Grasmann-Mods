@@ -23,6 +23,7 @@ dont_push.punishments = {"damage"}
 dont_push.values = {damage = 15}
 dont_push.reminder_time = 0
 dont_push.on_start = function(self)
+    push = 0
     mod:hook_enable(ActionPushStagger, "client_owner_start_action")
 end
 dont_push.check_state_function = function(self)

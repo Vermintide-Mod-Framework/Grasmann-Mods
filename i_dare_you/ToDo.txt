@@ -1,0 +1,31 @@
+- DARE don't pick up items / ammo / books
+- DARE don't tag enemies
+- DARE don't take damage
+- DARE don't kill
+- DARE don't do headshots
+- DARE keep crouching
+- DARE don't do friendly fire
+- DARE do friendly fire
+
+- Condition check for don't use item
+
+- Percentage damage incl. grim effects???
+- Negate healing item heal amount???
+- Knocked down state aborts dare and excludes player from selection???
+- Pick up player is blocking -> additional option to ignore???
+- Switch don't quick-switch to don't switch weapons???
+- Chance for a dare to be active for everyone???
+
+- Server deactivates when only one player alive
+
+RESOLVED:
+- Fixed UI spamming errors when less than 3 dares
+- Slayer condition check for don't use ranged
+- Rename don't use ranged to don't equip ranged
+- Increase frequency for don't use ranged
+- Push block attack not working with don't do melee
+- Foot knight skill is using dodge state -> filter in don't dodge
+- Zealot skill triggers dodge
+- Handmaiden skill triggers dodge
+- Slayer skill end bounce triggers stay on ground
+- Shade skill triggers dodge
