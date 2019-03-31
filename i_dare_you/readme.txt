@@ -4,6 +4,9 @@ Description :
 Lets players dare each other for random things.
 
 Changelog:
+1.0.6b
+	- Implemented dares affecting the whole party
+	- Fixed bug in don't use item
 1.0.5b
 	- Don't use item will only appear for players who have items other than tomes and grims
 	- Fixed issue where server deactivates when all but one player die

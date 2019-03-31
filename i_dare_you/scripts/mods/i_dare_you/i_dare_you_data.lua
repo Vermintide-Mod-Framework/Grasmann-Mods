@@ -224,6 +224,21 @@ return {
 						default_value = false,
 					},
 					{
+						setting_id = "all_players",
+						type = "checkbox",
+						default_value = true,
+						sub_widgets = {
+							{
+								setting_id = "all_players_chance",
+								type = "numeric",
+								range = {1, 100},
+								default_value = 5,
+								decimals_number = 0,
+								unit_text = "unit_text_percent",
+							},
+						},
+					},
+					{
 						setting_id = "configure_dares",
 						type = "group",
 						sub_widgets = customize_dares_table,

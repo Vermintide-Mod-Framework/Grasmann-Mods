@@ -11,7 +11,10 @@
 - Negate healing item heal amount???
 - Pick up player is blocking -> additional option to ignore???
 - Switch don't quick-switch to don't switch weapons???
+
+RESOLVED in 1.0.6b:
 - Chance for a dare to be active for everyone???
+- Fixed bug in don't use item
 
 RESOLVED in 1.0.5b:
 - Server deactivates when only one player alive

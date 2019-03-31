@@ -55,13 +55,19 @@ dont_use_item.on_start = function(self)
     mod:hook_enable(ActionPotion, "finish")
     mod:hook_enable(WeaponUnitExtension, "_finish_action")
 end
+local get_item_name = function(inventory_extension, slot_name)
+	local slot_data = inventory_extension:get_slot_data(slot_name)
+	local item_data = slot_data and slot_data.item_data
+	local item_name = item_data and item_data.name
+	return item_name
+end
 dont_use_item.check_condition = function(self, selector_peer_id, victim_peer_id)
     local unit = mod:player_unit_from_peer_id(victim_peer_id)
     local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
     if inventory_extension then
-        local healthkit = inventory_extension:get_item_name("slot_healthkit")
-        local potion = inventory_extension:get_item_name("slot_potion")
-        local grenade = inventory_extension:get_item_name("slot_grenade")
+        local healthkit = get_item_name(inventory_extension, "slot_healthkit")
+        local potion = get_item_name(inventory_extension, "slot_potion")
+        local grenade = get_item_name(inventory_extension, "slot_grenade")
         local healthkit_slot = healthkit and healthkit ~= "wpn_side_objective_tome_01"
         local potion_slot = potion and potion ~= "wpn_grimoire_01"
         if healthkit_slot or potion_slot or grenade then

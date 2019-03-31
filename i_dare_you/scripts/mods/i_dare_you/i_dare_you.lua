@@ -34,9 +34,11 @@ mod:persistent_table("data", {
 	victim_peer_id = nil,
 	-- Dare choices
 	dares = {},
+	all_id = nil,
 	is_selecting = false,
 	selection = false,
 	-- Selected dare
+	all = false,
 	selected_dare = nil,
 	active_dare = nil,
 	dare_time = 30,
@@ -89,7 +91,7 @@ mod.activate_dare = function(self, id, automatic)
 			self.data.selected_dare = self.data.dares[id].id
 			self.data.is_selecting = false
 			local server_peer_id = self:server_peer_id()
-			self:network_send("dare_selected_server", server_peer_id, self.data.selected_dare)
+			self:network_send("dare_selected_server", server_peer_id, self.data.selected_dare, mod.data.all_id == id)
 		end
 	end
 end
@@ -162,7 +164,7 @@ end)
 	Start dare selection
 	Everyone receives this from server
 --]]
-mod:network_register("start_dare_selection_client", function(sender, selector_peer_id, victim_peer_id, dares, time)
+mod:network_register("start_dare_selection_client", function(sender, selector_peer_id, victim_peer_id, dares, time, all_id)
 	if debug then
 		mod:echo("Selector:'"..tostring(selector_peer_id).."'")
 		mod:echo("Victim:'"..tostring(victim_peer_id).."'")
@@ -180,20 +182,25 @@ mod:network_register("start_dare_selection_client", function(sender, selector_pe
 		active_dares[#active_dares+1] = mod:get_dare(dare)
 	end
 	mod.data.dares = active_dares
+	mod.data.all_id = all_id
+	mod:echo("Received all id:'"..tostring(all_id).."'")
 	mod.ui:start_selection(time)
 end)
 --[[
 	Dare was selected by selector
 	Server receives this from clients
 --]]
-mod:network_register("dare_selected_server", function(sender, dare_name)
+mod:network_register("dare_selected_server", function(sender, dare_name, all)
 	local check_dare = mod:get_dare(dare_name)
 	if check_dare then
 		if debug then
 			mod:echo("Dare '"..dare_name.."' valid!")
 		end
 		local time = mod:get(dare_name.."_dare_length") or 30
-		mod:network_send("dare_selected_client", "all", mod.data.selector_peer_id, mod.data.victim_peer_id, dare_name, time)
+		if all then
+			if debug then mod:echo("Activate dare for everyone!") end
+		end
+		mod:network_send("dare_selected_client", "all", mod.data.selector_peer_id, mod.data.victim_peer_id, dare_name, time, all)
 		mod.server:set_state("countdown")
 	else
 		if debug then
@@ -205,7 +212,7 @@ end)
 	Dare was selected
 	Clients receive this from server
 --]]
-mod:network_register("dare_selected_client", function(sender, selector_peer_id, victim_peer_id, dare_name, time)
+mod:network_register("dare_selected_client", function(sender, selector_peer_id, victim_peer_id, dare_name, time, all)
 	if debug then
 		mod:echo("Selector:'"..tostring(selector_peer_id).."'")
 		mod:echo("Victim:'"..tostring(victim_peer_id).."'")
@@ -218,6 +225,7 @@ mod:network_register("dare_selected_client", function(sender, selector_peer_id, 
 	mod.data.selection = false
 	mod.data.selected_dare = dare_name
 	mod.data.dare_time = time
+	mod.data.all = all
 	if mod:is_victim() then
 		mod:set_dare(dare_name, time)
 	end
@@ -254,24 +262,29 @@ end)
 	Server receives this from clients
 --]]
 mod:network_register("dare_finished_server", function(sender, reason)
-	if debug then
-		mod:echo("Dare finished! Reason:'"..reason.."'")
+	if not mod.data.all then
+		if debug then
+			mod:echo("Dare finished! Reason:'"..reason.."'")
+		end
+		mod:network_send("dare_finished_client", "all", reason)
+		mod.server:set_state("selection")
 	end
-	mod:network_send("dare_finished_client", "all", reason)
-	mod.server:set_state("selection")
 end)
 --[[
 	Dare finished
 	Clients receive this from server
 --]]
 mod:network_register("dare_finished_client", function(sender, reason)
-	if debug then
-		mod:echo("Dare finished! Reason:'"..reason.."'")
+	if not mod.data.all or reason ~= "death" then
+		if debug then
+			mod:echo("Dare finished! Reason:'"..reason.."'")
+		end
+		if mod:is_victim() or mod.data.active_dare then
+			mod:finish_dare()
+		end
+		mod.data.dare_running = false
+		mod.data.all = false
 	end
-	if mod:is_victim() or mod.data.active_dare then
-		mod:finish_dare()
-	end
-	mod.data.dare_running = false
 end)
 --[[
 	Request punishment
@@ -533,10 +546,10 @@ mod.server = {
 					victim_peer_id = mod:random_player(selector_peer_id)
 				end
 				if selector_peer_id and victim_peer_id then
-					local dares = mod.server:get_random_dares(selector_peer_id, victim_peer_id)
+					local dares, all_id = mod.server:get_random_dares(selector_peer_id, victim_peer_id)
 					if dares then
 						local time = mod:get("selection_time")
-						mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares, time)
+						mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares, time, all_id)
 					end
 				else
 					if mod:has_enough_players() then
@@ -624,9 +637,15 @@ mod.server = {
 			return
 		end
 		local dares = {}
+		local all_rolled = false
+		local all_id = nil
 		for i = 1, 3 do
 			local rnd = math.random(1, #available_dares)
 			--dares[#dares+1] = available_dares[rnd].id --table.clone(available_dares[rnd])
+			if not all_rolled and mod:get("all_players") then
+				all_rolled = self:roll_all_chance(available_dares[rnd])
+				if all_rolled then all_id = #dares+1 end
+			end
 			dares[#dares+1] = available_dares[rnd]
 			table.remove(available_dares, rnd)
 		end
@@ -652,7 +671,27 @@ mod.server = {
 				end
 			end
 		end
-		return dares
+		return dares, all_id
+	end,
+	--[[
+		Roll for a chance to affect the whole team
+	--]]
+	roll_all_chance = function(self, dare_name)
+		local dare = mod:get_dare(dare_name)
+		local all_pass = true
+		for _, peer_id in pairs(mod.data.mod_users) do
+			if not dare:check_condition(nil, peer_id) then
+				all_pass = false
+				break
+			end
+		end
+		if all_pass then
+			local rnd = math.random(1, 100)
+			if rnd <= mod:get("all_players_chance") then
+				return true
+			end
+		end
+		return false
 	end,
 	--[[
 		Set server state
@@ -1184,6 +1223,7 @@ mod.ui = {
 				start_size = 40,
 				finish_size = 40,
 				update_size = true,
+				text = "victim_name",
 			},
 			dare_1 = {
 				start_offset = {0, -320, 0},
@@ -1441,13 +1481,16 @@ mod.ui = {
 					if animation.text then
 						if animation.text == "victim_name" then
 							local name = mod:localize("yourself")
-							if not mod:is_victim() then
+							if mod.data.all then
+								name = mod:localize("everybody")
+								widget.style.text.text_color = {255, 255, 255, 0}
+							elseif not mod:is_victim() then
 								name = mod:player_name_from_peer_id(mod.data.victim_peer_id)
 								widget.style.text.text_color = {255, 255, 255, 255}
 							else
 								widget.style.text.text_color = {255, 255, 0, 0}
 							end
-							widget.content.text = string.format("For %s!", name)
+							widget.content.text = string.format(mod:localize("for_text"), name)
 						elseif animation.text == "title" then
 							if not mod.is_selector() then
 								widget.style.text.text_color = {255, 255, 255, 255}
@@ -1464,6 +1507,9 @@ mod.ui = {
 							else
 								widget.content.text = ""
 							end
+							if mod.data.all_id == 1 then
+								widget.style.text.text_color = {255, 255, 255, 0}
+							end
 						elseif animation.text == "dare_1_hotkey" and mod.is_selector() then
 							if mod.data.dares[1] then
 								widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].text)
@@ -1471,6 +1517,9 @@ mod.ui = {
 								widget.content.dare_id = mod.data.dares[1].id
 							else
 								widget.content.text = ""
+							end
+							if mod.data.all_id == 1 then
+								widget.style.text.text_color = {255, 255, 255, 0}
 							end
 						elseif animation.text == "dare_2" or (animation.text == "dare_2_hotkey" and not mod.is_selector()) then
 							if mod.data.dares[2] then
@@ -1480,6 +1529,9 @@ mod.ui = {
 							else
 								widget.content.text = ""
 							end
+							if mod.data.all_id == 2 then
+								widget.style.text.text_color = {255, 255, 255, 0}
+							end
 						elseif animation.text == "dare_2_hotkey" and mod.is_selector() then
 							if mod.data.dares[2] then
 								widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
@@ -1487,6 +1539,9 @@ mod.ui = {
 								widget.content.dare_id = mod.data.dares[2].id
 							else
 								widget.content.text = ""
+							end
+							if mod.data.all_id == 2 then
+								widget.style.text.text_color = {255, 255, 255, 0}
 							end
 						elseif animation.text == "dare_3" or (animation.text == "dare_3_hotkey" and not mod.is_selector()) then
 							if mod.data.dares[3] then
@@ -1496,6 +1551,9 @@ mod.ui = {
 							else
 								widget.content.text = ""
 							end
+							if mod.data.all_id == 3 then
+								widget.style.text.text_color = {255, 255, 255, 0}
+							end
 						elseif animation.text == "dare_3_hotkey" and mod.is_selector() then
 							if mod.data.dares[3] then
 								widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
@@ -1503,6 +1561,9 @@ mod.ui = {
 								widget.content.dare_id = mod.data.dares[3].id
 							else
 								widget.content.text = ""
+							end
+							if mod.data.all_id == 3 then
+								widget.style.text.text_color = {255, 255, 255, 0}
 							end
 						elseif animation.text == "time" then
 							widget.content.text = self.state.time
@@ -1762,7 +1823,7 @@ end
 	Check if victim
 --]]
 mod.is_victim = function(self)
-	return self.data.victim_peer_id == self:my_peer_id()
+	return self.data.victim_peer_id == self:my_peer_id() or self.data.all
 end
 --[[
 	Check if selector
@@ -2094,6 +2155,8 @@ mod.on_setting_changed = function(setting_name)
 	elseif setting_name == "selection_time" then
 	elseif setting_name == "random_choice" then
 	elseif setting_name == "sound_effects" then
+	elseif setting_name == "all_players" then
+	elseif setting_name == "all_players_chance" then
 	else
 		if not mod:is_in_inn() then
 			mod.server:start_soft()

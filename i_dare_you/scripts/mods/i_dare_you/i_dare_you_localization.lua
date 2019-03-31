@@ -191,6 +191,35 @@ return {
 		en = "Plays sound effects for I dare you! UI.",
 		de = "Spielt Soundeffekte für Untersteh dich! UI.",
 	},
+	all_players = {
+		en = "All players",
+		de = "Alle Spieler",
+	},
+	all_players_description = {
+		en = "Allows for a random chance for one dare to affect all players.\n"..
+			"The dare must pass condition checks on all players.",
+		de = "Erlaubt eine zufällige Chance dass eine Pflicht alle Spieler betrifft.\n"..
+			"Alle Spieler müssen die Bedingungen für die Pflicht erfüllen.",
+	},
+	unit_text_percent = {
+		en = "%%",
+	},
+	all_players_chance = {
+		en = "Chance",
+		de = "Chance",
+	},
+	all_players_chance_description = {
+		en = "Percentual chance to affect all players.",
+		de = "Prozentuale Chance alle Spieler zu betreffen.",
+	},
+	everybody = {
+		en = "Everybody",
+		de = "Jeden",
+	},
+	for_text = {
+		en = "For %%s!",
+		de = "Für %%s!",
+	},
 
 	-- Dares
 	jump_continuously_text = {
