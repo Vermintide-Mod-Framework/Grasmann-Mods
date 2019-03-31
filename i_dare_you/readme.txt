@@ -4,6 +4,11 @@ Description :
 Lets players dare each other for random things.
 
 Changelog:
+1.0.5b
+	- Don't use item will only appear for players who have items other than tomes and grims
+	- Fixed issue where server deactivates when all but one player die
+	- Being knocked down aborts the current dare for that player and starts a new selection
+	- Knocked down players are excluded from random player rolls
 1.0.4b
 	- Fixed zealot skill triggering don't dodge
 	- Fixed handmaiden skill triggering don't dodge

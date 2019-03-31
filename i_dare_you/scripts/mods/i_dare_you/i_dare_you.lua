@@ -169,7 +169,7 @@ mod:network_register("start_dare_selection_client", function(sender, selector_pe
 		local dare_list = ""
 		for i, dare in pairs(dares) do
 			dare_list = dare_list..dare
-			if i < 3 then dare_list = dare_list..", " end
+			if i < #dares then dare_list = dare_list..", " end
 		end
 		mod:echo("Dares:'"..dare_list.."'")
 	end
@@ -268,9 +268,7 @@ mod:network_register("dare_finished_client", function(sender, reason)
 	if debug then
 		mod:echo("Dare finished! Reason:'"..reason.."'")
 	end
-	if mod:is_victim() then
-		mod:finish_dare()
-	elseif mod.data.active_dare then
+	if mod:is_victim() or mod.data.active_dare then
 		mod:finish_dare()
 	end
 	mod.data.dare_running = false
@@ -396,7 +394,7 @@ mod.server = {
 	start = function(self)
 		mod:network_send("reset_ui_client", "all")
 		mod:network_send("dare_finished_client", "all", "server_start")
-		if mod:has_enough_players() and not mod:is_in_inn() then
+		if mod:has_enough_players() and not mod:is_in_inn() and self:has_enough_activated_dares() then
 			if mod.data.in_mission and not test_dares then
 				--mod:echo(mod:localize("start_i_dare_you"))
 				self.show_title = true,
@@ -404,6 +402,11 @@ mod.server = {
 			end
 		else
 			self:stop()
+		end
+	end,
+	start_soft = function(self)
+		if self.state and self.state.id == 0 then
+			self:start()
 		end
 	end,
 	--[[
@@ -417,6 +420,9 @@ mod.server = {
 		end
 		if mod:is_in_inn() then
 			if debug then mod:echo(mod:localize("error_in_inn")) end
+		end
+		if not self:has_enough_activated_dares() then
+			mod:echo(mod:localize("error_not_enough_dares"))
 		end
 		self:set_state("idle")
 	end,
@@ -533,7 +539,12 @@ mod.server = {
 						mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares, time)
 					end
 				else
-					mod.server:stop()
+					if mod:has_enough_players() then
+						if debug then mod:echo("Not enough players alive!") end
+						mod.server:set_state("waiting_for_something")
+					else
+						mod.server:stop()
+					end
 				end
 			end,
 			finish = function(self)
@@ -557,6 +568,17 @@ mod.server = {
 				mod.server:set_state("waiting", time)
 			end,
 		},
+		waiting_for_something = {
+			id = 5,
+			time = 5,
+			start = function(self)
+				mod:network_send("reset_ui_client", "all")
+			end,
+			finish = function(self)
+				if debug then mod:echo("Parameters don't meet conditions. We're waiting!") end
+				mod.server:set_state("selection")
+			end,
+		}
 	},
 	--[[
 		Get list of available dares
@@ -575,14 +597,30 @@ mod.server = {
 		return available_dares
 	end,
 	--[[
+		Get activated dares
+	--]]
+	has_enough_activated_dares = function(self)
+		local activated_dares = 0
+		for _, dare in pairs(mod.dares) do
+			if mod:get(dare.id) then
+				activated_dares = activated_dares + 1
+			end
+		end
+		if activated_dares > 2 then
+			return true
+		end
+		return false
+	end,
+	--[[
 		Get set of random dares
 	--]]
 	get_random_dares = function(self, selector_peer_id, victim_peer_id)
 		--local available_dares = table.clone(mod.dares)
 		local available_dares = self:get_available_dares(selector_peer_id, victim_peer_id)
 		if #available_dares < 1 then
-			mod:echo(mod:localize("error_not_enough_dares"))
-			self:stop()
+			-- mod:echo(mod:localize("error_not_enough_dares"))
+			-- self:stop()
+			self:set_state("waiting_for_something")
 			return
 		end
 		local dares = {}
@@ -1764,7 +1802,12 @@ mod.is_peer_id_alive = function(self, peer_id)
 			if status_extension then
 				local respawned = status_extension:is_ready_for_assisted_respawn() or status_extension:is_assisted_respawning()
 				if not respawned then
-					return true
+					local knocked_down = status_extension:is_knocked_down()
+					if not knocked_down then
+						return true
+					else
+						if debug then mod:echo("Player '"..peer_id.."' skipped because is knocked down.") end	
+					end
 				else
 					if debug then mod:echo("Player '"..peer_id.."' skipped because of respawn.") end
 				end
@@ -1841,6 +1884,17 @@ end
 -- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
 -- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
 -- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
+-- --[[
+-- 	Abort dare when player is knocked down
+-- --]]
+-- mod:hook_safe(PlayerCharacterStateKnockedDown, "on_enter", function(self, unit, input, dt, context, t, previous_state, params)
+-- 	local player_unit = mod:player_unit_from_peer_id(mod:my_peer_id())
+-- 	if player_unit == self.unit then
+-- 		if mod.data.active_dare then
+-- 			mod:abort_dare("knocked_down")
+-- 		end
+-- 	end
+-- end)
 --[[
 	Catch moment when cutscene is over to start server
 --]]
@@ -2031,9 +2085,19 @@ mod.on_setting_changed = function(setting_name)
 	elseif setting_name == "activate_dare_3" then
 		-- Save setting to variable
 		mod.data.activate_dare_3 = mod:hotkey_string(mod:get("activate_dare_3"))
-	
+	elseif setting_name == "activate_random_dare" then
+	elseif setting_name == "start_server" then
+	elseif setting_name == "stop_server" then
 	elseif setting_name == "debug" then
 		debug = mod:get("debug")
+	elseif setting_name == "initial_time" then
+	elseif setting_name == "selection_time" then
+	elseif setting_name == "random_choice" then
+	elseif setting_name == "sound_effects" then
+	else
+		if not mod:is_in_inn() then
+			mod.server:start_soft()
+		end
 	end
 end
 --[[

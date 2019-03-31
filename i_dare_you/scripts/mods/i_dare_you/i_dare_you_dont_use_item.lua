@@ -14,13 +14,13 @@ mod:hook_safe(ActionHealingDraught, "finish", function(self, reason)
 end)
 mod:hook_disable(ActionHealingDraught, "finish")
 
-mod:hook_safe(ActionPotion, "client_owner_start_action", function(self, new_action, t)
+mod:hook_safe(ActionPotion, "finish", function(self, new_action, t)
     local player = Managers.player:player_from_peer_id(mod:my_peer_id())
     if self.owner_player and self.owner_player == player then
         item = item + 1
     end
 end)
-mod:hook_disable(ActionPotion, "client_owner_start_action")
+mod:hook_disable(ActionPotion, "finish")
 
 mod:hook(WeaponUnitExtension, "_finish_action", function(func, self, reason, data)
     local owner_player = Managers.player:unit_owner(self.owner_unit)
@@ -52,8 +52,23 @@ dont_use_item.reminder_time = 0
 dont_use_item.on_start = function(self)
     item = 0
     mod:hook_enable(ActionHealingDraught, "finish")
-    mod:hook_enable(ActionPotion, "client_owner_start_action")
+    mod:hook_enable(ActionPotion, "finish")
     mod:hook_enable(WeaponUnitExtension, "_finish_action")
+end
+dont_use_item.check_condition = function(self, selector_peer_id, victim_peer_id)
+    local unit = mod:player_unit_from_peer_id(victim_peer_id)
+    local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+    if inventory_extension then
+        local healthkit = inventory_extension:get_item_name("slot_healthkit")
+        local potion = inventory_extension:get_item_name("slot_potion")
+        local grenade = inventory_extension:get_item_name("slot_grenade")
+        local healthkit_slot = healthkit and healthkit ~= "wpn_side_objective_tome_01"
+        local potion_slot = potion and potion ~= "wpn_grimoire_01"
+        if healthkit_slot or potion_slot or grenade then
+            return true
+        end
+    end
+    return false
 end
 dont_use_item.check_state_function = function(self)
     if item > 0 then
@@ -64,7 +79,7 @@ dont_use_item.check_state_function = function(self)
 end
 dont_use_item.on_finish = function(self)
     mod:hook_disable(ActionHealingDraught, "finish")
-    mod:hook_disable(ActionPotion, "client_owner_start_action")
+    mod:hook_disable(ActionPotion, "finish")
     mod:hook_disable(WeaponUnitExtension, "_finish_action")
 end
 

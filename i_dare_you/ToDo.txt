@@ -7,18 +7,18 @@
 - DARE don't do friendly fire
 - DARE do friendly fire
 
-- Condition check for don't use item
-
 - Percentage damage incl. grim effects???
 - Negate healing item heal amount???
-- Knocked down state aborts dare and excludes player from selection???
 - Pick up player is blocking -> additional option to ignore???
 - Switch don't quick-switch to don't switch weapons???
 - Chance for a dare to be active for everyone???
 
+RESOLVED in 1.0.5b:
 - Server deactivates when only one player alive
+- Knocked down state aborts dare and excludes player from selection???
+- Condition check for don't use item
 
-RESOLVED:
+RESOLVED in 1.0.4b:
 - Fixed UI spamming errors when less than 3 dares
 - Slayer condition check for don't use ranged
 - Rename don't use ranged to don't equip ranged
