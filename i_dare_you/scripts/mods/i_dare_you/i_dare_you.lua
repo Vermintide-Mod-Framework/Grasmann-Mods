@@ -43,6 +43,7 @@ mod:persistent_table("data", {
 	active_dare = nil,
 	dare_time = 30,
 	dare_running = false,
+	deactivate_on_assisted_respawn = false,
 	-- Settings
 	active = nil,
 	mode = 1,
@@ -236,6 +237,15 @@ end)
 	Clients receive this from server
 --]]
 mod:network_register("start_dare_client", function(sender, dare_name, time)
+	if mod:is_server() then
+		-- Special options
+		mod.data.deactivate_on_assisted_respawn = mod:get(dare_name.."_deactivate_on_assisted_respawn")
+		if mod.data.deactivate_on_assisted_respawn then
+			if debug then
+				mod:echo("Dare '"..dare_name.."' not effective during assisted respawn")
+			end
+		end
+	end
 	if mod:is_victim() then
 		if debug then
 			mod:echo("Dare '"..dare_name.."' started.")
@@ -294,9 +304,18 @@ mod:network_register("request_punishment_server", function(sender, value)
 	if debug then
 		mod:echo("Player '"..sender.."' requested punishment of '"..tostring(value).."'!")
 	end
-	local unit = mod:player_unit_from_peer_id(sender)
-	DamageUtils.add_damage_network(unit, unit, value, "full", "forced", nil, Vector3(0, 0, 1), "debug")
-	--DamageUtils.add_damage_network(target_unit, attacker_unit, damage, "torso", action.damage_type, nil, damage_direction, damage_source, nil, nil, nil, action.hit_react_type)
+	local skip_punishment = (mod.data.deactivate_on_assisted_respawn and mod:is_helping_assisted_respawn(sender))
+	if not skip_punishment then
+		local unit = mod:player_unit_from_peer_id(sender)
+		if unit then
+			DamageUtils.add_damage_network(unit, unit, value, "full", "forced", nil, Vector3(0, 0, 1), "debug")
+			--DamageUtils.add_damage_network(target_unit, attacker_unit, damage, "torso", action.damage_type, nil, damage_direction, damage_source, nil, nil, nil, action.hit_react_type)
+		end
+	else
+		if debug then
+			mod:echo("Punishment skipped!")
+		end
+	end
 end)
 --[[
 	User deactivated mod
@@ -363,7 +382,9 @@ end
 	Abort active dare with a reason
 --]]
 mod.abort_dare = function(self, reason)
-	self:network_send("dare_finished_server", self:server_peer_id(), reason)
+	if not mod.data.all then
+		self:network_send("dare_finished_server", self:server_peer_id(), reason)
+	end
 end
 --[[
 	Finish active dare
@@ -639,7 +660,9 @@ mod.server = {
 		local dares = {}
 		local all_rolled = false
 		local all_id = nil
-		for i = 1, 3 do
+		local max_dares = 3
+		if #available_dares < 3 then max_dares = #available_dares end
+		for i = 1, max_dares do
 			local rnd = math.random(1, #available_dares)
 			--dares[#dares+1] = available_dares[rnd].id --table.clone(available_dares[rnd])
 			if not all_rolled and mod:get("all_players") then
@@ -1938,6 +1961,22 @@ mod.play_sound_effect = function(self, sound_event)
 		end
 	end
 end
+--[[
+	Check if peer_id is interacting in assisted respawn
+--]]
+mod.is_helping_assisted_respawn = function(self, peer_id)
+    local unit = mod:player_unit_from_peer_id(peer_id)
+    local interactor_extension = ScriptUnit.extension(unit, "interactor_system")
+    if interactor_extension then
+        local interacting, interaction_type = interactor_extension:is_interacting()
+        if interacting and (interaction_type == "assisted_respawn" or interaction_type == "revive") then
+			return true
+		else
+			mod:echo(interaction_type)
+        end
+    end
+    return false
+end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
@@ -2232,4 +2271,17 @@ if test_dares then
 		career_extension:reduce_activated_ability_cooldown_percent(100)
 	end
 	mod:start_test_dares()
+end
+--[[
+	Knock down / kill bots for tests
+--]]
+--local test_bots = true
+if test_bots then
+	local bots = Managers.player and Managers.player:bots()
+	if bots then
+		for _, bot in pairs(bots) do
+			local unit = bot.player_unit
+			DamageUtils.add_damage_network(unit, unit, 9999, "full", "forced", nil, Vector3(0, 0, 1), "debug")
+		end
+	end
 end

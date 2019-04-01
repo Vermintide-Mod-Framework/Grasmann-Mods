@@ -9,9 +9,13 @@
 
 - Percentage damage incl. grim effects???
 - Negate healing item heal amount???
-- Pick up player is blocking -> additional option to ignore???
-- Switch don't quick-switch to don't switch weapons???
+
+RESOLVED in 1.0.7b:
 - Rename evade to dodge
+- Switch don't quick-switch to don't switch weapons???
+- Prevented clients from spamming rpc calls trying to deactivate party dare
+- Pick up player is blocking -> additional option to ignore???
+- Fixed bug in party dare roll
 
 RESOLVED in 1.0.6b:
 - Chance for a dare to be active for everyone???

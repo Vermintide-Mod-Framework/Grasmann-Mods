@@ -45,6 +45,7 @@ local customize_dares = {
 		default_value = true,
 		length_default = 40,
 		length_range = {10, 60},
+		deactivate_on_assisted_respawn = true,
 	},
 	{
 		setting_id = "dont_dodge",
@@ -63,8 +64,8 @@ local customize_dares = {
 		length_range = {10, 60},
 	},
 	{
-		setting_id = "dont_quick_switch",
-		title = "dont_quick_switch_text",
+		setting_id = "dont_switch_equipment",
+		title = "dont_switch_equipment_text",
 		type = "checkbox",
 		default_value = true,
 		length_default = 30,
@@ -154,6 +155,15 @@ for _, custom in pairs(customize_dares) do
 		-- 	},
 		-- },
 	}
+	if custom_entry.deactivate_on_assisted_respawn ~= nil then
+		custom_entry.sub_widgets[#custom_entry.sub_widgets+1] = {
+			setting_id = custom_entry.setting_id.."_deactivate_on_assisted_respawn",
+			title = "deactivate_on_assisted_respawn",
+			tooltip = "deactivate_on_assisted_respawn_description",
+			type = "checkbox",
+			default_value = custom_entry.deactivate_on_assisted_respawn,
+		}
+	end
 	-- if custom_entry.punishments_default.damage.frequency_default then	
 	-- 	custom_entry.sub_widgets[2].sub_widgets[1].sub_widgets[index] = {
 	-- 		setting_id = custom_entry.setting_id.."_frequency",

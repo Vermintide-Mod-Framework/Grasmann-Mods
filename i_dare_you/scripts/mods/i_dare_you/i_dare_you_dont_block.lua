@@ -21,10 +21,9 @@ dont_block.check_state_function = function(self)
         local is_blocking = status_extension:is_blocking()
         if is_blocking then
             return false
-        else
-            return true
         end
     end
+    return true
 end
 
 return dont_block

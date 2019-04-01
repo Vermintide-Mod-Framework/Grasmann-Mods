@@ -155,7 +155,7 @@ local dares = {
 	-- 	fallible = false,
 	-- 	punishment = "none",
 	-- },
-	mod:dofile("scripts/mods/i_dare_you/i_dare_you_dont_quick_switch"),
+	mod:dofile("scripts/mods/i_dare_you/i_dare_you_dont_switch_equipment"),
 	mod:dofile("scripts/mods/i_dare_you/i_dare_you_dont_use_skill"),
 	mod:dofile("scripts/mods/i_dare_you/i_dare_you_dont_push"),
 	mod:dofile("scripts/mods/i_dare_you/i_dare_you_drop_grim"),

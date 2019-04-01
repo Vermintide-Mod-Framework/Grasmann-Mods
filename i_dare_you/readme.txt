@@ -4,6 +4,12 @@ Description :
 Lets players dare each other for random things.
 
 Changelog:
+1.0.7b:
+	- Rename evade to dodge in don't dodge description
+	- Don't quick switch changed to don't switch equipment (every switch)
+	- Special option for don't block to prevent dare to trigger when reviving other player
+	- Fixed bug in party dare roll
+	- Fixed issue where clients would repeatedly try to abort a party dare
 1.0.6b
 	- Implemented dares affecting the whole party
 	- Fixed bug in don't use item

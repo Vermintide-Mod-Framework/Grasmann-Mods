@@ -220,6 +220,14 @@ return {
 		en = "For %%s!",
 		de = "Für %%s!",
 	},
+	deactivate_on_assisted_respawn = {
+		en = "Except on revive",
+		de = "Außer beim Wiederbeleben"
+	},
+	deactivate_on_assisted_respawn_description = {
+		en = "This dare won't trigger if the player is reviving another player.",
+		de = "Diese Pflicht trifft nicht zu wenn der Spieler einen anderen Spieler wiederbelebt.",
+	},
 
 	-- Dares
 	jump_continuously_text = {
@@ -251,7 +259,7 @@ return {
 		de = "Nicht blocken!",
 	},
 	dont_dodge_text = {
-		en = "Don't evade damage!",
+		en = "Don't use dodges!",
 		de = "Weiche nicht aus!",
 	},
 	dont_dodge_reminder = {
@@ -278,13 +286,13 @@ return {
 		en = "Reverse camera!",
 		de = "Umgedrehte Kamera!",
 	},
-	dont_quick_switch_text = {
-		en = "Don't switch weapons quickly!",
-		de = "Wechsel die Waffen nicht schnell!",
+	dont_switch_equipment_text = {
+		en = "Don't switch equipment!",
+		de = "Wechsel deine Ausrüstung nicht!",
 	},
-	dont_quick_switch_reminder = {
-		en = "No quick-switch!",
-		de = "Kein Schnellwechsel!",
+	dont_switch_equipment_reminder = {
+		en = "No switch!",
+		de = "Nicht wechseln!",
 	},
 	dont_use_skill_text = {
 		en = "Don't use skill!",
