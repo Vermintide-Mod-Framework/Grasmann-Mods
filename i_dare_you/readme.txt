@@ -4,7 +4,7 @@ Description :
 Lets players dare each other for random things.
 
 Changelog:
-1.0.7b:
+1.0.7b
 	- Rename evade to dodge in don't dodge description
 	- Don't quick switch changed to don't switch equipment (every switch)
 	- Special option for don't block to prevent dare to trigger when reviving other player
