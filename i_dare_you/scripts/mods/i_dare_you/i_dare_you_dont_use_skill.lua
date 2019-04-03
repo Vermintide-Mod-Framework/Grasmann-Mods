@@ -22,8 +22,7 @@ dont_use_skill.id = "dont_use_skill"
 dont_use_skill.text = mod:localize("dont_use_skill_text")
 dont_use_skill.reminder = mod:localize("dont_use_skill_reminder")
 dont_use_skill.time = 0
-dont_use_skill.punishments = {"damage"}
-dont_use_skill.values = {damage = 25}
+dont_use_skill.values.damage = 25
 dont_use_skill.reminder_time = 0
 dont_use_skill.on_start = function(self)
     career_skill = 0

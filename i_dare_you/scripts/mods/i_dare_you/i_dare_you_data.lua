@@ -13,14 +13,6 @@ local customize_dares = {
 		default_value = true,
 		length_default = 20,
 		length_range = {10, 60},
-		-- punishments_default = {
-		-- 	damage = {
-		-- 		value_default = 2,
-		-- 		value_range = {1, 10},
-		-- 		frequency_default = 0.25,
-		-- 		frequency_range = {0.1, 1},
-		-- 	},
-		-- },
 	},
 	{
 		setting_id = "stay_on_ground",
@@ -29,14 +21,6 @@ local customize_dares = {
 		default_value = true,
 		length_default = 30,
 		length_range = {10, 60},
-		-- punishments_default = {
-		-- 	damage = {
-		-- 		value_default = 1,
-		-- 		value_range = {1, 200},
-		-- 		frequency_default = 0.1,
-		-- 		frequency_range = {0.1, 1},
-		-- 	},
-		-- },
 	},
 	{
 		setting_id = "dont_block",
@@ -54,6 +38,7 @@ local customize_dares = {
 		default_value = true,
 		length_default = 30,
 		length_range = {10, 60},
+		allow_catapult = true,
 	},
 	{
 		setting_id = "dont_push",
@@ -62,6 +47,7 @@ local customize_dares = {
 		default_value = true,
 		length_default = 40,
 		length_range = {10, 60},
+		allow_catapult = true,
 	},
 	{
 		setting_id = "dont_switch_equipment",
@@ -70,6 +56,7 @@ local customize_dares = {
 		default_value = true,
 		length_default = 30,
 		length_range = {10, 60},
+		allow_catapult = true,
 	},
 	{
 		setting_id = "dont_use_item",
@@ -78,6 +65,7 @@ local customize_dares = {
 		default_value = true,
 		length_default = 40,
 		length_range = {10, 60},
+		allow_catapult = true,
 	},
 	{
 		setting_id = "dont_use_melee",
@@ -86,6 +74,7 @@ local customize_dares = {
 		default_value = true,
 		length_default = 20,
 		length_range = {10, 60},
+		allow_catapult = true,
 	},
 	{
 		setting_id = "dont_use_ranged",
@@ -102,6 +91,7 @@ local customize_dares = {
 		default_value = true,
 		length_default = 40,
 		length_range = {10, 60},
+		allow_catapult = true,
 	},
 	{
 		setting_id = "drop_grim",
@@ -110,6 +100,15 @@ local customize_dares = {
 		default_value = true,
 		length_default = 30,
 		length_range = {10, 60},
+	},
+	{
+		setting_id = "dont_ping",
+		title = "dont_ping_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 30,
+		length_range = {10, 60},
+		allow_catapult = true,
 	},
 }
 
@@ -129,32 +128,8 @@ for _, custom in pairs(customize_dares) do
 			unit_text = "unit_text_seconds",
 			decimals_number = 0,
 		},
-		-- {
-		-- 	setting_id = custom_entry.setting_id.."_dare_punishment",
-		-- 	title = "dare_punishment",
-		-- 	tooltip = "dare_punishment_description",
-		-- 	type = "group",
-		-- 	sub_widgets = {
-		-- 		{
-		-- 			setting_id = custom_entry.setting_id.."_damage_active",
-		-- 			title = "dare_punishment_damage",
-		-- 			type = "checkbox",
-		-- 			default_value = custom_entry.punishments_default.damage ~= nil,
-		-- 			sub_widgets = {
-		-- 				{
-		-- 					setting_id = custom_entry.setting_id.."_damage_amount",
-		-- 					title = "dare_punishment_damage_amount",
-		-- 					type = "numeric",
-		-- 					range = custom_entry.punishments_default.damage.value_range,
-		-- 					default_value = custom_entry.punishments_default.damage.value_default,
-		-- 					unit_text = "unit_text_empty",
-		-- 					decimals_number = 0,
-		-- 				},
-		-- 			},
-		-- 		},
-		-- 	},
-		-- },
 	}
+	-- Deactivate on revive / assisted respawn
 	if custom_entry.deactivate_on_assisted_respawn ~= nil then
 		custom_entry.sub_widgets[#custom_entry.sub_widgets+1] = {
 			setting_id = custom_entry.setting_id.."_deactivate_on_assisted_respawn",
@@ -164,18 +139,16 @@ for _, custom in pairs(customize_dares) do
 			default_value = custom_entry.deactivate_on_assisted_respawn,
 		}
 	end
-	-- if custom_entry.punishments_default.damage.frequency_default then	
-	-- 	custom_entry.sub_widgets[2].sub_widgets[1].sub_widgets[index] = {
-	-- 		setting_id = custom_entry.setting_id.."_frequency",
-	-- 		title = "dare_punishment_damage_frequency",
-	-- 		type = "numeric",
-	-- 		range = custom_entry.punishments_default.damage.frequency_range,
-	-- 		default_value = custom_entry.punishments_default.damage.frequency_default,
-	-- 		unit_text = "unit_text_seconds",
-	-- 		decimals_number = 2,
-	-- 	}
-	-- end
-	-- index = index + 1
+	-- Allow catapult punishment
+	if custom_entry.allow_catapult ~= nil then
+		custom_entry.sub_widgets[#custom_entry.sub_widgets+1] = {
+			setting_id = custom_entry.setting_id.."_allow_catapult",
+			title = "allow_catapult",
+			tooltip = "allow_catapult_description",
+			type = "checkbox",
+			default_value = custom_entry.allow_catapult,
+		}
+	end
 	customize_dares_table[#customize_dares_table+1] = custom_entry
 end
 
@@ -186,7 +159,13 @@ return {
 	is_mutator = false,                             -- If the mod is mutator
 	mutator_settings = {},                          -- Extra settings, if it's mutator
 	options = {
-		widgets = {                             -- Widget settings for the mod options menu
+		collapsed_widgets = {
+			"common_settings",
+			"configure_dares",
+			"configure_hotkeys",
+			"configure_punishments",
+	  	},
+		widgets = {                             	-- Widget settings for the mod options menu
 			{
 				setting_id = "active",
 				type = "checkbox",
@@ -203,48 +182,49 @@ return {
 						default_value = 2,
 					},
 					{
-						setting_id = "initial_time",
-						type = "numeric",
-						range = {10, 60},
-						default_value = 20,
-						decimals_number = 0,
-						unit_text = "unit_text_seconds",
-					},
-					{
-						setting_id = "selection_time",
-						type = "numeric",
-						range = {5, 30},
-						default_value = 20,
-						decimals_number = 0,
-						unit_text = "unit_text_seconds",
-					},
-					{
-						setting_id = "random_choice",
-						type = "checkbox",
-						default_value = false,
-					},
-					{
-						setting_id = "sound_effects",
-						type = "checkbox",
-						default_value = true,
-					},
-					{
-						setting_id = "debug",
-						type = "checkbox",
-						default_value = false,
-					},
-					{
-						setting_id = "all_players",
-						type = "checkbox",
-						default_value = true,
+						setting_id = "common_settings",
+						type = "group",
 						sub_widgets = {
 							{
-								setting_id = "all_players_chance",
+								setting_id = "initial_time",
 								type = "numeric",
-								range = {1, 100},
-								default_value = 5,
+								range = {10, 60},
+								default_value = 20,
 								decimals_number = 0,
-								unit_text = "unit_text_percent",
+								unit_text = "unit_text_seconds",
+							},
+							{
+								setting_id = "selection_time",
+								type = "numeric",
+								range = {5, 30},
+								default_value = 20,
+								decimals_number = 0,
+								unit_text = "unit_text_seconds",
+							},
+							{
+								setting_id = "random_choice",
+								type = "checkbox",
+								default_value = false,
+							},
+							{
+								setting_id = "sound_effects",
+								type = "checkbox",
+								default_value = true,
+							},
+							{
+								setting_id = "all_players",
+								type = "checkbox",
+								default_value = true,
+								sub_widgets = {
+									{
+										setting_id = "all_players_chance",
+										type = "numeric",
+										range = {1, 100},
+										default_value = 5,
+										decimals_number = 0,
+										unit_text = "unit_text_percent",
+									},
+								},
 							},
 						},
 					},
@@ -254,52 +234,83 @@ return {
 						sub_widgets = customize_dares_table,
 					},
 					{
-						setting_id = "activate_dare_1",
-						type = "keybind",
-						keybind_trigger = "pressed",
-						keybind_type = "function_call",
-						function_name = "activate_dare_1",
-						default_value = {"f5"},
+						setting_id = "configure_punishments",
+						type = "group",
+						sub_widgets = {
+							{
+								setting_id = "punishment_catapult",
+								tooltip = "allow_catapult_description",
+								type = "checkbox",
+								default_value = true,
+							},
+						},
 					},
 					{
-						setting_id = "activate_dare_2",
-						type = "keybind",
-						keybind_trigger = "pressed",
-						keybind_type = "function_call",
-						function_name = "activate_dare_2",
-						default_value = {"f6"},
+						setting_id = "configure_hotkeys",
+						type = "group",
+						sub_widgets = {
+							{
+								setting_id = "activate_dare_1",
+								type = "keybind",
+								keybind_trigger = "pressed",
+								keybind_type = "function_call",
+								function_name = "activate_dare_1",
+								default_value = {"f5"},
+							},
+							{
+								setting_id = "activate_dare_2",
+								type = "keybind",
+								keybind_trigger = "pressed",
+								keybind_type = "function_call",
+								function_name = "activate_dare_2",
+								default_value = {"f6"},
+							},
+							{
+								setting_id = "activate_dare_3",
+								type = "keybind",
+								keybind_trigger = "pressed",
+								keybind_type = "function_call",
+								function_name = "activate_dare_3",
+								default_value = {"f7"},
+							},
+							{
+								setting_id = "activate_random_dare",
+								type = "keybind",
+								keybind_trigger = "pressed",
+								keybind_type = "function_call",
+								function_name = "activate_random_dare",
+								default_value = {},
+							},
+							{
+								setting_id = "start_server",
+								type = "keybind",
+								keybind_trigger = "pressed",
+								keybind_type = "function_call",
+								function_name = "start_server",
+								default_value = {},
+							},
+							{
+								setting_id = "stop_server",
+								type = "keybind",
+								keybind_trigger = "pressed",
+								keybind_type = "function_call",
+								function_name = "stop_server",
+								default_value = {},
+							},
+							-- {
+							-- 	setting_id = "test_player_knockdown",
+							-- 	type = "keybind",
+							-- 	keybind_trigger = "pressed",
+							-- 	keybind_type = "function_call",
+							-- 	function_name = "test_player_knockdown",
+							-- 	default_value = {},
+							-- },
+						},
 					},
 					{
-						setting_id = "activate_dare_3",
-						type = "keybind",
-						keybind_trigger = "pressed",
-						keybind_type = "function_call",
-						function_name = "activate_dare_3",
-						default_value = {"f7"},
-					},
-					{
-						setting_id = "activate_random_dare",
-						type = "keybind",
-						keybind_trigger = "pressed",
-						keybind_type = "function_call",
-						function_name = "activate_random_dare",
-						default_value = {},
-					},
-					{
-						setting_id = "start_server",
-						type = "keybind",
-						keybind_trigger = "pressed",
-						keybind_type = "function_call",
-						function_name = "start_server",
-						default_value = {},
-					},
-					{
-						setting_id = "stop_server",
-						type = "keybind",
-						keybind_trigger = "pressed",
-						keybind_type = "function_call",
-						function_name = "stop_server",
-						default_value = {},
+						setting_id = "debug",
+						type = "checkbox",
+						default_value = false,
 					},
 				},
 			},

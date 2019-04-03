@@ -10,9 +10,8 @@ jump_continuously.id = "jump_continuously"
 jump_continuously.text = mod:localize("jump_continuously_text")
 jump_continuously.reminder = mod:localize("jump_continuously_reminder")
 jump_continuously.time = 0.25
-jump_continuously.punishments = {"damage"}
-jump_continuously.values = {damage = 2}
-jump_continuously.reminder_time = 2
+jump_continuously.values.damage = 3
+jump_continuously.reminder_time = 0.5
 jump_continuously.states = {"jumping", "falling"}
 jump_continuously.check_state_function = function(self)
     local peer_id = mod:my_peer_id()

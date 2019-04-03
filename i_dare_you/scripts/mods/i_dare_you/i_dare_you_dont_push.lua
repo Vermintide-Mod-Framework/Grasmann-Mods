@@ -19,8 +19,7 @@ dont_push.id = "dont_push"
 dont_push.text = mod:localize("dont_push_text")
 dont_push.reminder = mod:localize("dont_push_reminder")
 dont_push.time = 0
-dont_push.punishments = {"damage"}
-dont_push.values = {damage = 15}
+dont_push.values.damage = 20
 dont_push.reminder_time = 0
 dont_push.on_start = function(self)
     push = 0

@@ -20,8 +20,7 @@ drop_grim.text = mod:localize("drop_grim_text")
 drop_grim.text_color = {255, 255, 0, 0}
 drop_grim.reminder = mod:localize("drop_grim_reminder")
 drop_grim.time = 1
-drop_grim.punishments = {"damage"}
-drop_grim.values = {damage = 1}
+drop_grim.values.damage = 2
 drop_grim.reminder_time = 5
 drop_grim.check_condition = function(self, selector_peer_id, victim_peer_id)
     local unit = mod:player_unit_from_peer_id(victim_peer_id)

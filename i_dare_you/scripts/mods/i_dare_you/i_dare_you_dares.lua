@@ -37,7 +37,8 @@ mod.dare_types = {
 }
 
 mod.punishment_types = {
-	damage = 1,
+	damage = mod:localize("dare_punishment_damage"),
+	catapult = mod:localize("dare_punishment_catapult"),
 }
 
 mod.template_dare = {
@@ -51,9 +52,11 @@ mod.template_dare = {
 	is_finishing = false,
 	punishments = {
 		"damage",
+		"catapult",
 	},
 	values = {
-        damage = 5,
+		damage = 5,
+		catapult = 8,
 	},
 	started = false,
 	testing = false,
@@ -125,12 +128,13 @@ mod.template_dare = {
 	on_finish = function(self)
 	end,
 	punish = function(self)
-		local rnd = math.random(1, #self.punishments)
-        local punishment = self.punishments[rnd]
-		local value = self.values[punishment]
-		if punishment == "damage" then
-			mod:add_damage(value)
-		end
+		mod:request_punishment()
+		-- local rnd = math.random(1, #self.punishments)
+        -- local punishment = self.punishments[rnd]
+		-- local value = self.values[punishment]
+		-- if punishment == "damage" then
+		-- 	mod:add_damage(value)
+		-- end
 	end,
 }
 
@@ -160,6 +164,7 @@ local dares = {
 	mod:dofile("scripts/mods/i_dare_you/i_dare_you_dont_push"),
 	mod:dofile("scripts/mods/i_dare_you/i_dare_you_drop_grim"),
 	mod:dofile("scripts/mods/i_dare_you/i_dare_you_dont_use_item"),
+	mod:dofile("scripts/mods/i_dare_you/i_dare_you_dont_ping"),
 	-- {
 	-- 	id = "dont_do_headshots",
 	-- 	text = "dont_do_headshots",

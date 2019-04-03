@@ -1,5 +1,4 @@
 - DARE don't pick up items / ammo / books
-- DARE don't tag enemies
 - DARE don't take damage
 - DARE don't kill
 - DARE don't do headshots
@@ -9,6 +8,19 @@
 
 - Percentage damage incl. grim effects???
 - Negate healing item heal amount???
+- Make compatible to twitch mode UI
+- Punishment triggers for skill on don't switch equipment on certain careers
+
+RESOLVED in 1.0.8b:
+- DARE don't ping enemies
+- Capitalized some words in UI
+- Line 1997 local_player
+- Fixed issue where dare server continues when not enough players alive
+- Fixed error where player was stuck in dead state after respawn
+- Option to deactivate individual punishment types except damage
+- In middle of selection server doesn't stop on too few players
+- Added new punishment catapult
+- Added options to deactivate catapult punishment for individual dares
 
 RESOLVED in 1.0.7b:
 - Rename evade to dodge

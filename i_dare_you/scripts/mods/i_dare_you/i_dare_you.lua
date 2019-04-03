@@ -19,13 +19,14 @@ end
 
 -- Debugging
 local debug = mod:get("debug")
---local test_dare = "dont_block"
+local test_dare = "dont_push"
 
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
 
 --local test_dares = table.clone(mod.dares)
 
+--local test_punishment = "catapult"
 
 -- Persistent Data
 mod:persistent_table("data", {
@@ -34,12 +35,14 @@ mod:persistent_table("data", {
 	victim_peer_id = nil,
 	-- Dare choices
 	dares = {},
+	punishments = {},
 	all_id = nil,
 	is_selecting = false,
 	selection = false,
 	-- Selected dare
 	all = false,
 	selected_dare = nil,
+	punishment = nil,
 	active_dare = nil,
 	dare_time = 30,
 	dare_running = false,
@@ -68,6 +71,12 @@ end
 -- ##### ██║██║ ╚████║██║     ╚██████╔╝   ██║    ######################################################################
 -- ##### ╚═╝╚═╝  ╚═══╝╚═╝      ╚═════╝    ╚═╝    ######################################################################
 --[[
+	Test player knockdown
+--]]
+mod.test_player_knockdown = function(held)
+	mod:network_send("request_punishment_server", mod:server_peer_id(), 9999)
+end
+--[[
 	Input functions used by chat commands and hotkeys
 --]]
 mod.activate_dare_1 = function(held, automatic)
@@ -90,9 +99,10 @@ mod.activate_dare = function(self, id, automatic)
 	if self.data.is_selecting or automatic then
 		if self.data.dares[id] then
 			self.data.selected_dare = self.data.dares[id].id
+			self.data.punishment = self.data.punishments[id]
 			self.data.is_selecting = false
 			local server_peer_id = self:server_peer_id()
-			self:network_send("dare_selected_server", server_peer_id, self.data.selected_dare, mod.data.all_id == id)
+			self:network_send("dare_selected_server", server_peer_id, self.data.selected_dare, mod.data.all_id == id, self.data.punishment)
 		end
 	end
 end
@@ -165,7 +175,7 @@ end)
 	Start dare selection
 	Everyone receives this from server
 --]]
-mod:network_register("start_dare_selection_client", function(sender, selector_peer_id, victim_peer_id, dares, time, all_id)
+mod:network_register("start_dare_selection_client", function(sender, selector_peer_id, victim_peer_id, dares, time, all_id, punishments)
 	if debug then
 		mod:echo("Selector:'"..tostring(selector_peer_id).."'")
 		mod:echo("Victim:'"..tostring(victim_peer_id).."'")
@@ -183,6 +193,7 @@ mod:network_register("start_dare_selection_client", function(sender, selector_pe
 		active_dares[#active_dares+1] = mod:get_dare(dare)
 	end
 	mod.data.dares = active_dares
+	mod.data.punishments = punishments
 	mod.data.all_id = all_id
 	mod:echo("Received all id:'"..tostring(all_id).."'")
 	mod.ui:start_selection(time)
@@ -191,7 +202,7 @@ end)
 	Dare was selected by selector
 	Server receives this from clients
 --]]
-mod:network_register("dare_selected_server", function(sender, dare_name, all)
+mod:network_register("dare_selected_server", function(sender, dare_name, all, punishment)
 	local check_dare = mod:get_dare(dare_name)
 	if check_dare then
 		if debug then
@@ -201,7 +212,8 @@ mod:network_register("dare_selected_server", function(sender, dare_name, all)
 		if all then
 			if debug then mod:echo("Activate dare for everyone!") end
 		end
-		mod:network_send("dare_selected_client", "all", mod.data.selector_peer_id, mod.data.victim_peer_id, dare_name, time, all)
+		local punishment = punishment or "damage"
+		mod:network_send("dare_selected_client", "all", mod.data.selector_peer_id, mod.data.victim_peer_id, dare_name, time, all, punishment)
 		mod.server:set_state("countdown")
 	else
 		if debug then
@@ -213,7 +225,7 @@ end)
 	Dare was selected
 	Clients receive this from server
 --]]
-mod:network_register("dare_selected_client", function(sender, selector_peer_id, victim_peer_id, dare_name, time, all)
+mod:network_register("dare_selected_client", function(sender, selector_peer_id, victim_peer_id, dare_name, time, all, punishment)
 	if debug then
 		mod:echo("Selector:'"..tostring(selector_peer_id).."'")
 		mod:echo("Victim:'"..tostring(victim_peer_id).."'")
@@ -225,6 +237,10 @@ mod:network_register("dare_selected_client", function(sender, selector_peer_id, 
 	mod.data.is_selecting = false
 	mod.data.selection = false
 	mod.data.selected_dare = dare_name
+	mod.data.punishment = punishment
+	if debug then
+		mod:echo("Selected punishment: '"..punishment.."'")
+	end
 	mod.data.dare_time = time
 	mod.data.all = all
 	if mod:is_victim() then
@@ -301,19 +317,41 @@ end)
 	Server receives this from clients
 --]]
 mod:network_register("request_punishment_server", function(sender, value)
-	if debug then
-		mod:echo("Player '"..sender.."' requested punishment of '"..tostring(value).."'!")
-	end
 	local skip_punishment = (mod.data.deactivate_on_assisted_respawn and mod:is_helping_assisted_respawn(sender))
 	if not skip_punishment then
 		local unit = mod:player_unit_from_peer_id(sender)
 		if unit then
-			DamageUtils.add_damage_network(unit, unit, value, "full", "forced", nil, Vector3(0, 0, 1), "debug")
+			-- Do special punishment
+			if value then
+				if debug then
+					mod:echo("Player '"..sender.."' requested punishment of '"..tostring(value).."'!")
+				end
+				DamageUtils.add_damage_network(unit, unit, value, "full", "forced", nil, Vector3(0, 0, 1), "debug")
+				return
+			end
+			-- Get punishment and value
+			local dare = mod:get_dare(mod.data.selected_dare)
+			local value = dare.values[mod.data.punishment]
+			-- Random hit_direction
+			local unit_position = Unit.world_position(unit, 0)
+			local damage_position = unit_position + Vector3(math.random(-100, 100), math.random(-100, 100), 0)
+			local random_hit_direction = Vector3.normalize(unit_position - damage_position)
+			if debug then
+				mod:echo("Player '"..sender.."' requested punishment '"..mod.data.punishment.."' of '"..tostring(value).."'!")
+			end
+			-- Apply punishment
+			if mod.data.punishment == "damage" then
+				local health_extension = ScriptUnit.has_extension(unit, "health_system")
+				if health_extension and health_extension:is_alive() then
+					DamageUtils.add_damage_network(unit, unit, value, "full", "forced", nil, random_hit_direction, "debug")
+				end
+			elseif mod.data.punishment == "catapult" then
+				local velocity = value * random_hit_direction
+				Vector3.set_z(velocity, value / 2)
+				StatusUtils.set_catapulted_network(unit, true, velocity)
+			end
+			--DamageUtils.add_damage_network(unit, unit, value, "full", "forced", nil, Vector3(0, 0, 1), "debug")
 			--DamageUtils.add_damage_network(target_unit, attacker_unit, damage, "torso", action.damage_type, nil, damage_direction, damage_source, nil, nil, nil, action.hit_react_type)
-		end
-	else
-		if debug then
-			mod:echo("Punishment skipped!")
 		end
 	end
 end)
@@ -404,8 +442,12 @@ end
 --[[
 	Add damage as punishment
 --]]
-mod.add_damage = function(self, value)
-	self:network_send("request_punishment_server", self:server_peer_id(), value)
+mod.request_punishment = function(self, value)
+	self:network_send("request_punishment_server", self:server_peer_id())
+end
+
+mod.punishment_text = function(self, punishment)
+	return self.punishment_types[punishment]
 end
 
 -- ##### ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗  ############################################################
@@ -567,10 +609,10 @@ mod.server = {
 					victim_peer_id = mod:random_player(selector_peer_id)
 				end
 				if selector_peer_id and victim_peer_id then
-					local dares, all_id = mod.server:get_random_dares(selector_peer_id, victim_peer_id)
+					local dares, all_id, punishments = mod.server:get_random_dares(selector_peer_id, victim_peer_id)
 					if dares then
 						local time = mod:get("selection_time")
-						mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares, time, all_id)
+						mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares, time, all_id, punishments)
 					end
 				else
 					if mod:has_enough_players() then
@@ -607,6 +649,7 @@ mod.server = {
 			time = 5,
 			start = function(self)
 				mod:network_send("reset_ui_client", "all")
+				mod:network_send("dare_finished_client", "all", "not_enough_players")
 			end,
 			finish = function(self)
 				if debug then mod:echo("Parameters don't meet conditions. We're waiting!") end
@@ -646,6 +689,28 @@ mod.server = {
 		return false
 	end,
 	--[[
+		Get available punishments for a dare
+	--]]
+	get_available_punishments = function(self, dare_name)
+		local available_punishments = {}
+		local dare = mod:get_dare(dare_name)
+		if dare then
+			for _, punishment in pairs(dare.punishments) do
+				local common_option = mod:get("punishment_"..punishment)
+				local specific_option = mod:get(dare.id.."_allow_"..punishment)
+				if punishment == "damage" or (common_option and specific_option) then
+					available_punishments[#available_punishments+1] = punishment
+				else
+					if debug then
+						if not common_option then mod:echo("Punishment '"..punishment.."' deactivated.") end
+						if not specific_option then mod:echo("Punishment '"..punishment.."' deactivated for dare "..dare_name.."'.") end
+					end
+				end
+			end
+		end
+		return available_punishments
+	end,
+	--[[
 		Get set of random dares
 	--]]
 	get_random_dares = function(self, selector_peer_id, victim_peer_id)
@@ -658,6 +723,7 @@ mod.server = {
 			return
 		end
 		local dares = {}
+		local punishments = {}
 		local all_rolled = false
 		local all_id = nil
 		local max_dares = 3
@@ -665,12 +731,24 @@ mod.server = {
 		for i = 1, max_dares do
 			local rnd = math.random(1, #available_dares)
 			--dares[#dares+1] = available_dares[rnd].id --table.clone(available_dares[rnd])
+			local dare_name = available_dares[rnd]
+			-- Roll party dare
 			if not all_rolled and mod:get("all_players") then
-				all_rolled = self:roll_all_chance(available_dares[rnd])
+				all_rolled = self:roll_all_chance(dare_name)
 				if all_rolled then all_id = #dares+1 end
 			end
-			dares[#dares+1] = available_dares[rnd]
+			dares[#dares+1] = dare_name
 			table.remove(available_dares, rnd)
+			-- Roll punishment
+			local available_punishments = self:get_available_punishments(dare_name)
+			local rnd = math.random(1, #available_punishments)
+			local punishment = available_punishments[rnd]
+			punishments[#punishments+1] = punishment
+			if test_punishment then
+				if table.contains(available_punishments, test_punishment) then
+					punishments[#punishments] = test_punishment
+				end
+			end
 		end
 		--mod:dump(dares, "dares", 1)
 		if test_dare then
@@ -685,16 +763,22 @@ mod.server = {
 				local dare = mod:get_dare(test_dare)
 				if mod:get(test_dare) then
 					if not dare.check_condition or dare:check_condition(selector_peer_id, victim_peer_id) then
-						mod:echo("Added test dare!")
 						local rnd = math.random(1, 3)
 						dares[rnd] = test_dare
+
+						local punishments = self:get_available_punishments(test_dare)
+						local p_rnd = math.random(1, #punishments)
+						local punishment = punishments[p_rnd]
+						punishments[rnd] = punishment
+
+						mod:echo("Added test dare '"..test_dare.."' with punishment '"..punishment.."'!")
 					end
 				else
 					if debug then mod:echo("Dare '"..dare.id.."' is deactivated") end
 				end
 			end
 		end
-		return dares, all_id
+		return dares, all_id, punishments
 	end,
 	--[[
 		Roll for a chance to affect the whole team
@@ -1502,6 +1586,35 @@ mod.ui = {
 					widget.style.text_shadow.font_size = animation.start_size
 					widget.offset = self:apply_scale_to_offset(animation.start_offset)
 					if animation.text then
+						local found = false
+						for i = 1, 3 do
+							if animation.text == "dare_"..tostring(i) or (animation.text == "dare_"..tostring(i).."_hotkey" and not mod.is_selector()) then
+								if mod.data.dares[i] then
+									widget.content.text = string.format("%s ( %s )", mod.data.dares[i].text, mod:punishment_text(mod.data.punishments[i]))
+									widget.style.text.text_color = mod.data.dares[i].text_color
+									widget.content.dare_id = mod.data.dares[i].id
+								else
+									widget.content.text = ""
+								end
+								if mod.data.all_id == i then
+									widget.style.text.text_color = {255, 255, 255, 0}
+								end
+								found = true
+							elseif animation.text == "dare_"..tostring(i).."_hotkey" and mod.is_selector() then
+								if mod.data.dares[i] then
+									widget.content.text = string.format("%s: %s ( %s )", mod.data["activate_dare_"..tostring(i)], mod.data.dares[i].text, mod:punishment_text(mod.data.punishments[i]))
+									widget.style.text.text_color = mod.data.dares[i].text_color
+									widget.content.dare_id = mod.data.dares[i].id
+								else
+									widget.content.text = ""
+								end
+								if mod.data.all_id == i then
+									widget.style.text.text_color = {255, 255, 255, 0}
+								end
+								found = true
+							end
+						end
+
 						if animation.text == "victim_name" then
 							local name = mod:localize("yourself")
 							if mod.data.all then
@@ -1522,72 +1635,76 @@ mod.ui = {
 							end
 						elseif animation.text == "mod_title" then
 							widget.content.text = mod:localize("start_i_dare_you")
-						elseif animation.text == "dare_1" or (animation.text == "dare_1_hotkey" and not mod.is_selector()) then
-							if mod.data.dares[1] then
-								widget.content.text = mod.data.dares[1].text
-								widget.style.text.text_color = mod.data.dares[1].text_color
-								widget.content.dare_id = mod.data.dares[1].id
-							else
-								widget.content.text = ""
-							end
-							if mod.data.all_id == 1 then
-								widget.style.text.text_color = {255, 255, 255, 0}
-							end
-						elseif animation.text == "dare_1_hotkey" and mod.is_selector() then
-							if mod.data.dares[1] then
-								widget.content.text = string.format("%s: %s", mod.data.activate_dare_1, mod.data.dares[1].text)
-								widget.style.text.text_color = mod.data.dares[1].text_color
-								widget.content.dare_id = mod.data.dares[1].id
-							else
-								widget.content.text = ""
-							end
-							if mod.data.all_id == 1 then
-								widget.style.text.text_color = {255, 255, 255, 0}
-							end
-						elseif animation.text == "dare_2" or (animation.text == "dare_2_hotkey" and not mod.is_selector()) then
-							if mod.data.dares[2] then
-								widget.content.text = mod.data.dares[2].text
-								widget.style.text.text_color = mod.data.dares[2].text_color
-								widget.content.dare_id = mod.data.dares[2].id
-							else
-								widget.content.text = ""
-							end
-							if mod.data.all_id == 2 then
-								widget.style.text.text_color = {255, 255, 255, 0}
-							end
-						elseif animation.text == "dare_2_hotkey" and mod.is_selector() then
-							if mod.data.dares[2] then
-								widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
-								widget.style.text.text_color = mod.data.dares[2].text_color
-								widget.content.dare_id = mod.data.dares[2].id
-							else
-								widget.content.text = ""
-							end
-							if mod.data.all_id == 2 then
-								widget.style.text.text_color = {255, 255, 255, 0}
-							end
-						elseif animation.text == "dare_3" or (animation.text == "dare_3_hotkey" and not mod.is_selector()) then
-							if mod.data.dares[3] then
-								widget.content.text = mod.data.dares[3].text
-								widget.style.text.text_color = mod.data.dares[3].text_color
-								widget.content.dare_id = mod.data.dares[3].id
-							else
-								widget.content.text = ""
-							end
-							if mod.data.all_id == 3 then
-								widget.style.text.text_color = {255, 255, 255, 0}
-							end
-						elseif animation.text == "dare_3_hotkey" and mod.is_selector() then
-							if mod.data.dares[3] then
-								widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
-								widget.style.text.text_color = mod.data.dares[3].text_color
-								widget.content.dare_id = mod.data.dares[3].id
-							else
-								widget.content.text = ""
-							end
-							if mod.data.all_id == 3 then
-								widget.style.text.text_color = {255, 255, 255, 0}
-							end
+						-- elseif animation.text == "dare_1" or (animation.text == "dare_1_hotkey" and not mod.is_selector()) then
+						-- 	if mod.data.dares[1] then
+						-- 		widget.content.text = string.format("%s ( %s )", mod.data.dares[1].text, mod:punishment_text(mod.data.punishments[1]))
+						-- 		widget.style.text.text_color = mod.data.dares[1].text_color
+						-- 		widget.content.dare_id = mod.data.dares[1].id
+						-- 	else
+						-- 		widget.content.text = ""
+						-- 	end
+						-- 	if mod.data.all_id == 1 then
+						-- 		widget.style.text.text_color = {255, 255, 255, 0}
+						-- 	end
+						-- elseif animation.text == "dare_1_hotkey" and mod.is_selector() then
+						-- 	if mod.data.dares[1] then
+						-- 		widget.content.text = string.format("%s: %s ( %s )", mod.data.activate_dare_1, mod.data.dares[1].text, mod:punishment_text(mod.data.punishments[1]))
+						-- 		widget.style.text.text_color = mod.data.dares[1].text_color
+						-- 		widget.content.dare_id = mod.data.dares[1].id
+						-- 	else
+						-- 		widget.content.text = ""
+						-- 	end
+						-- 	if mod.data.all_id == 1 then
+						-- 		widget.style.text.text_color = {255, 255, 255, 0}
+						-- 	end
+						-- elseif animation.text == "dare_2" or (animation.text == "dare_2_hotkey" and not mod.is_selector()) then
+						-- 	if mod.data.dares[2] then
+						-- 		--widget.content.text = mod.data.dares[2].text
+						-- 		widget.content.text = string.format("%s ( %s )", mod.data.dares[2].text, mod:punishment_text(mod.data.punishments[2]))
+						-- 		widget.style.text.text_color = mod.data.dares[2].text_color
+						-- 		widget.content.dare_id = mod.data.dares[2].id
+						-- 	else
+						-- 		widget.content.text = ""
+						-- 	end
+						-- 	if mod.data.all_id == 2 then
+						-- 		widget.style.text.text_color = {255, 255, 255, 0}
+						-- 	end
+						-- elseif animation.text == "dare_2_hotkey" and mod.is_selector() then
+						-- 	if mod.data.dares[2] then
+						-- 		--widget.content.text = string.format("%s: %s", mod.data.activate_dare_2, mod.data.dares[2].text)
+						-- 		widget.content.text = string.format("%s: %s ( %s )", mod.data.activate_dare_2, mod.data.dares[2].text, mod:punishment_text(mod.data.punishments[2]))
+						-- 		widget.style.text.text_color = mod.data.dares[2].text_color
+						-- 		widget.content.dare_id = mod.data.dares[2].id
+						-- 	else
+						-- 		widget.content.text = ""
+						-- 	end
+						-- 	if mod.data.all_id == 2 then
+						-- 		widget.style.text.text_color = {255, 255, 255, 0}
+						-- 	end
+						-- elseif animation.text == "dare_3" or (animation.text == "dare_3_hotkey" and not mod.is_selector()) then
+						-- 	if mod.data.dares[3] then
+						-- 		--widget.content.text = mod.data.dares[3].text
+						-- 		widget.content.text = string.format("%s ( %s )", mod.data.dares[3].text, mod:punishment_text(mod.data.punishments[3]))
+						-- 		widget.style.text.text_color = mod.data.dares[3].text_color
+						-- 		widget.content.dare_id = mod.data.dares[3].id
+						-- 	else
+						-- 		widget.content.text = ""
+						-- 	end
+						-- 	if mod.data.all_id == 3 then
+						-- 		widget.style.text.text_color = {255, 255, 255, 0}
+						-- 	end
+						-- elseif animation.text == "dare_3_hotkey" and mod.is_selector() then
+						-- 	if mod.data.dares[3] then
+						-- 		--widget.content.text = string.format("%s: %s", mod.data.activate_dare_3, mod.data.dares[3].text)
+						-- 		widget.content.text = string.format("%s: %s ( %s )", mod.data.activate_dare_3, mod.data.dares[3].text, mod:punishment_text(mod.data.punishments[3]))
+						-- 		widget.style.text.text_color = mod.data.dares[3].text_color
+						-- 		widget.content.dare_id = mod.data.dares[3].id
+						-- 	else
+						-- 		widget.content.text = ""
+						-- 	end
+						-- 	if mod.data.all_id == 3 then
+						-- 		widget.style.text.text_color = {255, 255, 255, 0}
+						-- 	end
 						elseif animation.text == "time" then
 							widget.content.text = self.state.time
 						elseif animation.text == "reminder" then
@@ -1600,7 +1717,7 @@ mod.ui = {
 							end
 						elseif animation.text == "active_countdown" then
 							widget.content.text = string.format("%i", mod.data.dare_time + 1)
-						else
+						elseif not found then
 							widget.content.text = animation.text
 						end
 					end
@@ -1884,8 +2001,11 @@ mod.is_peer_id_alive = function(self, peer_id)
 		if health_extension and health_extension:is_alive() then
 			local status_extension = ScriptUnit.extension(unit, "status_system")
 			if status_extension then
-				local respawned = status_extension:is_ready_for_assisted_respawn() or status_extension:is_assisted_respawning()
+				local respawned = status_extension:is_ready_for_assisted_respawn() --or status_extension:is_assisted_respawning()
 				if not respawned then
+					if status_extension:is_assisted_respawning() then
+						if debug then mod:echo("ERROR OCCURED: is_assisted_respawning = "..tostring(status_extension:is_assisted_respawning())) end
+					end
 					local knocked_down = status_extension:is_knocked_down()
 					if not knocked_down then
 						return true
@@ -1909,7 +2029,7 @@ end
 --]]
 mod.my_peer_id = function(self)
 	local local_player = Managers.player:local_player()
-	return local_player.peer_id
+	return local_player and local_player.peer_id
 end
 --[[
 	Get server peer_id
@@ -1976,6 +2096,23 @@ mod.is_helping_assisted_respawn = function(self, peer_id)
         end
     end
     return false
+end
+--[[
+	Check if enough players are alive / not knocked down
+--]]
+mod.has_enough_players_alive = function(self)
+	if mod:has_enough_players() then
+		local player_count = 0
+		for _, peer_id in pairs(mod.data.mod_users) do
+			if mod:is_peer_id_alive(peer_id) then
+				player_count = player_count + 1
+			end
+		end
+		if player_count > 0 then
+			return true
+		end
+	end
+	return false
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -2061,6 +2198,21 @@ local draw_widgets = function(self, dt)
 end
 mod:hook_safe(BuffUI, "draw", draw_widgets)
 --mod:hook_safe(UnitFrameUI, "draw", draw_widgets)
+--[[
+	On player death / knockdown check for enough players alive
+--]]
+local check_alive_players = function()
+	if mod:is_server() then
+		if debug then
+			mod:echo("PlayerUnitHealthExtension check players!")
+		end
+		if not mod:has_enough_players_alive() then
+			mod.server:set_state("waiting_for_something")
+		end
+	end
+end
+mod:hook_safe(PlayerUnitHealthExtension, "knock_down", check_alive_players)
+mod:hook_safe(PlayerUnitHealthExtension, "die", check_alive_players)
 
 -- ##### ███████╗██╗   ██╗███████╗███╗   ██╗████████╗███████╗ #########################################################
 -- ##### ██╔════╝██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔════╝ #########################################################

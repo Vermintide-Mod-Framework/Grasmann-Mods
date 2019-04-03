@@ -57,15 +57,15 @@ return {
 		en = "Debugging",
 	},
 	start_i_dare_you = {
-		en = "I dare you!",
-		de = "Untersteh dich!",
+		en = "I Dare You!",
+		de = "Untersteh Dich!",
 	},
 	incoming_dare = {
-		en = "Incoming dare!",
+		en = "Incoming Dare!",
 		de = "Nahende Pflicht!",
 	},
 	choose_dare = {
-		en = "Choose dare!",
+		en = "Choose Dare!",
 		de = "Wähle Pflicht!",
 	},
 	error_not_enough_players = {
@@ -81,12 +81,8 @@ return {
 		de = "Nicht genug Pflichten aktiviert! Aktiviere mindestens 3 Pflichten!",
 	},
 	configure_dares = {
-		en = "Configure Dares",
-		de = "Pflichten Konfigurieren",
-	},
-	configure_dares_description = {
-		en = "Set custom settings for specific dares.",
-		de = "Benutzerdefinierte Einstellungen zu spezifischen Pflichten.",
+		en = "Dares",
+		de = "Pflichten",
 	},
 	unit_text_seconds = {
 		en = "sec",
@@ -131,14 +127,18 @@ return {
 		en = "Damage",
 		de = "Schaden",
 	},
-	dare_punishment_damage_amount = {
-		en = "Amount",
-		de = "Höhe",
+	dare_punishment_catapult = {
+		en = "Catapult",
+		de = "Katapultieren",
 	},
-	dare_punishment_damage_frequency = {
-		en = "Frequency",
-		de = "Frequenz",
-	},
+	-- dare_punishment_damage_amount = {
+	-- 	en = "Amount",
+	-- 	de = "Höhe",
+	-- },
+	-- dare_punishment_damage_frequency = {
+	-- 	en = "Frequency",
+	-- 	de = "Frequenz",
+	-- },
 	random_choice = {
 		en = "Random Choice",
 		de = "Zufällige Auswahl",
@@ -227,6 +227,36 @@ return {
 	deactivate_on_assisted_respawn_description = {
 		en = "This dare won't trigger if the player is reviving another player.",
 		de = "Diese Pflicht trifft nicht zu wenn der Spieler einen anderen Spieler wiederbelebt.",
+	},
+	allow_catapult = {
+		en = "Punishment: Catapult",
+		de = "Bestrafung: Katapultieren",
+	},
+	allow_catapult_description = {
+		en = "Allows the victim to be punished by catapulting.\n"..
+			"The server will roll this punishment type randomly.",
+		de = "Erlaubt das Opfer als Strafe zu katapultieren.\n"..
+			"Der Server wird diese Bestrafungsart zufällig würfeln.",
+	},
+	configure_hotkeys = {
+		en = "Hotkeys",
+		de = "Tastenkombinationen",
+	},
+	common_settings = {
+		en = "Common",
+		de = "Allgemein",
+	},
+	configure_punishments = {
+		en = "Punishments",
+		de = "Bestrafungen",
+	},
+	configure_punishments_description = {
+		en = "Activate or deactivate certain punishments in general.",
+		de = "Aktiviere oder deaktiviere bestimmte Bestrafungen generell.",
+	},
+	punishment_catapult = {
+		en = "Catapult",
+		de = "Katapultieren",
 	},
 
 	-- Dares
@@ -323,7 +353,15 @@ return {
 		de = "Benutze keine Gegenstände!",
 	},
 	dont_use_item_reminder = {
-		en = "No Items!",
+		en = "No items!",
 		de = "Keine Gegenstände!",
+	},
+	dont_ping_text = {
+		en = "Don't ping enemies or items!",
+		de = "Markiere keine Gegner oder Items!",
+	},
+	dont_ping_reminder = {
+		en = "Don't ping!",
+		de = "Nicht markieren!",
 	},
 }

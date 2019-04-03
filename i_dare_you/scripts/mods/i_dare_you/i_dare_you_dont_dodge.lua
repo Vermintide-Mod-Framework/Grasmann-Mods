@@ -19,8 +19,7 @@ dont_dodge.id = "dont_dodge"
 dont_dodge.text = mod:localize("dont_dodge_text")
 dont_dodge.reminder = mod:localize("dont_dodge_reminder")
 dont_dodge.time = 0
-dont_dodge.punishments = {"damage"}
-dont_dodge.values = {damage = 15}
+dont_dodge.values.damage = 25
 dont_dodge.reminder_time = 0
 dont_dodge.on_start = function(self)
     dodge = 0

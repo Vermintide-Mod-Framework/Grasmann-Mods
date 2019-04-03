@@ -19,8 +19,7 @@ dont_switch_equipment.id = "dont_switch_equipment"
 dont_switch_equipment.text = mod:localize("dont_switch_equipment_text")
 dont_switch_equipment.reminder = mod:localize("dont_switch_equipment_reminder")
 dont_switch_equipment.time = 0
-dont_switch_equipment.punishments = {"damage"}
-dont_switch_equipment.values = {damage = 15}
+dont_switch_equipment.values.damage = 20
 dont_switch_equipment.reminder_time = 0
 dont_switch_equipment.on_start = function(self)
     switch = 0

@@ -46,8 +46,7 @@ dont_use_item.id = "dont_use_item"
 dont_use_item.text = mod:localize("dont_use_item_text")
 dont_use_item.reminder = mod:localize("dont_use_item_reminder")
 dont_use_item.time = 0
-dont_use_item.punishments = {"damage"}
-dont_use_item.values = {damage = 30}
+dont_use_item.values.damage = 30
 dont_use_item.reminder_time = 0
 dont_use_item.on_start = function(self)
     item = 0

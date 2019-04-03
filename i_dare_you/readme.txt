@@ -4,6 +4,24 @@ Description :
 Lets players dare each other for random things.
 
 Changelog:
+1.0.8b
+	- Added new dare don't ping enemies or items
+	- Capitalized some words in UI
+	- Fixed error appearing in clients chat about local_player being nil
+	- Fixed issue where dare server would continue if not enough players alive
+	- Fixed issue where player would be stuck in dead state after respawn
+	- Added new punishment catapult
+	- Added options to disable catapult punishment for individual dares
+	- Added option to disable catapult punishment in general
+	- Lowered time for reminder to appear in jump continuously
+	- Slightly increased damage of jump continuously
+	- Decreased damage of don't block
+	- Increased damage of don't dodge
+	- Increased damage of don't use melee attacks
+	- Increased damage of don't equip ranged weapon
+	- Increased damage of don't switch equipment
+	- Increased damage of don't use pushes
+	- Increased damage of drop grim
 1.0.7b
 	- Rename evade to dodge in don't dodge description
 	- Don't quick switch changed to don't switch equipment (every switch)

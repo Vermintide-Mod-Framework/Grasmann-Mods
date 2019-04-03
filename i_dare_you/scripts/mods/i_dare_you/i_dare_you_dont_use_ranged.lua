@@ -10,8 +10,7 @@ dont_use_ranged.id = "dont_use_ranged"
 dont_use_ranged.text = mod:localize("dont_use_ranged_text")
 dont_use_ranged.reminder = mod:localize("dont_use_ranged_reminder")
 dont_use_ranged.time = 0.2
-dont_use_ranged.punishments = {"damage"}
-dont_use_ranged.values = {damage = 2}
+dont_use_ranged.values.damage = 5
 dont_use_ranged.reminder_time = 1
 dont_use_ranged.check_condition = function(self, selector_peer_id, victim_peer_id)
     -- Make sure character isn't a slayer
