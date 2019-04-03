@@ -19,7 +19,7 @@ end
 
 -- Debugging
 local debug = mod:get("debug")
-local test_dare = "dont_push"
+--local test_dare = "dont_push"
 
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
