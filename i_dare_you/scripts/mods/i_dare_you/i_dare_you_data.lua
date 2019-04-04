@@ -57,6 +57,7 @@ local customize_dares = {
 		length_default = 30,
 		length_range = {10, 60},
 		allow_catapult = true,
+		deactivate_on_career_skill = true,
 	},
 	{
 		setting_id = "dont_use_item",
@@ -110,6 +111,15 @@ local customize_dares = {
 		length_range = {10, 60},
 		allow_catapult = true,
 	},
+	{
+		setting_id = "dont_pick_up",
+		title = "dont_pick_up_text",
+		type = "checkbox",
+		default_value = true,
+		length_default = 30,
+		length_range = {10, 60},
+		allow_catapult = true,
+	},
 }
 
 local customize_dares_table = {}
@@ -137,6 +147,16 @@ for _, custom in pairs(customize_dares) do
 			tooltip = "deactivate_on_assisted_respawn_description",
 			type = "checkbox",
 			default_value = custom_entry.deactivate_on_assisted_respawn,
+		}
+	end
+	-- Deactivate on career skill
+	if custom_entry.deactivate_on_career_skill ~= nil then
+		custom_entry.sub_widgets[#custom_entry.sub_widgets+1] = {
+			setting_id = custom_entry.setting_id.."_deactivate_on_career_skill",
+			title = "deactivate_on_career_skill",
+			tooltip = "deactivate_on_career_skill_description",
+			type = "checkbox",
+			default_value = custom_entry.deactivate_on_career_skill,
 		}
 	end
 	-- Allow catapult punishment

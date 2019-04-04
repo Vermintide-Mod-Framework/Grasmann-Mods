@@ -6,11 +6,19 @@ local mod = get_mod("i_dare_you")
 --]]
 
 local switch = 0
-mod:hook_safe(SimpleInventoryExtension, "wield", function(self)
+local last_slot = ""
+local skill_weapon = "slot_career_skill_weapon"
+mod:hook(SimpleInventoryExtension, "wield", function(func, self, slot_name, ...)
     local player = Managers.player:player_from_peer_id(mod:my_peer_id())
     if self.player == player then
-        switch = switch + 1
+        local option = mod:get("dont_switch_equipment_deactivate_on_career_skill")
+        local no_career_weapon = slot_name ~= skill_weapon and last_slot ~= skill_weapon
+        if not option or no_career_weapon then
+            switch = switch + 1
+        end
     end
+    last_slot = slot_name
+    func(self, slot_name, ...)
 end)
 mod:hook_disable(SimpleInventoryExtension, "wield")
 

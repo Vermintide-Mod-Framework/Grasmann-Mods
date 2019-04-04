@@ -4,6 +4,9 @@ Description :
 Lets players dare each other for random things.
 
 Changelog:
+1.0.9b
+	- Prevented career skill weapons from triggering don't switch equipment
+	- Fixed option to prevent don't block on revive for clients
 1.0.8b
 	- Added new dare don't ping enemies or items
 	- Capitalized some words in UI

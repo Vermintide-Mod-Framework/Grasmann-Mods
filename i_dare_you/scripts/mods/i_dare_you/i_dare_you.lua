@@ -19,7 +19,7 @@ end
 
 -- Debugging
 local debug = mod:get("debug")
---local test_dare = "dont_push"
+--local test_dare = "dont_pick_up"
 
 -- Load dares
 mod.dares = mod:dofile("scripts/mods/i_dare_you/i_dare_you_dares")
@@ -766,10 +766,15 @@ mod.server = {
 						local rnd = math.random(1, 3)
 						dares[rnd] = test_dare
 
-						local punishments = self:get_available_punishments(test_dare)
-						local p_rnd = math.random(1, #punishments)
-						local punishment = punishments[p_rnd]
+						local available_punishments = self:get_available_punishments(test_dare)
+						local p_rnd = math.random(1, #available_punishments)
+						local punishment = available_punishments[p_rnd]
 						punishments[rnd] = punishment
+						if test_punishment then
+							if table.contains(available_punishments, test_punishment) then
+								punishments[rnd] = test_punishment
+							end
+						end
 
 						mod:echo("Added test dare '"..test_dare.."' with punishment '"..punishment.."'!")
 					end
@@ -2088,11 +2093,15 @@ mod.is_helping_assisted_respawn = function(self, peer_id)
     local unit = mod:player_unit_from_peer_id(peer_id)
     local interactor_extension = ScriptUnit.extension(unit, "interactor_system")
     if interactor_extension then
-        local interacting, interaction_type = interactor_extension:is_interacting()
+		local interacting, interaction_type = interactor_extension:is_interacting()
+		if not interaction_type then
+			-- Husk
+			interaction_type = interactor_extension.interaction_context.interaction_type
+		end
         if interacting and (interaction_type == "assisted_respawn" or interaction_type == "revive") then
 			return true
 		else
-			mod:echo(interaction_type)
+			if debug then mod:echo(interaction_type) end
         end
     end
     return false

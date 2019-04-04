@@ -165,6 +165,7 @@ local dares = {
 	mod:dofile("scripts/mods/i_dare_you/i_dare_you_drop_grim"),
 	mod:dofile("scripts/mods/i_dare_you/i_dare_you_dont_use_item"),
 	mod:dofile("scripts/mods/i_dare_you/i_dare_you_dont_ping"),
+	mod:dofile("scripts/mods/i_dare_you/i_dare_you_dont_pick_up"),
 	-- {
 	-- 	id = "dont_do_headshots",
 	-- 	text = "dont_do_headshots",

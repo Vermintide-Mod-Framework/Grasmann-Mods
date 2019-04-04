@@ -9,7 +9,10 @@
 - Percentage damage incl. grim effects???
 - Negate healing item heal amount???
 - Make compatible to twitch mode UI
+
+RESOLVED in 1.0.9b:
 - Punishment triggers for skill on don't switch equipment on certain careers
+- Special option for don't block on revive only working on host
 
 RESOLVED in 1.0.8b:
 - DARE don't ping enemies

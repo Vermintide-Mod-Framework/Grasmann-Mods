@@ -228,6 +228,14 @@ return {
 		en = "This dare won't trigger if the player is reviving another player.",
 		de = "Diese Pflicht trifft nicht zu wenn der Spieler einen anderen Spieler wiederbelebt.",
 	},
+	deactivate_on_career_skill = {
+		en = "Except on career skill",
+		de = "Außer bei Klassenfähigkeit",
+	},
+	deactivate_on_career_skill_description = {
+		en = "This dare won't trigger when switching to the career skill weapon.",
+		de = "Diese Pflicht trifft nicht beim Wechsel zur Waffe der Klassenfähigkeit.",
+	},
 	allow_catapult = {
 		en = "Punishment: Catapult",
 		de = "Bestrafung: Katapultieren",
@@ -363,5 +371,13 @@ return {
 	dont_ping_reminder = {
 		en = "Don't ping!",
 		de = "Nicht markieren!",
+	},
+	dont_pick_up_text = {
+		en = "Don't pick up items!",
+		de = "Hebe keine Gegenstände auf!",
+	},
+	dont_pick_up_reminder = {
+		en = "No pickup!",
+		de = "Nicht aufheben!",
 	},
 }
