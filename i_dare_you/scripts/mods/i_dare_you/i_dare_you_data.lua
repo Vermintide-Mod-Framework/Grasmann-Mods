@@ -201,6 +201,15 @@ return {
 						},
 						default_value = 2,
 					},
+					-- {
+					-- 	setting_id = "game_mode",
+					-- 	type = "dropdown",
+					-- 	options = {
+					-- 		{text = "game_mode_option_default_text", 	value = 1},
+					-- 		{text = "game_mode_option_quickfire_text", 	value = 2},
+					-- 	},
+					-- 	default_value = 1,
+					-- },
 					{
 						setting_id = "common_settings",
 						type = "group",

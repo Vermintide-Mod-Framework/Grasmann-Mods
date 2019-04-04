@@ -266,6 +266,30 @@ return {
 		en = "Catapult",
 		de = "Katapultieren",
 	},
+	game_mode_option_default_text = {
+		en = "Default",
+		de = "Standard",
+	},
+	game_mode_option_quickfire_text = {
+		en = "Quickfire",
+		de = "Schnellfeuer",
+	},
+	game_mode = {
+		en = "Rules",
+		de = "Regeln",
+	},
+	game_mode_description = {
+		en = "Rules for the dare selection.\n\n"..
+			"-- DEFAULT --\n"..
+			"One player chosses a dare for the other one.\n\n"..
+			"-- QUICKFIRE --\n"..
+			"The server automatically chooses dares. Each dare is active for 10 seconds.",
+		de = "Regeln für die Pflichtauswahl.\n\n"..
+			"-- STANDARD --\n"..
+			"Ein Spieler wählt eine Pflicht für einen Anderen.\n\n"..
+			"-- SCHNELLFEUER --\n"..
+			"Der server wählt Pflichten automatisch. Jede Pflicht ist 10 Sekunden aktiv.",
+	},
 
 	-- Dares
 	jump_continuously_text = {

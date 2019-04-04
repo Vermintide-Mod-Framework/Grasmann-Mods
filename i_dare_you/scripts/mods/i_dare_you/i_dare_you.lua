@@ -209,6 +209,9 @@ mod:network_register("dare_selected_server", function(sender, dare_name, all, pu
 			mod:echo("Dare '"..dare_name.."' valid!")
 		end
 		local time = mod:get(dare_name.."_dare_length") or 30
+		if mod:get("game_mode") == 2 then
+			time = 10
+		end
 		if all then
 			if debug then mod:echo("Activate dare for everyone!") end
 		end
@@ -613,6 +616,9 @@ mod.server = {
 					if dares then
 						local time = mod:get("selection_time")
 						mod:network_send("start_dare_selection_client", "all", selector_peer_id, victim_peer_id, dares, time, all_id, punishments)
+						if mod:get("game_mode") == 2 then
+							self:finish()
+						end
 					end
 				else
 					if mod:has_enough_players() then
@@ -639,9 +645,9 @@ mod.server = {
 			start = function(self)
 			end,
 			finish = function(self)
-				local time = mod:get(mod.data.selected_dare.."_dare_length")
-				mod:network_send("start_dare_client", "all", mod.data.selected_dare, time)
-				mod.server:set_state("waiting", time)
+				--local time = mod:get(mod.data.selected_dare.."_dare_length")
+				mod:network_send("start_dare_client", "all", mod.data.selected_dare, mod.data.dare_time)
+				mod.server:set_state("waiting", mod.data.dare_time)
 			end,
 		},
 		waiting_for_something = {
