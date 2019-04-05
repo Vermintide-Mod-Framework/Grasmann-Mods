@@ -134,6 +134,12 @@ mod.create_test_entries = function(self)
 	self:register_entry("test_lowest_2", "Test Lowest 2", "lowest", self.get_test_values)
 	self:register_entry("test_highest_2", "Test Highest 2", "highest", self.get_test_values)
 	self:register_entry("test_highest_2", "Test Highest 3", "highest", self.get_test_values) -- will already be in list
+	for i = 1, 100 do
+		local rnd = math.random(1, 2)
+		local type = "lowest"
+		if rnd == 2 then type = "highest" end
+		self:register_entry("test_many_"..i, "Test Many "..i, type, self.get_test_values)
+	end
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
