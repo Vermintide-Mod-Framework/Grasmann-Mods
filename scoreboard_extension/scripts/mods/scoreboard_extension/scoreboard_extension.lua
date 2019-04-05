@@ -11,17 +11,24 @@ local mod = get_mod("scoreboard_extension")
 -- ##### ██║  ██║██╔══██║   ██║   ██╔══██║ ############################################################################
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
-
-mod.score_rows = 11
+mod.scores = {}
+mod.score_rows = 16
+local score_height = 775 --580
+mod.player_score_size = {250, score_height}
+--[[
+	Custom entry structure
+--]]
 mod.custom_entries = {
 	list = {},
 	register = function(self, id, text, type, callback)
 		local entry = self:get(id)
 		if not entry then
 			self:add(id, text, type, callback)
+			return true
 		else
 			mod:echo("Entry '"..id.."' has already been registered!")
 		end
+		return false
 	end,
 	add = function(self, id, text, type, callback)
 		local entry = {
@@ -41,6 +48,9 @@ mod.custom_entries = {
 		return nil
 	end,
 }
+--[[
+	Scrollbar mechanics
+--]]
 mod.scrollbar = {
 	automatic = false,
 	timer = 0,
@@ -56,6 +66,10 @@ mod.scrollbar = {
 	end,
 	is_held = function(self)
 		return self.widget.content.scroll_bar_info.is_held
+	end,
+	create = function(self)
+		local definition = UIWidgets.create_scrollbar(self.scenegraph_id, self.size)
+		self.widget = UIWidget.init(definition)
 	end,
 	set = function(self)
 		local rows = #mod.scores
@@ -134,7 +148,6 @@ mod.scrollbar = {
 		end
 	end,
 }
-mod.scores = {}
 
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
 -- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
@@ -142,13 +155,6 @@ mod.scores = {}
 -- ##### ██╔══╝  ██║   ██║██║╚██╗██║██║        ██║   ██║██║   ██║██║╚██╗██║╚════██║ ###################################
 -- ##### ██║     ╚██████╔╝██║ ╚████║╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║███████║ ###################################
 -- ##### ╚═╝      ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ###################################
---[[
-	Create scrollbar
---]]
-mod.create_scrollbar = function(self)
-	local definition = UIWidgets.create_scrollbar(mod.scrollbar.scenegraph_id, mod.scrollbar.size)
-	return UIWidget.init(definition)
-end
 --[[
 	Register a score entry
 
@@ -158,27 +164,7 @@ end
 	callback	: Function to receive values from 		- function(player_index)
 --]]
 mod.register_entry = function(self, id, text, type, callback)
-	self.custom_entries:register(id, text, type, callback)
-end
---[[
-	Testfunctions
---]]
-mod.get_test_values = function(player_index)
-	return math.random(1, 100)
-end
-mod.create_test_entries = function(self)
-	self:register_entry("test_lowest", "Test Lowest 1", "lowest", self.get_test_values)
-	self:register_entry("test_highest", "Test Highest 1", "highest", self.get_test_values)
-	self:register_entry("test_none", "Test None", nil, self.get_test_values)
-	self:register_entry("test_lowest_2", "Test Lowest 2", "lowest", self.get_test_values)
-	self:register_entry("test_highest_2", "Test Highest 2", "highest", self.get_test_values)
-	self:register_entry("test_highest_2", "Test Highest 3", "highest", self.get_test_values) -- will already be in list
-	-- for i = 1, 100 do
-	-- 	local rnd = math.random(1, 2)
-	-- 	local type = "lowest"
-	-- 	if rnd == 2 then type = "highest" end
-	-- 	self:register_entry("test_many_"..i, "Test Many "..i, type, self.get_test_values)
-	-- end
+	return self.custom_entries:register(id, text, type, callback)
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -193,8 +179,8 @@ end
 mod:hook(UISceneGraph, "init_scenegraph", function(func, scenegraph, ...)
 	-- Size and position
 	local start = 80
-	local player_score_size = {250, 580 - start}
-	local size = {8, player_score_size[2]}
+	--local player_score_size = {250, 580}
+	local size = {8, mod.player_score_size[2] - start}
 	local position = {-4, 0, 5}
 	-- Change scenegraph
 	scenegraph.scrollbar = {
@@ -204,6 +190,13 @@ mod:hook(UISceneGraph, "init_scenegraph", function(func, scenegraph, ...)
 		size = size,
 		position = position,
 	}
+	-- Add rows
+	scenegraph.scores_topics.size[2] = mod.player_score_size[2]
+	scenegraph.scores_topics.position[2] = 50
+	for player_index = 1, 4 do
+		scenegraph["player_panel_"..player_index].size = mod.player_score_size
+		scenegraph["player_panel_"..player_index].position[2] = 50
+	end
 	-- Scrollbar size
 	mod.scrollbar.size = size
 	-- Return
@@ -215,10 +208,38 @@ mod:hook_disable(UISceneGraph, "init_scenegraph")
 --]]
 mod:hook(EndViewStateScore, "create_ui_elements", function(func, self, params, ...)
 	mod:hook_enable(UISceneGraph, "init_scenegraph")
+
 	local result = func(self, params, ...)
-	-- create widgets
-	mod.scrollbar.widget = mod:create_scrollbar()
-	-- create widgets
+
+	-- Change widgets
+	local MAX_SCORE_PANEL_ROWS = 20
+	local topics_hover_length = 1400 + mod.player_score_size[1]
+	-- Score topics
+	local scores_topics = UIWidgets.create_score_topics("scores_topics", {350, mod.player_score_size[2]}, topics_hover_length, MAX_SCORE_PANEL_ROWS)
+	local new_widget = UIWidget.init(scores_topics)
+	self._widgets_by_name.scores_topics = new_widget
+	for i, widget in pairs(self._widgets) do
+		if widget.content.num_rows then
+			self._widgets[i] = new_widget
+			break
+		end
+	end
+	-- Panels
+	local score_widget_definitions = {
+		player_score_1 = UIWidgets.create_score_entry("player_panel_1", mod.player_score_size, MAX_SCORE_PANEL_ROWS, "left"),
+		player_score_2 = UIWidgets.create_score_entry("player_panel_2", mod.player_score_size, MAX_SCORE_PANEL_ROWS),
+		player_score_3 = UIWidgets.create_score_entry("player_panel_3", mod.player_score_size, MAX_SCORE_PANEL_ROWS, "left"),
+		player_score_4 = UIWidgets.create_score_entry("player_panel_4", mod.player_score_size, MAX_SCORE_PANEL_ROWS)
+	}
+	self._score_widgets = {
+		UIWidget.init(score_widget_definitions.player_score_1),
+		UIWidget.init(score_widget_definitions.player_score_2),
+		UIWidget.init(score_widget_definitions.player_score_3),
+		UIWidget.init(score_widget_definitions.player_score_4)
+	}
+	-- Create Scrollbar
+	mod.scrollbar:create()
+
 	mod:hook_disable(UISceneGraph, "init_scenegraph")
 	return result
 end)
@@ -240,6 +261,7 @@ mod:hook_safe(EndViewStateScore, "update", function(self, dt, t)
 			local row_name = "row_bg"..line_suffix
 			local row_content = self._widgets_by_name.scores_topics.content[row_name]
 			row_content[score_text_name] = mod.scores[group_row_index].text
+			row_content.has_score = true
 			for player_index = 1, 4 do
 				local line_suffix = "_"..total_row_index
 				local score_text_name = "score_text"..line_suffix
@@ -247,6 +269,8 @@ mod:hook_safe(EndViewStateScore, "update", function(self, dt, t)
 				local row_content = self._score_widgets[player_index].content[row_name]
 				row_content[score_text_name] = mod.scores[group_row_index][player_index].score
 				row_content.has_highscore = mod.scores[group_row_index][player_index].has_highscore
+				row_content.has_background = total_row_index % 2 == 0
+				row_content.has_score = true
 			end
 			total_row_index = total_row_index + 1
 		end
@@ -326,6 +350,25 @@ mod:hook_safe(EndViewStateScore, "_setup_score_panel", function(self, score_pane
 			}
 		end
 	end
+	-- Fill additional rows
+	for row = total_row_index, mod.score_rows+1 do
+		local line_suffix = "_"..row
+		local score_text_name = "score_text"..line_suffix
+		local row_name = "row_bg"..line_suffix
+		local row_content = self._widgets_by_name.scores_topics.content[row_name]
+		row_content[score_text_name] = mod.scores[row-1].text
+		row_content.has_score = true
+		for player_index = 1, 4 do
+			local line_suffix = "_"..row
+			local score_text_name = "score_text"..line_suffix
+			local row_name = "row_bg"..line_suffix
+			local row_content = self._score_widgets[player_index].content[row_name]
+			row_content[score_text_name] = mod.scores[row-1][player_index].score
+			row_content.has_highscore = mod.scores[row-1][player_index].has_highscore
+			row_content.has_background = row % 2 == 0
+			row_content.has_score = true
+		end
+	end
 	-- Set scrollbar
 	mod.scrollbar:set()
 end)
@@ -354,17 +397,44 @@ end)
 -- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
 -- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
 --[[
-	Register score entries in on_all_mods_loaded
-	Prevents load order issues
---]]
-mod.on_all_mods_loaded = function()
-	mod:create_test_entries()
-end
---[[
 	Deactivate UISceneGraph hook
 --]]
 mod.on_enabled = function(is_first_call)
 	if is_first_call then
 		mod:hook_disable(UISceneGraph, "init_scenegraph")
 	end
+end
+
+-- ##### ████████╗███████╗███████╗████████╗ ██████╗ ██████╗ ██████╗ ███████╗ ##########################################
+-- ##### ╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝██╔════╝██╔═══██╗██╔══██╗██╔════╝ ##########################################
+-- #####    ██║   █████╗  ███████╗   ██║   ██║     ██║   ██║██║  ██║█████╗   ##########################################
+-- #####    ██║   ██╔══╝  ╚════██║   ██║   ██║     ██║   ██║██║  ██║██╔══╝   ##########################################
+-- #####    ██║   ███████╗███████║   ██║   ╚██████╗╚██████╔╝██████╔╝███████╗ ##########################################
+-- #####    ╚═╝   ╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝ ##########################################
+--[[
+	Testfunctions
+--]]
+mod.get_test_values = function(player_index)
+	return math.random(1, 100)
+end
+mod.create_test_entries = function(self)
+	self:register_entry("test_lowest", "Test Lowest 1", "lowest", self.get_test_values)
+	self:register_entry("test_highest", "Test Highest 1", "highest", self.get_test_values)
+	self:register_entry("test_none", "Test None", nil, self.get_test_values)
+	self:register_entry("test_lowest_2", "Test Lowest 2", "lowest", self.get_test_values)
+	self:register_entry("test_highest_2", "Test Highest 2", "highest", self.get_test_values)
+	self:register_entry("test_highest_2", "Test Highest 3", "highest", self.get_test_values) -- will already be in list
+	for i = 1, 100 do
+		local rnd = math.random(1, 2)
+		local type = "lowest"
+		if rnd == 2 then type = "highest" end
+		self:register_entry("test_many_"..i, "Test Many "..i, type, self.get_test_values)
+	end
+end
+--[[
+	Register score entries in on_all_mods_loaded
+	Prevents load order issues
+--]]
+mod.on_all_mods_loaded = function()
+	mod:create_test_entries()
 end

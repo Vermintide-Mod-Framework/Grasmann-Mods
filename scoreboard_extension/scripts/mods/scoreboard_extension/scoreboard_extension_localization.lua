@@ -21,8 +21,8 @@ local localizations = {
 			"Stoppt wenn du manuell scrollst.",
 	},
 	initial_time = {
-		en = "Initial Time",
-		de = "Anfangszeit",
+		en = "Delay",
+		de = "Verzögerung",
 	},
 	initial_time_description = {
 		en = "Initial time waited before the autoscrolling starts.",
