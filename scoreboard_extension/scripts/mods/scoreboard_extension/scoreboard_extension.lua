@@ -78,7 +78,7 @@ mod.scrollbar = {
 	scroll = function(self, dt, input_service)
 		local scroll_axis = input_service:get("scroll_axis")
 		if scroll_axis then
-			local sensitivity = 5
+			local sensitivity = 3
 			local scroll_value = (scroll_axis[2] * dt) * sensitivity
 			if scroll_value ~= 0 then
 				--mod:echo("Scroll value '"..tostring(scroll_value).."'")
