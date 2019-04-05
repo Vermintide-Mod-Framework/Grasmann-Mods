@@ -42,6 +42,9 @@ mod.custom_entries = {
 	end,
 }
 mod.scrollbar = {
+	automatic = false,
+	timer = 0,
+	start_over_time = 2,
 	size = {},
 	scenegraph_id = "scrollbar",
 	widget = nil,
@@ -58,6 +61,8 @@ mod.scrollbar = {
 		if rows < 1 then rows = 1 end
 		local percentage = mod.score_rows / rows
 		self.widget.content.scroll_bar_info.bar_height_percentage = percentage
+		self.automatic = true
+		self.timer = 0
 	end,
 	update = function(self, dt)
 		local heighest_start_index = #mod.scores - (mod.score_rows - 1)
@@ -77,6 +82,20 @@ mod.scrollbar = {
 	end,
 	scroll = function(self, dt, input_service)
 		local scroll_axis = input_service:get("scroll_axis")
+		if scroll_axis[2] == 0 and self.automatic and not self:is_held() then
+			local value = self.widget.content.scroll_bar_info.value
+			if value < 1 then
+				scroll_axis = Vector3(0, -0.05, 0)
+			else
+				self.timer = self.timer + dt
+				if self.timer >= self.start_over_time then
+					self.widget.content.scroll_bar_info.value = 0
+					self.timer = 0
+				end
+			end
+		elseif scroll_axis[2] ~= 0 or self:is_held() then
+			self.automatic = false
+		end
 		if scroll_axis then
 			local sensitivity = 3
 			local scroll_value = (scroll_axis[2] * dt) * sensitivity
@@ -134,12 +153,12 @@ mod.create_test_entries = function(self)
 	self:register_entry("test_lowest_2", "Test Lowest 2", "lowest", self.get_test_values)
 	self:register_entry("test_highest_2", "Test Highest 2", "highest", self.get_test_values)
 	self:register_entry("test_highest_2", "Test Highest 3", "highest", self.get_test_values) -- will already be in list
-	for i = 1, 100 do
-		local rnd = math.random(1, 2)
-		local type = "lowest"
-		if rnd == 2 then type = "highest" end
-		self:register_entry("test_many_"..i, "Test Many "..i, type, self.get_test_values)
-	end
+	-- for i = 1, 100 do
+	-- 	local rnd = math.random(1, 2)
+	-- 	local type = "lowest"
+	-- 	if rnd == 2 then type = "highest" end
+	-- 	self:register_entry("test_many_"..i, "Test Many "..i, type, self.get_test_values)
+	-- end
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
