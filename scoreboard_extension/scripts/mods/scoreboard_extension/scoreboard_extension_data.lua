@@ -1,7 +1,8 @@
 local mod = get_mod("scoreboard_extension")
 --[[
 	Scoreboard Extension
-	
+
+	author: grasmann
 --]]
 
 -- Everything here is optional. You can remove unused parts.

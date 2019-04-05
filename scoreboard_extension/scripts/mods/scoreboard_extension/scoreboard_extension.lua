@@ -2,6 +2,7 @@ local mod = get_mod("scoreboard_extension")
 --[[
 	Scoreboard Extension
 
+	author: grasmann
 --]]
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗  ############################################################################
@@ -73,6 +74,25 @@ mod.scrollbar = {
 			self.end_index = end_index
 		end
 		return change, start_index, end_index
+	end,
+	scroll = function(self, dt, input_service)
+		local scroll_axis = input_service:get("scroll_axis")
+		if scroll_axis then
+			local sensitivity = 5
+			local scroll_value = (scroll_axis[2] * dt) * sensitivity
+			if scroll_value ~= 0 then
+				--mod:echo("Scroll value '"..tostring(scroll_value).."'")
+				local value = self.widget.content.scroll_bar_info.value
+				if scroll_value > 0 then
+					value = value - scroll_value
+					if value < 0 then value = 0 end
+				elseif scroll_value < 0 then
+					value = value + scroll_value*-1
+					if value > 1 then value = 1 end
+				end
+				self.widget.content.scroll_bar_info.value = value
+			end
+		end
 	end,
 }
 mod.scores = {}
@@ -161,7 +181,11 @@ end)
 	Update scrolling
 --]]
 mod:hook_safe(EndViewStateScore, "update", function(self, dt, t)
-	local change, start_index, end_index = mod.scrollbar:update()
+	-- Scrollwheel
+	local input_service = self.input_manager:get_service("end_of_level")
+	mod.scrollbar:scroll(dt, input_service)
+	-- Update scoreboard
+	local change, start_index, end_index = mod.scrollbar:update(dt)
 	if change then
 		--mod:echo("Scroll change! Start: '"..tostring(start_index).."' End: '"..tostring(end_index).."'")
 		local total_row_index = 2
