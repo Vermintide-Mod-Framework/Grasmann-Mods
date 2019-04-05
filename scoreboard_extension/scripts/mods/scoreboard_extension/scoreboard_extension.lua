@@ -45,6 +45,7 @@ mod.scrollbar = {
 	automatic = false,
 	timer = 0,
 	start_over_time = 2,
+	initial_timer = 0,
 	size = {},
 	scenegraph_id = "scrollbar",
 	widget = nil,
@@ -65,7 +66,11 @@ mod.scrollbar = {
 		end
 		self.widget.content.scroll_bar_info.bar_height_percentage = percentage
 		self.automatic = mod:get("autoscroll")
+		if self.automatic and mod:get("direction") == "bottom_to_top" then
+			self.widget.content.scroll_bar_info.value = 1
+		end
 		self.timer = 0
+		self.initial_timer = 0
 	end,
 	update = function(self, dt)
 		local heighest_start_index = #mod.scores - (mod.score_rows - 1)
@@ -87,12 +92,24 @@ mod.scrollbar = {
 		local scroll_axis = input_service:get("scroll_axis")
 		if scroll_axis[2] == 0 and self.automatic and not self:is_held() then
 			local value = self.widget.content.scroll_bar_info.value
-			if value < 1 then
-				scroll_axis = Vector3(0, -0.05, 0)
-			else
+			if (mod:get("direction") == "bottom_to_top" and value > 0) or (mod:get("direction") == "top_to_bottom" and value < 1) then
+				if self.initial_timer >= mod:get("initial_time") then
+					if mod:get("direction") == "bottom_to_top" then
+						scroll_axis = Vector3(0, 0.05, 0)
+					else
+						scroll_axis = Vector3(0, -0.05, 0)
+					end
+				else
+					self.initial_timer = self.initial_timer + dt
+				end
+			elseif mod:get("loop") then
 				self.timer = self.timer + dt
-				if self.timer >= self.start_over_time then
-					self.widget.content.scroll_bar_info.value = 0
+				if self.timer >= mod:get("loop_time") then
+					if mod:get("direction") == "bottom_to_top" then
+						self.widget.content.scroll_bar_info.value = 1
+					else
+						self.widget.content.scroll_bar_info.value = 0
+					end
 					self.timer = 0
 				end
 			end
@@ -341,7 +358,7 @@ end)
 	Prevents load order issues
 --]]
 mod.on_all_mods_loaded = function()
-	--mod:create_test_entries()
+	mod:create_test_entries()
 end
 --[[
 	Deactivate UISceneGraph hook
