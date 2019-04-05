@@ -60,8 +60,11 @@ mod.scrollbar = {
 		local rows = #mod.scores
 		if rows < 1 then rows = 1 end
 		local percentage = mod.score_rows / rows
+		if percentage >= 1 then
+			self.widget.content.visible = false
+		end
 		self.widget.content.scroll_bar_info.bar_height_percentage = percentage
-		self.automatic = true
+		self.automatic = mod:get("autoscroll")
 		self.timer = 0
 	end,
 	update = function(self, dt)
@@ -306,7 +309,6 @@ mod:hook_safe(EndViewStateScore, "_setup_score_panel", function(self, score_pane
 			}
 		end
 	end
-	mod:dump(mod.scores, "mod.scores", 3)
 	-- Set scrollbar
 	mod.scrollbar:set()
 end)
@@ -339,7 +341,7 @@ end)
 	Prevents load order issues
 --]]
 mod.on_all_mods_loaded = function()
-	mod:create_test_entries()
+	--mod:create_test_entries()
 end
 --[[
 	Deactivate UISceneGraph hook
