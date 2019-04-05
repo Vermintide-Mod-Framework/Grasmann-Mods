@@ -1,0 +1,11 @@
+mod = [
+	"scoreboard_extension"
+]
+
+package = [
+	"resource_packages/scoreboard_extension/scoreboard_extension"
+]
+
+lua = [
+	"scripts/mods/scoreboard_extension/*"
+]
