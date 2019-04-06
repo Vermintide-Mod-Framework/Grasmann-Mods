@@ -474,7 +474,7 @@ mod.server = {
 		mod:network_send("reset_ui_client", "all")
 		mod:network_send("dare_finished_client", "all", "server_start")
 		if mod:has_enough_players() and not mod:is_in_inn() and self:has_enough_activated_dares() then
-			if mod.data.in_mission and not test_dares then
+			if mod.data.active and mod.data.in_mission and not test_dares then
 				--mod:echo(mod:localize("start_i_dare_you"))
 				self.show_title = true,
 				self:set_state("init")

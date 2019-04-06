@@ -4,6 +4,8 @@ Description :
 Lets players dare each other for random things.
 
 Changelog:
+1.1.0b
+	- Dare server doesn't start when option switch off
 1.0.9b
 	- Prevented career skill weapons from triggering don't switch equipment
 	- Fixed option to prevent don't block on revive for clients
