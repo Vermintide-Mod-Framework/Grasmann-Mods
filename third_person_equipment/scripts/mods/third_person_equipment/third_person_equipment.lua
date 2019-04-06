@@ -89,7 +89,7 @@ end
 --[[
     Hook inventory extensions on init
 --]]
-local init_inventory_extension = function(self)
+local init_inventory_extension = function(self, ...)
 	self.tpe_extension = ThirdPersonEquipmentExtension:new(self)
 end
 mod:hook_safe(SimpleInventoryExtension, "init", init_inventory_extension)

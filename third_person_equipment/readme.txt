@@ -6,6 +6,9 @@ Melee- and ranged weapon as well as tomes, grims, potions, bombs and heal items.
 Works for yourself, other players and bots.
 
 Changelog:
+2.4.3
+	- Changed hooks into inventory extension due to an issue in vmf
+	- Added safety check for equipment visibility with special states
 2.4.2 - Made to work with both vt1 and vt2
 2.4.1
 	- Updated options menu for latest vmf version

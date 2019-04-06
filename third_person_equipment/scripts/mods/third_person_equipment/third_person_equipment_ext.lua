@@ -7,13 +7,91 @@ local mod = get_mod("ThirdPersonEquipment")
 	Author: grasmann
 --]]
 
+-- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
+-- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################
+-- ##### ███████║██║   ██║██║   ██║█████╔╝ ███████╗ ###################################################################
+-- ##### ██╔══██║██║   ██║██║   ██║██╔═██╗ ╚════██║ ###################################################################
+-- ##### ██║  ██║╚██████╔╝╚██████╔╝██║  ██╗███████║ ###################################################################
+-- ##### ╚═╝  ╚═╝ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝ ###################################################################
+--[[
+	Destroy extension
+--]]
+local destroy = function(func, self, ...)
+	if self.tpe_extension and self.tpe_extension.initialized then
+		self.tpe_extension:destroy()
+	end
+	return func(self, ...)
+end
+mod:hook(SimpleInventoryExtension, "destroy", destroy)
+mod:hook(SimpleHuskInventoryExtension, "destroy", destroy)
+--[[
+	Wield weapons
+--]]
+local wield = function(self, slot_name)
+	if self.tpe_extension and self.tpe_extension.initialized then
+		if table.contains(self.tpe_extension.slots, slot_name) then
+			self.tpe_extension:wield(slot_name)
+		end
+	end
+end
+mod:hook_safe(SimpleInventoryExtension, "wield", wield)
+mod:hook_safe(SimpleHuskInventoryExtension, "wield", wield)
+--[[
+	Add equipment
+--]]
+local add_equipment = function(self, slot_name, item_data)
+	if self.tpe_extension and self.tpe_extension.initialized then
+		if type(item_data) == "string" then
+			item_data = ItemMasterList[item_data]
+		end
+		if table.contains(self.tpe_extension.slots, slot_name) then
+			self.tpe_extension:add(slot_name, item_data)
+		end
+	end
+end
+mod:hook_safe(SimpleInventoryExtension, "add_equipment", add_equipment)
+mod:hook_safe(SimpleHuskInventoryExtension, "add_equipment", add_equipment)
+--[[
+	Destroy slot
+--]]
+local destroy_slot = function(func, self, slot_name, ...)
+	if self.tpe_extension and self.tpe_extension.initialized then
+		if table.contains(self.tpe_extension.slots, slot_name) then
+			self.tpe_extension:remove(slot_name)
+		end
+	end
+	return func(self, slot_name, ...)
+end
+mod:hook(SimpleInventoryExtension, "destroy_slot", destroy_slot)
+mod:hook(SimpleHuskInventoryExtension, "destroy_slot", destroy_slot)
+--[[
+	Update
+--]]
+local update = function(self)
+	if self.tpe_extension and self.tpe_extension.initialized then
+		self.tpe_extension:update()
+	end
+end
+mod:hook_safe(SimpleInventoryExtension, "update", update)
+mod:hook_safe(SimpleHuskInventoryExtension, "update", update)
+--[[
+	Catch first / third person changes
+--]]
+local show_third_person_inventory = function(self, show)
+	if self.tpe_extension and self.tpe_extension.initialized then
+		self.tpe_extension.show = show
+		self.tpe_extension.delayed_visibility_check = true
+	end
+end
+mod:hook_safe(SimpleInventoryExtension, "show_third_person_inventory", show_third_person_inventory)
+mod:hook_safe(SimpleHuskInventoryExtension, "show_third_person_inventory", show_third_person_inventory)
+
 -- ##### ███████╗██╗  ██╗████████╗███████╗███╗   ██╗███████╗██╗ ██████╗ ███╗   ██╗ ####################################
 -- ##### ██╔════╝╚██╗██╔╝╚══██╔══╝██╔════╝████╗  ██║██╔════╝██║██╔═══██╗████╗  ██║ ####################################
 -- ##### █████╗   ╚███╔╝    ██║   █████╗  ██╔██╗ ██║███████╗██║██║   ██║██╔██╗ ██║ ####################################
 -- ##### ██╔══╝   ██╔██╗    ██║   ██╔══╝  ██║╚██╗██║╚════██║██║██║   ██║██║╚██╗██║ ####################################
 -- ##### ███████╗██╔╝ ██╗   ██║   ███████╗██║ ╚████║███████║██║╚██████╔╝██║ ╚████║ ####################################
 -- ##### ╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ####################################
-
 ThirdPersonEquipmentExtension = class(ThirdPersonEquipmentExtension)
 --[[
     Initialize extension
@@ -36,8 +114,7 @@ ThirdPersonEquipmentExtension.init = function(self, inventory_extension)
 	self.special_states_remote_only = {
 		"climbing_ladder",
 	}
-    -- Create hooks
-    self:create_hooks()
+	self.initialized = true
     -- Add to list
     mod.extensions[self.unit] = self
 end
@@ -45,7 +122,6 @@ end
     Destroy extension
 --]]
 ThirdPersonEquipmentExtension.destroy = function(self)
-    self:destroy_hooks()
     self:remove_all()
     mod.extensions[self.unit] = nil
 end
@@ -54,51 +130,41 @@ end
 --]]
 ThirdPersonEquipmentExtension.create_hooks = function(self)
     -- Destroy
-    mod:hook(self.inventory_extension, "destroy", function(func, self, ...)
-        self.tpe_extension:destroy()
-        return func(self, ...)
-    end)
+    -- mod:hook(self.inventory_extension, "destroy", function(func, self, ...)
+    --     self.tpe_extension:destroy()
+    --     return func(self, ...)
+    -- end)
     -- Wield
-	mod:hook_safe(self.inventory_extension, "wield", function(self, slot_name)
-        if table.contains(self.tpe_extension.slots, slot_name) then
-            self.tpe_extension:wield(slot_name)
-        end
-    end)
+	-- mod:hook_safe(self.inventory_extension, "wield", function(self, slot_name)
+    --     if table.contains(self.tpe_extension.slots, slot_name) then
+    --         self.tpe_extension:wield(slot_name)
+    --     end
+    -- end)
     -- Add Equipment
-	mod:hook_safe(self.inventory_extension, "add_equipment", function(self, slot_name, item_data)
-		if type(item_data) == "string" then
-			item_data = ItemMasterList[item_data]
-		end
-        if table.contains(self.tpe_extension.slots, slot_name) then
-            self.tpe_extension:add(slot_name, item_data)
-        end
-    end)
+	-- mod:hook_safe(self.inventory_extension, "add_equipment", function(self, slot_name, item_data)
+	-- 	if type(item_data) == "string" then
+	-- 		item_data = ItemMasterList[item_data]
+	-- 	end
+    --     if table.contains(self.tpe_extension.slots, slot_name) then
+    --         self.tpe_extension:add(slot_name, item_data)
+    --     end
+    -- end)
     -- Destroy Slot
-    mod:hook(self.inventory_extension, "destroy_slot", function(func, self, slot_name, ...)
-        if table.contains(self.tpe_extension.slots, slot_name) then
-            self.tpe_extension:remove(slot_name)
-        end
-        return func(self, slot_name, ...)
-    end)
+    -- mod:hook(self.inventory_extension, "destroy_slot", function(func, self, slot_name, ...)
+    --     if table.contains(self.tpe_extension.slots, slot_name) then
+    --         self.tpe_extension:remove(slot_name)
+    --     end
+    --     return func(self, slot_name, ...)
+    -- end)
     -- Update
-	mod:hook_safe(self.inventory_extension, "update", function(self)
-        self.tpe_extension:update()
-	end)
+	-- mod:hook_safe(self.inventory_extension, "update", function(self)
+    --     self.tpe_extension:update()
+	-- end)
 	-- Third Person
-	mod:hook_safe(self.inventory_extension, "show_third_person_inventory", function(self, show)
-		self.tpe_extension.show = show
-		self.tpe_extension.delayed_visibility_check = true
-	end)
-end
---[[
-    Disable inventory hooks
---]]
-ThirdPersonEquipmentExtension.destroy_hooks = function(self)
-    mod:hook_disable(self.inventory_extension, "destroy")
-    mod:hook_disable(self.inventory_extension, "wield")
-    mod:hook_disable(self.inventory_extension, "add_equipment")
-    mod:hook_disable(self.inventory_extension, "destroy_slot")
-    mod:hook_disable(self.inventory_extension, "update")
+	-- mod:hook_safe(self.inventory_extension, "show_third_person_inventory", function(self, show)
+	-- 	self.tpe_extension.show = show
+	-- 	self.tpe_extension.delayed_visibility_check = true
+	-- end)
 end
 --[[
     Update extension
@@ -108,6 +174,12 @@ ThirdPersonEquipmentExtension.update = function(self)
 	if self.delayed_visibility_check then
 		self:set_equipment_visibility()
 		self.delayed_visibility_check = false
+	end
+	if self.special_state then
+		self.special_state = self:is_special_state()
+		if not self.special_state then
+			self:set_equipment_visibility()
+		end
 	end
 end
 --[[
@@ -149,11 +221,11 @@ end
 --]]
 ThirdPersonEquipmentExtension.set_equipment_visibility = function(self)
 	local hide = not self.show
-	local special_state = self:is_special_state()
+	self.special_state = self:is_special_state()
 	
 	if self.equipment then
 		for _, equip in pairs(self.equipment) do
-			if not special_state and (equip.slot == self.slot or hide) then
+			if not self.special_state and (equip.slot == self.slot or hide) then
                 if equip.visible or equip.visible == nil then
                     for _, sub_unit in pairs({"right", "left"}) do
                         if equip[sub_unit] ~= nil then
