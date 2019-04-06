@@ -2,6 +2,8 @@ local mod = get_mod("scoreboard_extension")
 --[[
 	Scoreboard Extension
 
+	Localization file.
+
 	author: grasmann
 --]]
 
@@ -48,6 +50,9 @@ local localizations = {
 		en = "sec",
 		de = "sek",
 	},
+	unit_text_empty = {
+		en = "",
+	},
 	direction = {
 		en = "Direction",
 		de = "Richtung",
@@ -71,6 +76,14 @@ local localizations = {
 	direction_option_bottom_to_top_text = {
 		en = "Bottom to Top",
 		de = "Von Unten nach Oben",
+	},
+	extend = {
+		en = "Rows",
+		de = "Zeilen",
+	},
+	extend_description = {
+		en = "Extends the size / number of rows in the scoreboard.",
+		de = "Erweitert die Größe / Anzahl der Zeilen im Scoreboard.",
 	},
 }
 

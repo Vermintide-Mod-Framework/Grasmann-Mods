@@ -2,6 +2,8 @@ local mod = get_mod("scoreboard_extension")
 --[[
 	Scoreboard Extension
 
+	Option file.
+
 	author: grasmann
 --]]
 
@@ -13,10 +15,15 @@ return {
 	is_mutator = false,                             -- If the mod is mutator
 	mutator_settings = {},                          -- Extra settings, if it's mutator
 	options = {
-		collapsed_widgets = {
-			"autoscroll",
-		},
 		widgets = {                             	-- Widget settings for the mod options menu
+			{
+				setting_id = "extend",
+				type = "numeric",
+				range = {11, 16},
+				unit_text = "unit_text_empty",
+				decimals_number = 0,
+				default_value = 16,
+			},
 			{
 				setting_id = "autoscroll",
 				type = "checkbox",

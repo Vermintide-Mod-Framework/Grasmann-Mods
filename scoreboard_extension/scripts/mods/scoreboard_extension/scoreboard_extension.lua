@@ -2,6 +2,9 @@ local mod = get_mod("scoreboard_extension")
 --[[
 	Scoreboard Extension
 
+	Extends number of rows in the scoreboard
+	Adds support for a scrollbar in the scoreboard with autoscroll
+
 	author: grasmann
 --]]
 
@@ -12,9 +15,22 @@ local mod = get_mod("scoreboard_extension")
 -- ##### ██████╔╝██║  ██║   ██║   ██║  ██║ ############################################################################
 -- ##### ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ############################################################################
 mod.scores = {}
-mod.score_rows = 16
-local score_height = 775 --580
-mod.player_score_size = {250, score_height}
+--[[
+	Scoreboard row extension
+--]]
+mod.scoreboard = {
+	rows_default = 11,
+	row_height = 40,
+	rows = mod:get("extend"),
+	extension = function(self)
+		return (self.rows - self.rows_default) * self.row_height
+	end,
+	player_score_size_default = {250, 580},
+	player_score_size = function(self)
+		local extension = self:extension()
+		return {self.player_score_size_default[1], self.player_score_size_default[2] + extension}
+	end,
+}
 --[[
 	Custom entry structure
 --]]
@@ -60,7 +76,8 @@ mod.scrollbar = {
 	scenegraph_id = "scrollbar",
 	widget = nil,
 	start_index = 1,
-	end_index = mod.score_rows,
+	--end_index = mod.score_rows, --mod.scoreboard.rows
+	end_index = mod.scoreboard.rows,
 	is_hovered = function(self)
 		return self.widget.content.scroll_bar_info.is_hover
 	end,
@@ -74,7 +91,8 @@ mod.scrollbar = {
 	set = function(self)
 		local rows = #mod.scores
 		if rows < 1 then rows = 1 end
-		local percentage = mod.score_rows / rows
+		--local percentage = mod.score_rows / rows --mod.scoreboard.rows
+		local percentage = mod.scoreboard.rows / rows
 		if percentage >= 1 then
 			self.widget.content.visible = false
 		end
@@ -87,13 +105,15 @@ mod.scrollbar = {
 		self.initial_timer = 0
 	end,
 	update = function(self, dt)
-		local heighest_start_index = #mod.scores - (mod.score_rows - 1)
+		--local heighest_start_index = #mod.scores - (mod.score_rows - 1) --mod.scoreboard.rows
+		local heighest_start_index = #mod.scores - (mod.scoreboard.rows - 1)
 		local step = 1 / (heighest_start_index)
 		local value = self.widget.content.scroll_bar_info.value
 		local start_index = math.ceil(value / step)
 		if start_index < 1 then start_index = 1 end
 		if start_index > heighest_start_index then start_index = heighest_start_index end
-		local end_index = start_index + (mod.score_rows - 1)
+		--local end_index = start_index + (mod.score_rows - 1) --mod.scoreboard.rows
+		local end_index = start_index + (mod.scoreboard.rows - 1)
 		local change = false
 		if self.start_index ~= start_index then
 			change = true
@@ -180,7 +200,9 @@ mod:hook(UISceneGraph, "init_scenegraph", function(func, scenegraph, ...)
 	-- Size and position
 	local start = 80
 	--local player_score_size = {250, 580}
-	local size = {8, mod.player_score_size[2] - start}
+	local extension = mod.scoreboard:extension()
+	local player_score_size = mod.scoreboard:player_score_size()
+	local size = {8, player_score_size[2] - start}
 	local position = {-4, 0, 5}
 	-- Change scenegraph
 	scenegraph.scrollbar = {
@@ -191,11 +213,11 @@ mod:hook(UISceneGraph, "init_scenegraph", function(func, scenegraph, ...)
 		position = position,
 	}
 	-- Add rows
-	scenegraph.scores_topics.size[2] = mod.player_score_size[2]
-	scenegraph.scores_topics.position[2] = 50
+	scenegraph.scores_topics.size[2] = player_score_size[2]
+	scenegraph.scores_topics.position[2] = -50 + extension / 2
 	for player_index = 1, 4 do
-		scenegraph["player_panel_"..player_index].size = mod.player_score_size
-		scenegraph["player_panel_"..player_index].position[2] = 50
+		scenegraph["player_panel_"..player_index].size = player_score_size
+		scenegraph["player_panel_"..player_index].position[2] = -50 + extension / 2
 	end
 	-- Scrollbar size
 	mod.scrollbar.size = size
@@ -213,9 +235,10 @@ mod:hook(EndViewStateScore, "create_ui_elements", function(func, self, params, .
 
 	-- Change widgets
 	local MAX_SCORE_PANEL_ROWS = 20
-	local topics_hover_length = 1400 + mod.player_score_size[1]
+	local player_score_size = mod.scoreboard:player_score_size()
+	local topics_hover_length = 1400 + player_score_size[1]
 	-- Score topics
-	local scores_topics = UIWidgets.create_score_topics("scores_topics", {350, mod.player_score_size[2]}, topics_hover_length, MAX_SCORE_PANEL_ROWS)
+	local scores_topics = UIWidgets.create_score_topics("scores_topics", {350, player_score_size[2]}, topics_hover_length, MAX_SCORE_PANEL_ROWS)
 	local new_widget = UIWidget.init(scores_topics)
 	self._widgets_by_name.scores_topics = new_widget
 	for i, widget in pairs(self._widgets) do
@@ -226,10 +249,10 @@ mod:hook(EndViewStateScore, "create_ui_elements", function(func, self, params, .
 	end
 	-- Panels
 	local score_widget_definitions = {
-		player_score_1 = UIWidgets.create_score_entry("player_panel_1", mod.player_score_size, MAX_SCORE_PANEL_ROWS, "left"),
-		player_score_2 = UIWidgets.create_score_entry("player_panel_2", mod.player_score_size, MAX_SCORE_PANEL_ROWS),
-		player_score_3 = UIWidgets.create_score_entry("player_panel_3", mod.player_score_size, MAX_SCORE_PANEL_ROWS, "left"),
-		player_score_4 = UIWidgets.create_score_entry("player_panel_4", mod.player_score_size, MAX_SCORE_PANEL_ROWS)
+		player_score_1 = UIWidgets.create_score_entry("player_panel_1", player_score_size, MAX_SCORE_PANEL_ROWS, "left"),
+		player_score_2 = UIWidgets.create_score_entry("player_panel_2", player_score_size, MAX_SCORE_PANEL_ROWS),
+		player_score_3 = UIWidgets.create_score_entry("player_panel_3", player_score_size, MAX_SCORE_PANEL_ROWS, "left"),
+		player_score_4 = UIWidgets.create_score_entry("player_panel_4", player_score_size, MAX_SCORE_PANEL_ROWS)
 	}
 	self._score_widgets = {
 		UIWidget.init(score_widget_definitions.player_score_1),
@@ -256,23 +279,25 @@ mod:hook_safe(EndViewStateScore, "update", function(self, dt, t)
 		--mod:echo("Scroll change! Start: '"..tostring(start_index).."' End: '"..tostring(end_index).."'")
 		local total_row_index = 2
 		for group_row_index = start_index, end_index do
-			local line_suffix = "_"..total_row_index
-			local score_text_name = "score_text"..line_suffix
-			local row_name = "row_bg"..line_suffix
-			local row_content = self._widgets_by_name.scores_topics.content[row_name]
-			row_content[score_text_name] = mod.scores[group_row_index].text
-			row_content.has_score = true
-			for player_index = 1, 4 do
+			if mod.scores[group_row_index] then
 				local line_suffix = "_"..total_row_index
 				local score_text_name = "score_text"..line_suffix
 				local row_name = "row_bg"..line_suffix
-				local row_content = self._score_widgets[player_index].content[row_name]
-				row_content[score_text_name] = mod.scores[group_row_index][player_index].score
-				row_content.has_highscore = mod.scores[group_row_index][player_index].has_highscore
-				row_content.has_background = total_row_index % 2 == 0
+				local row_content = self._widgets_by_name.scores_topics.content[row_name]
+				row_content[score_text_name] = mod.scores[group_row_index].text
 				row_content.has_score = true
+				for player_index = 1, 4 do
+					local line_suffix = "_"..total_row_index
+					local score_text_name = "score_text"..line_suffix
+					local row_name = "row_bg"..line_suffix
+					local row_content = self._score_widgets[player_index].content[row_name]
+					row_content[score_text_name] = mod.scores[group_row_index][player_index].score
+					row_content.has_highscore = mod.scores[group_row_index][player_index].has_highscore
+					row_content.has_background = total_row_index % 2 == 0
+					row_content.has_score = true
+				end
+				total_row_index = total_row_index + 1
 			end
-			total_row_index = total_row_index + 1
 		end
 	end
 end)
@@ -351,22 +376,25 @@ mod:hook_safe(EndViewStateScore, "_setup_score_panel", function(self, score_pane
 		end
 	end
 	-- Fill additional rows
-	for row = total_row_index, mod.score_rows+1 do
-		local line_suffix = "_"..row
-		local score_text_name = "score_text"..line_suffix
-		local row_name = "row_bg"..line_suffix
-		local row_content = self._widgets_by_name.scores_topics.content[row_name]
-		row_content[score_text_name] = mod.scores[row-1].text
-		row_content.has_score = true
-		for player_index = 1, 4 do
+	--for row = total_row_index, mod.score_rows+1 do --mod.scoreboard.rows
+	for row = total_row_index, mod.scoreboard.rows+1 do
+		if mod.scores[row-1] then
 			local line_suffix = "_"..row
 			local score_text_name = "score_text"..line_suffix
 			local row_name = "row_bg"..line_suffix
-			local row_content = self._score_widgets[player_index].content[row_name]
-			row_content[score_text_name] = mod.scores[row-1][player_index].score
-			row_content.has_highscore = mod.scores[row-1][player_index].has_highscore
-			row_content.has_background = row % 2 == 0
+			local row_content = self._widgets_by_name.scores_topics.content[row_name]
+			row_content[score_text_name] = mod.scores[row-1].text
 			row_content.has_score = true
+			for player_index = 1, 4 do
+				local line_suffix = "_"..row
+				local score_text_name = "score_text"..line_suffix
+				local row_name = "row_bg"..line_suffix
+				local row_content = self._score_widgets[player_index].content[row_name]
+				row_content[score_text_name] = mod.scores[row-1][player_index].score
+				row_content.has_highscore = mod.scores[row-1][player_index].has_highscore
+				row_content.has_background = row % 2 == 0
+				row_content.has_score = true
+			end
 		end
 	end
 	-- Set scrollbar
@@ -397,6 +425,15 @@ end)
 -- ##### ███████╗ ╚████╔╝ ███████╗██║ ╚████║   ██║   ███████║ #########################################################
 -- ##### ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝ #########################################################
 --[[
+	Settings changed
+--]]
+mod.on_setting_changed = function(setting_id)
+	if setting_id == "extend" then
+		-- mod.score_rows = mod:get("extend")
+		mod.scoreboard.rows = mod:get("extend")
+	end
+end
+--[[
 	Deactivate UISceneGraph hook
 --]]
 mod.on_enabled = function(is_first_call)
@@ -414,27 +451,27 @@ end
 --[[
 	Testfunctions
 --]]
-mod.get_test_values = function(player_index)
-	return math.random(1, 100)
-end
-mod.create_test_entries = function(self)
-	self:register_entry("test_lowest", "Test Lowest 1", "lowest", self.get_test_values)
-	self:register_entry("test_highest", "Test Highest 1", "highest", self.get_test_values)
-	self:register_entry("test_none", "Test None", nil, self.get_test_values)
-	self:register_entry("test_lowest_2", "Test Lowest 2", "lowest", self.get_test_values)
-	self:register_entry("test_highest_2", "Test Highest 2", "highest", self.get_test_values)
-	self:register_entry("test_highest_2", "Test Highest 3", "highest", self.get_test_values) -- will already be in list
-	for i = 1, 100 do
-		local rnd = math.random(1, 2)
-		local type = "lowest"
-		if rnd == 2 then type = "highest" end
-		self:register_entry("test_many_"..i, "Test Many "..i, type, self.get_test_values)
-	end
-end
+-- mod.get_test_values = function(player_index)
+-- 	return math.random(1, 100)
+-- end
+-- mod.create_test_entries = function(self)
+-- 	self:register_entry("test_lowest", "Test Lowest 1", "lowest", self.get_test_values)
+-- 	self:register_entry("test_highest", "Test Highest 1", "highest", self.get_test_values)
+-- 	self:register_entry("test_none", "Test None", nil, self.get_test_values)
+-- 	self:register_entry("test_lowest_2", "Test Lowest 2", "lowest", self.get_test_values)
+-- 	self:register_entry("test_highest_2", "Test Highest 2", "highest", self.get_test_values)
+-- 	self:register_entry("test_highest_2", "Test Highest 3", "highest", self.get_test_values) -- will already be in list
+-- 	-- for i = 1, 100 do
+-- 	-- 	local rnd = math.random(1, 2)
+-- 	-- 	local type = "lowest"
+-- 	-- 	if rnd == 2 then type = "highest" end
+-- 	-- 	self:register_entry("test_many_"..i, "Test Many "..i, type, self.get_test_values)
+-- 	-- end
+-- end
 --[[
 	Register score entries in on_all_mods_loaded
 	Prevents load order issues
 --]]
-mod.on_all_mods_loaded = function()
-	mod:create_test_entries()
-end
+-- mod.on_all_mods_loaded = function()
+-- 	mod:create_test_entries()
+-- end
