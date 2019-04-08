@@ -57,11 +57,51 @@ mod:persistent_table("data", {
 	in_mission = false,
 	-- Users
 	mod_users = {},
+	-- Statistics
+	stats = {},
 })
 mod.data = mod:persistent_table("data")
 mod.data.mod_users = {}
+mod.data.stats = {}
 if debug then
 	mod.data.active_dare = nil
+end
+
+-- ##### ███████╗████████╗ █████╗ ████████╗███████╗ ###################################################################
+-- ##### ██╔════╝╚══██╔══╝██╔══██╗╚══██╔══╝██╔════╝ ###################################################################
+-- ##### ███████╗   ██║   ███████║   ██║   ███████╗ ###################################################################
+-- ##### ╚════██║   ██║   ██╔══██║   ██║   ╚════██║ ###################################################################
+-- ##### ███████║   ██║   ██║  ██║   ██║   ███████║ ###################################################################
+-- ##### ╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚══════╝ ###################################################################
+--[[
+	Increase stats
+--]]
+mod.inc_stat = function(self, peer_id, id)
+	if not self.data.stats[peer_id] then self.data.stats[peer_id] = {} end
+	if not self.data.stats[peer_id][id] then self.data.stats[peer_id][id] = 0 end
+	self.data.stats[peer_id][id] = self.data.stats[peer_id][id] + 1
+end
+--[[
+	Get stat value
+--]]
+mod.get_stat = function(peer_id, local_player_id, stats_id, entry_id)
+	if peer_id and entry_id and local_player_id == 1 then
+		local peer_stats = mod.data.stats[peer_id] or {}
+		local value = peer_stats[entry_id] or 0
+		return value
+	end
+	return 0
+end
+--[[
+	Register scoreboard stats
+--]]
+mod.register_stats = function(self)
+	local scoreboard_extension = get_mod("scoreboard_extension")
+	if scoreboard_extension then
+		scoreboard_extension:register_entry("i_dare_you_dared", "Times Dared", "highest", self.get_stat)
+		scoreboard_extension:register_entry("i_dare_you_dared_others", "Dared Somebody", "highest", self.get_stat)
+		scoreboard_extension:register_entry("i_dare_you_punished", "Punished by Dares", "highest", self.get_stat)
+	end
 end
 
 -- ##### ██╗███╗   ██╗██████╗ ██╗   ██╗████████╗ ######################################################################
@@ -272,6 +312,8 @@ mod:network_register("start_dare_client", function(sender, dare_name, time)
 		--mod:set_dare(dare_name, time)
 		mod:start_dare()
 	end
+	mod:inc_stat(mod.data.victim_peer_id, "i_dare_you_dared")
+	mod:inc_stat(mod.data.selector_peer_id, "i_dare_you_dared_others")
 	mod.data.dare_time = time
 	mod.data.dare_running = true
 	mod.ui:set_state("waiting", time)
@@ -355,6 +397,8 @@ mod:network_register("request_punishment_server", function(sender, value)
 			end
 			--DamageUtils.add_damage_network(unit, unit, value, "full", "forced", nil, Vector3(0, 0, 1), "debug")
 			--DamageUtils.add_damage_network(target_unit, attacker_unit, damage, "torso", action.damage_type, nil, damage_direction, damage_source, nil, nil, nil, action.hit_react_type)
+
+			mod:network_send("sync_inc_stat_client", "all", sender, "i_dare_you_punished")
 		end
 	end
 end)
@@ -373,6 +417,12 @@ mod:network_register("user_activated_mod", function(sender)
 	if mod:is_server() then
 		mod.server:add_mod_user(sender)
 	end
+end)
+--[[
+	Sync dare stats
+--]]
+mod:network_register("sync_inc_stat_client", function(sender, peer_id, stat)
+	mod:inc_stat(peer_id, stat)
 end)
 
 -- #####  █████╗  ██████╗████████╗██╗██╗   ██╗███████╗    ██████╗  █████╗ ██████╗ ███████╗ ############################
@@ -448,7 +498,9 @@ end
 mod.request_punishment = function(self, value)
 	self:network_send("request_punishment_server", self:server_peer_id())
 end
-
+--[[
+	Get punishment text
+--]]
 mod.punishment_text = function(self, punishment)
 	return self.punishment_types[punishment]
 end
@@ -1992,15 +2044,21 @@ end
 	Get player name from peer_id
 --]]
 mod.player_name_from_peer_id = function(self, peer_id)
-	local player = Managers.player:player_from_peer_id(peer_id)
-	return player:name()
+	local player = self:player_from_peer_id(peer_id)
+	return player and player:name() or "N/A"
 end
 --[[
 	Get player unit from peer_id
 --]]
 mod.player_unit_from_peer_id = function(self, peer_id)
-	local player = Managers.player:player_from_peer_id(peer_id)
-	return player.player_unit
+	local player = self:player_from_peer_id(peer_id)
+	return player and player.player_unit
+end
+--[[
+	Player from peer_id
+--]]
+mod.player_from_peer_id = function(self, peer_id)
+	return Managers.player:player_from_peer_id(peer_id)
 end
 --[[
 	Check if peer_id is alive
@@ -2154,6 +2212,9 @@ mod:hook_safe(CutsceneUI, "set_player_input_enabled", function(self, enabled)
 	if enabled and mod:is_server() then
 		mod.data.in_mission = true
 		mod.server:start()
+	elseif enabled then
+		-- Start dare statistics
+		mod.data.stats = {}
 	end
 end)
 --[[
@@ -2378,6 +2439,9 @@ end
 	Mod enable
 --]]
 mod.on_enabled = function(is_first_call)
+	if not is_first_call then
+		mod.server:start_soft()
+	end
 end
 --[[
 	When all mods are loaded
@@ -2397,6 +2461,8 @@ mod.on_all_mods_loaded = function()
 	if mod:is_server() then
 		mod.server:add_mod_user(mod:my_peer_id())
 	end
+	-- Register stat
+	mod:register_stats()
 end
 
 -- ##### ████████╗███████╗███████╗████████╗    ██████╗  █████╗ ██████╗ ███████╗███████╗ ###############################
