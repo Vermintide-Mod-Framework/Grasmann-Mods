@@ -63,6 +63,11 @@ return {
 					},
 				},
 			},
+			{
+				setting_id = "network_sync",
+				type = "checkbox",
+				default_value = true,
+			},
 		},
 	},
 }

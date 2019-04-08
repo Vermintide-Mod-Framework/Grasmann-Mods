@@ -85,6 +85,14 @@ local localizations = {
 		en = "Extends the size / number of rows in the scoreboard.",
 		de = "Erweitert die Größe / Anzahl der Zeilen im Scoreboard.",
 	},
+	network_sync = {
+		en = "Network Share",
+		de = "Über Netzwerk teilen",
+	},
+	network_sync_description = {
+		en = "Shares custom scores with other players.",
+		de = "Teilt benutzerdef. Elemente mit anderen Spielern.",
+	},
 }
 
 return localizations

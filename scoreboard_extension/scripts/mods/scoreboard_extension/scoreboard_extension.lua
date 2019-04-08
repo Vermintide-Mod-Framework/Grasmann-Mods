@@ -36,6 +36,10 @@ mod.scoreboard = {
 --]]
 mod.custom_entries = {
 	list = {},
+	synced = {},
+	has_synced = false,
+	sync_dirty = false,
+	default_scores = nil,
 	register = function(self, id, text, type, callback)
 		local entry = self:get(id)
 		if not entry then
@@ -52,6 +56,7 @@ mod.custom_entries = {
 			text = text,
 			type = type,
 			callback = callback,
+			enabled = true,
 		}
 		self.list[#self.list+1] = entry
 	end,
@@ -169,6 +174,22 @@ mod.scrollbar = {
 	end,
 }
 
+-- ##### ██████╗ ██████╗  ██████╗  ██████╗ █████╗ ██╗     ██╗     ███████╗ ############################################
+-- ##### ██╔══██╗██╔══██╗██╔════╝ ██╔════╝██╔══██╗██║     ██║     ██╔════╝ ############################################
+-- ##### ██████╔╝██████╔╝██║█████╗██║     ███████║██║     ██║     ███████╗ ############################################
+-- ##### ██╔══██╗██╔═══╝ ██║╚════╝██║     ██╔══██║██║     ██║     ╚════██║ ############################################
+-- ##### ██║  ██║██║     ╚██████╗ ╚██████╗██║  ██║███████╗███████╗███████║ ############################################
+-- ##### ╚═╝  ╚═╝╚═╝      ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ############################################
+--[[
+	Sync data to others
+--]]
+mod:network_register("sync_data", function(sender, custom_entries)
+	if mod:get("network_sync") then
+		mod.custom_entries.synced[sender] = custom_entries
+		mod.custom_entries.sync_dirty = true
+	end
+end)
+
 -- ##### ███████╗██╗   ██╗███╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗███████╗ ###################################
 -- ##### ██╔════╝██║   ██║████╗  ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝ ###################################
 -- ##### █████╗  ██║   ██║██╔██╗ ██║██║        ██║   ██║██║   ██║██╔██╗ ██║███████╗ ###################################
@@ -178,13 +199,46 @@ mod.scrollbar = {
 --[[
 	Register a score entry
 
-	id			: Identifier for the row 				- must be unique
-	text		: Display text in the middle 			- readable text
-	type		: Highscore type 'highest'/'lowest'/nil	- Decides where to put the circle
-	callback	: Function to receive values from 		- function(player_index)
+	id			: string 	: Identifier for the row 				- must be unique
+	text		: string 	: Display text in the middle 			- readable text
+	type		: string 	: Highscore type 'highest'/'lowest'/nil	- Decides where to put the circle
+	callback	: function 	: Function to receive values from 		- function(peer_id, local_player_id, stats_id, id)
 --]]
 mod.register_entry = function(self, id, text, type, callback)
 	return self.custom_entries:register(id, text, type, callback)
+end
+--[[
+	Disable a score entry
+
+	id		: string 	: Identifier for the row	- must be unique
+	enabled	: boolean 	: True / False				- state
+--]]
+mod.set_entry = function(self, id, enabled)
+	local entry = mod.custom_entries:get(id)
+	if entry then entry.enabled = enabled end
+end
+--[[
+	Sync data with others
+--]]
+mod.send_sync_data = function(self)
+	local scores = {}
+	local count = #self.custom_entries.list
+	for index, entry in pairs(self.custom_entries.list) do
+		scores[index] = self.scores[#self.scores-count+index]
+	end
+	local custom_entries = {
+		entries = table.clone(self.custom_entries.list),
+		scores = table.clone(scores)
+	}
+	self:network_send("sync_data", "others", custom_entries)
+	-- test
+	-- custom_entries.entries[#custom_entries.entries+1] = {id = "test_lol", text = "Test lol", type = "highest", callback = function() end}
+	-- custom_entries.scores[#custom_entries.scores+1] = {}
+	-- local scores = custom_entries.scores[#custom_entries.scores]
+	-- for player_index = 1, 4 do
+	-- 	scores[player_index] = {score = math.random(1, 100), has_highscore = false}
+	-- end
+	-- self:network_send("sync_data", "all", custom_entries)
 end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
@@ -231,6 +285,7 @@ mod:hook_disable(UISceneGraph, "init_scenegraph")
 mod:hook(EndViewStateScore, "create_ui_elements", function(func, self, params, ...)
 	mod:hook_enable(UISceneGraph, "init_scenegraph")
 
+	mod.custom_entries.has_synced = false
 	local result = func(self, params, ...)
 
 	-- Change widgets
@@ -270,6 +325,15 @@ end)
 	Update scrolling
 --]]
 mod:hook_safe(EndViewStateScore, "update", function(self, dt, t)
+	-- Update synced data
+	if mod:get("network_sync") then
+		if mod.custom_entries.default_scores then
+			if mod.custom_entries.sync_dirty then
+				mod.custom_entries.sync_dirty = false
+				self:_setup_player_scores(mod.custom_entries.default_scores)
+			end
+		end
+	end
 	-- Scrollwheel
 	local input_service = self.input_manager:get_service("end_of_level")
 	mod.scrollbar:scroll(dt, input_service)
@@ -319,6 +383,17 @@ end)
 --[[
 	Catch score setup and fill score list
 --]]
+mod:hook(EndViewStateScore, "_setup_player_scores", function(func, self, players_session_scores, ...)
+	mod.player_data = {}
+	mod.custom_entries.default_scores = mod.custom_entries.default_scores or table.clone(players_session_scores)
+	local widget_index = 1
+	for stats_id, player_data in pairs(players_session_scores) do
+		mod.player_data[widget_index] = player_data
+		widget_index = widget_index + 1
+	end
+	--mod:dump(mod.player_data, "mod.player_data", 2)
+	return func(self, players_session_scores, ...)
+end)
 mod:hook_safe(EndViewStateScore, "_setup_score_panel", function(self, score_panel_scores, player_names)
 	local total_row_index = 2
 	mod.scores = {}
@@ -344,39 +419,75 @@ mod:hook_safe(EndViewStateScore, "_setup_score_panel", function(self, score_pane
 	end
 	-- Handle custom entries
 	for _, entry in pairs(mod.custom_entries.list) do
-		local index = #mod.scores + 1
-		mod.scores[index] = {
-			text = entry.text,
-		}
-		-- Get scores
-		local scores = {}
-		local highest = -math.huge
-		local lowest = math.huge
-		for player_index = 1, 4 do
-			scores[player_index] = entry.callback(player_index)
-			if scores[player_index] < lowest then
-				lowest = scores[player_index]
+		if entry.enabled then
+			local index = #mod.scores + 1
+			mod.scores[index] = {
+				text = entry.text,
+			}
+			-- Get scores
+			local scores = {}
+			local highest = -math.huge
+			local lowest = math.huge
+			for player_index = 1, 4 do
+				--local player = mod:player_from_index(player_index)
+				--local peer_id = mod.peer_id_from_stats_id[player_index]
+				local data = mod.player_data[player_index]
+				local value = 0
+				if data and entry.callback then
+					--mod:dump(data, "data", 2)
+					value = entry.callback(data.peer_id, data.local_player_id, data.stats_id, entry.id)
+				end
+				scores[player_index] = value
+				--scores[player_index] = entry.callback(peer_id, entry.id)
+				if scores[player_index] < lowest then
+					lowest = scores[player_index]
+				end
+				if scores[player_index] > highest then
+					highest = scores[player_index]
+				end
 			end
-			if scores[player_index] > highest then
-				highest = scores[player_index]
+			-- Add to list
+			for player_index = 1, 4 do
+				local has_highscore = false
+				if entry.type == "lowest" and scores[player_index] == lowest then
+					has_highscore = true
+				elseif entry.type == "highest" and scores[player_index] == highest then
+					has_highscore = true
+				end
+				mod.scores[index][player_index] = {
+					score = scores[player_index],
+					has_highscore = has_highscore,
+				}
 			end
 		end
-		-- Add to list
-		for player_index = 1, 4 do
-			local has_highscore = false
-			if entry.type == "lowest" and scores[player_index] == lowest then
-				has_highscore = true
-			elseif entry.type == "highest" and scores[player_index] == highest then
-				has_highscore = true
+	end
+	-- Send sync data
+	if mod:get("network_sync") then
+		if not mod.custom_entries.has_synced then
+			mod:send_sync_data()
+			mod.custom_entries.has_synced = true
+		end
+	end
+	-- Grab network synced entries
+	local added_entries = {}
+	for peer_id, data in pairs(mod.custom_entries.synced) do
+		--mod:echo("Data from '"..peer_id.."'")
+		for index, entry in pairs(data.entries) do
+			--mod:echo("Entry '"..index.."' from '"..peer_id.."' called '"..entry.id.."'")
+			local my_entry = mod.custom_entries:get(entry.id)
+			if my_entry then
+				--mod:echo("Entry '"..entry.id.."' skipped.")
+			elseif not table.contains(added_entries, entry.id) then
+				--mod:echo("Entry '"..entry.id.."' needed.")
+				local score_index = #mod.scores + 1
+				mod.scores[score_index] = table.clone(data.scores[index])
+				mod.scores[score_index].text = entry.text
+				--mod:echo("Entry '"..entry.id.."' added.")
+				added_entries[#added_entries+1] = entry.id
 			end
-			mod.scores[index][player_index] = {
-				score = scores[player_index],
-				has_highscore = has_highscore,
-			}
 		end
 	end
 	-- Fill additional rows
-	--for row = total_row_index, mod.score_rows+1 do --mod.scoreboard.rows
 	for row = total_row_index, mod.scoreboard.rows+1 do
 		if mod.scores[row-1] then
 			local line_suffix = "_"..row
