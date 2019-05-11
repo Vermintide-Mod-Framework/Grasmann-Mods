@@ -10,7 +10,7 @@ local mod = get_mod("ShowDamage")
 local UIResolutionScale = UIResolutionScale or function()
 	return RESOLUTION_LOOKUP.scale
 end
-local StatBuffIndex = {
+local StatBuffIndex = VT1 and StatBuffIndex or {
 	HEAL_PROC = "heal_proc",
 	LIGHT_HEAL_PROC = "light_heal_proc",
 	HEAVY_HEAL_PROC = "heavy_heal_proc",
