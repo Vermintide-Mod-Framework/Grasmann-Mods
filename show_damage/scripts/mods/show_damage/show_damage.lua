@@ -542,7 +542,7 @@ mod.floating = {
 	--]]
 	local_player = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 		local local_player = Managers.player:local_player()
-		if attacker_unit == local_player.player_unit and (not self.corpses[unit]) then
+		if attacker_unit == local_player.player_unit and (not self.corpses[unit] or healed or ammo) then
 			self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 		end
 	end,
@@ -550,7 +550,7 @@ mod.floating = {
 		Post message for every player
 	--]]
 	all = function(self, attacker_unit, unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
-		if mod.players.is_player_unit(attacker_unit) and (not self.corpses[unit]) then
+		if mod.players.is_player_unit(attacker_unit) and (not self.corpses[unit] or healed or ammo) then
 			self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 		end
 	end,
@@ -570,7 +570,7 @@ mod.floating = {
 					setting = "floating_ammo_player_"..tostring(i)
 				end
 				if mod:get(setting) then
-					if attacker_unit == p.player_unit and (not self.corpses[unit]) then
+					if attacker_unit == p.player_unit and (not self.corpses[unit] or healed or ammo) then
 
 						self.units[unit][#self.units[unit]+1] = self:new(unit, dead, damage_amount, healed, ammo, hit_zone_name, blocked, poison, burn)
 					end
