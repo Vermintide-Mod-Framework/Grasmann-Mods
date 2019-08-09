@@ -4,6 +4,9 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+2.0.0
+	- Updated for v2.0
+	- Fixed bug in deed filter where deeds would overlap the filter controls ( hopefully )
 1.8.1
 	- Fixed option definitions for latest vmf
 1.8.0

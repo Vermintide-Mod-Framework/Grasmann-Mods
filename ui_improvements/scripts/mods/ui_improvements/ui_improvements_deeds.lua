@@ -166,7 +166,7 @@ mod.deeds = {
                 -- "act_holly_final",
                 -- "act_celebrate",
                 -- "act_scorpion",
-                --"prologue",
+                -- "prologue",
             },
             get_list = function(self)
                 local acts = {}
