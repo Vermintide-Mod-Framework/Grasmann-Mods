@@ -149,7 +149,8 @@ mod.filter_achievements = function(self, hero_view_state_achievements)
 
     -- Update scroll bar and stuff
     hero_view_state_achievements.scroll_value = nil
-    hero_view_state_achievements:_update_scroll_height()
+    --hero_view_state_achievements:_update_scroll_height()
+    hero_view_state_achievements:_update_achievements_scroll_height()
     hero_view_state_achievements:_setup_achievement_entries_animations()
 	if num_entries > 0 then
 		hero_view_state_achievements:_hide_empty_entries_warning()

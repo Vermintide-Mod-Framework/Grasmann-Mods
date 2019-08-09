@@ -161,7 +161,12 @@ mod.deeds = {
                 "act_2",
                 "act_3",
                 "act_4",
-                "act_bogenhafen",
+                -- "act_bogenhafen",
+                -- "act_holly",
+                -- "act_holly_final",
+                -- "act_celebrate",
+                -- "act_scorpion",
+                --"prologue",
             },
             get_list = function(self)
                 local acts = {}
@@ -170,6 +175,7 @@ mod.deeds = {
                         if not acts[level.act] then acts[level.act] = {} end
                         acts[level.act][#acts[level.act]+1] = {name, level}
                     end
+                    --if level.act then mod:echo(tostring(level.act)) end
                 end
                 local missions = {}
                 for _, name in pairs(self.list) do
@@ -712,34 +718,6 @@ mod.create_deed_button = function(self, scenegraph_id, text, icon, tag, value, i
     return UIWidget.init(widget)
 end
 --[[
-    Create difficulty button
---]]
--- mod.create_difficulty_button = function(self, scenegraph_id, difficulty, is_selected, root, size)
---     local text, icon = self.deeds.groups.difficulty:get_data(difficulty)
---     return mod:create_deed_button("window", text, icon, "difficulty", difficulty, is_selected, root, size, "save_deed_difficulty")
--- end
---[[
-    Create rarity button
---]]
--- mod.create_rarity_button = function(self, scenegraph_id, rarity, is_selected, root, size)
---     local text, icon = self.deeds.groups.rarity:get_data(rarity)
---     return mod:create_deed_button("window", text, icon, "rarity", rarity, is_selected, root, size, "save_deed_rarity")
--- end
---[[
-    Create mutator button
---]]
--- mod.create_mutator_button = function(self, scenegraph_id, mutator, is_selected, root, size)
---     local text, icon = self.deeds.groups.mutator:get_data(mutator)
---     return mod:create_deed_button("window", text, icon, "mutator", mutator, is_selected, root, size, "save_deed_mutator")
--- end
---[[
-    Create mission button
---]]
--- mod.create_mission_button = function(self, scenegraph_id, mission, is_selected, root, size)
---     local text, icon = self.deeds.groups.mission:get_data(mission)
---     return mod:create_deed_button("window", text, icon, "mission", mission, is_selected, root, size, "save_deed_mission")
--- end
---[[
     Update difficulty widgets
 --]]
 mod.update_widget_group = function(self, group, value)
@@ -822,7 +800,6 @@ end
 --[[
     Create a deed filter group
 --]]
-
 mod.create_deed_group = function(self, name, start, length, size, height)
     for grp_name, group in pairs(mod.deeds.groups) do
         if grp_name == name then
@@ -846,30 +823,14 @@ end
 --]]
 mod:hook_safe(StartGameWindowMutatorGrid, "on_enter", function(self, ...)
 
-    -- mod.deeds.groups.difficulty.value = "all"
-    -- if mod.deeds.groups.difficulty.saved and mod:get("remember_categories") then
-    --     mod.deeds.groups.difficulty.value = mod.deeds.groups.difficulty.saved
-    --     mod:update_widget_group(mod.deeds.groups.difficulty, mod.deeds.groups.difficulty.value)
-    -- end
-    -- mod.deeds.groups.rarity.value = "all"
-    -- if mod.deeds.groups.rarity.saved and mod:get("remember_categories") then
-    --     mod.deeds.groups.rarity.value = mod.deeds.groups.rarity.saved
-    --     mod:update_widget_group(mod.deeds.groups.rarity, mod.deeds.groups.rarity.value)
-    -- end
-    -- mod.deeds.groups.mutator.value = "all"
-    -- if mod.deeds.groups.mutator.saved and mod:get("remember_categories") then
-    --     mod.deeds.groups.mutator.value = mod.deeds.groups.mutator.saved
-    --     mod:update_widget_group(mod.deeds.groups.mutator, mod.deeds.groups.mutator.value)
-    -- end
-
-    --mod:filter_item_grid(self)
-
     -- Lower row count from 8 to 7
     local rows = 7
     local item_grid = self._item_grid._widget.content
     if item_grid then
+        self._item_grid:clear_item_grid()
         item_grid.rows = rows
         item_grid.slots = rows * item_grid.columns
+        mod:filter_item_grid(self)
     end
 
     -- Hide additional page arrow buttons and text
@@ -880,7 +841,6 @@ mod:hook_safe(StartGameWindowMutatorGrid, "on_enter", function(self, ...)
         styles.page_text.offset[3] = -10
     end
 
-    --mod:dump(, "_item_grid", 1)
 end)
 --[[
     Manipulate default widgets and create mod widgets

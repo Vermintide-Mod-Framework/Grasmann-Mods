@@ -480,13 +480,21 @@ end)
 --[[
 	Prevent item spawns when changing equipment
 --]]
-mod:hook(HeroViewStateOverview, "_set_loadout_item", function(func, self, item, strict_slot_type, ...)
+mod:hook(HeroViewStateOverview, "_set_loadout_item", function(func, self, item, strict_slot_name, ...)
 	-- If different character or career selected only update backend and menu
 	if mod.profile_index ~= mod.actual_profile_index or mod.career_index ~= mod.actual_career_index then
 
 		local rarity_index = {common = 2, plentiful = 1, exotic = 4, rare = 3, unique = 5}
-		local slot_type = strict_slot_type or item.data.slot_type
-		local slot = self:_get_slot_by_type(slot_type)
+		--local slot_type = strict_slot_name or item.data.slot_type
+		local slot, slot_type = nil
+		if strict_slot_name then
+			slot = InventorySettings.slots_by_name[strict_slot_name]
+			slot_type = slot.type
+		else
+			slot_type = item.data.slot_type
+			slot = self:_get_slot_by_type(slot_type)
+		end
+		--local slot = self:_get_slot_by_type(slot_type)
 		local profile = SPProfiles[mod.profile_index]
 		local career_name = profile.careers[mod.career_index].name
 		local backend_items = Managers.backend:get_interface("items")
@@ -505,5 +513,5 @@ mod:hook(HeroViewStateOverview, "_set_loadout_item", function(func, self, item, 
 		return
 	end
 	-- Continue with original function
-	func(self, item, strict_slot_type, ...)
+	func(self, item, strict_slot_name, ...)
 end)
