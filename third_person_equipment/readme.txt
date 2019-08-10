@@ -6,6 +6,9 @@ Melee- and ranged weapon as well as tomes, grims, potions, bombs and heal items.
 Works for yourself, other players and bots.
 
 Changelog:
+2.5.0
+	- Update for v2.0 patch
+	- Fixed bardin v2 skin backpack positioning
 2.4.3
 	- Changed hooks into inventory extension due to an issue in vmf
 	- Added safety check for equipment visibility with special states

@@ -15,7 +15,7 @@ local hip_node = "j_hips"
 mod.definitions.potion.dwarf_ranger = {
     left = { node = backpack_node, position = {0.07, 0.04, -0.04}, rotation = {40, -20, -10},                                               -- Default / V1
         dr_ranger = {
-            attachment = 1, attachment_node = 9, position = {0, -0.1, 0}, rotation = {-20, 180, 0},                                         -- V2 ranger
+            attachment = 2, attachment_node = 9, position = {0, -0.1, 0}, rotation = {-20, 180, 0},                                         -- V2 ranger                2.5.0
             skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.07, 0.04, -0.04}, rotation = {40, -20, -10}, },         -- V2 classic ranger skin
         },
         dr_ironbreaker = { node = default_node, position = {-0.05, 0.25, 0.15}, rotation = {-70, 110, -90}, },                              -- V2 ironbreaker
@@ -47,7 +47,7 @@ mod.definitions.grenade.dwarf_ranger = {
 mod.definitions.healthkit.dwarf_ranger = {
     left = { node = backpack_node, position = {0.15, -0.2, 0.13}, rotation = {60, -20, -10},                                                -- Default / V1
         dr_ranger = { 
-            attachment = 1, attachment_node = 9, position = {-0.25, -0.03, -0.25}, rotation = {40, 180, 185},                               -- V2 ranger
+            attachment = 2, attachment_node = 9, position = {-0.25, -0.03, -0.25}, rotation = {40, 180, 185},                               -- V2 ranger                2.5.0
             skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.15, -0.2, 0.13}, rotation = {60, -20, -10}, },          -- V2 classic ranger skin
         },
         dr_ironbreaker = { node = default_node, position = {0, -0.15, -0.18}, rotation = {-70, 70, -90}, },                                 -- V2 ironbreaker
@@ -67,7 +67,7 @@ mod.definitions.dr_1h_axe_shield = {
         },
         backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},											-- Default / V1				2.1.0
             dr_ranger = {
-                attachment = 1, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.26, -0.5, 0.1}, rotation = {40, 150, 20}, },		-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.1}, rotation = {0, 180, 180}, },			-- V2 ironbreaker			2.1.0
@@ -87,7 +87,7 @@ mod.definitions.dr_1h_axe_shield = {
         },
         backpack = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},										-- Default / V1				2.1.0
             dr_ranger = {
-                attachment = 1, attachment_node = 9, position = {0.02, -0.07, -0.2}, rotation = {0, -140, 90},								-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {0.02, -0.07, -0.2}, rotation = {0, -140, 90},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100}, },		-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.07, 0.1}, rotation = {0, 0, 90}, },				-- V2 ironbreaker
@@ -104,7 +104,7 @@ mod.definitions.dr_handgun = {
     right = {
         backpack = { node = backpack_node, position = {-0.2, -0.45, 0.25}, rotation = {-30, 90, -10},										-- Default / V1				2.1.0
             dr_ranger = {
-                attachment = 1, attachment_node = 9, position = {-0.35, 0.05, -0.3}, rotation = {90, 0, 0},									-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {-0.35, 0.05, -0.3}, rotation = {90, 0, 0},									-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {-0.2, -0.25, 0.12}, rotation = {-30, 90, -10}, },		-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0.15, 0, 0.3}, rotation = {-90, 180, 0}, },					-- V2 ironbreaker			2.1.0
@@ -129,7 +129,7 @@ mod.definitions.dr_1h_hammer = {
         },
         backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},											-- Default / V1				2.1.0
             dr_ranger = { 
-                attachment = 1, attachment_node = 9, position = {0.10, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {0.10, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.26, -0.5, 0.1}, rotation = {40, 150, 20}, },		-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.25}, rotation = {0, 180, 180}, },			-- V2 ironbreaker			2.1.0
@@ -156,7 +156,7 @@ mod.definitions.dr_2h_hammer = {
         },
         backpack = { node = backpack_node, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20},											-- Default / V1				2.1.0
             dr_ranger = {
-                attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90},								-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0, -0.8, 0.4}, rotation = {40, 150, 20}, },			-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.7}, rotation = {0, 180, -60}, },			-- V2 ironbreaker			2.1.0
@@ -175,7 +175,7 @@ mod.definitions.dr_dual_wield_hammers = {
         },
         backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},											-- Default / V1				2.2.0
             dr_ranger = { 
-                attachment = 1, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.2.0
+                attachment = 2, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.26, -0.5, 0.1}, rotation = {40, 150, 20}, },		-- V2 classic ranger skin	2.2.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.25}, rotation = {0, 180, 90}, },			-- V2 ironbreaker			2.2.0
@@ -198,7 +198,7 @@ mod.definitions.dr_dual_wield_hammers = {
         },
         backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},											-- Default / V1				2.2.0
             dr_ranger = { 
-                attachment = 1, attachment_node = 9, position = {-0.02, -0.1, -0.18}, rotation = {0, 0, 90},								-- V2 ranger				2.2.0
+                attachment = 2, attachment_node = 9, position = {-0.02, -0.1, -0.18}, rotation = {0, 0, 90},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.16, -0.3, 0.2}, rotation = {60, 150, 120}, },		-- V2 classic ranger skin	2.2.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0, -0.13, 0.35}, rotation = {-10, 190, 90}, },			    -- V2 ironbreaker			2.2.0
@@ -228,7 +228,7 @@ mod.definitions.dr_1h_axes = {
         },
         backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},											-- Default / V1				2.1.0
             dr_ranger = { 
-                attachment = 1, attachment_node = 9, position = {0.10, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {0.10, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.26, -0.5, 0.1}, rotation = {40, 150, 20}, },		-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.3}, rotation = {0, 180, 180}, },			-- V2 ironbreaker			2.1.0
@@ -254,7 +254,7 @@ mod.definitions.dr_1h_hammer_shield = {
         },
         backpack = { node = backpack_node, position = {0.3, -0.5, 0.1}, rotation = {40, 160, 20},											-- Default / V1				2.1.0
             dr_ranger = { 
-                attachment = 1, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {0.12, -0.03, -0.25}, rotation = {0, 15, 180},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.26, -0.5, 0.1}, rotation = {40, 150, 20}, },		-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.25}, rotation = {0, 180, 90}, },			-- V2 ironbreaker			2.1.0
@@ -274,7 +274,7 @@ mod.definitions.dr_1h_hammer_shield = {
         },
         backpack = { node = backpack_node, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100},										-- Default / V1				2.1.0
             dr_ranger = { 
-                attachment = 1, attachment_node = 9, position = {0.02, -0.07, -0.2}, rotation = {0, -140, 90},								-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {0.02, -0.07, -0.2}, rotation = {0, -140, 90},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0.3, -0.3, 0.12}, rotation = {60, -40, -100}, },		-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.07, 0.1}, rotation = {0, 0, 90}, },				-- V2 ironbreaker			2.1.0
@@ -299,7 +299,7 @@ mod.definitions.dr_2h_axes = {
         },
         backpack = { node = backpack_node, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20},											-- Default / V1				2.1.0
             dr_ranger = {
-                attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90},								-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0, -0.8, 0.4}, rotation = {40, 150, 20}, },			-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.7}, rotation = {0, 180, -90}, },			-- V2 ironbreaker			2.1.0
@@ -321,7 +321,7 @@ mod.definitions.dr_2h_picks = {
         },
         backpack = { node = backpack_node, position = {0.1, -0.8, 0.5}, rotation = {40, 160, 20},											-- Default / V1				2.1.0
             dr_ranger = {
-                attachment = 1, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90},								-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {0.3, -0.12, -0.6}, rotation = {0, -40, 90},								-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {0, -0.8, 0.4}, rotation = {40, 150, -10}, },			-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {-0.15, -0.03, 0.7}, rotation = {0, 180, -60}, },			-- V2 ironbreaker			2.1.0
@@ -335,7 +335,7 @@ mod.definitions.dr_grudgeraker = {
     right = {
         backpack = { node = backpack_node, position = {-0.2, -0.3, 0.1}, rotation = {-30, 90, -10},											-- Default / V1				2.1.0
             dr_ranger = {
-                attachment = 1, attachment_node = 9, position = {-0.35, 0.05, -0.3}, rotation = {90, 0, 0},									-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {-0.35, 0.05, -0.3}, rotation = {90, 0, 0},									-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {-0.19, -0.35, 0.1}, rotation = {-30, 50, -10}, },		-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0.15, -0.02, 0.3}, rotation = {-90, 180, 0}, },				-- V2 ironbreaker			2.1.0
@@ -355,7 +355,7 @@ mod.definitions.dr_crossbow = {
     left = {
         backpack = { node = backpack_node, position = {-0.1, -0.3, 0.15}, rotation = {-10, 120, -10},										-- Default / V1				2.1.0
             dr_ranger = { 
-                attachment = 1, attachment_node = 9, position = {-0.4, 0, -0.15}, rotation = {90, 0, 0},									-- V2 ranger				2.1.0
+                attachment = 2, attachment_node = 9, position = {-0.4, 0, -0.15}, rotation = {90, 0, 0},									-- V2 ranger				2.5.0
                 skin_dr_default = { attachment = 2, attachment_node = 13, position = {-0.14, -0.2, 0.07}, rotation = {-30, 150, -10}, },	-- V2 classic ranger skin	2.1.0
             },
             dr_ironbreaker = { attachment = 1, attachment_node = 6, position = {0.17, -0.05, 0.22}, rotation = {90, 0, 180}, },				-- V2 ironbreaker			2.1.0

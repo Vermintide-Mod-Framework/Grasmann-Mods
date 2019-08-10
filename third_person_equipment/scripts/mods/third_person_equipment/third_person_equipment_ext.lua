@@ -19,6 +19,8 @@ local mod = get_mod("ThirdPersonEquipment")
 local destroy = function(func, self, ...)
 	if self.tpe_extension and self.tpe_extension.initialized then
 		self.tpe_extension:destroy()
+	else
+		mod:echo("destroy not executed")
 	end
 	return func(self, ...)
 end
@@ -32,6 +34,8 @@ local wield = function(self, slot_name)
 		if table.contains(self.tpe_extension.slots, slot_name) then
 			self.tpe_extension:wield(slot_name)
 		end
+	else
+		mod:echo("wield not executed")
 	end
 end
 mod:hook_safe(SimpleInventoryExtension, "wield", wield)
@@ -47,6 +51,8 @@ local add_equipment = function(self, slot_name, item_data)
 		if table.contains(self.tpe_extension.slots, slot_name) then
 			self.tpe_extension:add(slot_name, item_data)
 		end
+	else
+		mod:echo("add_equipment not executed")
 	end
 end
 mod:hook_safe(SimpleInventoryExtension, "add_equipment", add_equipment)
@@ -59,6 +65,8 @@ local destroy_slot = function(func, self, slot_name, ...)
 		if table.contains(self.tpe_extension.slots, slot_name) then
 			self.tpe_extension:remove(slot_name)
 		end
+	else
+		mod:echo("destroy_slot not executed")
 	end
 	return func(self, slot_name, ...)
 end
@@ -70,6 +78,8 @@ mod:hook(SimpleHuskInventoryExtension, "destroy_slot", destroy_slot)
 local update = function(self)
 	if self.tpe_extension and self.tpe_extension.initialized then
 		self.tpe_extension:update()
+	else
+		mod:echo("update not executed")
 	end
 end
 mod:hook_safe(SimpleInventoryExtension, "update", update)
@@ -81,6 +91,8 @@ local show_third_person_inventory = function(self, show)
 	if self.tpe_extension and self.tpe_extension.initialized then
 		self.tpe_extension.show = show
 		self.tpe_extension.delayed_visibility_check = true
+	else
+		mod:echo("show_third_person_inventory not executed")
 	end
 end
 mod:hook_safe(SimpleInventoryExtension, "show_third_person_inventory", show_third_person_inventory)
@@ -96,7 +108,7 @@ ThirdPersonEquipmentExtension = class(ThirdPersonEquipmentExtension)
 --[[
     Initialize extension
 --]]
-ThirdPersonEquipmentExtension.init = function(self, inventory_extension)
+ThirdPersonEquipmentExtension.init = function(self, inventory_extension, data)
     self.inventory_extension = inventory_extension
     self.unit = inventory_extension._unit
     self.link_queue = {}
@@ -417,6 +429,8 @@ ThirdPersonEquipmentExtension.get_item_setting = function(self, equipment_info, 
 				item_setting = profile_name and def[key][profile_name] and def[key][profile_name].left
 				item_setting = item_setting or def[key] and def[key].left
 			end
+		else
+			mod:echo("Profile '"..profile_name.."' not found.")
 		end
 	end
 	--end)

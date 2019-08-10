@@ -89,8 +89,12 @@ end
 --[[
     Hook inventory extensions on init
 --]]
-local init_inventory_extension = function(self, ...)
-	self.tpe_extension = ThirdPersonEquipmentExtension:new(self)
+local init_inventory_extension = function(self, extension_init_context, unit, extension_init_data)
+
+	mod:dump(extension_init_context, "extension_init_context", 1)
+	mod:dump(extension_init_data, "extension_init_data", 1)
+
+	self.tpe_extension = ThirdPersonEquipmentExtension:new(self, extension_init_data)
 end
 mod:hook_safe(SimpleInventoryExtension, "init", init_inventory_extension)
 mod:hook_safe(SimpleHuskInventoryExtension, "init", init_inventory_extension)
