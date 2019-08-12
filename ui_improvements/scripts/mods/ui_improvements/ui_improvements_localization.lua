@@ -84,6 +84,34 @@ return {
 		pl = "Ukończone",
 		ru = "Выполненные",
 	},
+	mutator = {
+		en = "Mutator",
+		de = "Mutation",
+	},
+	rarity = {
+		en = "Rarity",
+		de = "Seltenheit",
+	},
+	rarity_plentiful = {
+		en = "Plentiful",
+		de = "Massenhaft",
+	},
+	rarity_common = {
+		en = "Common",
+		de = "Häufig",
+	},
+	rarity_rare = {
+		en = "Rare",
+		de = "Selten",
+	},
+	rarity_exotic = {
+		en = "Exotic",
+		de = "Exotisch",
+	},
+	rarity_unique = {
+		en = "Unique",
+		de = "Einmalig",
+	},
 	salvage_pages_text = {
 		en = "Salvage more items",
 		de = "Mehr Items einschmelzen",

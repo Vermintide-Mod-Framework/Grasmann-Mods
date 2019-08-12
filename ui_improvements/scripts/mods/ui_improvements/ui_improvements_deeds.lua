@@ -30,8 +30,10 @@ end
 
 mod.deeds = {
     widgets = {},
+    --tooltips = {},
     groups = {
         difficulty = {
+            name = Localize("lb_difficulty"),
             value = "all",
             saved = "all",
             position = {0, 0},
@@ -63,6 +65,7 @@ mod.deeds = {
             end,
         },
         rarity = {
+            name = mod:localize("rarity"),
             value = "all",
             saved = "all",
             position = {0.5, 0},
@@ -99,6 +102,7 @@ mod.deeds = {
             end,
         },
         mutator = {
+            name = mod:localize("mutator"),
             value = "all",
             saved = "all",
             position = {0, 1},
@@ -150,6 +154,7 @@ mod.deeds = {
             end,
         },
         mission = {
+            name = Localize("lb_level"),
             value = "all",
             saved = "all",
             position = {0, 2},
@@ -415,17 +420,14 @@ mod.create_deed_button = function(self, scenegraph_id, text, icon, tag, value, i
     icon = icon or "loot_chest_icon"
     text = text or "nope"
     height = height or mod.deeds.element_height
-    -- if difficulty == "easy" then
-    --     icon = "loot_chest_icon"
-    --     text = mod:localize("deed_filter_all")
-    -- else
-    --     icon = DifficultySettings[difficulty].display_image
-    --     text = Localize(DifficultySettings[difficulty].display_name)
-    -- end
     local font_size = 16
     local icon_size = {height-10, height-10}
     local long = size[1]
     local short = size[2]
+
+    local firstToUpper = function(str)
+        return (str:gsub("^%l", string.upper))
+    end
 
     local widget = {
 		element = {
@@ -581,12 +583,22 @@ mod.create_deed_button = function(self, scenegraph_id, text, icon, tag, value, i
 					texture_id = "edge_holder_bottom",
 					style_id = "edge_holder_bottom",
 					pass_type = "texture",
+                },
+                -- Tooltip
+                {
+					style_id = "tooltip_text",
+					pass_type = "tooltip_text",
+					text_id = "tooltip_text",
+					content_check_function = function (content)
+						return content.tooltip_text and not content.is_selected and content.button_hotspot.is_hover
+					end
 				},
 			}
 		},
 		content = {
             icon = icon,
             text = text or "n/a",
+            tooltip_text = firstToUpper(tag)..": "..firstToUpper(text),
             button_hotspot = {},
             is_selected = is_selected,
             tag = tag or "",
@@ -709,6 +721,21 @@ mod.create_deed_button = function(self, scenegraph_id, text, icon, tag, value, i
 				color = {255, 255, 255, 255},
 				offset = {-6, 5, 20},
 				size = {17, 9},
+            },
+            -- Tooltip
+            tooltip_text = {
+				vertical_alignment = "top",
+				max_width = 500,
+				localize = false,
+				horizontal_alignment = "left",
+				font_size = 18,
+				font_type = "hell_shark",
+				text_color = Colors.get_color_table_with_alpha("white", 255),
+				offset = {
+					0,
+					0,
+					1
+				}
 			},
 		},
 		scenegraph_id = scenegraph_id,
@@ -861,7 +888,7 @@ mod:hook_safe(StartGameWindowMutatorGrid, "create_ui_elements", function(self, .
         local pos_y = base_y + element_height*group.position[2]
 
         -- Label
-        mod.deeds.widgets[index] = mod:create_label("window", name, {pos_x, pos_y, 2})
+        mod.deeds.widgets[index] = mod:create_label("window", group.name, {pos_x, pos_y, 2})
         index = index + 1
         pos_x = pos_x + label_width
 
