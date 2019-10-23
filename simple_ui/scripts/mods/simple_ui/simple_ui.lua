@@ -504,7 +504,7 @@ mod.fonts = {
 	]]--
 	template = {
 		font = "hell_shark",
-		material = "materials/fonts/gw_body_32",
+		material = "materials/fonts/gw_body",
 		size = 22,
 		font_size = function(self)
 			if not self.dynamic_size then
