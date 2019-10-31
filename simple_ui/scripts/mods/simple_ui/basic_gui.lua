@@ -19,7 +19,7 @@ mod.gui = nil
 mod.default_world = "top_ingame_view"
 mod.default_font = "hell_shark"
 mod.default_font_size = 22
-mod.default_font_material = "materials/fonts/gw_body_32"
+mod.default_font_material = "materials/fonts/gw_body"
 
 -- ##### ██╗███╗   ██╗██╗████████╗ ####################################################################################
 -- ##### ██║████╗  ██║██║╚══██╔══╝ ####################################################################################
@@ -55,7 +55,7 @@ end
 	Destroy screen gui
 --]]
 mod.destroy_screen_ui = function(self)
-	if self.gui then
+	if self.gui and Managers.world then
 		local top_world = Managers.world:world(self.default_world)
 		World.destroy_gui(top_world, self.gui)
 		self.gui = nil
@@ -314,16 +314,16 @@ end
 --[[
 	Get width of a text with the given font and font size
 --]]
-mod.text_width = function(self, text, font, font_size)
-	local text_extent_min, text_extent_max = Gui.text_extents(self.gui, text, font or self.default_font, font_size or self.default_font_size)
+mod.text_width = function(self, text, font_material, font_size)
+	local text_extent_min, text_extent_max = Gui.text_extents(self.gui, text, font_material or self.default_font_material, font_size or self.default_font_size)
 	local text_width = text_extent_max[1] - text_extent_min[1]
 	return text_width
 end
 --[[
 	Get height of a text with the given font and font size
 --]]
-mod.text_height = function(self, text, font, font_size)
-	local text_extent_min, text_extent_max = Gui.text_extents(self.gui, text, font or self.default_font, font_size or self.default_font_size)
+mod.text_height = function(self, text, font_material, font_size)
+	local text_extent_min, text_extent_max = Gui.text_extents(self.gui, text, font_material or self.default_font_material, font_size or self.default_font_size)
 	local text_height = text_extent_max[2] - text_extent_min[2]
 	return text_height
 end
