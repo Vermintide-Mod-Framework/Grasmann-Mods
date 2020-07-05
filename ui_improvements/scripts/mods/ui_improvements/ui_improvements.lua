@@ -192,21 +192,21 @@ end
 	Settings changed
 --]]
 mod.on_setting_changed = function(setting_name)
-	mod:overwrite_exotic_background()
+	--mod:overwrite_exotic_background()
 	--mod:set_salvage_activated()
 end
 --[[
 	Enable
 --]]
 mod.on_enabled = function(initial_call)
-	mod:overwrite_exotic_background()
+	--mod:overwrite_exotic_background()
 	--mod:set_salvage_activated()
 end
 --[[
 	Disabled
 --]]
 mod.on_disabled = function(initial_call)
-	mod:overwrite_exotic_background()
+	--mod:overwrite_exotic_background()
 end
 
 -- ##### ██████╗ ███████╗██████╗ ██╗   ██╗ ██████╗  ###################################################################

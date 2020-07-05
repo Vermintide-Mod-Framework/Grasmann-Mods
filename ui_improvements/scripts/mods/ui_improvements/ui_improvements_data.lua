@@ -14,14 +14,12 @@ return {
 	custom_gui_textures = {
 		textures = {
 			"menu_frame_09_divider_middle",
-			"icon_bg_exotic_2",
 		},
 		atlases = {},
 		ui_renderer_injections = {
 			{
 				"ingame_ui",
 				"materials/ui_improvements/menu_frame_09_divider_middle",
-				"materials/ui_improvements/icon_bg_exotic_2",
 			},
 		},
 	},
@@ -39,13 +37,6 @@ return {
 				type = "checkbox",
 				title = "remember_opened_text",
 				["tooltip"] = "remember_opened_tip",
-				["default_value"] = true,
-			},
-			{
-				setting_id = "alternative_exotic_background",
-				type = "checkbox",
-				title = "alternative_exotic_background_text",
-				["tooltip"] = "alternative_exotic_background_tip",
 				["default_value"] = true,
 			},
 			-- {

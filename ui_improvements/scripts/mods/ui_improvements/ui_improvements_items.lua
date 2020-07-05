@@ -67,13 +67,13 @@ end
 --[[
     Replace exotic background texture
 --]]
-mod.overwrite_exotic_background = function(self)
-    if mod:is_enabled() and mod:get("alternative_exotic_background") then
-        UISettings.item_rarity_textures.exotic = "icon_bg_exotic_2"
-    else
-        UISettings.item_rarity_textures.exotic = "icon_bg_exotic"
-    end
-end
+-- mod.overwrite_exotic_background = function(self)
+--     if mod:is_enabled() and mod:get("alternative_exotic_background") then
+--         UISettings.item_rarity_textures.exotic = "icon_bg_exotic_2"
+--     else
+--         UISettings.item_rarity_textures.exotic = "icon_bg_exotic"
+--     end
+-- end
 
 -- ##### ██╗  ██╗ ██████╗  ██████╗ ██╗  ██╗███████╗ ###################################################################
 -- ##### ██║  ██║██╔═══██╗██╔═══██╗██║ ██╔╝██╔════╝ ###################################################################

@@ -192,6 +192,9 @@ mod.change_character = function(self, profile_index)
 		local career_index = not mod.orig_get_career and hero_attributes:get(display_name, "career") or mod.orig_get_career(hero_attributes, display_name, "career")
 		mod.career_index = career_index
 
+		-- Delete career widgets ( because not all characters have the same amount of careers now )
+		mod.career_widgets = {}
+
 		-- Overwrite functions
         mod:overwrite_functions(true)
 
@@ -212,6 +215,10 @@ mod.create_career_button = function(self, profile_index, career_index)
 	local root = {200, 40, 20}
 	local size = {60, 70}
 	local space = 50
+	if #SPProfiles[profile_index].careers == 4 then
+		root = {170, 40, 20}
+		space = 30
+	end
 
 	-- Calculate
 	local pos = {root[1] + (size[1]+space)*(career_index-1), root[2], root[3]}
@@ -384,6 +391,14 @@ mod:hook_safe(HeroWindowOptions, "_update_hero_portrait_frame", function(self, .
 		{ x = -80, },
 		{ x = 30, },
 	}
+	if #SPProfiles[mod.profile_index].careers == 4 then
+		offset = {
+			{ x = -220, },
+			{ x = -130, },
+			{ x = -40, },
+			{ x = 40, },
+		}
+	end
 	self._portrait_widget.offset[1] = offset[mod.career_index].x
 end)
 --[[
@@ -395,13 +410,15 @@ mod:hook_safe(HeroWindowOptions, "create_ui_elements", function(self, ...)
 		mod.character_widgets[p] = mod:create_character_button(p)
 	end
 	-- Career buttons
-	for c = 1, 3 do
-		mod.career_widgets[c] = mod:create_career_button(mod.profile_index, c)
+	for c = 1, 4 do
+		if SPProfiles[mod.profile_index].careers[c] then
+			mod.career_widgets[c] = mod:create_career_button(mod.profile_index, c)
+		end
 	end
 
 	-- Debug
-	--self._widgets_by_name.game_option_3.content.button_hotspot.disable_button = false
-	--self._widgets_by_name.game_option_5.content.button_hotspot.disable_button = false
+	-- self._widgets_by_name.game_option_3.content.button_hotspot.disable_button = false
+	-- self._widgets_by_name.game_option_5.content.button_hotspot.disable_button = false
 end)
 --[[
 	Draw button widgets

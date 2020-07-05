@@ -439,12 +439,12 @@ mod:hook(HeroWindowCrafting, "on_enter", function(func, self, ...)
 	end
 
 end)
--- --[[
--- 	Disable controls on craft
--- --]]
--- mod:hook_safe(HeroWindowCrafting, "craft", function(self, items, ...)
--- 	mod:disable_controls(true)
--- end)
+--[[
+	Disable controls on craft
+--]]
+mod:hook_safe(HeroWindowCrafting, "craft", function(self, items, ...)
+	--mod:disable_controls(true)
+end)
 --[[
 	Enable controls after craft
 --]]
@@ -459,7 +459,7 @@ mod:hook(HeroWindowCrafting, "_update_craft_end_time", function(func, self, ...)
 
 	-- Check if craft end time reached and enable controls
 	if is_waiting and not self._craft_end_duration then
-		mod:disable_controls(false)
+		--mod:disable_controls(false)
 	end
 
 end)

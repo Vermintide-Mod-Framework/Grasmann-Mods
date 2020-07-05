@@ -4,6 +4,9 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+2.1.0
+	- Updated for Grail Knight Career DLC
+	- Removed alternative exotic item background
 2.0.0
 	- Updated for v2.0
 	- Fixed bug in deed filter where deeds would overlap the filter controls ( hopefully )
