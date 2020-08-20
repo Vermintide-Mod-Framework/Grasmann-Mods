@@ -413,6 +413,8 @@ mod:hook_safe(HeroWindowOptions, "create_ui_elements", function(self, ...)
 	for c = 1, 4 do
 		if SPProfiles[mod.profile_index].careers[c] then
 			mod.career_widgets[c] = mod:create_career_button(mod.profile_index, c)
+		else
+			mod.career_widgets[c] = nil
 		end
 	end
 

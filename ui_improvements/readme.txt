@@ -4,6 +4,8 @@ Description :
 A collection of improvements to the game menus for better usability.
 	
 Changelog:
+2.1.1
+	- Fixed grail knight icon in inventory showing up when it shouldn't
 2.1.0
 	- Updated for Grail Knight Career DLC
 	- Removed alternative exotic item background
