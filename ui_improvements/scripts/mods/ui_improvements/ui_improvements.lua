@@ -10,9 +10,9 @@ mod:dofile("scripts/mods/ui_improvements/ui_improvements_items")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_crafting")
 --mod:dofile("scripts/mods/ui_improvements/ui_improvements_salvage")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_cosmetics")
-mod:dofile("scripts/mods/ui_improvements/ui_improvements_loot")
+--mod:dofile("scripts/mods/ui_improvements/ui_improvements_loot")
 mod:dofile("scripts/mods/ui_improvements/ui_improvements_deeds")
-mod:dofile("scripts/mods/ui_improvements/ui_improvements_achievements")
+--mod:dofile("scripts/mods/ui_improvements/ui_improvements_achievements")
 
 -- ##### ██████╗  █████╗ ████████╗ █████╗ #############################################################################
 -- ##### ██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗ ############################################################################
@@ -45,8 +45,7 @@ mod.window_settings = {
 	Get hero view and check if view is open
 --]]
 mod.get_hero_view = function(self)
-	local matchmaking_manager = Managers.matchmaking
-	local ingame_ui = matchmaking_manager and matchmaking_manager._ingame_ui
+	local ingame_ui = Managers.ui:temporary_get_ingame_ui_called_from_state_ingame_running()
 	local hero_view_active = ingame_ui and ingame_ui.current_view == "hero_view"
 	local hero_view = hero_view_active and ingame_ui.views["hero_view"]
 
@@ -75,20 +74,7 @@ mod.overwrite_functions = function(self, overwrite)
 
 		-- Overwrite profile function
 		ingame_ui_context.profile_synchronizer.profile_by_peer = function(self, peer_id, local_player_id)
-			return mod.profile_index or mod.orig_profile_by_peer(self, peer_id, local_player_id)
-		end
-
-		-- Backup original career function
-		if not mod.orig_get_career then
-			mod.orig_get_career = Managers.backend._interfaces["hero_attributes"].get
-		end
-
-		-- Overwrite career function
-		Managers.backend._interfaces["hero_attributes"].get = function(self, hero_name, attribute_name)
-			if attribute_name == "career" then
-				return mod.career_index or mod.orig_get_career(self, hero_name, attribute_name)
-			end
-			return mod.orig_get_career(self, hero_name, attribute_name)
+			return mod.profile_index, mod.career_index or mod.orig_profile_by_peer(self, peer_id, local_player_id)
 		end
 
 	else
@@ -97,12 +83,6 @@ mod.overwrite_functions = function(self, overwrite)
 		if mod.orig_profile_by_peer then
 			ingame_ui_context.profile_synchronizer.profile_by_peer = mod.orig_profile_by_peer
 			mod.orig_profile_by_peer = nil
-		end
-
-		-- Reset career function
-		if mod.orig_get_career then
-			Managers.backend._interfaces["hero_attributes"].get = mod.orig_get_career
-			mod.orig_get_career = nil
 		end
 
 	end
@@ -143,6 +123,14 @@ mod:hook(HeroView, "_change_screen_by_name", function(func, self, screen_name, s
 	elseif screen_name ~= "loot" then
 		mod:delete_profile_data()
 	end
+
+	if optional_params == nil then
+		optional_params = {}
+	end
+	if optional_params.force_ingame_menu == nil then
+		optional_params.force_ingame_menu = false
+	end
+
 	-- Orig function
 	func(self, screen_name, sub_screen_name, optional_params, ...)
 end)
