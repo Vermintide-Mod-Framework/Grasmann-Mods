@@ -28,23 +28,23 @@ mod.career_unlocked = function(self, profile_index, career_index)
 	local unlocked = false
 
 	local profile_settings = SPProfiles[profile_index]
-	local display_name = profile_settings.display_name
+	local hero_name = profile_settings.display_name
+
+	local career = profile_settings.careers[career_index]
 
 	local hero_attributes = Managers.backend:get_interface("hero_attributes")
-	local hero_experience = hero_attributes:get(display_name, "experience") or 0
+	local hero_experience = hero_attributes:get(hero_name, "experience") or 0
 	local hero_level = ExperienceSettings.get_level(hero_experience)
 
-	local career_name = SPProfiles[profile_index].careers[career_index].name
+	local is_career_unlocked = career:is_unlocked_function(hero_name, hero_level)
 
-	unlocked = ProgressionUnlocks.is_unlocked_for_profile(career_name, display_name, hero_level)
-
-	return unlocked
+	return is_career_unlocked
 end
 --[[
 	Get protrait frame for given profile and career
 --]]
 mod.get_portrait_frame = function(self, profile_index, career_index)
-	local player_portrait_frame = "default"
+	local player_portrait_frame = "portrait_frame_0000"
 
 	local profile = SPProfiles[profile_index]
 	local career_data = profile.careers[career_index]
@@ -58,6 +58,7 @@ mod.get_portrait_frame = function(self, profile_index, career_index)
 		player_portrait_frame = frame_texture or player_portrait_frame
 	end
 
+	mod:debug("Retrieved portrait " .. tostring(player_portrait_frame) .. "\tProfile " .. profile_index .. "\tCareer " .. career_index)
 	return player_portrait_frame
 end
 --[[
@@ -180,6 +181,7 @@ end
 	Change character
 --]]
 mod.change_character = function(self, profile_index)
+	mod:debug("Changing character to " .. profile_index)
 	if mod.profile_index ~= profile_index then
 
 		-- Set selected profile index
@@ -191,6 +193,7 @@ mod.change_character = function(self, profile_index)
 		local hero_attributes = Managers.backend:get_interface("hero_attributes")
 		local career_index = not mod.orig_get_career and hero_attributes:get(display_name, "career") or mod.orig_get_career(hero_attributes, display_name, "career")
 		mod.career_index = career_index
+		mod:debug("Got career index for change: " .. career_index)
 
 		-- Delete career widgets ( because not all characters have the same amount of careers now )
 		mod.career_widgets = {}
@@ -210,7 +213,7 @@ end
 	Create career button widget
 --]]
 mod.create_career_button = function(self, profile_index, career_index)
-
+	mod:debug("Creating career button. Profile " .. profile_index .. "\tCareer " .. career_index)
 	-- Values
 	local root = {200, 40, 20}
 	local size = {60, 70}
@@ -326,6 +329,7 @@ end
 	Change career
 --]]
 mod.change_career = function(self, profile_index, career_index)
+	mod:debug("Changing career. Profile " .. profile_index .. "\tCareer " .. career_index)
 
 	-- Set selected profile index
 	mod.profile_index = profile_index
@@ -479,6 +483,7 @@ mod:hook_safe(HeroWindowOptions, "post_update", function(self, ...)
 		-- Career buttons
 		for _, widget in pairs(mod.career_widgets) do
 			if not widget.content.disable_button and self:_is_button_pressed(widget) then
+				mod:debug("Attempting to switch to profile ".. widget.content.profile_index .. " career ".. widget.content.career_index)
 				mod:change_career(widget.content.profile_index, widget.content.career_index)
 			end
 		end
