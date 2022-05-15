@@ -351,14 +351,17 @@ mod:hook_safe(EndViewStateScore, "update", function(self, dt, t)
 				row_content[score_text_name] = mod.scores[group_row_index].text
 				row_content.has_score = true
 				for player_index = 1, 4 do
-					local line_suffix = "_"..total_row_index
-					local score_text_name = "score_text"..line_suffix
-					local row_name = "row_bg"..line_suffix
-					local row_content = self._score_widgets[player_index].content[row_name]
-					row_content[score_text_name] = mod.scores[group_row_index][player_index].score
-					row_content.has_highscore = mod.scores[group_row_index][player_index].has_highscore
-					row_content.has_background = total_row_index % 2 == 0
-					row_content.has_score = true
+					local player_score = mod.scores[group_row_index][player_index]
+					if player_score then
+						local line_suffix = "_"..total_row_index
+						local score_text_name = "score_text"..line_suffix
+						local row_name = "row_bg"..line_suffix
+						local row_content = self._score_widgets[player_index].content[row_name]
+						row_content[score_text_name] = player_score.score
+						row_content.has_highscore = player_score.has_highscore
+						row_content.has_background = total_row_index % 2 == 0
+						row_content.has_score = true
+					end
 				end
 				total_row_index = total_row_index + 1
 			end
